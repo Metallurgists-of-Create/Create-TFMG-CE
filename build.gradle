@@ -68,6 +68,11 @@ repositories {
     maven { url = "https://raw.githubusercontent.com/Fuzss/modresources/main/maven/" } // ForgeConfigAPIPort
     maven { url = "https://maven.blamejared.com" } // JEI, Vazkii's Mods
     maven { url = "https://cursemaven.com" }
+
+    maven {
+        name = "DevAuth Maven"
+        url = "https://pkgs.dev.azure.com/djtheredstoner/DevAuth/_packaging/public/maven/v1"
+    }
 }
 
 dependencies {
@@ -82,6 +87,8 @@ dependencies {
     runtimeOnly("curse.maven:configured-457570:7122915")
     implementation("mezz.jei:jei-${jei_minecraft_version}-neoforge:${jei_version}")
     implementation("com.tterrag.registrate:Registrate:${registrate_version}")
+
+    runtimeOnly("me.djtheredstoner:DevAuth-neoforge:1.2.1")
 }
 
 var generateModMetadata = tasks.register("generateModMetadata", ProcessResources) {
