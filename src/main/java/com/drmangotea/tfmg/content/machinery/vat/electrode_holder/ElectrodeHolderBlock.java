@@ -7,6 +7,7 @@ import com.drmangotea.tfmg.content.machinery.vat.electrode_holder.electrode.Elec
 import com.drmangotea.tfmg.registry.TFMGBlockEntities;
 import com.simibubi.create.foundation.block.IBE;
 import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -26,24 +27,28 @@ public class ElectrodeHolderBlock extends Block implements IBE<ElectrodeHolderBl
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
        if(hand == InteractionHand.OFF_HAND)
             return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
-        if(level.getBlockEntity(pos) instanceof ElectrodeHolderBlockEntity be){
-            Electrode electrode = be.electrode;
-            ItemStack stackInside = electrode.getStack();
-            if(stack.is(stackInside.getItem()))
-                return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
-            if(be.setElectrode(stack, true)) {
-                player.setItemInHand(hand, electrode.getStack());
-                be.setElectrode(stack, false);
-                return ItemInteractionResult.SUCCESS;
-            }
-            if (player.isShiftKeyDown() && player.getItemInHand(hand).isEmpty()) {
-                if (be.electrode == TFMGUtils.getElectrode(TFMG.asResource("none"))) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
-                player.setItemInHand(hand, electrode.getStack());
-                be.setElectrode(TFMGUtils.getElectrode(TFMG.asResource("none")), false);
-                return ItemInteractionResult.SUCCESS;
-            }
-        }
-        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+	   
+	   if(!(level.getBlockEntity(pos) instanceof ElectrodeHolderBlockEntity be))
+		   return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+	   
+	   ItemStack stackInside = be.electrode.getStack();
+	   if(stack.is(stackInside.getItem()))
+		   return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+		
+	   if (TFMGUtils.getElectrode(ResourceLocation.parse(stack.getItem().toString())) instanceof Electrode electrode) {
+		   player.setItemInHand(hand, stackInside);
+		   be.setElectrode(electrode);
+		   return ItemInteractionResult.SUCCESS;
+	   }
+	   
+	   if (player.isShiftKeyDown() && player.getItemInHand(hand).isEmpty()) {
+		   if (be.electrode == TFMGUtils.getElectrode(TFMG.asResource("none"))) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+		   player.setItemInHand(hand, stackInside);
+		   be.setElectrode(TFMGUtils.getElectrode(TFMG.asResource("none")));
+		   return ItemInteractionResult.SUCCESS;
+	   }
+	   
+	   return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
     }
     @Override
     public void onPlace(BlockState pState, Level level, BlockPos pos, BlockState pOldState, boolean pIsMoving) {

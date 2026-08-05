@@ -1,7 +1,6 @@
 package com.drmangotea.tfmg.content.machinery.vat.electrode_holder;
 
 import com.drmangotea.tfmg.TFMG;
-import com.drmangotea.tfmg.TFMGRegistries;
 import com.drmangotea.tfmg.base.TFMGUtils;
 import com.drmangotea.tfmg.base.lang.TFMGTexts;
 import com.drmangotea.tfmg.config.TFMGConfigs;
@@ -10,7 +9,6 @@ import com.drmangotea.tfmg.content.machinery.vat.base.IVatMachine;
 import com.drmangotea.tfmg.content.machinery.vat.base.VatBlock;
 import com.drmangotea.tfmg.content.machinery.vat.base.VatBlockEntity;
 import com.drmangotea.tfmg.content.machinery.vat.electrode_holder.electrode.Electrode;
-import com.drmangotea.tfmg.content.machinery.vat.industrial_mixer.IndustrialMixerBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -18,8 +16,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
@@ -47,23 +43,6 @@ public class ElectrodeHolderBlockEntity extends ElectricBlockEntity implements I
     @Override
     public boolean hasElectricitySlot(Direction direction) {
         return direction == Direction.UP;
-    }
-
-
-    public boolean setElectrode(ItemStack modeItem, boolean simulate) {
-        if (level == null) return false;
-        for (Electrode electrode : TFMGRegistries.ELECTRODE_REGISTRY.stream().toList()) {
-            if (electrode.getStack().isEmpty()) continue;
-            if (modeItem.is(electrode.getStack().getItem())) {
-                if (!simulate) {
-                    this.electrode = electrode;
-                } else return true;
-            }
-        }
-        if (!simulate && hasLevel())
-            VatBlock.updateVatState(getBlockState(), getLevel(), getBlockPos().relative(Direction.DOWN));
-        sendData();
-        return false;
     }
 
     @Override
@@ -95,32 +74,24 @@ public class ElectrodeHolderBlockEntity extends ElectricBlockEntity implements I
     }
 
 
-
-    public boolean setElectrode(Electrode electrode, boolean simulate) {
+    public void setElectrode(Electrode electrode) {
         if (electrode != null) {
-            if (!simulate) {
-                this.electrode = electrode;
-            } else return true;
-        }
-        if (!simulate && hasLevel())
+			this.electrode = electrode;
+		}
+        if (hasLevel())
             VatBlock.updateVatState(getBlockState(), getLevel(), getBlockPos().relative(Direction.DOWN));
         sendData();
-        return false;
-    }
+	}
 
 
     @Override
     public void remove() {
-
         if (level.isClientSide || electrode.getItem()==null)
             return;
-
 
         ItemEntity itemToDrop = new ItemEntity(level, getBlockPos().getX() + 0.5f, getBlockPos().getY() + 0.5f, getBlockPos().getZ() + 0.5f, electrode.getStack());
 
         level.addFreshEntity(itemToDrop);
-
-
     }
 
     @Override
@@ -128,7 +99,6 @@ public class ElectrodeHolderBlockEntity extends ElectricBlockEntity implements I
         super.onNetworkChanged(oldVoltage, oldPower);
         VatBlock.updateVatState(getBlockState(), level, getBlockPos().relative(Direction.DOWN));
     }
-
 
     boolean isOperational() {
         return getCurrent() >= TFMGConfigs.common().machines.electrolysisMinimumCurrent.get() && canWork();
@@ -150,8 +120,7 @@ public class ElectrodeHolderBlockEntity extends ElectricBlockEntity implements I
     protected void read(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {
         super.read(compound,registries , clientPacket);
 
-        setElectrode(TFMGUtils.getElectrode(ResourceLocation.parse(compound.getString("Electrode"))), false);
-
+        setElectrode(TFMGUtils.getElectrode(ResourceLocation.parse(compound.getString("Electrode"))));
     }
 
     @Override
@@ -173,6 +142,4 @@ public class ElectrodeHolderBlockEntity extends ElectricBlockEntity implements I
     public void vatUpdated(VatBlockEntity be) {
         IVatMachine.super.vatUpdated(be);
     }
-
-
 }
