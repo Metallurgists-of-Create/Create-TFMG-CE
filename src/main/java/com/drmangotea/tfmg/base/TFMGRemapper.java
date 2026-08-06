@@ -32,6 +32,7 @@ public class TFMGRemapper {
         reMapBlock.put("copper_encased_plastic_pipe", TFMG.asResource("encased_plastic_pipe"));
 
         //Items
+        reMapItem.put("lit_lithium_blade", TFMG.asResource("lithium_blade"));
     }
 
     @SubscribeEvent

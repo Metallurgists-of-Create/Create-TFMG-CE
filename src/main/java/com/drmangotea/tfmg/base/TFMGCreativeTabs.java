@@ -90,7 +90,6 @@ public class TFMGCreativeTabs {
     public static List<RegistryEntry<Item, ? extends Item>> blacklist() {
         List<RegistryEntry<Item, ? extends Item>> list = new ArrayList<>();
 
-        list.add(TFMGItems.LIT_LITHIUM_BLADE);
         list.add(TFMGItems.GOLDEN_TURBO);
         list.add(TFMGItems.ALUMINUM_SPOOL);
         list.add(TFMGItems.COPPER_SPOOL);

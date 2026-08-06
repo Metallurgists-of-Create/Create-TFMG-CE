@@ -734,7 +734,6 @@
   "item.tfmg.liquid_asphalt_bucket": "Liquid Asphalt Bucket",
   "item.tfmg.liquid_concrete_bucket": "Liquid Concrete Bucket",
   "item.tfmg.liquid_silicon_bucket": "Liquid Silicon Bucket",
-  "item.tfmg.lit_lithium_blade": "Lithium Blade",
   "item.tfmg.lithium_blade": "Lithium Blade",
   "item.tfmg.lithium_blade.tooltip.behaviour1": "Is set on hellfire, consuming a _Lithium Charge_. Its flame sets enemies on fire for a set amount of time, this fire is renewed even after Enemy extinguishes themself in water ",
   "item.tfmg.lithium_blade.tooltip.behaviour2": "Shoots out several bolts of _Hellfire_ consuming the blades charge",

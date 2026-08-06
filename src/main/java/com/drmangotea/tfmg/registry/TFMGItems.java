@@ -24,7 +24,6 @@ import com.drmangotea.tfmg.content.items.weapons.explosives.thermite_grenades.Th
 import com.drmangotea.tfmg.content.items.weapons.explosives.thermite_grenades.ThermiteGrenadeItem;
 import com.drmangotea.tfmg.content.items.weapons.fire_extinguisher.FireExtinguisherItem;
 import com.drmangotea.tfmg.content.items.weapons.flamethrover.FlamethrowerItem;
-import com.drmangotea.tfmg.content.items.weapons.lithium_blade.LitLithiumBladeItem;
 import com.drmangotea.tfmg.content.items.weapons.lithium_blade.LithiumBladeItem;
 import com.drmangotea.tfmg.content.items.weapons.quad_potato_cannon.QuadPotatoCannonItem;
 import com.drmangotea.tfmg.content.machinery.misc.winding_machine.SpoolItem;
@@ -247,17 +246,12 @@ public class TFMGItems {
                     .tag(ItemTags.SWORDS)
                     .model((ctx, prov) -> prov
                             .withExistingParent("lithium_blade", "minecraft:item/handheld")
-                            .texture("layer0", "tfmg:item/lithium_blade"))
+                            .texture("layer0", "tfmg:item/lithium_blade")
+                            .override().predicate(TFMG.asResource("lithium_charged"), 1)
+                            .model(prov.withExistingParent("lithium_blade_lit", "minecraft:item/handheld").texture("layer0", "tfmg:item/lithium_blade_lit"))
+                    )
                     .register();
-    public static final ItemEntry<LitLithiumBladeItem> LIT_LITHIUM_BLADE =
-            REGISTRATE.item("lit_lithium_blade", p -> new LitLithiumBladeItem(TFMGTiers.STEEL, p))
-                    .properties(p -> p.attributes(AxeItem.createAttributes(TFMGTiers.STEEL, 3, -2.4F)))
-                    .tag(ItemTags.SWORDS)
-                    .model((ctx, prov) -> prov
-                            .withExistingParent("lit_lithium_blade", "minecraft:item/handheld")
-                            .texture("layer0", "tfmg:item/lithium_blade_lit"))
-                    .lang("Lithium Blade")
-                    .register();
+
 
 
     public static final ItemEntry<AdvancedPotatoCannonItem> ADVANCED_POTATO_CANNON =

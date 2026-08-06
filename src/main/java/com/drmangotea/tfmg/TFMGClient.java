@@ -4,8 +4,11 @@ import com.drmangotea.tfmg.content.items.weapons.advanced_potato_cannon.Advanced
 import com.drmangotea.tfmg.content.items.weapons.flamethrover.FlamethrowerRenderHandler;
 import com.drmangotea.tfmg.content.items.weapons.quad_potato_cannon.QuadPotatoCannonRenderHandler;
 import com.drmangotea.tfmg.ponder.TFMGPonderPlugin;
+import com.drmangotea.tfmg.registry.TFMGDataComponents;
+import com.drmangotea.tfmg.registry.TFMGItems;
 import com.drmangotea.tfmg.registry.TFMGParticleTypes;
 import net.createmod.ponder.foundation.PonderIndex;
+import net.minecraft.client.renderer.item.ItemProperties;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
@@ -39,5 +42,10 @@ public class TFMGClient {
 
     public static void clientInit(final FMLClientSetupEvent event) {
         PonderIndex.addPlugin(new TFMGPonderPlugin());
+        registerModelPredicates();
+    }
+
+    public static void registerModelPredicates() {
+        ItemProperties.register(TFMGItems.LITHIUM_BLADE.get(), TFMG.asResource("lithium_charged"), (stack, level, entity, seed) -> stack.getOrDefault(TFMGDataComponents.LITHIUM_BLADE_TIMER, 0) > 0 ? 1 : 0);
     }
 }
