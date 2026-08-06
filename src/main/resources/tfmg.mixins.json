@@ -8,7 +8,6 @@
     "BuiltInRegistriesMixin",
     "FluidPipeBlockMixin",
     "FluidPropagatorMixin",
-    "FluidTankBlockEntityMixin",
     "GoggleOverlayRendererMixin",
     "PipeAttachmentModelMixin",
     "RecipeProviderMixin",
