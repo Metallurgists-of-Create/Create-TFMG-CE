@@ -5,14 +5,11 @@ import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.TFMGRegistries;
 import com.drmangotea.tfmg.content.decoration.tanks.TFMGFluidTankBlockEntity;
 import com.drmangotea.tfmg.content.decoration.tanks.steel.SteelTankBlockEntity;
-import com.drmangotea.tfmg.content.electricity.base.IElectric;
 import com.drmangotea.tfmg.content.electricity.storage.AccumulatorBlockEntity;
-import com.drmangotea.tfmg.content.electricity.utilities.converter.ConverterBlockEntity;
 import com.drmangotea.tfmg.content.electricity.utilities.polarizer.PolarizerBlockEntity;
 import com.drmangotea.tfmg.content.engines.fuels.EngineFuelTypeManager;
 import com.drmangotea.tfmg.content.engines.types.AbstractSmallEngineBlockEntity;
 import com.drmangotea.tfmg.content.engines.types.large_engine.LargeEngineBlockEntity;
-import com.drmangotea.tfmg.content.engines.types.regular_engine.RegularEngineBlockEntity;
 import com.drmangotea.tfmg.content.machinery.metallurgy.blast_furnace.BlastFurnaceHatchBlockEntity;
 import com.drmangotea.tfmg.content.machinery.metallurgy.blast_furnace.BlastFurnaceOutputBlockEntity;
 import com.drmangotea.tfmg.content.machinery.metallurgy.blast_stove.BlastStoveBlockEntity;
@@ -30,16 +27,15 @@ import com.drmangotea.tfmg.content.machinery.oil_processing.distillation_tower.c
 import com.drmangotea.tfmg.content.machinery.oil_processing.distillation_tower.output.DistillationOutputBlockEntity;
 import com.drmangotea.tfmg.content.machinery.oil_processing.pumpjack.base.PumpjackBaseBlockEntity;
 import com.drmangotea.tfmg.content.machinery.vat.base.VatBlockEntity;
-import com.drmangotea.tfmg.registry.TFMGDataComponents;
-import com.drmangotea.tfmg.registry.TFMGItems;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.entity.player.Player;
+import com.drmangotea.tfmg.registry.TFMGMobEffects;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.LevelAccessor;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.event.AddReloadListenerEvent;
-import net.neoforged.neoforge.event.level.BlockEvent;
+import net.neoforged.neoforge.event.entity.living.MobEffectEvent;
 import net.neoforged.neoforge.event.level.LevelEvent;
 import net.neoforged.neoforge.registries.NewRegistryEvent;
 
@@ -106,7 +102,19 @@ public class TFMGCommonEvents {
             event.register(TFMGRegistries.CABLE_TYPE_REGISTRY);
             event.register(TFMGRegistries.ELECTRODE_REGISTRY);
         }
+
     }
 
-
+    @SubscribeEvent
+    public static void onEffectAdded(MobEffectEvent.Added event) {
+        MobEffectInstance instance = event.getEffectInstance();
+        LivingEntity target = event.getEntity();
+        if (instance.is(TFMGMobEffects.HELLFIRE)) {
+            if (!target.isOnFire()) {
+                target.setRemainingFireTicks(instance.getDuration());
+            } else if (target.getRemainingFireTicks() < instance.getDuration()) {
+                target.setRemainingFireTicks(instance.getDuration());
+            }
+        }
+    }
 }

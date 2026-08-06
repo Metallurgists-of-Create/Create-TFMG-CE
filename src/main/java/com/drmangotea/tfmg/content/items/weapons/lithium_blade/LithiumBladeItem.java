@@ -19,7 +19,6 @@ import net.minecraft.world.item.AxeItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.Tier;
-import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.minecraft.world.level.Level;
 
 public class LithiumBladeItem extends SwordItem {
@@ -32,16 +31,14 @@ public class LithiumBladeItem extends SwordItem {
     }
 
     public boolean hurtEnemy(ItemStack pStack, LivingEntity pTarget, LivingEntity pAttacker) {
-        if (!pStack.has(TFMGDataComponents.LITHIUM_BLADE_TIMER)) {
-            return true;
+        if (pStack.has(TFMGDataComponents.LITHIUM_BLADE_TIMER)) {
+            pStack.hurtAndBreak(2, pAttacker, LivingEntity.getSlotForHand(pAttacker.getUsedItemHand()));
+            MobEffectInstance hellfire = pTarget.getEffect(TFMGMobEffects.HELLFIRE);
+            if (hellfire != null) {
+                pTarget.addEffect(new MobEffectInstance(TFMGMobEffects.HELLFIRE, 140 + hellfire.getDuration()));
+            }
+            pTarget.addEffect(new MobEffectInstance(TFMGMobEffects.HELLFIRE, 140));
         }
-        pStack.hurtAndBreak(2, pAttacker, LivingEntity.getSlotForHand(pAttacker.getUsedItemHand()));
-        MobEffectInstance poison = pTarget.getEffect(TFMGMobEffects.HELLFIRE);
-
-        if (poison != null) {
-            pTarget.addEffect(new MobEffectInstance(TFMGMobEffects.HELLFIRE, 140 + poison.getDuration()));
-        }
-        pTarget.addEffect(new MobEffectInstance(TFMGMobEffects.HELLFIRE, 140));
         return true;
     }
 

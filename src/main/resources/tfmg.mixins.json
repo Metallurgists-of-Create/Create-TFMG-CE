@@ -9,6 +9,7 @@
     "FluidPipeBlockMixin",
     "FluidPropagatorMixin",
     "GoggleOverlayRendererMixin",
+    "MobEffectInstanceMixin",
     "PipeAttachmentModelMixin",
     "RecipeProviderMixin",
     "UtilMixin",
