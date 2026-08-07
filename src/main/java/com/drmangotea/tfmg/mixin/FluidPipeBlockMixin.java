@@ -1,5 +1,6 @@
 package com.drmangotea.tfmg.mixin;
 
+import com.drmangotea.tfmg.content.decoration.pipes.ILockablePipe;
 import com.drmangotea.tfmg.content.decoration.pipes.TFMGPipeBlockEntity;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
@@ -24,12 +25,10 @@ public class FluidPipeBlockMixin {
 
 		BlockEntity be = world.getBlockEntity(neighbourPos);
 
-		if (be instanceof TFMGPipeBlockEntity tfmgPipe) {
-			if (tfmgPipe.locked) {
+		if (be instanceof ILockablePipe lockablePipe) {
+			if (lockablePipe.locked()) {
 				var oppositeProperty = FluidPipeBlock.PROPERTY_BY_DIRECTION.get(direction.getOpposite());
-				shouldConnect =
-					neighbourState.hasProperty(oppositeProperty) &&
-					neighbourState.getValue(oppositeProperty);
+				shouldConnect = neighbourState.hasProperty(oppositeProperty) && neighbourState.getValue(oppositeProperty);
 			}
 		}
 

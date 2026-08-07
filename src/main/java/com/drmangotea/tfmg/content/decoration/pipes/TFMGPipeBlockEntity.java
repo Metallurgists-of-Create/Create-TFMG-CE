@@ -23,45 +23,43 @@ import java.util.Map;
 
 public class TFMGPipeBlockEntity extends FluidPipeBlockEntity {
 
-    public boolean locked = false;
+    //public boolean locked = false;
     public TFMGPipeBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
     }
 
-    public void toggleLock(Player player) {
-        level.playSound(player, getBlockPos(), SoundEvents.ITEM_PICKUP, SoundSource.BLOCKS, 0.4f, 0.5f);
+    //public void toggleLock(Player player) {
+    //    level.playSound(player, getBlockPos(), SoundEvents.ITEM_PICKUP, SoundSource.BLOCKS, 0.4f, 0.5f);
+    //    locked = !locked;
+    //    if (locked)
+    //        return;
+    //    BlockState newState;
+    //    Level world = level;
+    //    BlockPos pos = getBlockPos();
+    //    FluidTransportBehaviour.cacheFlows(world, pos);
+    //    newState = updatePipe(world, pos, getBlockState()).setValue(BlockStateProperties.WATERLOGGED, getBlockState().getValue(BlockStateProperties.WATERLOGGED));
+    //    world.setBlock(pos, newState, 3);
+    //    FluidTransportBehaviour.loadFlows(world, pos);
+    //}
 
-        locked = !locked;
-        if (locked)
-            return;
-
-        BlockState newState;
-        Level world = level;
-        BlockPos pos = getBlockPos();
-        FluidTransportBehaviour.cacheFlows(world, pos);
-        newState = updatePipe(world, pos, getBlockState()).setValue(BlockStateProperties.WATERLOGGED, getBlockState().getValue(BlockStateProperties.WATERLOGGED));
-        world.setBlock(pos, newState, 3);
-        FluidTransportBehaviour.loadFlows(world, pos);
-    }
-
-    public BlockState updatePipe(LevelAccessor world, BlockPos pos, BlockState state) {
-        Direction side = Direction.UP;
-        Map<Direction, BooleanProperty> facingToPropertyMap = FluidPipeBlock.PROPERTY_BY_DIRECTION;
-        return AllBlocks.FLUID_PIPE.get()
-                .updateBlockState(state.getBlock().defaultBlockState()
-                        .setValue(facingToPropertyMap.get(side), true)
-                        .setValue(facingToPropertyMap.get(side.getOpposite()), true), side, null, world, pos);
-    }
+    //public BlockState updatePipe(LevelAccessor world, BlockPos pos, BlockState state) {
+    //    Direction side = Direction.UP;
+    //    Map<Direction, BooleanProperty> facingToPropertyMap = FluidPipeBlock.PROPERTY_BY_DIRECTION;
+    //    return AllBlocks.FLUID_PIPE.get()
+    //            .updateBlockState(state.getBlock().defaultBlockState()
+    //                    .setValue(facingToPropertyMap.get(side), true)
+    //                    .setValue(facingToPropertyMap.get(side.getOpposite()), true), side, null, world, pos);
+    //}
 
     @Override
     public void write(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {
-        compound.putBoolean("Locked", locked);
+        //compound.putBoolean("Locked", locked);
         super.write(compound,registries , clientPacket);
     }
 
     @Override
     protected void read(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {
         super.read(compound,registries , clientPacket);
-        locked = compound.getBoolean("Locked");
+        //locked = compound.getBoolean("Locked");
     }
 }

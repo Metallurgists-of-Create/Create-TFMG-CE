@@ -11,6 +11,7 @@
     "GoggleOverlayRendererMixin",
     "MobEffectInstanceMixin",
     "PipeAttachmentModelMixin",
+    "FluidPipeBlockEntityMixin",
     "RecipeProviderMixin",
     "UtilMixin",
     "accessor.FluidTankBlockEntityAccessor",

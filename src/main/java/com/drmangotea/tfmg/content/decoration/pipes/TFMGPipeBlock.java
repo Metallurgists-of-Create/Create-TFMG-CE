@@ -43,10 +43,9 @@ public class TFMGPipeBlock extends FluidPipeBlock {
         this.material = material;
     }
 
-    public BlockState updateBlockState(BlockState state, Direction preferredDirection, @Nullable Direction ignore,
-                                       BlockAndTintGetter world, BlockPos pos) {
-        if (world.getBlockEntity(pos) instanceof TFMGPipeBlockEntity)
-            if (((TFMGPipeBlockEntity) world.getBlockEntity(pos)).locked) {
+    public BlockState updateBlockState(BlockState state, Direction preferredDirection, @Nullable Direction ignore, BlockAndTintGetter world, BlockPos pos) {
+        if (world.getBlockEntity(pos) instanceof ILockablePipe lockablePipe)
+            if (lockablePipe.locked()) {
                 return state;
             }
 
@@ -65,8 +64,8 @@ public class TFMGPipeBlock extends FluidPipeBlock {
             if (d != ignore) {
                 boolean shouldConnect = canConnectTo(world, pos.relative(d), world.getBlockState(pos.relative(d)), d);
 
-                if (world.getBlockEntity(pos.relative(d)) instanceof TFMGPipeBlockEntity) {
-                    if (((TFMGPipeBlockEntity) world.getBlockEntity(pos.relative(d))).locked) {
+                if (world.getBlockEntity(pos.relative(d)) instanceof ILockablePipe lockablePipe) {
+                    if (lockablePipe.locked()) {
                         shouldConnect = false;
                         if (world.getBlockState(pos.relative(d)).getValue(PROPERTY_BY_DIRECTION.get(d.getOpposite()))) {
                             shouldConnect = true;

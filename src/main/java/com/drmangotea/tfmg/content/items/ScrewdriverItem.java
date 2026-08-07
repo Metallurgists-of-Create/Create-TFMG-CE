@@ -1,5 +1,6 @@
 package com.drmangotea.tfmg.content.items;
 
+import com.drmangotea.tfmg.content.decoration.pipes.ILockablePipe;
 import com.drmangotea.tfmg.content.decoration.pipes.TFMGPipeBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionResult;
@@ -18,18 +19,23 @@ public class ScrewdriverItem extends Item {
     @Override
     public InteractionResult useOn(UseOnContext pContext) {
         Player player = pContext.getPlayer();
-
         BlockPos positionClicked = pContext.getClickedPos();
-
         Level level = pContext.getLevel();
 
-        if (level.getBlockEntity(positionClicked) != null && level.getBlockEntity(positionClicked) instanceof TFMGPipeBlockEntity pipeBlockEntity) {
-            pipeBlockEntity.toggleLock(player);
-            pContext.getItemInHand().hurtAndBreak(1, pContext.getPlayer(),
-                    LivingEntity.getSlotForHand(pContext.getHand()));
-            return InteractionResult.SUCCESS;
-        } else {
-            return super.useOn(pContext);
+        if (level.getBlockEntity(positionClicked) != null) {
+            //if (level.getBlockEntity(positionClicked) instanceof TFMGPipeBlockEntity pipeBlockEntity) {
+            //    pipeBlockEntity.toggleLock(player);
+            //    pContext.getItemInHand().hurtAndBreak(1, pContext.getPlayer(),
+            //            LivingEntity.getSlotForHand(pContext.getHand()));
+            //    return InteractionResult.SUCCESS;
+            //}
+            if (level.getBlockEntity(positionClicked) instanceof ILockablePipe lockablePipe) {
+                lockablePipe.toggleLock(player, level, positionClicked, level.getBlockState(positionClicked));
+                pContext.getItemInHand().hurtAndBreak(1, pContext.getPlayer(),
+                        LivingEntity.getSlotForHand(pContext.getHand()));
+                return InteractionResult.SUCCESS;
+            }
         }
+        return super.useOn(pContext);
     }
 }
