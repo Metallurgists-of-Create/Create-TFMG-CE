@@ -147,6 +147,8 @@
   "create.recipe.hot_blast": "Air Blasting",
   "create.recipe.winding": "Winding",
 
+  "tfmg.recipe.assembly.winding": "Wind %s",
+
   "tfmg.keyinfo.custom_button": "Engine Controller Custom Button",
   "tfmg.keyinfo.engine_start": "Start Engine",
   "tfmg.keyinfo.transmission_shift_up": "Transmission Shift Up",

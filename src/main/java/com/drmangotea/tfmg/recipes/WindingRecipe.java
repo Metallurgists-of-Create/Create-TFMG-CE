@@ -5,11 +5,13 @@ import com.drmangotea.tfmg.recipes.jei.WindingCategory;
 import com.drmangotea.tfmg.registry.TFMGBlocks;
 import com.drmangotea.tfmg.registry.TFMGRecipeTypes;
 import com.simibubi.create.compat.jei.category.sequencedAssembly.SequencedAssemblySubCategory;
+import com.simibubi.create.content.kinetics.deployer.DeployerApplicationRecipe;
 import com.simibubi.create.content.processing.recipe.ProcessingRecipeParams;
 import com.simibubi.create.content.processing.recipe.StandardProcessingRecipe;
 import com.simibubi.create.content.processing.sequenced.IAssemblyRecipe;
 
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
@@ -52,13 +54,16 @@ public class WindingRecipe extends StandardProcessingRecipe<RecipeWrapper> imple
 	public boolean matches(RecipeWrapper inv, Level worldIn) {
 		if (inv.isEmpty())
 			return false;
-		return ingredients.get(0)
-				.test(inv.getItem(0));
+		return ingredients.get(0).test(inv.getItem(0));
 	}
 //
 	@Override
 	public Component getDescriptionForAssembly() {
-		return TFMGLang.translateDirect("recipe.assembly.winding");
+		ItemStack[] matchingStacks = getSpool().getItems();
+		if (matchingStacks.length == 0) {
+			return Component.literal("Invalid");
+		}
+		return TFMGLang.translateDirect("recipe.assembly.winding", Component.translatable(matchingStacks[0].getDescriptionId()).getString());
 	}
 
 	@Override

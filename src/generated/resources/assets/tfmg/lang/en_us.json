@@ -1155,6 +1155,7 @@
   "tfmg.ponder.valve_pipe.text_4": "It can be closed again by reversing the input rotation",
   "tfmg.pumpjack.header": "Pumpjack Info:",
   "tfmg.pumpjack_deposit_amount": "%1$s Buckets",
+  "tfmg.recipe.assembly.winding": "Wind %s",
   "tfmg.resistor.allowed_voltage": "Percentage of Voltage Allowed",
   "tfmg.subtitle.diesel_engine_sounds": "Diesel Engine Sounds",
   "tfmg.subtitle.engine_sounds": "Engine Sounds",
