@@ -85,19 +85,11 @@ public class ChemicalVatCategory extends CreateRecipeCategory<VatMachineRecipe> 
     }
 
     public void draw(VatMachineRecipe recipe, IRecipeSlotsView iRecipeSlotsView, GuiGraphics graphics, double mouseX, double mouseY) {
-
         List<String> machines = recipe.machines;
         List<String> allowedVatTypes = recipe.allowedVatTypes;
-
-
         TFMGGuiTextures.VAT.render(graphics, 0, 24);
-
         drawVatTypes(allowedVatTypes, graphics);
-
         drawSprites(machines, graphics);
-
-
-
 
         if(recipe.heatLevel!=0) {
             TFMGGuiTextures.VAT_HEATER.render(graphics, 55 - 10, 109);
@@ -107,26 +99,16 @@ public class ChemicalVatCategory extends CreateRecipeCategory<VatMachineRecipe> 
         int pos = 55;
         int width = ((recipe.getFluidIngredients().size()) * 21) / 2;
         for (int i = 0; i < recipe.getFluidIngredients().size(); i++) {
-
             TFMGGuiTextures.SLOT.render(graphics, pos - width, recipe.getIngredients().isEmpty() ? 70 : 83);
-
             pos += 21;
         }
         int posItem = 55;
         List<Pair<Ingredient, MutableInt>> condensedIngredients = ItemHelper.condenseIngredients(recipe.getIngredients());
         int widthItem = ((condensedIngredients.size()) * 21) / 2;
         for (int i = 0; i < condensedIngredients.size(); i++) {
-
             TFMGGuiTextures.SLOT.render(graphics, posItem - widthItem, recipe.getFluidIngredients().isEmpty() ? 70 : 62);
-
             posItem += 21;
         }
-
-
-        //AllGuiTextures.JEI_ARROW.render(graphics, 85, 32);
-        //AllGuiTextures.JEI_DOWN_ARROW.render(graphics, 43, 4);
-
-
     }
 
     private void renderHeated(HeatCondition heatCondition, GuiGraphics graphics) {

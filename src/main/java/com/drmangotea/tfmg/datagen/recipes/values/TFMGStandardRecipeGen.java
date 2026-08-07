@@ -2863,4 +2863,9 @@ public class TFMGStandardRecipeGen extends TFMGRecipeProvider {
             wrapped.accept(id, new ModdedCookingRecipeOutputShim(recipe, outputOverride), advancement, conditions);
         }
     }
+
+    @Override
+    public String getName() {
+        return "TFMG'S Standard Recipes";
+    }
 }

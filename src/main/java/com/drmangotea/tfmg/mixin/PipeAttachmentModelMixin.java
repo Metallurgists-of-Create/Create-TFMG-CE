@@ -44,9 +44,8 @@ public class PipeAttachmentModelMixin extends BakedModelWrapperWithData {
      * @author DrMangoTea
      * @reason locked pipes
      */
-    @Overwrite( remap = false)
-    protected ModelData.Builder gatherModelData(ModelData.Builder builder, BlockAndTintGetter world, BlockPos pos, BlockState state,
-                                      ModelData blockEntityData) {
+    @Overwrite(remap = false)
+    protected ModelData.Builder gatherModelData(ModelData.Builder builder, BlockAndTintGetter world, BlockPos pos, BlockState state, ModelData blockEntityData) {
         TFMGPipeModelData data = new TFMGPipeModelData();
         FluidTransportBehaviour transport = BlockEntityBehaviour.get(world, pos, FluidTransportBehaviour.TYPE);
         BracketedBlockEntityBehaviour bracket = BlockEntityBehaviour.get(world, pos, BracketedBlockEntityBehaviour.TYPE);
@@ -55,12 +54,8 @@ public class PipeAttachmentModelMixin extends BakedModelWrapperWithData {
             for (Direction d : Iterate.directions) {
                 boolean shouldConnect = true;
                 if(world.getBlockState(pos.relative(d)).getBlock() instanceof FluidPipeBlock) {
-
                     if(d.getAxis().isHorizontal())
                         shouldConnect = world.getBlockState(pos.relative(d)).getValue(PROPERTY_BY_DIRECTION.get(d.getOpposite()));
-
-
-
                 }
 
                 data.putAttachment(d, transport.getRenderedRimAttachment(world, pos, state, d));
@@ -69,16 +64,13 @@ public class PipeAttachmentModelMixin extends BakedModelWrapperWithData {
                     if(state.getBlock() instanceof FluidPipeBlock)
                         if(state.getValue(PROPERTY_BY_DIRECTION.get(d)))
                             data.putAttachment(d, AttachmentTypes.RIM);
-
             }
         if (bracket != null)
             data.putBracket(bracket.getBracket());
-
         data.setEncased(FluidPipeBlock.shouldDrawCasing(world, pos, state));
         return builder.with(PIPE_PROPERTY, data);
     }
 
-    @SuppressWarnings("removal")
     @Override
     public ChunkRenderTypeSet getRenderTypes(@NotNull BlockState state, @NotNull RandomSource rand, @NotNull ModelData data) {
         ChunkRenderTypeSet set = super.getRenderTypes(state, rand, data);
@@ -99,8 +91,7 @@ public class PipeAttachmentModelMixin extends BakedModelWrapperWithData {
         return quads;
     }
 
-    private void addQuads(List<BakedQuad> quads, BlockState state, Direction side, RandomSource rand, ModelData data,
-                          TFMGPipeModelData pipeData, RenderType renderType) {
+    private void addQuads(List<BakedQuad> quads, BlockState state, Direction side, RandomSource rand, ModelData data, TFMGPipeModelData pipeData, RenderType renderType) {
         BakedModel bracket = pipeData.getBracket();
         if (bracket != null)
             quads.addAll(bracket.getQuads(state, side, rand, data, renderType));
