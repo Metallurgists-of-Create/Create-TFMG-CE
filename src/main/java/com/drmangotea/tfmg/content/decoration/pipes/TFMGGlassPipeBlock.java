@@ -40,12 +40,6 @@ public class TFMGGlassPipeBlock extends GlassFluidPipeBlock {
         return ItemRequirement.of(TFMGPipes.PIPES.get(material).getPipe().getDefaultState(), te);
     }
 
-   // @Override
-   // public ItemStack getCloneItemStack(BlockState state, HitResult target, BlockGetter world, BlockPos pos,
-   //                                    Player player) {
-   //     return TFMGPipes.TFMG_PIPES.get(material).get(0).asStack();
-   // }
-
     @Override
     public BlockState toRegularPipe(LevelAccessor world, BlockPos pos, BlockState state) {
         Direction side = Direction.get(Direction.AxisDirection.POSITIVE, state.getValue(AXIS));

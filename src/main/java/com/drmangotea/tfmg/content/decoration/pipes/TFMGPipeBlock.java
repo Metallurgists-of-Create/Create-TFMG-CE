@@ -43,62 +43,6 @@ public class TFMGPipeBlock extends FluidPipeBlock {
         this.material = material;
     }
 
-    public BlockState updateBlockState(BlockState state, Direction preferredDirection, @Nullable Direction ignore, BlockAndTintGetter world, BlockPos pos) {
-        if (world.getBlockEntity(pos) instanceof ILockablePipe lockablePipe)
-            if (lockablePipe.locked()) {
-                return state;
-            }
-
-        BracketedBlockEntityBehaviour bracket = BlockEntityBehaviour.get(world, pos, BracketedBlockEntityBehaviour.TYPE);
-        if (bracket != null && bracket.isBracketPresent())
-            return state;
-
-        BlockState prevState = state;
-        int prevStateSides = (int) Arrays.stream(Iterate.directions)
-                .map(PROPERTY_BY_DIRECTION::get)
-                .filter(prevState::getValue)
-                .count();
-
-        // Update sides that are not ignored
-        for (Direction d : Iterate.directions)
-            if (d != ignore) {
-                boolean shouldConnect = canConnectTo(world, pos.relative(d), world.getBlockState(pos.relative(d)), d);
-
-                if (world.getBlockEntity(pos.relative(d)) instanceof ILockablePipe lockablePipe) {
-                    if (lockablePipe.locked()) {
-                        shouldConnect = false;
-                        if (world.getBlockState(pos.relative(d)).getValue(PROPERTY_BY_DIRECTION.get(d.getOpposite()))) {
-                            shouldConnect = true;
-                        }
-                    }
-
-
-                }
-                state = state.setValue(PROPERTY_BY_DIRECTION.get(d), shouldConnect);
-            }
-
-        // See if it has enough connections
-        Direction connectedDirection = null;
-        for (Direction d : Iterate.directions) {
-            if (isOpenAt(state, d)) {
-                if (connectedDirection != null)
-                    return state;
-                connectedDirection = d;
-            }
-        }
-        // Add opposite end if only one connection
-        if (connectedDirection != null)
-            return state.setValue(PROPERTY_BY_DIRECTION.get(connectedDirection.getOpposite()), true);
-
-        // If we can't connect to anything and weren't connected before, do nothing
-        if (prevStateSides == 2)
-            return prevState;
-
-        // Use preferred
-        return state.setValue(PROPERTY_BY_DIRECTION.get(preferredDirection), true)
-                .setValue(PROPERTY_BY_DIRECTION.get(preferredDirection.getOpposite()), true);
-    }
-
     @Override
     public void tick(BlockState state, ServerLevel world, BlockPos pos, RandomSource r) {
         super.tick(state, world, pos, r);
@@ -106,8 +50,6 @@ public class TFMGPipeBlock extends FluidPipeBlock {
 
     @Override
     public InteractionResult onWrenched(BlockState state, UseOnContext context) {
-
-
         if (tryRemoveBracket(context))
             return InteractionResult.SUCCESS;
         Level world = context.getLevel();
@@ -155,12 +97,6 @@ public class TFMGPipeBlock extends FluidPipeBlock {
     private Direction.Axis getAxis(BlockGetter world, BlockPos pos, BlockState state) {
         return FluidPropagator.getStraightPipeAxis(state);
     }
-
-    //@Override
-    //public ItemStack getCloneItemStack(BlockState state, HitResult target, BlockGetter world, BlockPos pos,
-    //                                   Player player) {
-    //    return TFMGPipes.TFMG_PIPES.get(material).get(0).asStack();
-    //}
 
     @Override
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
