@@ -1,5 +1,6 @@
 package com.drmangotea.tfmg.mixin;
 
+import com.drmangotea.tfmg.content.decoration.pipes.ILockablePipe;
 import com.drmangotea.tfmg.content.decoration.pipes.TFMGPipeBlockEntity;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
@@ -11,6 +12,8 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(FluidPipeBlock.class)
 public class FluidPipeBlockMixin {
@@ -21,18 +24,22 @@ public class FluidPipeBlockMixin {
 	)
 	private boolean tfmg$filterLockedPipes(BlockAndTintGetter neighbourWorld, BlockPos neighbourPos, BlockState neighbourState, Direction direction, Operation<Boolean> original, BlockState state, Direction preferredDirection, Direction ignore, BlockAndTintGetter world, BlockPos pos) {
 		boolean shouldConnect = original.call(neighbourWorld, neighbourPos, neighbourState, direction);
-
 		BlockEntity be = world.getBlockEntity(neighbourPos);
-
-		if (be instanceof TFMGPipeBlockEntity tfmgPipe) {
-			if (tfmgPipe.locked) {
+		if (be instanceof ILockablePipe lockablePipe) {
+			if (lockablePipe.locked()) {
 				var oppositeProperty = FluidPipeBlock.PROPERTY_BY_DIRECTION.get(direction.getOpposite());
-				shouldConnect =
-					neighbourState.hasProperty(oppositeProperty) &&
-					neighbourState.getValue(oppositeProperty);
+				shouldConnect = neighbourState.hasProperty(oppositeProperty) && neighbourState.getValue(oppositeProperty);
 			}
 		}
 
 		return shouldConnect;
+	}
+
+	@Inject(method = "updateBlockState", at = @At("HEAD"), cancellable = true)
+	private void updateBlockState(BlockState state, Direction preferredDirection, Direction ignore, BlockAndTintGetter world, BlockPos pos, CallbackInfoReturnable<BlockState> cir) {
+		if (world.getBlockEntity(pos) instanceof ILockablePipe lockablePipe)
+			if (lockablePipe.locked()) {
+				cir.setReturnValue(state);
+			}
 	}
 }
