@@ -8,6 +8,8 @@ import com.drmangotea.tfmg.content.decoration.kinetics.cogs.TFMGEncasedCogRender
 import com.drmangotea.tfmg.content.decoration.kinetics.cogs.TFMGEncasedCogVisual;
 import com.drmangotea.tfmg.content.decoration.kinetics.flywheels.TFMGFlywheelRenderer;
 import com.drmangotea.tfmg.content.decoration.kinetics.flywheels.TFMGFlywheelVisual;
+import com.drmangotea.tfmg.content.decoration.pipes.rendering.TFMGMechanicalPumpRenderer;
+import com.drmangotea.tfmg.content.decoration.pipes.rendering.TFMGMechanicalPumpVisual;
 import com.drmangotea.tfmg.content.decoration.pipes.TFMGPipeBlockEntity;
 import com.drmangotea.tfmg.content.decoration.pipes.TFMGPipes;
 import com.drmangotea.tfmg.content.decoration.tanks.TFMGFluidTankBlockEntity;
@@ -116,7 +118,6 @@ import com.simibubi.create.content.fluids.pipes.valve.FluidValveBlockEntity;
 import com.simibubi.create.content.fluids.pipes.valve.FluidValveRenderer;
 import com.simibubi.create.content.fluids.pipes.valve.FluidValveVisual;
 import com.simibubi.create.content.fluids.pump.PumpBlockEntity;
-import com.simibubi.create.content.fluids.pump.PumpRenderer;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.content.kinetics.base.OrientedRotatingVisual;
 import com.simibubi.create.content.kinetics.base.ShaftRenderer;
@@ -614,7 +615,7 @@ public class TFMGBlockEntities {
 
     public static final BlockEntityEntry<PumpBlockEntity> TFMG_MECHANICAL_PUMP = REGISTRATE
             .blockEntity("mechanical_pump", PumpBlockEntity::new)
-            .visual(() -> SingleAxisRotatingVisual.ofZ(AllPartialModels.MECHANICAL_PUMP_COG))
+            .visual(() -> TFMGMechanicalPumpVisual::new)
             .validBlocks(
                     TFMGPipes.PIPES.get(TFMGPipes.PipeMaterial.BRASS).getPump(),
                     TFMGPipes.PIPES.get(TFMGPipes.PipeMaterial.STEEL).getPump(),
@@ -622,7 +623,7 @@ public class TFMGBlockEntities {
                     TFMGPipes.PIPES.get(TFMGPipes.PipeMaterial.CAST_IRON).getPump(),
                     TFMGPipes.PIPES.get(TFMGPipes.PipeMaterial.PLASTIC).getPump()
             )
-            .renderer(() -> PumpRenderer::new)
+            .renderer(() -> TFMGMechanicalPumpRenderer::new)
             .register();
 
     public static final BlockEntityEntry<SmartFluidPipeBlockEntity> TFMG_SMART_FLUID_PIPE = REGISTRATE

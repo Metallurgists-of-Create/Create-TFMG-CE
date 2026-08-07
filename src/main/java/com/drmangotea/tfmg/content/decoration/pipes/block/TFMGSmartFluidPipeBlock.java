@@ -1,4 +1,4 @@
-package com.drmangotea.tfmg.content.decoration.pipes;
+package com.drmangotea.tfmg.content.decoration.pipes.block;
 
 
 import com.drmangotea.tfmg.registry.TFMGBlockEntities;

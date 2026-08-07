@@ -40,7 +40,7 @@ public class TFMGCogwheelRenderer extends KineticBlockEntityRenderer<SimpleKinet
 
 		Axis axis = getRotationAxisOf(be);
 		Direction facing = Direction.fromAxisAndDirection(axis, AxisDirection.POSITIVE);
-		PartialModel model = be.getBlockState().is(TFMGBlocks.LARGE_ALUMINUM_COGWHEEL.get()) ? TFMGPartialModels.LARGE_ALUMINUM_COGHWEEL : TFMGPartialModels.LARGE_STEEL_COGHWEEL;
+		PartialModel model = be.getBlockState().is(TFMGBlocks.LARGE_ALUMINUM_COGWHEEL.get()) ? TFMGPartialModels.LARGE_ALUMINUM_COGWHEEL : TFMGPartialModels.LARGE_STEEL_COGWHEEL;
 		renderRotatingBuffer(be,
 			CachedBuffers.partialFacingVertical(model, be.getBlockState(), facing),
 			ms, buffer.getBuffer(RenderType.cutoutMipped()), light);
@@ -56,8 +56,7 @@ public class TFMGCogwheelRenderer extends KineticBlockEntityRenderer<SimpleKinet
 		BlockPos pos = be.getBlockPos();
 		float offset = getShaftAngleOffset(axis, pos);
 		float time = AnimationTickHolder.getRenderTime(be.getLevel());
-		float angle = ((time * be.getSpeed() * 3f / 10 + offset) % 360) / 180 * (float) Math.PI;
-		return angle;
+        return ((time * be.getSpeed() * 3f / 10 + offset) % 360) / 180 * (float) Math.PI;
 	}
 
 	public static float getShaftAngleOffset(Axis axis, BlockPos pos) {

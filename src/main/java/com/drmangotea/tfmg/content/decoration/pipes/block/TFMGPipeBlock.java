@@ -1,8 +1,8 @@
-package com.drmangotea.tfmg.content.decoration.pipes;
+package com.drmangotea.tfmg.content.decoration.pipes.block;
 
+import com.drmangotea.tfmg.content.decoration.pipes.TFMGPipes;
 import com.drmangotea.tfmg.registry.TFMGBlockEntities;
 import com.simibubi.create.AllBlocks;
-import com.simibubi.create.content.decoration.bracket.BracketedBlockEntityBehaviour;
 import com.simibubi.create.content.fluids.FluidPropagator;
 import com.simibubi.create.content.fluids.FluidTransportBehaviour;
 import com.simibubi.create.content.fluids.pipes.EncasedPipeBlock;
@@ -10,8 +10,8 @@ import com.simibubi.create.content.fluids.pipes.FluidPipeBlock;
 import com.simibubi.create.content.fluids.pipes.FluidPipeBlockEntity;
 import com.simibubi.create.content.fluids.pipes.GlassFluidPipeBlock;
 import com.simibubi.create.foundation.advancement.AllAdvancements;
-import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import net.createmod.catnip.data.Iterate;
+import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -22,8 +22,6 @@ import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
-import net.minecraft.world.level.BlockAndTintGetter;
-import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -32,8 +30,8 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nullable;
-import java.util.Arrays;
 
+@MethodsReturnNonnullByDefault
 public class TFMGPipeBlock extends FluidPipeBlock {
 
     public final TFMGPipes.PipeMaterial material;
@@ -56,7 +54,7 @@ public class TFMGPipeBlock extends FluidPipeBlock {
         BlockPos pos = context.getClickedPos();
         Direction clickedFace = context.getClickedFace();
 
-        Direction.Axis axis = getAxis(world, pos, state);
+        Direction.Axis axis = getAxis(state);
         if (axis == null) {
             Vec3 clickLocation = context.getClickLocation()
                     .subtract(pos.getX(), pos.getY(), pos.getZ());
@@ -78,7 +76,7 @@ public class TFMGPipeBlock extends FluidPipeBlock {
         if (clickedFace.getAxis() == axis)
             return InteractionResult.PASS;
         if (!world.isClientSide) {
-            withBlockEntityDo(world, pos, fpte -> fpte.getBehaviour(FluidTransportBehaviour.TYPE).interfaces.values()
+            withBlockEntityDo(world, pos, be -> be.getBehaviour(FluidTransportBehaviour.TYPE).interfaces.values()
                     .stream()
                     .filter(pc -> pc != null && pc.hasFlow())
                     .findAny()
@@ -94,7 +92,7 @@ public class TFMGPipeBlock extends FluidPipeBlock {
     }
 
     @Nullable
-    private Direction.Axis getAxis(BlockGetter world, BlockPos pos, BlockState state) {
+    private Direction.Axis getAxis(BlockState state) {
         return FluidPropagator.getStraightPipeAxis(state);
     }
 
@@ -110,11 +108,6 @@ public class TFMGPipeBlock extends FluidPipeBlock {
                 EncasedPipeBlock.transferSixWayProperties(state, TFMGPipes.PIPES.get(material).getEncased().getDefaultState()));
         FluidTransportBehaviour.loadFlows(world, pos);
         return ItemInteractionResult.SUCCESS;
-    }
-
-    @Override
-    public Class<FluidPipeBlockEntity> getBlockEntityClass() {
-        return FluidPipeBlockEntity.class;
     }
 
     @Override
