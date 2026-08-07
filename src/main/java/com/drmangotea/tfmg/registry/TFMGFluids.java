@@ -7,7 +7,6 @@ import com.drmangotea.tfmg.base.fluid.AsphaltFluid;
 import com.drmangotea.tfmg.base.fluid.ConcreteFluid;
 import com.drmangotea.tfmg.base.fluid.HotFluidType;
 import com.simibubi.create.AllFluids;
-import com.simibubi.create.AllTags;
 import com.simibubi.create.content.fluids.VirtualFluid;
 import com.tterrag.registrate.builders.FluidBuilder;
 import com.tterrag.registrate.util.entry.FluidEntry;
