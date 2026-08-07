@@ -6,6 +6,7 @@ import com.drmangotea.tfmg.content.electricity.connection.cables.CableConnectorB
 import com.drmangotea.tfmg.content.electricity.measurement.MultimeterOverlayRenderer;
 import com.drmangotea.tfmg.content.electricity.network.transformer.small.TransformerBlockEntity;
 
+import com.drmangotea.tfmg.content.items.ScrewdriverItem;
 import com.drmangotea.tfmg.content.items.weapons.advanced_potato_cannon.AdvancedPotatoCannonItemRenderer;
 import com.drmangotea.tfmg.content.items.weapons.quad_potato_cannon.QuadPotatoCannonItemRenderer;
 import com.drmangotea.tfmg.registry.TFMGDataComponents;
@@ -56,6 +57,8 @@ public class TFMGClientEvents {
 
 		TransformerBlockEntity.tickOutliner();
 		CableConnectorBlockEntity.tickOutliner();
+
+		ScrewdriverItem.clientTick();
 	}
 	@SubscribeEvent
 	public static void PlayerLoggedOut(PlayerEvent.PlayerLoggedOutEvent event) {
