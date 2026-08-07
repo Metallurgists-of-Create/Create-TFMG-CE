@@ -57,7 +57,8 @@ public class ScrewdriverItem extends Item {
         if (player == null)
             return;
         ItemStack heldItemMainhand = player.getMainHandItem();
-        if (!(heldItemMainhand.getItem() instanceof ScrewdriverItem))
+        ItemStack heldItemOffhand = player.getOffhandItem();
+        if (!(heldItemMainhand.getItem() instanceof ScrewdriverItem) && !(heldItemOffhand.getItem() instanceof ScrewdriverItem))
             return;
 
         Level world = Minecraft.getInstance().level;
