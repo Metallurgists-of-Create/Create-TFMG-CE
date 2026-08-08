@@ -22,12 +22,15 @@ public class VatMachineRecipe extends ProcessingRecipe<RecipeInput, VatRecipePar
     public int minSize;
     public int heatLevel=0;
 
+    public int pressure=0;
+
     public VatMachineRecipe(VatRecipeParams params) {
         super(TFMGRecipeTypes.VAT_MACHINE_RECIPE, params);
         machines = params.machines;
         allowedVatTypes = params.allowedVatTypes;
         minSize = params.min_size;
         heatLevel = params.heat_level;
+        pressure = params.pressure;
     }
 
     @Override
