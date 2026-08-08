@@ -40,7 +40,7 @@ public class PolarizingRecipe extends StandardProcessingRecipe<RecipeInput> impl
     }
     
     public boolean matches(RecipeInput inv, Level worldIn) {
-        return !inv.isEmpty() && ((Ingredient)this.ingredients.get(0)).test(inv.getItem(0));
+        return !inv.isEmpty() && this.ingredients.getFirst().test(inv.getItem(0));
     }
     
     @Override

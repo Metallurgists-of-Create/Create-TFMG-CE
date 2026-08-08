@@ -1,21 +1,29 @@
 package com.drmangotea.tfmg.recipes.jei;
 
+import com.drmangotea.tfmg.base.lang.TFMGLang;
 import com.drmangotea.tfmg.recipes.VatMachineRecipe;
 import com.drmangotea.tfmg.registry.TFMGGuiTextures;
 import com.simibubi.create.compat.jei.category.CreateRecipeCategory;
+import com.simibubi.create.compat.jei.category.SequencedAssemblyCategory;
 import com.simibubi.create.content.processing.recipe.HeatCondition;
 import com.simibubi.create.content.processing.recipe.ProcessingOutput;
+import com.simibubi.create.content.processing.sequenced.SequencedAssemblyRecipe;
 import com.simibubi.create.foundation.item.ItemHelper;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 import net.createmod.catnip.data.Pair;
+import net.createmod.ponder.api.PonderPalette;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import org.apache.commons.lang3.mutable.MutableInt;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -110,6 +118,81 @@ public class ChemicalVatCategory extends CreateRecipeCategory<VatMachineRecipe> 
         }
     }
 
+    @Override
+    @NotNull
+    public List<Component> getTooltipStrings(VatMachineRecipe recipe, IRecipeSlotsView recipeSlotsView, double mouseX, double mouseY) {
+        List<Component> tooltip = new ArrayList<>();
+        int xOffset = -7;
+        int minX = 150 + xOffset;
+        int maxX = minX + 18;
+        int minY = 90;
+        int maxY = minY + 18;
+
+        int pressure = recipe.pressure;
+
+        if (mouseY > -3 && mouseY < 43 && mouseX > 127 && mouseX < 170) {
+            if(pressure != 0) {
+                int colour = 0x5b6ee1;
+                if (pressure > -8 && pressure < -3) colour = 0x5fcde4;
+                if (pressure > -4 && pressure < 3) colour = 0x37946e;
+                if (pressure > 2 && pressure < 8) colour = 0xd95763;
+                if (pressure > 7 && pressure < 10) colour = 0x9b1c1c;
+
+                tooltip.add(TFMGLang.translate("recipe.vat.pressure", pressure).component()
+                        .withColor(colour));
+            } else {
+                tooltip.add(TFMGLang.translate("recipe.vat.pressure.none").component()
+                        .withStyle(ChatFormatting.GRAY));
+            }
+        }
+
+        boolean showHeat;
+        if (recipe.heatLevel > 9) {
+            showHeat = mouseY > 109 && mouseY < 118 && mouseX > 10 && mouseX < 100;
+        } else if (recipe.heatLevel > 0) {
+            showHeat = mouseY > 109 && mouseY < 118 && mouseX > 10 && mouseX < (recipe.heatLevel * 10) + 10;
+        } else {
+            showHeat = mouseY > 109 && mouseY < 118 && mouseX > 10 && mouseX < (Math.abs(recipe.heatLevel) * 10) + 10;
+        }
+
+        if (showHeat) {
+            int colour = recipe.heatLevel <= 0 ? 0x9eccfb : recipe.heatLevel > 9 ? 0x425bf5 : 0xd17800;
+            tooltip.add(TFMGLang.translate("recipe.vat.heat", recipe.heatLevel).component()
+                    .withColor(colour));
+        }
+
+
+        List<String> machines = recipe.machines;
+
+        if (machines.contains("tfmg:mixing")) {
+            if (mouseY > -3 && mouseY < 60 && mouseX > 43 && mouseX < 67) {
+                tooltip.add(TFMGLang.translate("recipe.vat.mixing").component()
+                        .withColor(PonderPalette.INPUT.getColor()));
+            }
+        }
+        if (machines.contains("tfmg:centrifuge")) {
+            if (mouseY > -3 && mouseY < 60 && mouseX > 43 && mouseX < 67) {
+                tooltip.add(TFMGLang.translate("recipe.vat.centrifuge").component()
+                        .withColor(PonderPalette.INPUT.getColor()));
+            }
+        }
+        if (machines.contains("tfmg:electrode")) {
+            boolean xCheck = mouseX > 11 && mouseX < 35 || mouseX > 75 && mouseX < 99;
+            if (mouseY > -3 && mouseY < 60 && xCheck) {
+                tooltip.add(TFMGLang.translate("recipe.vat.electrode").component()
+                        .withColor(PonderPalette.INPUT.getColor()));
+            }
+        }
+        if (machines.contains("tfmg:graphite_electrode")) {
+            if (mouseY > -3 && mouseY < 60 && mouseX > 11 && mouseX < 99) {
+                tooltip.add(TFMGLang.translate("recipe.vat.graphite_electrode").component()
+                        .withColor(PonderPalette.INPUT.getColor()));
+            }
+        }
+
+        return tooltip;
+    }
+
     private void renderPressure(int pressure, GuiGraphics graphics) {
         TFMGGuiTextures.VAT_BAROMETER.render(graphics, 128, 0);
         TFMGGuiTextures spritemap = TFMGGuiTextures.VAT_BAROMETER_NEEDLE;
@@ -123,8 +206,8 @@ public class ChemicalVatCategory extends CreateRecipeCategory<VatMachineRecipe> 
     }
 
     private void renderHeated(int heatLevel, GuiGraphics graphics) {
-        if(heatLevel!=0) {
-            if (heatLevel>9) {
+        if(heatLevel != 0) {
+            if (heatLevel > 9) {
                 for (int i = 9; i > 0; i--) {
                     if (heatLevel >= 9 + i) {
                         TFMGGuiTextures.VAT_SUPERHEATER.render(graphics, i * 10, 109);
@@ -132,8 +215,7 @@ public class ChemicalVatCategory extends CreateRecipeCategory<VatMachineRecipe> 
                         TFMGGuiTextures.VAT_HEATER.render(graphics, i * 10, 109);
                     }
                 }
-
-            }else if (heatLevel>0) {
+            } else if (heatLevel > 0) {
                 for (int i = heatLevel; i > 0; i--) {
                     TFMGGuiTextures.VAT_HEATER.render(graphics, i * 10, 109);
                 }
