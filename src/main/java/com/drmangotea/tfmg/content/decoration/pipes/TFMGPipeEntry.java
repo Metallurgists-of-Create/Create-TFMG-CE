@@ -2,6 +2,8 @@ package com.drmangotea.tfmg.content.decoration.pipes;
 
 import com.drmangotea.tfmg.base.TFMGRegistrate;
 import com.drmangotea.tfmg.config.TFMGStress;
+import com.drmangotea.tfmg.content.decoration.pipes.block.*;
+import com.drmangotea.tfmg.content.decoration.pipes.rendering.TFMGPipeAttachmentModel;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.decoration.encasing.EncasedCTBehaviour;
 import com.simibubi.create.content.decoration.encasing.EncasingRegistry;
@@ -39,6 +41,7 @@ public class TFMGPipeEntry {
     private final BlockEntry<? extends TFMGSmartFluidPipeBlock> smart;
     private final BlockEntry<? extends TFMGFluidValveBlock> valve;
 
+    @SuppressWarnings({"FieldCanBeLocal", "unused"})
     @OnlyIn(Dist.CLIENT)
     private NonNullFunction<BakedModel, ? extends BakedModel> attachmentModel;
 
@@ -55,6 +58,7 @@ public class TFMGPipeEntry {
         this.valve = registerValve();
     }
 
+    @SuppressWarnings("unused")
     @OnlyIn(Dist.CLIENT)
     public TFMGPipeEntry attachmentModel(NonNullFunction<BakedModel, ? extends BakedModel> attachmentModel) {
         this.attachmentModel = attachmentModel;
@@ -128,19 +132,17 @@ public class TFMGPipeEntry {
                 .initialProperties(SharedProperties::copperMetal)
                 .addLayer(() -> RenderType::cutoutMipped)
                 .transform(pickaxeOnly())
-                .blockstate((c, p) -> {
-                    p.getVariantBuilder(c.getEntry())
-                            .forAllStatesExcept(state -> {
-                                Direction.Axis axis = state.getValue(BlockStateProperties.AXIS);
-                                return ConfiguredModel.builder()
-                                        .modelFile(p.models()
-                                                .getExistingFile(p.modLoc("block/" + this.material.name + "_pipe/window")))
-                                        .uvLock(false)
-                                        .rotationX(axis == Direction.Axis.Y ? 0 : 90)
-                                        .rotationY(axis == Direction.Axis.X ? 90 : 0)
-                                        .build();
-                            }, BlockStateProperties.WATERLOGGED);
-                })
+                .blockstate((c, p) -> p.getVariantBuilder(c.getEntry())
+                        .forAllStatesExcept(state -> {
+                            Direction.Axis axis = state.getValue(BlockStateProperties.AXIS);
+                            return ConfiguredModel.builder()
+                                    .modelFile(p.models()
+                                            .getExistingFile(p.modLoc("block/" + this.material.name + "_pipe/window")))
+                                    .uvLock(false)
+                                    .rotationX(axis == Direction.Axis.Y ? 0 : 90)
+                                    .rotationY(axis == Direction.Axis.X ? 90 : 0)
+                                    .build();
+                        }, BlockStateProperties.WATERLOGGED))
                 .onRegister(CreateRegistrate.blockModel(()->
                         switch (this.material){
                             case BRASS -> TFMGPipeAttachmentModel::withAOBrass;
@@ -154,7 +156,7 @@ public class TFMGPipeEntry {
     }
 
     protected BlockEntry<? extends TFMGPumpBlock> registerPump() {
-        return this.registrate.block(this.material.name + "_mechanical_pump", TFMGPumpBlock::new)
+        return this.registrate.block(this.material.name + "_mechanical_pump", (p) -> new TFMGPumpBlock(p, this.material))
                 .initialProperties(SharedProperties::copperMetal)
                 .transform(pickaxeOnly())
                 .blockstate(BlockStateGen.directionalBlockProviderIgnoresWaterlogged(true))

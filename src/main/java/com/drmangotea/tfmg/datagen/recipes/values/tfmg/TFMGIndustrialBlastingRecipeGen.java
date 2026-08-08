@@ -68,6 +68,9 @@ public class TFMGIndustrialBlastingRecipeGen extends IndustrialBlastingRecipeGen
     }
 
 
-
+    @Override
+    public String getName() {
+        return "TFMG'S Industrial Blasting Recipes";
+    }
 
 }

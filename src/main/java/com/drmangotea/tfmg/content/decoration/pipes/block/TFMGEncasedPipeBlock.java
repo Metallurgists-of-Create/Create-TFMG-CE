@@ -1,5 +1,6 @@
-package com.drmangotea.tfmg.content.decoration.pipes;
+package com.drmangotea.tfmg.content.decoration.pipes.block;
 
+import com.drmangotea.tfmg.content.decoration.pipes.TFMGPipes;
 import com.drmangotea.tfmg.registry.TFMGBlockEntities;
 import com.simibubi.create.content.fluids.FluidTransportBehaviour;
 import com.simibubi.create.content.fluids.pipes.EncasedPipeBlock;
@@ -20,6 +21,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.HitResult;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Supplier;
 
@@ -57,18 +59,13 @@ public class TFMGEncasedPipeBlock extends EncasedPipeBlock {
     }
 
     @Override
-    public ItemStack getCloneItemStack(BlockState state, HitResult target, LevelReader level, BlockPos pos, Player player) {
+    public @NotNull ItemStack getCloneItemStack(BlockState state, HitResult target, LevelReader level, BlockPos pos, Player player) {
         return TFMGPipes.PIPES.get(material).getPipe().asStack();
     }
 
     @Override
     public ItemRequirement getRequiredItems(BlockState state, BlockEntity be) {
         return ItemRequirement.of(TFMGPipes.PIPES.get(material).getPipe().getDefaultState(), be);
-    }
-
-    @Override
-    public Class<FluidPipeBlockEntity> getBlockEntityClass() {
-        return FluidPipeBlockEntity.class;
     }
 
     @Override

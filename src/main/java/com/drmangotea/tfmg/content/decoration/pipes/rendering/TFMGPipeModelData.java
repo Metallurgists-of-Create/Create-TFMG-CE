@@ -1,4 +1,4 @@
-package com.drmangotea.tfmg.content.decoration.pipes;
+package com.drmangotea.tfmg.content.decoration.pipes.rendering;
 
 import com.simibubi.create.content.fluids.FluidTransportBehaviour;
 import net.minecraft.client.Minecraft;
@@ -9,7 +9,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import java.util.Arrays;
 
 public class TFMGPipeModelData {
-    private FluidTransportBehaviour.AttachmentTypes[] attachments;
+    private final FluidTransportBehaviour.AttachmentTypes[] attachments;
     private boolean encased;
     private BakedModel bracket;
 

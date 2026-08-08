@@ -135,7 +135,10 @@ public class TFMGSequencedAssemblyRecipeGen extends SequencedAssemblyRecipeGen {
         super(generator, registries,TFMG.MOD_ID);
     }
 
-
+    @Override
+    public String getName() {
+        return "TFMG'S Sequenced Assembly Recipes";
+    }
 
 
 }

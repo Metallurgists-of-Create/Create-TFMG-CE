@@ -120,6 +120,8 @@ public class TFMGMechanicalCraftingRecipeGen extends MechanicalCraftingRecipeGen
         super(output, registries,TFMG.MOD_ID);
     }
 
-
-
+    @Override
+    public String getName() {
+        return "TFMG'S Mechanical Crafting Recipes";
+    }
 }

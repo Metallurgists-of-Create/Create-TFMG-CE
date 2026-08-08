@@ -36,6 +36,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -54,9 +55,8 @@ public class GoggleOverlayRendererMixin {
     @Shadow
     private static final Map<Object, Outliner.OutlineEntry> outlines = Outliner.getInstance().getOutlines();
 
+    @Unique
     private static int tfmg$hoverTicks = 0;
-
-    private static BlockPos tfmg$lastHovered = null;
 
     @Inject(at = @At("HEAD"), method = "renderOverlay", cancellable = true, remap = false)
     private static void renderOverlay(GuiGraphics guiGraphics, DeltaTracker deltaTracker, CallbackInfo ci) {
@@ -64,9 +64,7 @@ public class GoggleOverlayRendererMixin {
         ClientLevel world = mc.level;
         HitResult objectMouseOver = mc.hitResult;
 
-
         if (!(objectMouseOver instanceof BlockHitResult result)) {
-            tfmg$lastHovered = null;
             tfmg$hoverTicks = 0;
             return;
         }
@@ -82,17 +80,7 @@ public class GoggleOverlayRendererMixin {
         if (mc.options.hideGui || mc.gameMode.getPlayerMode() == GameType.SPECTATOR)
             return;
 
-        // for (Outliner.OutlineEntry entry : outlines.values()) {
-        //     if (!entry.isAlive())
-        //         continue;
-        //     Outline outline = entry.getOutline();
-        //     if (outline instanceof ValueBox && !((ValueBox) outline).isPassive)
-        //         return;
-        // }
-
         tfmg$hoverTicks++;
-        tfmg$lastHovered = pos;
-
 
         boolean holdsMultimeter = MultimeterItem.isHeldByPlayer(mc.player);
 
@@ -100,25 +88,19 @@ public class GoggleOverlayRendererMixin {
 
         boolean isShifting = mc.player.isShiftKeyDown();
 
-        boolean isElectricBlock = be instanceof IElectric;
-
-
-        if (isElectricBlock && !hasGoggles) {
+        if (be instanceof IElectric electric && !hasGoggles) {
             ItemStack item = TFMGItems.MULTIMETER.asStack();
             List<Component> tooltip = new ArrayList<>();
 
-            ((IElectric) be).makeMultimeterTooltip(tooltip, isShifting);
+            electric.makeMultimeterTooltip(tooltip, isShifting);
 
             // break early if goggle or hover returned false when present
-            if ((!isElectricBlock) || !holdsMultimeter) {
+            if (!holdsMultimeter) {
                 tfmg$hoverTicks = 0;
-
             } else {
-
                 if (tooltip.isEmpty()) {
                     tfmg$hoverTicks = 0;
                 } else {
-
                     PoseStack poseStack = guiGraphics.pose();
                     poseStack.pushPose();
 

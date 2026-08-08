@@ -21,18 +21,20 @@ public class UtilMixin {
     @Shadow
     static final Logger LOGGER = LogUtils.getLogger();
 
+    /**
+     * @author DrMangoTea
+     * @reason Remove log spam
+     */
     @Overwrite
     public static void logAndPauseIfInIde(String error) {
-
         if(error.contains("Detected setBlock in a far chunk"))
             return;
-
         LOGGER.error(error);
         if (SharedConstants.IS_RUNNING_WITH_JDWP) {
             doPause(error);
         }
-
     }
+
     @Shadow
     private static void doPause(String message) {
         Instant instant = Instant.now();

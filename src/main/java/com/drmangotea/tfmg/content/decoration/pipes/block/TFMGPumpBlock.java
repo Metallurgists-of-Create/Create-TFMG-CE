@@ -1,6 +1,7 @@
-package com.drmangotea.tfmg.content.decoration.pipes;
+package com.drmangotea.tfmg.content.decoration.pipes.block;
 
 
+import com.drmangotea.tfmg.content.decoration.pipes.TFMGPipes;
 import com.drmangotea.tfmg.registry.TFMGBlockEntities;
 import com.simibubi.create.content.fluids.pump.PumpBlock;
 import com.simibubi.create.content.fluids.pump.PumpBlockEntity;
@@ -11,20 +12,17 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class TFMGPumpBlock extends PumpBlock {
-    public TFMGPumpBlock(Properties p_i48415_1_) {
-        super(p_i48415_1_);
+    public final TFMGPipes.PipeMaterial material;
+
+    public TFMGPumpBlock(Properties properties, TFMGPipes.PipeMaterial material) {
+        super(properties);
+        this.material = material;
     }
 
     @Override
     public void tick(BlockState state, ServerLevel world, BlockPos pos, RandomSource r) {
         super.tick(state, world, pos, r);
-        this.getBlockEntity(world, pos).updatePressureChange();
-
-    }
-
-    @Override
-    public Class<PumpBlockEntity> getBlockEntityClass() {
-        return PumpBlockEntity.class;
+        withBlockEntityDo(world, pos, PumpBlockEntity::updatePressureChange);
     }
 
     @Override

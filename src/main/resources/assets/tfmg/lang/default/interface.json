@@ -147,6 +147,8 @@
   "create.recipe.hot_blast": "Air Blasting",
   "create.recipe.winding": "Winding",
 
+  "tfmg.recipe.assembly.winding": "Wind %s",
+
   "tfmg.keyinfo.custom_button": "Engine Controller Custom Button",
   "tfmg.keyinfo.engine_start": "Start Engine",
   "tfmg.keyinfo.transmission_shift_up": "Transmission Shift Up",
@@ -248,6 +250,9 @@
 
   "tfmg.subtitle.engine_sounds": "Engine Sounds",
   "tfmg.subtitle.diesel_engine_sounds": "Diesel Engine Sounds",
+  "tfmg.subtitle.fire_extinguisher": "Fire Extinguisher Foams",
+  "tfmg.subtitle.fire_extinguisher_start": "Fire Extinguisher Starts",
+  "tfmg.subtitle.fire_extinguisher_fade": "Fire Extinguisher Fades",
 
   "tfmg.flamethrower.fuel.spread": "%s Projectile Spread",
   "tfmg.flamethrower.fuel.speed": "%s Projectile Speed",

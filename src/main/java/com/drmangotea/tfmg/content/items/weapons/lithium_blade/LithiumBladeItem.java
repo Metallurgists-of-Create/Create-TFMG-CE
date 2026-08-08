@@ -6,6 +6,8 @@ import com.drmangotea.tfmg.registry.TFMGDataComponents;
 import com.drmangotea.tfmg.registry.TFMGEntityTypes;
 import com.drmangotea.tfmg.registry.TFMGItems;
 import com.drmangotea.tfmg.registry.TFMGMobEffects;
+import com.simibubi.create.content.kinetics.deployer.DeployerBlockEntity;
+import com.simibubi.create.content.kinetics.deployer.DeployerFakePlayer;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -20,6 +22,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.Tier;
 import net.minecraft.world.level.Level;
+import net.neoforged.neoforge.common.util.FakePlayer;
 
 public class LithiumBladeItem extends SwordItem {
 
@@ -53,7 +56,6 @@ public class LithiumBladeItem extends SwordItem {
                     break;
                 }
             }
-
             if (slot == -1) return super.use(pLevel, player, hand);
             setCharge(stack, MAX_TIME);
             pLevel.playSound(player, player.getX(), player.getY(), player.getZ(), SoundEvents.FIRECHARGE_USE, SoundSource.NEUTRAL, 0.5F, 0.4F);
@@ -98,7 +100,6 @@ public class LithiumBladeItem extends SwordItem {
     @Override
     public void inventoryTick(ItemStack stack, Level pLevel, Entity entity, int pSlotId, boolean pIsSelected) {
         super.inventoryTick(stack, pLevel, entity, pSlotId, pIsSelected);
-
         decrementCharge(stack, 1);
     }
 
@@ -109,7 +110,7 @@ public class LithiumBladeItem extends SwordItem {
         return super.shouldCauseReequipAnimation(oldStack, newStack, true);
     }
 
-    private void decrementCharge(ItemStack stack, int amount) {
+    public static void decrementCharge(ItemStack stack, int amount) {
         if (stack.has(TFMGDataComponents.LITHIUM_BLADE_TIMER)) {
             if (stack.getOrDefault(TFMGDataComponents.LITHIUM_BLADE_TIMER, 0) > 0) {
                 int toDecrement = Math.max(0, stack.getOrDefault(TFMGDataComponents.LITHIUM_BLADE_TIMER, 0) - amount);
@@ -124,7 +125,7 @@ public class LithiumBladeItem extends SwordItem {
         }
     }
 
-    private void setCharge(ItemStack stack, int charge) {
+    public static void setCharge(ItemStack stack, int charge) {
         stack.set(TFMGDataComponents.LITHIUM_BLADE_TIMER, charge);
         stack.set(DataComponents.ATTRIBUTE_MODIFIERS, AxeItem.createAttributes(TFMGTiers.STEEL, 3, -2.4F));
     }

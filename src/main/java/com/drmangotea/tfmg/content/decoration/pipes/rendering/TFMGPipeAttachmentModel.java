@@ -1,5 +1,6 @@
-package com.drmangotea.tfmg.content.decoration.pipes;
+package com.drmangotea.tfmg.content.decoration.pipes.rendering;
 
+import com.drmangotea.tfmg.content.decoration.pipes.TFMGPipes;
 import com.drmangotea.tfmg.registry.TFMGPartialModels;
 import com.simibubi.create.content.decoration.bracket.BracketedBlockEntityBehaviour;
 import com.simibubi.create.content.fluids.FluidTransportBehaviour;
@@ -7,6 +8,7 @@ import com.simibubi.create.content.fluids.pipes.FluidPipeBlock;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.model.BakedModelWrapperWithData;
 import net.createmod.catnip.data.Iterate;
+import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -28,12 +30,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+@MethodsReturnNonnullByDefault
 @OnlyIn(Dist.CLIENT)
 public class TFMGPipeAttachmentModel extends BakedModelWrapperWithData {
 
     public final TFMGPipes.PipeMaterial material ;
     private static final ModelProperty<PipeModelData> PIPE_PROPERTY = new ModelProperty<>();
-    private boolean ao;
+    private final boolean ao;
 
     public static TFMGPipeAttachmentModel withAOSteel(BakedModel template) {
         return new TFMGPipeAttachmentModel(template, true, TFMGPipes.PipeMaterial.STEEL);
@@ -84,6 +87,7 @@ public class TFMGPipeAttachmentModel extends BakedModelWrapperWithData {
         if (data.has(PIPE_PROPERTY)) {
             PipeModelData pipeData = data.get(PIPE_PROPERTY);
             for (Direction d : Iterate.directions) {
+                if (pipeData == null) continue;
                 FluidTransportBehaviour.AttachmentTypes type = pipeData.getAttachment(d);
                 for (FluidTransportBehaviour.AttachmentTypes.ComponentPartials partial : type.partials) {
                     ChunkRenderTypeSet attachmentRenderTypeSet = TFMGPartialModels.PIPE_ATTACHMENTS.get(material).get(partial).get(d)
@@ -97,18 +101,20 @@ public class TFMGPipeAttachmentModel extends BakedModelWrapperWithData {
     }
 
     @Override
-    public List<BakedQuad> getQuads(BlockState state, Direction side, RandomSource rand, ModelData data, RenderType renderType) {
+    public List<BakedQuad> getQuads(BlockState state, Direction side, @NotNull RandomSource rand, @NotNull ModelData data, RenderType renderType) {
         List<BakedQuad> quads = super.getQuads(state, side, rand, data, renderType);
         if (data.has(PIPE_PROPERTY)) {
             PipeModelData pipeData = data.get(PIPE_PROPERTY);
             quads = new ArrayList<>(quads);
-            addQuads(quads, state, side, rand, data, pipeData, renderType);
+            if (pipeData != null) {
+                addQuads(quads, state, side, rand, data, pipeData, renderType);
+            }
         }
         return quads;
     }
 
     @Override
-    public TriState useAmbientOcclusion(BlockState state, ModelData data, RenderType renderType) {
+    public TriState useAmbientOcclusion(@NotNull BlockState state, @NotNull ModelData data, @NotNull RenderType renderType) {
         if (ao) {
             return TriState.TRUE;
         } else {
@@ -124,8 +130,10 @@ public class TFMGPipeAttachmentModel extends BakedModelWrapperWithData {
     private void addQuads(List<BakedQuad> quads, BlockState state, Direction side, RandomSource rand, ModelData data,
                           PipeModelData pipeData, RenderType renderType) {
         BakedModel bracket = pipeData.getBracket();
-        if (bracket != null)
+        //noinspection ConstantValue
+        if (bracket != null) {
             quads.addAll(bracket.getQuads(state, side, rand, data, renderType));
+        }
         for (Direction d : Iterate.directions) {
             FluidTransportBehaviour.AttachmentTypes type = pipeData.getAttachment(d);
             for (FluidTransportBehaviour.AttachmentTypes.ComponentPartials partial : type.partials) {
@@ -141,7 +149,7 @@ public class TFMGPipeAttachmentModel extends BakedModelWrapperWithData {
     }
 
     private static class PipeModelData {
-        private FluidTransportBehaviour.AttachmentTypes[] attachments;
+        private final FluidTransportBehaviour.AttachmentTypes[] attachments;
         private boolean encased;
         private BakedModel bracket;
 

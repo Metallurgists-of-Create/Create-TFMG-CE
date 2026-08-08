@@ -231,4 +231,9 @@ public class TFMGVatRecipeGen extends VatRecipeGen {
         }
 
     }
+
+    @Override
+    public String getName() {
+        return "TFMG'S Vat Recipes";
+    }
 }
