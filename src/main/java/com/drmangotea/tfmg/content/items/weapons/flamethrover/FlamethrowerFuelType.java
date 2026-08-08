@@ -11,11 +11,11 @@ import net.minecraft.core.RegistryCodecs;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.material.Fluid;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public record FlamethrowerFuelType(HolderSet<Fluid> fluids, int spread, float speed, int amount, boolean isCold, boolean hellfire, int color) {
+
+    public static final Map<Fluid, Optional<Holder.Reference<FlamethrowerFuelType>>> typeCache = new HashMap<>();
 
     public static final Codec<FlamethrowerFuelType> CODEC = RecordCodecBuilder.create(i -> i.group(
             RegistryCodecs.homogeneousList(Registries.FLUID).fieldOf("fluids").forGetter(FlamethrowerFuelType::fluids),
@@ -28,11 +28,10 @@ public record FlamethrowerFuelType(HolderSet<Fluid> fluids, int spread, float sp
     ).apply(i, FlamethrowerFuelType::new));
 
     public static Optional<Holder.Reference<FlamethrowerFuelType>> getTypeForFluid(RegistryAccess registryAccess, Fluid fluid) {
-        // Cache this if it causes performance issues, but it probably won't
-        return registryAccess.lookupOrThrow(TFMGRegistries.FLAMETHROWER_FUEL_TYPE)
+        return typeCache.computeIfAbsent(fluid, f -> registryAccess.lookupOrThrow(TFMGRegistries.FLAMETHROWER_FUEL_TYPE)
                 .listElements()
-                .filter(ref -> ref.value().fluids.contains(fluid.builtInRegistryHolder()))
-                .findFirst();
+                .filter(ref -> ref.value().fluids.contains(f.builtInRegistryHolder()))
+                .findFirst());
     }
 
     public static class Builder {

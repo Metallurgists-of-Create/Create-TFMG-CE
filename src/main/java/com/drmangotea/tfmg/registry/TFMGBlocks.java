@@ -72,7 +72,6 @@ import com.drmangotea.tfmg.content.engines.types.radial_engine.RadialEngineBlock
 import com.drmangotea.tfmg.content.engines.types.regular_engine.RegularEngineBlock;
 import com.drmangotea.tfmg.content.engines.types.turbine_engine.TurbineEngineBlock;
 import com.drmangotea.tfmg.content.engines.types.turbine_engine.TurbineEngineGenerator;
-import com.drmangotea.tfmg.content.items.CoalCokeBlockItem;
 import com.drmangotea.tfmg.content.items.weapons.explosives.napalm.NapalmBombBlock;
 import com.drmangotea.tfmg.content.machinery.metallurgy.blast_furnace.BlastFurnaceHatchBlock;
 import com.drmangotea.tfmg.content.machinery.metallurgy.blast_furnace.BlastFurnaceOutputBlock;
@@ -1659,7 +1658,7 @@ public class TFMGBlocks {
             .tag(BlockTags.NEEDS_STONE_TOOL)
             .tag(Tags.Blocks.STORAGE_BLOCKS)
             .tag(TFMGBlockTags.STORAGE_BLOCKS_COAL_COKE.tag)
-            .item(CoalCokeBlockItem::new)
+            .item()
             .tag(Tags.Items.STORAGE_BLOCKS)
             .tag(TFMGItemTags.STORAGE_BLOCKS_COAL_COKE.tag)
             .build()
@@ -1673,7 +1672,7 @@ public class TFMGBlocks {
             .tag(BlockTags.BEACON_BASE_BLOCKS)
             .blockstate(simpleCubeAll("laminated_magnetic_alloy_block"))
             .tag(BlockTags.NEEDS_IRON_TOOL)
-            .item(CoalCokeBlockItem::new)
+            .item()
             .build()
             .register();
 

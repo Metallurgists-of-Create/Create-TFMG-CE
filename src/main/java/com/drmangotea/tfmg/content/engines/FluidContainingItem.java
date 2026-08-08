@@ -10,6 +10,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -42,7 +43,6 @@ public class FluidContainingItem extends Item {
     public boolean isBarVisible(ItemStack stack) {
         if(!stack.has(TFMGDataComponents.AMOUNT))
             return false;
-
         return stack.getOrDefault(TFMGDataComponents.AMOUNT, 0) > 0;
     }
 
@@ -50,7 +50,6 @@ public class FluidContainingItem extends Item {
     public int getBarColor(ItemStack stack) {
         if(!stack.has(TFMGDataComponents.AMOUNT))
             stack.set(TFMGDataComponents.AMOUNT, 0);
-
         return 0xC7C4A4;
     }
 
@@ -64,41 +63,36 @@ public class FluidContainingItem extends Item {
 
     @Override
     public InteractionResult useOn(UseOnContext context) {
-
+        Player player = context.getPlayer();
         Level level = context.getLevel();
         BlockPos pos = context.getClickedPos();
         ItemStack stack = context.getItemInHand();
 
+        if (player == null)
+            return InteractionResult.PASS;
 
-        if (context.getPlayer().isShiftKeyDown()&&stack.getOrDefault(TFMGDataComponents.AMOUNT, 0) > 0) {
-
+        if (player.isShiftKeyDown() && stack.getOrDefault(TFMGDataComponents.AMOUNT, 0) > 0) {
             level.playSound(null, pos, SoundEvents.BUCKET_FILL, SoundSource.BLOCKS, 1f, 1f);
             stack.set(TFMGDataComponents.AMOUNT, 0);
             return InteractionResult.SUCCESS;
         }
 
-        if (level.getBlockEntity(pos) != null)
+        if (level.getBlockEntity(pos) != null) {
             if (level.getBlockEntity(pos) instanceof FluidTankBlockEntity fluidTankBe) {
-
                 FluidTankBlockEntity be = fluidTankBe.isController() ? fluidTankBe : fluidTankBe.getControllerBE();
-
                 if (be.getFluid(0).getFluid().isSame(fluid.get())) {
-
                     int toDrain = Math.min(CAPACITY - stack.getOrDefault(TFMGDataComponents.AMOUNT, 0), be.getFluid(0).getAmount());
-                    if(toDrain == 0||context.getPlayer().getCooldowns().isOnCooldown(stack.getItem()))
+                    if (toDrain == 0 || player.getCooldowns().isOnCooldown(stack.getItem()))
                         return InteractionResult.PASS;
+
                     level.playSound(null, be.getBlockPos(), SoundEvents.BUCKET_FILL, SoundSource.BLOCKS, 1f, 1f);
                     be.getTankInventory().drain(toDrain, IFluidHandler.FluidAction.EXECUTE);
                     stack.set(TFMGDataComponents.AMOUNT, stack.getOrDefault(TFMGDataComponents.AMOUNT, 0) + toDrain);
-                    context.getPlayer().getCooldowns().addCooldown(stack.getItem(), 20);
-
-
-
-
+                    player.getCooldowns().addCooldown(stack.getItem(), 20);
                     return InteractionResult.SUCCESS;
                 }
             }
-
+        }
         return InteractionResult.PASS;
     }
 }

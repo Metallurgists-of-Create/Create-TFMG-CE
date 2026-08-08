@@ -31,25 +31,21 @@ public class TFMGDatagen {
     public static void gatherData(GatherDataEvent event) {
         DataGenerator generator = event.getGenerator();
         PackOutput output = generator.getPackOutput();
-       CompletableFuture<HolderLookup.Provider> lookupProvider = event.getLookupProvider();
-//
-//
+        CompletableFuture<HolderLookup.Provider> lookupProvider = event.getLookupProvider();
+
         TFMGGeneratedEntriesProvider generatedEntriesProvider = new TFMGGeneratedEntriesProvider(output, lookupProvider);
         lookupProvider = generatedEntriesProvider.getRegistryProvider();
         generator.addProvider(event.includeServer(), generatedEntriesProvider);
-//
-       //
 
 
-        generator.addProvider(event.includeServer(),new TFMGStandardRecipeGen(output,lookupProvider));
-        generator.addProvider(event.includeServer(), new TFMGMechanicalCraftingRecipeGen(output,lookupProvider));
+        generator.addProvider(event.includeServer(),new TFMGDataMapProvider(output, lookupProvider));
+        generator.addProvider(event.includeServer(),new TFMGStandardRecipeGen(output, lookupProvider));
+        generator.addProvider(event.includeServer(), new TFMGMechanicalCraftingRecipeGen(output, lookupProvider));
         generator.addProvider(event.includeServer(), new TFMGSequencedAssemblyRecipeGen(output, lookupProvider));
-//
+
         if (event.includeServer()) {
             TFMGRecipeProvider.registerAllProcessing(generator, output, lookupProvider);
         }
-
-
     }
 
     private static void addExtraRegistrateData() {
@@ -57,10 +53,8 @@ public class TFMGDatagen {
 
         REGISTRATE.addDataGenerator(ProviderType.LANG, provider -> {
             BiConsumer<String, String> langConsumer = provider::add;
-
             provideDefaultLang("interface", langConsumer);
             provideDefaultLang("tooltips", langConsumer);
-
             providePonderLang(langConsumer);
         });
     }
@@ -68,7 +62,6 @@ public class TFMGDatagen {
 
     private static void providePonderLang(BiConsumer<String, String> consumer) {
         PonderIndex.addPlugin(new TFMGPonderPlugin());
-
         PonderIndex.getLangAccess().provideLang(TFMG.MOD_ID, consumer);
     }
 

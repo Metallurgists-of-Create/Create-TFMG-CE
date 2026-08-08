@@ -14,7 +14,6 @@ import com.drmangotea.tfmg.content.electricity.network.transformer.small.Electro
 
 import com.drmangotea.tfmg.content.engines.CylinderItem;
 import com.drmangotea.tfmg.content.engines.FluidContainingItem;
-import com.drmangotea.tfmg.content.items.CoalCokeItem;
 import com.drmangotea.tfmg.content.items.ScrewdriverItem;
 import com.drmangotea.tfmg.content.items.weapons.LeadAxeItem;
 import com.drmangotea.tfmg.content.items.weapons.LeadSwordItem;
@@ -208,14 +207,14 @@ public class TFMGItems {
     //public static final ItemEntry<FuseItem> FUSE = REGISTRATE.item("fuse", FuseItem::new)
     //        .properties(p -> p.stacksTo(1))
     //        .register();
-    public static final ItemEntry<CoalCokeItem> COAL_COKE_DUST = REGISTRATE.item("coal_coke_dust", CoalCokeItem::new)
+    public static final ItemEntry<Item> COAL_COKE_DUST = REGISTRATE.item("coal_coke_dust", Item::new)
             .tag(TFMGItemTags.DUSTS_COAL_COKE.tag, TFMGItemTags.BLAST_FURNACE_FUEL.tag, Tags.Items.DUSTS)
             .register();
 
     public static final ItemEntry<OilHammerItem> OIL_HAMMER = REGISTRATE.item("oil_hammer", OilHammerItem::new)
             .register();
 
-    public static final ItemEntry<CoalCokeItem> COAL_COKE = REGISTRATE.item("coal_coke", CoalCokeItem::new)
+    public static final ItemEntry<Item> COAL_COKE = REGISTRATE.item("coal_coke", Item::new)
             .register();
 
     public static final ItemEntry<DebugCinderBlockItem> DEBUG_CINDERBLOCK = REGISTRATE.item("debug_cinderblock", DebugCinderBlockItem::new)

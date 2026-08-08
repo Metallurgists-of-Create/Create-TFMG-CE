@@ -10,6 +10,7 @@ import com.drmangotea.tfmg.content.electricity.utilities.polarizer.PolarizerBloc
 import com.drmangotea.tfmg.content.engines.fuels.EngineFuelTypeManager;
 import com.drmangotea.tfmg.content.engines.types.AbstractSmallEngineBlockEntity;
 import com.drmangotea.tfmg.content.engines.types.large_engine.LargeEngineBlockEntity;
+import com.drmangotea.tfmg.content.items.weapons.flamethrover.FlamethrowerFuelType;
 import com.drmangotea.tfmg.content.machinery.metallurgy.blast_furnace.BlastFurnaceHatchBlockEntity;
 import com.drmangotea.tfmg.content.machinery.metallurgy.blast_furnace.BlastFurnaceOutputBlockEntity;
 import com.drmangotea.tfmg.content.machinery.metallurgy.blast_stove.BlastStoveBlockEntity;
@@ -35,6 +36,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.event.AddReloadListenerEvent;
+import net.neoforged.neoforge.event.OnDatapackSyncEvent;
 import net.neoforged.neoforge.event.entity.living.MobEffectEvent;
 import net.neoforged.neoforge.event.level.LevelEvent;
 import net.neoforged.neoforge.registries.NewRegistryEvent;
@@ -49,8 +51,6 @@ public class TFMGCommonEvents {
     public static void onUnloadWorld(LevelEvent.Unload event) {
         LevelAccessor world = event.getLevel();
         TFMG.NETWORK_MANAGER.onUnloadWorld(world);
-
-
     }
 
     @SubscribeEvent
@@ -60,12 +60,16 @@ public class TFMGCommonEvents {
         TFMG.DEPOSITS.levelLoaded(world);
     }
 
-
-
     @SubscribeEvent
     public static void addReloadListeners(AddReloadListenerEvent event) {
         event.addListener(EngineFuelTypeManager.ReloadListener.INSTANCE);
     }
+
+    @SubscribeEvent
+    public static void dataReload(OnDatapackSyncEvent event) {
+        FlamethrowerFuelType.typeCache.clear();
+    }
+
     @EventBusSubscriber
     public static class ModBusEvents {
         @net.neoforged.bus.api.SubscribeEvent
