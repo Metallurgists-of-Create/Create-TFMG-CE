@@ -42,6 +42,9 @@ public class FireExtinguisherItem extends Item implements CustomArmPoseItem {
         }
         stack.set(AMOUNT, fillLevel > 0 ? fillLevel - 1 : 0);
         TFMGSoundEvents.FIRE_EXTINGUISHER.playFrom(entity, 1F, 0.04F);
+        if (stack.getOrDefault(AMOUNT, 0) == 0) {
+            entity.stopUsingItem();
+        }
     }
 
     @Override
@@ -79,7 +82,7 @@ public class FireExtinguisherItem extends Item implements CustomArmPoseItem {
     public void onStopUsing(ItemStack stack, LivingEntity entity, int count) {
         super.onStopUsing(stack, entity, count);
         if (stack.getOrDefault(AMOUNT, 0) > 0) {
-            TFMGSoundEvents.FIRE_EXTINGUISHER_FADE.playFrom(entity, 1F, 0.04F);
+            TFMGSoundEvents.FIRE_EXTINGUISHER_FADE.playFrom(entity, 1F, 0.14F);
         }
     }
 
