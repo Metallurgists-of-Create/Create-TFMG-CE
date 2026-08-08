@@ -91,57 +91,9 @@ public class ChemicalVatCategory extends CreateRecipeCategory<VatMachineRecipe> 
         drawVatTypes(allowedVatTypes, graphics);
         drawSprites(machines, graphics);
 
-        TFMGGuiTextures.VAT_BAROMETER.render(graphics, 128, 0);
-        if (recipe.pressure==0) {
-            TFMGGuiTextures.VAT_BAROMETER_NEEDLE_OFF.render(graphics,  128+20-13, 0+24);
-        } else {
+        renderPressure(recipe.pressure, graphics);
 
-            TFMGGuiTextures i;
-
-            if (recipe.pressure == -9) { i = TFMGGuiTextures.VAT_BAROMETER_NEEDLE_LOWNINE; }
-            else if (recipe.pressure == 9) {i = TFMGGuiTextures.VAT_BAROMETER_NEEDLE_HIGHNINE; }
-            else if (recipe.pressure == -8) { i = TFMGGuiTextures.VAT_BAROMETER_NEEDLE_LOWEIGHT; }
-            else if (recipe.pressure == 8) { i = TFMGGuiTextures.VAT_BAROMETER_NEEDLE_HIGHEIGHT; }
-            else if (recipe.pressure == -7) { i = TFMGGuiTextures.VAT_BAROMETER_NEEDLE_LOWSEVEN; }
-            else if (recipe.pressure == 7) { i = TFMGGuiTextures.VAT_BAROMETER_NEEDLE_HIGHSEVEN; }
-            else if (recipe.pressure == -6) { i = TFMGGuiTextures.VAT_BAROMETER_NEEDLE_LOWSIX; }
-            else if (recipe.pressure == 6) { i = TFMGGuiTextures.VAT_BAROMETER_NEEDLE_HIGHSIX; }
-            else if (recipe.pressure == -5) { i = TFMGGuiTextures.VAT_BAROMETER_NEEDLE_LOWFIVE; }
-            else if (recipe.pressure == 5) { i = TFMGGuiTextures.VAT_BAROMETER_NEEDLE_HIGHFIVE; }
-            else if (recipe.pressure == -4) { i = TFMGGuiTextures.VAT_BAROMETER_NEEDLE_LOWFOUR; }
-            else if (recipe.pressure == 4) { i = TFMGGuiTextures.VAT_BAROMETER_NEEDLE_HIGHFOUR; }
-            else if (recipe.pressure == -3) { i = TFMGGuiTextures.VAT_BAROMETER_NEEDLE_LOWTHREE; }
-            else if (recipe.pressure == 3) { i = TFMGGuiTextures.VAT_BAROMETER_NEEDLE_HIGHTHREE; }
-            else if (recipe.pressure == -2) { i = TFMGGuiTextures.VAT_BAROMETER_NEEDLE_LOWTWO; }
-            else if (recipe.pressure == 2) { i = TFMGGuiTextures.VAT_BAROMETER_NEEDLE_HIGHTWO; }
-            else if (recipe.pressure == -1) { i = TFMGGuiTextures.VAT_BAROMETER_NEEDLE_LOWONE; }
-            else { i = TFMGGuiTextures.VAT_BAROMETER_NEEDLE_HIGHONE; }
-            if (recipe.pressure<0) { i.render(graphics, 128 +20 - (i.width-2), 0 + 24-(i.height-2)); }
-            else {i.render(graphics, 128 + 20 , 0 + 24-(i.height-2));}
-        }
-      
-        if(recipe.heatLevel!=0) {
-            if (recipe.heatLevel>9) {
-                for (int i = 9; i > 0; i--) {
-                    if (recipe.heatLevel >= 9 + i) {
-                        TFMGGuiTextures.VAT_SUPERHEATER.render(graphics, i * 10, 109);
-                    } else {
-                        TFMGGuiTextures.VAT_HEATER.render(graphics, i * 10, 109);
-                    }
-                }
-
-            }else if (recipe.heatLevel>0) {
-                for (int i = recipe.heatLevel; i > 0; i--) {
-                    TFMGGuiTextures.VAT_HEATER.render(graphics, i * 10, 109);
-                }
-            } else {
-                for (int i = -1 * recipe.heatLevel; i > 0; i--) {
-                    TFMGGuiTextures.VAT_FREEZER.render(graphics, i * 10, 109);
-                }
-            }
-
-            //graphics.drawString(Minecraft.getInstance().font, String.valueOf((recipe.heatLevel + 10f) / 10f), 76.0F, 113.0F, 0xFF501C, false);
-        }
+        renderHeated(recipe.heatLevel, graphics);
 
         int pos = 55;
         int width = ((recipe.getFluidIngredients().size()) * 21) / 2;
@@ -158,11 +110,39 @@ public class ChemicalVatCategory extends CreateRecipeCategory<VatMachineRecipe> 
         }
     }
 
-    private void renderHeated(HeatCondition heatCondition, GuiGraphics graphics) {
-        if (heatCondition == HeatCondition.HEATED)
-            TFMGGuiTextures.VAT_HEATER.render(graphics, 55 - 10, 109);
-        if (heatCondition == HeatCondition.SUPERHEATED)
-            TFMGGuiTextures.VAT_SUPERHEATER.render(graphics, 55 - 10, 109);
+    private void renderPressure(int pressure, GuiGraphics graphics) {
+        TFMGGuiTextures.VAT_BAROMETER.render(graphics, 128, 0);
+        TFMGGuiTextures spritemap = TFMGGuiTextures.VAT_BAROMETER_NEEDLE;
+        if (pressure == 0) {
+            spritemap.render(graphics, 125, -3, 0, 0, 48, 48);
+        } else {
+            int xOffset = pressure < 0 ? 0 : 48;
+            int yOffset = 48 + (Math.abs(pressure) * 48);
+            spritemap.render(graphics,  125, -3, xOffset, yOffset, 48, 48);
+        }
+    }
+
+    private void renderHeated(int heatLevel, GuiGraphics graphics) {
+        if(heatLevel!=0) {
+            if (heatLevel>9) {
+                for (int i = 9; i > 0; i--) {
+                    if (heatLevel >= 9 + i) {
+                        TFMGGuiTextures.VAT_SUPERHEATER.render(graphics, i * 10, 109);
+                    } else {
+                        TFMGGuiTextures.VAT_HEATER.render(graphics, i * 10, 109);
+                    }
+                }
+
+            }else if (heatLevel>0) {
+                for (int i = heatLevel; i > 0; i--) {
+                    TFMGGuiTextures.VAT_HEATER.render(graphics, i * 10, 109);
+                }
+            } else {
+                for (int i = -1 * heatLevel; i > 0; i--) {
+                    TFMGGuiTextures.VAT_FREEZER.render(graphics, i * 10, 109);
+                }
+            }
+        }
     }
 
     private void drawVatTypes(List<String> allowedVatTypes, GuiGraphics graphics) {

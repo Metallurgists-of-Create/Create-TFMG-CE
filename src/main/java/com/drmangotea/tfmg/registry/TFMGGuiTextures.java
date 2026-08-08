@@ -37,27 +37,7 @@ public enum TFMGGuiTextures implements ScreenElement {
     VAT_HEATER("chemical_vat", 112, 89, 9, 9),
     VAT_SUPERHEATER("chemical_vat", 112, 98, 9, 9),
     VAT_BAROMETER("chemical_vat",211,3,42,42),
-    //im so sorry
-    VAT_BAROMETER_NEEDLE_OFF("chemical_vat",202,75,15,8),
-    VAT_BAROMETER_NEEDLE_LOWNINE("chemical_vat",201,232,16,5),
-    VAT_BAROMETER_NEEDLE_HIGHNINE("chemical_vat",231,232,16,5),
-    VAT_BAROMETER_NEEDLE_LOWEIGHT("chemical_vat",201,214,16,7),
-    VAT_BAROMETER_NEEDLE_HIGHEIGHT("chemical_vat",231,214,16,7),
-    VAT_BAROMETER_NEEDLE_LOWSEVEN("chemical_vat",203,195,14,10),
-    VAT_BAROMETER_NEEDLE_HIGHSEVEN("chemical_vat",231,195,14,10),
-    VAT_BAROMETER_NEEDLE_LOWSIX("chemical_vat",204,177,13,12),
-    VAT_BAROMETER_NEEDLE_HIGHSIX("chemical_vat",231,177,13,12),
-    VAT_BAROMETER_NEEDLE_LOWFIVE("chemical_vat",205,159,12,14),
-    VAT_BAROMETER_NEEDLE_HIGHFIVE("chemical_vat",231,159,12,14),
-    VAT_BAROMETER_NEEDLE_LOWFOUR("chemical_vat",207,143,10,14),
-    VAT_BAROMETER_NEEDLE_HIGHFOUR("chemical_vat",231,143,10,14),
-    VAT_BAROMETER_NEEDLE_LOWTHREE("chemical_vat",209,126,8,15),
-    VAT_BAROMETER_NEEDLE_HIGHTHREE("chemical_vat",231,126,8,15),
-    VAT_BAROMETER_NEEDLE_LOWTWO("chemical_vat",211,109,6,16),
-    VAT_BAROMETER_NEEDLE_HIGHTWO("chemical_vat",231,109,6,16),
-    VAT_BAROMETER_NEEDLE_LOWONE("chemical_vat",213,92,4,17),
-    VAT_BAROMETER_NEEDLE_HIGHONE("chemical_vat",231,92,4,17),
-    VAT_BAROMETER_NEEDLE_ZERO("chemical_vat",231,60,2,17),
+    VAT_BAROMETER_NEEDLE("barometer_needle",0,0,96,480),
     ;
 
 
@@ -95,6 +75,11 @@ public enum TFMGGuiTextures implements ScreenElement {
     @OnlyIn(Dist.CLIENT)
     public void render(GuiGraphics graphics, int x, int y) {
         graphics.blit(location, x, y, startX, startY, width, height);
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    public void render(GuiGraphics graphics, int x, int y, int u, int v, int width, int height) {
+        graphics.blit(this.location, x, y, u, v, width, height, this.width, this.height);
     }
 
     @OnlyIn(Dist.CLIENT)
