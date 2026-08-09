@@ -7,6 +7,7 @@ import com.drmangotea.tfmg.content.decoration.tanks.TFMGFluidTankBlockEntity;
 import com.drmangotea.tfmg.content.decoration.tanks.steel.SteelTankBlockEntity;
 import com.drmangotea.tfmg.content.electricity.storage.AccumulatorBlockEntity;
 import com.drmangotea.tfmg.content.electricity.utilities.polarizer.PolarizerBlockEntity;
+import com.drmangotea.tfmg.content.engines.fuel.EngineFuelType;
 import com.drmangotea.tfmg.content.engines.types.AbstractSmallEngineBlockEntity;
 import com.drmangotea.tfmg.content.engines.types.large_engine.LargeEngineBlockEntity;
 import com.drmangotea.tfmg.content.items.weapons.flamethrover.FlamethrowerFuelType;
@@ -62,6 +63,7 @@ public class TFMGCommonEvents {
     @SubscribeEvent
     public static void dataReload(OnDatapackSyncEvent event) {
         FlamethrowerFuelType.typeCache.clear();
+        EngineFuelType.typeCache.clear();
     }
 
     @EventBusSubscriber
