@@ -3,6 +3,7 @@ package com.drmangotea.tfmg.content.engines.types.regular_engine;
 import com.drmangotea.tfmg.base.TFMGUtils;
 import com.drmangotea.tfmg.base.lang.TFMGTexts;
 import com.drmangotea.tfmg.config.TFMGConfigs;
+import com.drmangotea.tfmg.content.engines.fuel.EngineFuelType;
 import com.drmangotea.tfmg.content.engines.types.AbstractSmallEngineBlockEntity;
 import com.drmangotea.tfmg.content.engines.types.turbine_engine.TurbineEngineBlockEntity;
 import com.drmangotea.tfmg.registry.TFMGDataComponents;
@@ -33,6 +34,8 @@ import net.neoforged.api.distmarker.OnlyIn;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static com.drmangotea.tfmg.content.engines.base.EngineProperties.*;
 import static com.drmangotea.tfmg.content.engines.types.regular_engine.RegularEngineBlock.EXTENDED;
@@ -357,17 +360,32 @@ public class RegularEngineBlockEntity extends AbstractSmallEngineBlockEntity {
 
     @Override
     public float efficiencyModifier() {
-        return type.effeciencyModifier * getFuelType().getEfficiency() * getUpgradeEfficiencyModifier()*(TFMGConfigs.common().machines.engineFuelConsumption.getF()/100f);
+        AtomicReference<Float> fuelTypeEfficiency = new AtomicReference<>(1.0f);
+        if (level != null) {
+            Optional<EngineFuelType> fuelType = getFuelType().getFuelType(this.level.registryAccess());
+            fuelType.ifPresent(type -> fuelTypeEfficiency.set(type.efficiency()));
+        }
+        return type.effeciencyModifier * fuelTypeEfficiency.get() * getUpgradeEfficiencyModifier()*(TFMGConfigs.common().machines.engineFuelConsumption.getF()/100f);
     }
 
     @Override
     public float speedModifier() {
-        return type.speedModifier * getFuelType().getSpeed() * getUpgradeSpeedModifier();
+        AtomicReference<Float> fuelTypeSpeed = new AtomicReference<>(1.0f);
+        if (level != null) {
+            Optional<EngineFuelType> fuelType = getFuelType().getFuelType(this.level.registryAccess());
+            fuelType.ifPresent(type -> fuelTypeSpeed.set(type.speed()));
+        }
+        return type.speedModifier * fuelTypeSpeed.get() * getUpgradeSpeedModifier();
     }
 
     @Override
     public float torqueModifier() {
-        return type.torqueModifier * getFuelType().getStress() * getUpgradeTorqueModifier();
+        AtomicReference<Float> fuelTypeTorque = new AtomicReference<>(1.0f);
+        if (level != null) {
+            Optional<EngineFuelType> fuelType = getFuelType().getFuelType(this.level.registryAccess());
+            fuelType.ifPresent(type -> fuelTypeTorque.set(type.torque()));
+        }
+        return type.torqueModifier * fuelTypeTorque.get() * getUpgradeTorqueModifier();
     }
 
     @Override

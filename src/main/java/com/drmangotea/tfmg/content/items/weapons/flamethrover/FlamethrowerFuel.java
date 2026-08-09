@@ -85,6 +85,6 @@ public record FlamethrowerFuel(@Nullable ResourceKey<FlamethrowerFuelType> fuelT
     }
 
     public FlamethrowerFuelType getFuelTypeOrThrow(RegistryAccess registryAccess) {
-        return getFuelType(registryAccess).orElseThrow(() -> new IllegalStateException("No fuel type found for " + fuelType));
+        return getFuelType(registryAccess).orElseThrow(() -> new IllegalStateException("No flamethrower fuel type found for " + fuelType));
     }
 }

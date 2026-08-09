@@ -32,14 +32,12 @@ public class CylinderItem extends Item {
 
         CompoundTag fuels = stack.get(TFMGDataComponents.FUELS);
 
-        if(fuels.isEmpty())
+        if(fuels == null || fuels.isEmpty())
             return;
         tooltip.add(TFMGLang.translateDirect("tooltip.cylinder")
                 .withStyle(ChatFormatting.GRAY));
 
         for(String key : fuels.getAllKeys()) {
-
-
             MutableComponent component = TFMGLang.text("- ").component()
                     .append(Component.translatable(fuels.getString(key)))
                     .withStyle(ChatFormatting.AQUA);

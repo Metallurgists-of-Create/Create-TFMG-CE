@@ -2,9 +2,7 @@ package com.drmangotea.tfmg.content.engines.base;
 
 import com.drmangotea.tfmg.config.TFMGConfigs;
 import com.drmangotea.tfmg.content.electricity.base.KineticElectricBlockEntity;
-import com.drmangotea.tfmg.content.engines.fuels.BaseFuelTypes;
-import com.drmangotea.tfmg.content.engines.fuels.EngineFuelTypeManager;
-import com.drmangotea.tfmg.content.engines.fuels.FuelType;
+import com.drmangotea.tfmg.content.engines.fuel.EngineFuel;
 import com.drmangotea.tfmg.registry.TFMGBlockEntities;
 import com.drmangotea.tfmg.registry.TFMGFluids;
 import com.drmangotea.tfmg.registry.TFMGTags;
@@ -29,7 +27,6 @@ import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
 
 public abstract class AbstractEngineBlockEntity extends KineticElectricBlockEntity {
 
@@ -97,9 +94,7 @@ public abstract class AbstractEngineBlockEntity extends KineticElectricBlockEnti
     }
 
     public void tankUpdated(FluidStack stack, boolean fuelTank) {
-
         if (fuelTank && stack.isEmpty()) {
-
             rpm = 0;
             updateRotation();
             analogSignalChanged();
@@ -141,7 +136,7 @@ public abstract class AbstractEngineBlockEntity extends KineticElectricBlockEnti
         if(drainFuel) {
             manageFuelAndExhaust();
         } else drainFuel = true;
-        }
+    }
 
     public void manageFuelAndExhaust() {
         exhaustTank.forceFill(new FluidStack(TFMGFluids.CARBON_DIOXIDE.get(), Math.min(300, getFuelConsumption())), IFluidHandler.FluidAction.EXECUTE);
@@ -197,19 +192,10 @@ public abstract class AbstractEngineBlockEntity extends KineticElectricBlockEnti
     public abstract float torqueModifier();
 
 
-    public FuelType getFuelType() {
-
-        AtomicReference<FuelType> matchingType = new AtomicReference<>(BaseFuelTypes.FALLBACK);
-
-        EngineFuelTypeManager.GLOBAL_TYPE_MAP.forEach((r, t) -> {
-            TagKey<Fluid> fluidTag = t.getFluid();
-            FluidStack fluid = fuelTank.getFluid();
-            if (fluid.getFluid().is(fluidTag)) {
-                matchingType.set(t);
-            }
-
-        });
-        return matchingType.get();
+    public EngineFuel getFuelType() {
+        if (this.level == null) return EngineFuel.EMPTY;
+        FluidStack contained = fuelTank.getFluid();
+        return EngineFuel.createForType(this.level.registryAccess(), contained);
     }
 
     public void refreshCapability() {

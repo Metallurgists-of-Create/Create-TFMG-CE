@@ -7,7 +7,6 @@ import com.drmangotea.tfmg.content.decoration.tanks.TFMGFluidTankBlockEntity;
 import com.drmangotea.tfmg.content.decoration.tanks.steel.SteelTankBlockEntity;
 import com.drmangotea.tfmg.content.electricity.storage.AccumulatorBlockEntity;
 import com.drmangotea.tfmg.content.electricity.utilities.polarizer.PolarizerBlockEntity;
-import com.drmangotea.tfmg.content.engines.fuels.EngineFuelTypeManager;
 import com.drmangotea.tfmg.content.engines.types.AbstractSmallEngineBlockEntity;
 import com.drmangotea.tfmg.content.engines.types.large_engine.LargeEngineBlockEntity;
 import com.drmangotea.tfmg.content.items.weapons.flamethrover.FlamethrowerFuelType;
@@ -58,11 +57,6 @@ public class TFMGCommonEvents {
         LevelAccessor world = event.getLevel();
         TFMG.NETWORK_MANAGER.onLoadWorld(world);
         TFMG.DEPOSITS.levelLoaded(world);
-    }
-
-    @SubscribeEvent
-    public static void addReloadListeners(AddReloadListenerEvent event) {
-        event.addListener(EngineFuelTypeManager.ReloadListener.INSTANCE);
     }
 
     @SubscribeEvent

@@ -6,6 +6,7 @@ import com.drmangotea.tfmg.base.lang.TFMGLang;
 import com.drmangotea.tfmg.config.TFMGConfigs;
 import com.drmangotea.tfmg.content.engines.base.AbstractEngineBlockEntity;
 import com.drmangotea.tfmg.content.engines.base.EngineFluidTank;
+import com.drmangotea.tfmg.content.engines.fuel.EngineFuelType;
 import com.drmangotea.tfmg.registry.TFMGBlockEntities;
 import com.drmangotea.tfmg.registry.TFMGBlocks;
 import com.drmangotea.tfmg.registry.TFMGSoundEvents;
@@ -41,6 +42,8 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import javax.annotation.Nullable;
 import java.lang.ref.WeakReference;
 import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class LargeEngineBlockEntity extends AbstractEngineBlockEntity {
 
@@ -222,8 +225,13 @@ public class LargeEngineBlockEntity extends AbstractEngineBlockEntity {
                 isFuelValid = true;
         }
 
+        AtomicReference<Float> fuelTypeTorque = new AtomicReference<>(1.0f);
+        if (level != null) {
+            Optional<EngineFuelType> fuelType = getFuelType().getFuelType(this.level.registryAccess());
+            fuelType.ifPresent(type -> fuelTypeTorque.set(type.torque()));
+        }
 
-        shaft.update(worldPosition, 2, 15 * getFuelType().getStress()*(isFuelValid?1:0));
+        shaft.update(worldPosition, 2, 15 * fuelTypeTorque.get() * (isFuelValid ? 1 : 0));
         sendData();
         setChanged();
     }

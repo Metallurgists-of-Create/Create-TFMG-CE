@@ -1,6 +1,7 @@
 package com.drmangotea.tfmg;
 
 import com.drmangotea.tfmg.content.electricity.connection.cable_type.CableType;
+import com.drmangotea.tfmg.content.engines.fuel.EngineFuelType;
 import com.drmangotea.tfmg.content.items.weapons.flamethrover.FlamethrowerFuelType;
 import com.drmangotea.tfmg.content.machinery.vat.electrode_holder.electrode.Electrode;
 import net.minecraft.core.Registry;
@@ -11,7 +12,8 @@ public class TFMGRegistries {
     public static final ResourceKey<Registry<CableType>> CABLE_TYPE = createRegistryKey("cable_types");
     public static final ResourceKey<Registry<Electrode>> ELECTRODE = createRegistryKey("electrodes");
 
-    public static final ResourceKey<Registry<FlamethrowerFuelType>> FLAMETHROWER_FUEL_TYPE = createRegistryKey("flamethrower_fuel/type");
+    public static final ResourceKey<Registry<FlamethrowerFuelType>> FLAMETHROWER_FUEL_TYPE = createRegistryKey("fuel_type/flamethrower");
+    public static final ResourceKey<Registry<EngineFuelType>> ENGINE_FUEL_TYPE = createRegistryKey("fuel_type/engine");
 
     public static final Registry<CableType> CABLE_TYPE_REGISTRY = makeSyncedRegistry(CABLE_TYPE);
     public static final Registry<Electrode> ELECTRODE_REGISTRY = makeSyncedRegistry(ELECTRODE);
