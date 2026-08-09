@@ -15,8 +15,6 @@ import static com.drmangotea.tfmg.registry.TFMGTags.NameSpace.*;
 
 
 public class TFMGTags {
-
-
     public enum NameSpace {
         MOD(TFMG.MOD_ID),
         COMMON("c")
@@ -31,6 +29,7 @@ public class TFMGTags {
     public enum TFMGBlockTags {
         BLAST_FURNACE_SUPPORT,
         BLAST_FURNACE_WALL,
+		NON_DIAGONAL_WALLS("diagonalwalls","non_diagonal_walls"),
         INDUSTRIAL_PIPE,
         ORES_LITHIUM(COMMON, "ores/lithium"),
         PUMPJACK_CONNECTOR,
@@ -56,10 +55,13 @@ public class TFMGTags {
         TFMGBlockTags(NameSpace namespace) {
             this(namespace, null);
         }
-        TFMGBlockTags(NameSpace namespace, String path) {
-            ResourceLocation id = ResourceLocation.fromNamespaceAndPath(namespace.id, path == null ? TFMGLang.asId(name()) : path);
-            this.tag = BlockTags.create(id);
-        }
+		TFMGBlockTags(NameSpace namespace, String path) {
+			ResourceLocation id = ResourceLocation.fromNamespaceAndPath(namespace.id, path == null ? TFMGLang.asId(name()) : path);
+			this.tag = BlockTags.create(id);
+		}
+		TFMGBlockTags(String namespace, String path) {
+			this.tag = BlockTags.create(ResourceLocation.fromNamespaceAndPath(namespace, path));
+		}
     }
     public enum TFMGItemTags {
         BLAST_FURNACE_FUEL,

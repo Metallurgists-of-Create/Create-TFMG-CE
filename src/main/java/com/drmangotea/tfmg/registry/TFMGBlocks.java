@@ -838,7 +838,7 @@ public class TFMGBlocks {
             .transform(pickaxeOnly())
             .properties(BlockBehaviour.Properties::noOcclusion)
             .onRegister(connectedTextures(() -> new HorizontalCTBehaviour(TFMGSpriteShifts.BLAST_FURNACE_REINFORCEMENT)))
-            .tag(BlockTags.NEEDS_STONE_TOOL)
+            .tag(BlockTags.NEEDS_STONE_TOOL, TFMGBlockTags.NON_DIAGONAL_WALLS.tag)
             .blockstate(BlockStateGen.horizontalBlockProvider(false))
             .loot((lt, block) -> lt.dropOther(block, TFMGBlocks.BLAST_FURNACE_REINFORCEMENT.get().asItem()))
             .register();
