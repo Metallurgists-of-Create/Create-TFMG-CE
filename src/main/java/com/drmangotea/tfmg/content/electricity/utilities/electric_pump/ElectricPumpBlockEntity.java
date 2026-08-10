@@ -230,8 +230,8 @@ public class ElectricPumpBlockEntity extends PumpBlockEntity implements IElectri
 
 
     @Override
-    public long getPos() {
-        return getBlockPos().asLong();
+    public BlockPos getPos() {
+        return getBlockPos();
     }
 
     @Override

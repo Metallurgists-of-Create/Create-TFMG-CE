@@ -55,8 +55,8 @@ public class ElectricBlockValues {
 
     public boolean importsFE = false;
 
-    public ElectricBlockValues(long pos) {
-        this.electricalNetworkId = pos;
+    public ElectricBlockValues(BlockPos pos) {
+        this.electricalNetworkId = pos.asLong();
     }
 
     public long getId() {

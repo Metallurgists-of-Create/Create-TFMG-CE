@@ -140,9 +140,8 @@ public class VoltageAlteringBlockEntity extends ElectricBlockEntity {
     }
 
     public void updateInFront() {
-
         if (level instanceof ServerLevel serverLevel)
-            CatnipServices.NETWORK.sendToClientsTrackingChunk(serverLevel, new ChunkPos(worldPosition), new UpdateInFrontPacket(BlockPos.of(getPos())));
+            CatnipServices.NETWORK.sendToClientsTrackingChunk(serverLevel, new ChunkPos(worldPosition), new UpdateInFrontPacket(getBlockPos()));
         Direction facing = getBlockState().hasProperty(FACING) ? getBlockState().getValue(FACING) : getBlockState().getValue(HorizontalDirectionalBlock.FACING).getCounterClockWise();
         if (level.getBlockEntity(getBlockPos().relative(facing)) instanceof IElectric be && be.getData().getId() != data.getId()) {
             if (be.hasElectricitySlot(facing.getOpposite())) {
@@ -155,9 +154,8 @@ public class VoltageAlteringBlockEntity extends ElectricBlockEntity {
     }
 
     public void updateBehind() {
-
         if (level instanceof ServerLevel serverLevel)
-            CatnipServices.NETWORK.sendToClientsTrackingChunk(serverLevel, new ChunkPos(worldPosition), new UpdateInFrontPacket(BlockPos.of(getPos())));
+            CatnipServices.NETWORK.sendToClientsTrackingChunk(serverLevel, new ChunkPos(worldPosition), new UpdateInFrontPacket(getBlockPos()));
         Direction facing = getBlockState().hasProperty(FACING) ? getBlockState().getValue(FACING) : getBlockState().getValue(HorizontalDirectionalBlock.FACING).getCounterClockWise();
         facing = facing.getOpposite();
         if (level.getBlockEntity(getBlockPos().relative(facing)) instanceof IElectric be && be.getData().getId() != data.getId()) {

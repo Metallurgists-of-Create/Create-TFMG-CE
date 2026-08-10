@@ -49,8 +49,8 @@ public class KineticElectricBlockEntity extends GeneratingKineticBlockEntity imp
 
 
     @Override
-    public long getPos() {
-        return getBlockPos().asLong();
+    public BlockPos getPos() {
+        return getBlockPos();
     }
 
     @Override
