@@ -43,7 +43,7 @@ public class CableConnectorRenderer extends SafeBlockEntityRenderer<CableConnect
             if (stack.has(TFMGDataComponents.POSITION)) {
                 BlockPos pos = stack.get(TFMGDataComponents.POSITION);
 				if (pos.equals(be.getBlockPos()))
-                     renderWire(be.getLevel(), ms, bufferSource, player.position(), Vec3.atLowerCornerOf(pos), 0.0001f, be.color);
+                     renderWire(be.getLevel(), ms, bufferSource, player.getRopeHoldPosition(partialTicks), Vec3.atLowerCornerOf(pos), 0.0001f, be.color);
             }
         }
     }
@@ -63,8 +63,12 @@ public class CableConnectorRenderer extends SafeBlockEntityRenderer<CableConnect
 		float dz = Z * f4;
 		float dx = X * f4;
 		
-		int light1 = level.getBrightness(LightLayer.SKY, new BlockPos((int) pos2.x(), (int) pos2.y(), (int) pos2.z()));
-		int light2 = level.getBrightness(LightLayer.SKY, new BlockPos((int) pos1.x(), (int) pos1.y(), (int) pos1.z()));
+		BlockPos bp1 = new BlockPos((int) pos2.x(), (int) pos2.y(), (int) pos2.z());
+		BlockPos bp2 = new BlockPos((int) pos1.x(), (int) pos1.y(), (int) pos1.z());
+		int skylight1 = level.getBrightness(LightLayer.SKY, bp1);
+		int skylight2 = level.getBrightness(LightLayer.SKY, bp2);
+		int blocklight1 = level.getBrightness(LightLayer.BLOCK, bp1);
+		int blocklight2 = level.getBrightness(LightLayer.BLOCK, bp2);
 		
 		Color c = new Color(color);
 		float
@@ -73,18 +77,19 @@ public class CableConnectorRenderer extends SafeBlockEntityRenderer<CableConnect
 			g = c.getGreen() / 255f;
 		
 		for (int i1 = 0; i1 <= 24; ++i1) {
-			addVertexPair(vertexconsumer, matrix4f, X, Y, Z, light1, light2, 0.030F, 0.030F, dz, dx, i1, false, curve, r, g, b);
+			addVertexPair(vertexconsumer, matrix4f, X, Y, Z, skylight1, skylight2, blocklight1, blocklight2, 0.030F, 0.030F, dz, dx, i1, false, curve, r, g, b);
 		}
 		for (int j1 = 24; j1 >= 0; --j1) {
-			addVertexPair(vertexconsumer, matrix4f, X, Y, Z, light1, light2, 0.030F, 0.00F, dz, dx, j1, true, curve, r, g, b);
+			addVertexPair(vertexconsumer, matrix4f, X, Y, Z, skylight1, skylight2, blocklight1, blocklight2, 0.030F, 0.00F, dz, dx, j1, true, curve, r, g, b);
 		}
 		pMatrixStack.popPose();
 	}
 	
-	private static void addVertexPair(VertexConsumer vertexConsumer, Matrix4f matrix4f, float px, float py, float pz, int light_1, int light_2, float thickness, float dy, float dx, float dz, int value, boolean reverse, float curve, float r, float g, float b) {
+	private static void addVertexPair(VertexConsumer vertexConsumer, Matrix4f matrix4f, float px, float py, float pz, int skylight1, int skylight2, int blocklight1, int blocklight2, float thickness, float dy, float dx, float dz, int value, boolean reverse, float curve, float r, float g, float b) {
 		float f = value / 24.0F;
-		int i = (int) Mth.lerp(f, (float) light_1, (float) light_2);
-		int light = LightTexture.pack(i, i);
+		int block = (int) Mth.lerp(f, (float) blocklight1, (float) blocklight2);
+		int sky = (int) Mth.lerp(f, (float) skylight1, (float) skylight2);
+		int light = LightTexture.pack(block, sky);
 		float brightness = value % 2 == (reverse ? 1 : 0) ? 0.7F : 1.0F;
 		r *= brightness;
 		g *= brightness;

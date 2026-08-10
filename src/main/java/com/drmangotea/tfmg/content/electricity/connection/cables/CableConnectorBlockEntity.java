@@ -39,14 +39,11 @@ public class CableConnectorBlockEntity extends ElectricBlockEntity implements IH
     public Player player;
     public int color = 0x000000;
     //
-
     public List<CableConnection> connections = new ArrayList<>();
-    public long id;
     public boolean removeWiresNextTick = false;
 
     public CableConnectorBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
-        id = getBlockPos().asLong();
     }
 
     @Override

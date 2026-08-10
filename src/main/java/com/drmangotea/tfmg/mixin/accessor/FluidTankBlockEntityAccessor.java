@@ -22,9 +22,6 @@ public interface FluidTankBlockEntityAccessor {
     @Accessor("width")
     int tfmg$getWidth();
 
-    @Accessor("tankInventory")
-    FluidTank tfmg$getTankInventory();
-
     @Accessor("fluidCapability")
     IFluidHandler tfmg$getFluidCapability();
 
@@ -33,6 +30,4 @@ public interface FluidTankBlockEntityAccessor {
 
     @Invoker("refreshCapability")
     void tfmg$refreshCapability();
-
-
 }
