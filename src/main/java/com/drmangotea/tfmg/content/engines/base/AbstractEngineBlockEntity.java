@@ -11,15 +11,14 @@ import net.createmod.catnip.math.VecHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
@@ -27,6 +26,7 @@ import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 
 import java.util.List;
+import java.util.function.Predicate;
 
 public abstract class AbstractEngineBlockEntity extends KineticElectricBlockEntity {
 
@@ -113,14 +113,12 @@ public abstract class AbstractEngineBlockEntity extends KineticElectricBlockEnti
     }
 
     protected void analogSignalChanged() {
+        if (level == null) return;
         if (hasEngineController()) {
             return;
         }
-
         int newSignal = level.getBestNeighborSignal(getBlockPos());
-
         signal = newSignal;
-
         newSignal = Math.max(level.getBestNeighborSignal(getBlockPos()), newSignal);
         highestSignal = newSignal / 15f;
         updateRotation();
@@ -164,22 +162,14 @@ public abstract class AbstractEngineBlockEntity extends KineticElectricBlockEnti
     }
 
 
-    public abstract List<TagKey<Fluid>> getSupportedFuels();
+    public abstract Predicate<FluidStack> validFuels();
 
     public void onUpdated() {
     }
 
 
     public boolean canWork() {
-
-        if (fuelTank.isEmpty())
-            return false;
-
-        if (exhaustTank.getSpace() == 0)
-            return false;
-
-
-        return true;
+        return !fuelTank.isEmpty() && exhaustTank.getSpace() != 0;
     }
 
     public void updateRotation() {
@@ -204,7 +194,6 @@ public abstract class AbstractEngineBlockEntity extends KineticElectricBlockEnti
     }
 
     public IFluidHandler handlerForCapability() {
-
         return new CombinedTankWrapper(fuelTank, exhaustTank);
     }
 
@@ -213,7 +202,6 @@ public abstract class AbstractEngineBlockEntity extends KineticElectricBlockEnti
         return TFMGConfigs.common().machines.engineMaxLength.get();
     }
 
-
     public void changeDirection() {
         playInsertionSound();
         reverse = !reverse;
@@ -221,6 +209,7 @@ public abstract class AbstractEngineBlockEntity extends KineticElectricBlockEnti
     }
 
     public void dropItem(ItemStack stack) {
+        if (level == null) return;
         Vec3 dropVec = VecHelper.getCenterOf(worldPosition).add(0, 0.3f, 0);
         ItemEntity dropped = new ItemEntity(level, dropVec.x, dropVec.y, dropVec.z, stack);
         dropped.setDefaultPickUpDelay();
@@ -230,10 +219,12 @@ public abstract class AbstractEngineBlockEntity extends KineticElectricBlockEnti
 
 
     public void playInsertionSound() {
+        if (level == null) return;
         level.playSound(null, getBlockPos(), SoundEvents.ITEM_PICKUP, SoundSource.BLOCKS, 0.4f, 0.5f);
     }
 
     public void playRemovalSound() {
+        if (level == null) return;
         level.playSound(null, getBlockPos(), SoundEvents.ITEM_PICKUP, SoundSource.BLOCKS, 0.4f, 0.5f);
     }
 
@@ -245,7 +236,7 @@ public abstract class AbstractEngineBlockEntity extends KineticElectricBlockEnti
         reverse = compound.getBoolean("Reverse");
         signal = compound.getInt("Signal") + 1;
         if (hasEngineController())
-            engineController = BlockPos.of(compound.getLong("EngineController"));
+            engineController = NbtUtils.readBlockPos(compound, "EngineController").orElse(getBlockPos());
 
         fuelTank.readFromNBT(registries, compound.getCompound("FuelTank"));
         exhaustTank.readFromNBT(registries, compound.getCompound("ExhaustTank"));
@@ -263,9 +254,9 @@ public abstract class AbstractEngineBlockEntity extends KineticElectricBlockEnti
 
         compound.putBoolean("Reverse", reverse);
         compound.putInt("Signal", signal);
-        if (hasEngineController())
-            compound.putLong("EngineController", engineController.asLong());
-
+        if (hasEngineController()) {
+            compound.put("EngineController", NbtUtils.writeBlockPos(engineController));
+        }
         compound.put("FuelTank", fuelTank.writeToNBT(registries, new CompoundTag()));
         compound.put("ExhaustTank", exhaustTank.writeToNBT(registries, new CompoundTag()));
 
@@ -279,16 +270,10 @@ public abstract class AbstractEngineBlockEntity extends KineticElectricBlockEnti
     }
 
     public void neighbourChanged() {
-
-        if (!hasLevel())
+        if (level == null)
             return;
-
-
         int power = level.getBestNeighborSignal(getBlockPos());
-
-
         if (power != this.signal)
             this.signalChanged = true;
-
     }
 }

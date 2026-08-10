@@ -267,7 +267,14 @@
   "tfmg.flamethrower.fuel.amount": "%s Projectile Amount",
   "tfmg.flamethrower.fuel.cold": "Cold Flame",
   "tfmg.flamethrower.fuel.hellfire": "Scorching Flame",
-  "tfmg.flamethrower.fuel.capacity": "Fuel Capacity: %s"
+  "tfmg.flamethrower.fuel.capacity": "Fuel Capacity: %s",
 
-
+  "engine_fuel.tfmg.fallback": "[Missing]",
+  "engine_fuel.tfmg.gasoline": "Gasoline",
+  "engine_fuel.tfmg.diesel": "Diesel",
+  "engine_fuel.tfmg.lpg": "LPG",
+  "engine_fuel.tfmg.kerosene": "Kerosene",
+  "engine_fuel.tfmg.naphtha": "Naphtha",
+  "engine_fuel.tfmg.creosote": "Creosote",
+  "engine_fuel.tfmg.furnace_gas": "Furnace Gas"
 }

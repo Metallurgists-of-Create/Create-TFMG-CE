@@ -4,6 +4,7 @@ import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.base.TFMGCreativeTabs;
 import com.drmangotea.tfmg.base.TFMGRegistrate;
 import com.drmangotea.tfmg.base.TFMGTiers;
+import com.drmangotea.tfmg.base.data_storage.CylinderFuels;
 import com.drmangotea.tfmg.content.decoration.kinetics.gearbox.SteelVerticalGearboxItem;
 import com.drmangotea.tfmg.content.electricity.configuration_wrench.ElectriciansWrenchItem;
 import com.drmangotea.tfmg.base.debug.DebugCinderBlockItem;
@@ -12,7 +13,8 @@ import com.drmangotea.tfmg.content.electricity.utilities.polarizer.MagnetItem;
 import com.drmangotea.tfmg.content.electricity.utilities.resistor.ResistorItem;
 import com.drmangotea.tfmg.content.electricity.network.transformer.small.ElectromagneticCoilItem;
 
-import com.drmangotea.tfmg.content.engines.CylinderItem;
+import com.drmangotea.tfmg.content.engines.fuel.EngineFuelType;
+import com.drmangotea.tfmg.content.items.parts.EngineCylinderItem;
 import com.drmangotea.tfmg.content.engines.FluidContainingItem;
 import com.drmangotea.tfmg.content.items.ScrewdriverItem;
 import com.drmangotea.tfmg.content.items.weapons.LeadAxeItem;
@@ -39,16 +41,14 @@ import com.tterrag.registrate.util.entry.ItemEntry;
 import net.minecraft.core.Holder;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.block.Blocks;
 import net.neoforged.neoforge.common.Tags;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.drmangotea.tfmg.base.TFMGBuilderTransformers.COLORS;
 import static com.drmangotea.tfmg.content.items.weapons.explosives.thermite_grenades.ThermiteGrenade.ChemicalColor.*;
@@ -97,9 +97,9 @@ public class TFMGItems {
 
     public static final ItemEntry<Item>
             REBAR = REGISTRATE.item("rebar", Item::new)
-            .tag(TFMGItemTags.RODS_STEEL.tag, Tags.Items.RODS)
-            .recipe((c, p) -> p.stonecutting(DataIngredient.tag(CommonMetal.STEEL.ingots), RecipeCategory.BUILDING_BLOCKS, c, 4))
-            .register(),
+                    .tag(TFMGItemTags.RODS_STEEL.tag, Tags.Items.RODS)
+                    .recipe((c, p) -> p.stonecutting(DataIngredient.tag(CommonMetal.STEEL.ingots), RecipeCategory.BUILDING_BLOCKS, c, 4))
+                    .register(),
             SYNTHETIC_STRING = REGISTRATE.item("synthetic_string", Item::new)
                     .tag(Tags.Items.STRINGS)
                     .recipe((c, p) -> p.stonecutting(DataIngredient.tag(TFMGItemTags.INGOTS_RUBBER.tag), RecipeCategory.MISC, c, 4))
@@ -107,7 +107,7 @@ public class TFMGItems {
 
     public static final ItemEntry<Item>
             COPPER_WIRE = REGISTRATE.item("copper_wire", Item::new).tag(TFMGItemTags.WIRES_COPPER.tag, TFMGItemTags.WIRES.tag)
-            .recipe((c, p) -> p.stonecutting(DataIngredient.tag(CommonMetal.COPPER.ingots), RecipeCategory.BUILDING_BLOCKS, c, 2)).register(),
+                    .recipe((c, p) -> p.stonecutting(DataIngredient.tag(CommonMetal.COPPER.ingots), RecipeCategory.BUILDING_BLOCKS, c, 2)).register(),
             ALUMINUM_WIRE = REGISTRATE.item("aluminum_wire", Item::new).tag(TFMGItemTags.WIRES_ALUMINUM.tag, TFMGItemTags.WIRES.tag)
                     .recipe((c, p) -> p.stonecutting(DataIngredient.tag(CommonMetal.ALUMINUM.ingots), RecipeCategory.BUILDING_BLOCKS, c, 2)).register(),
             CONSTANTAN_WIRE = REGISTRATE.item("constantan_wire", Item::new).tag(TFMGItemTags.WIRES_CONSTANTAN.tag, TFMGItemTags.WIRES.tag)
@@ -289,12 +289,12 @@ public class TFMGItems {
             PIPE_BOMB = REGISTRATE.item("pipe_bomb", PipeBombItem::new)
             .register();
 
-    public static final ItemEntry<CylinderItem>
-		DIESEL_ENGINE_CYLINDER = cylinder("diesel_engine_cylinder", "diesel"),
-		SIMPLE_ENGINE_CYLINDER = cylinder("simple_engine_cylinder", "creosote","furnace_gas"),
-		ENGINE_CYLINDER = cylinder("engine_cylinder", "gasoline","kerosene","naphtha"),
-		AUTOGAS_ENGINE_CYLINDER = cylinder("autogas_engine_cylinder", "lpg"),
-		TURBINE_BLADE = cylinder("turbine_blade", "kerosene");
+    public static final ItemEntry<EngineCylinderItem>
+		DIESEL_ENGINE_CYLINDER = cylinder("diesel_engine_cylinder", TFMGEngineFuelTypes.DIESEL),
+		SIMPLE_ENGINE_CYLINDER = cylinder("simple_engine_cylinder", TFMGEngineFuelTypes.CREOSOTE, TFMGEngineFuelTypes.FURNACE_GAS),
+		ENGINE_CYLINDER = cylinder("engine_cylinder", TFMGEngineFuelTypes.GASOLINE, TFMGEngineFuelTypes.KEROSENE, TFMGEngineFuelTypes.NAPHTHA),
+		AUTOGAS_ENGINE_CYLINDER = cylinder("autogas_engine_cylinder", TFMGEngineFuelTypes.LPG),
+		TURBINE_BLADE = cylinder("turbine_blade", TFMGEngineFuelTypes.KEROSENE);
 
 
     public static final ItemEntry<FluidContainingItem>
@@ -476,26 +476,18 @@ public class TFMGItems {
 	public static ItemEntry<SpoolItem> fullSpoolItem(String name, int barColor) {
 		return spoolItem(name, barColor)
 			.tab(TFMGCreativeTabs.TFMG_MAIN.getKey(), (c,m) -> {
-				//custom creative tab addition
 				ItemStack spool = c.getEntry().getDefaultInstance();
 				spool.set(TFMGDataComponents.SPOOL_AMOUNT, 1000);
 				m.accept(spool, CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
 			}).register();
 	}
 	
-	public static ItemEntry<CylinderItem> cylinder(String name, String... fuelTypes) {
-		//for now, fuelTypes is just used to add them to the creative entry
-		return REGISTRATE.item(name, CylinderItem::new)
+	@SafeVarargs
+    public static ItemEntry<EngineCylinderItem> cylinder(String name, ResourceKey<EngineFuelType>... fuelTypes) {
+		return REGISTRATE.item(name, EngineCylinderItem::new)
 			.tab(TFMGCreativeTabs.TFMG_MAIN.getKey(), (c,m) -> {
-				//custom creative tab addition
-				CompoundTag fuelTags = new CompoundTag(), fuels = new CompoundTag();
-				for (String fuel : fuelTypes) { //this will have to be reworked if the components get reworked
-					fuelTags.putString(fuel, "c:" + fuel);
-					fuels.putString(fuel, "fluid.tfmg." + fuel);
-				}
 				ItemStack stack = c.get().getDefaultInstance();
-				stack.set(TFMGDataComponents.FUEL_TAGS, fuelTags);
-				stack.set(TFMGDataComponents.FUELS, fuels);
+				stack.set(TFMGDataComponents.ENGINE_CYLINDER, new CylinderFuels(Arrays.asList(fuelTypes)));
 				m.accept(stack);
 			}).register();
 	}

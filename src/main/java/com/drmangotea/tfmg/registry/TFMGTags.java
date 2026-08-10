@@ -91,6 +91,8 @@ public class TFMGTags {
         WIRES_ALUMINUM(COMMON, "wires/aluminum"),
         WIRES_CONSTANTAN(COMMON, "wires/constantan"),
         WIRES_COPPER(COMMON, "wires/copper"),
+        ENGINE_TURBINE(MOD, "engine/turbine"),
+        ENGINE_CYLINDER(MOD, "engine/cylinder")
         ;
 
         public final TagKey<Item> tag;

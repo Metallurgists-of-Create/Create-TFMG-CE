@@ -1,6 +1,7 @@
 package com.drmangotea.tfmg.content.engines.types.regular_engine;
 
 import com.drmangotea.tfmg.base.TFMGUtils;
+import com.drmangotea.tfmg.base.data_storage.CylinderFuels;
 import com.drmangotea.tfmg.base.lang.TFMGTexts;
 import com.drmangotea.tfmg.config.TFMGConfigs;
 import com.drmangotea.tfmg.content.engines.fuel.EngineFuelType;
@@ -18,9 +19,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.FluidTags;
-import net.minecraft.tags.TagKey;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -30,12 +28,13 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.fluids.FluidStack;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Predicate;
 
 import static com.drmangotea.tfmg.content.engines.base.EngineProperties.*;
 import static com.drmangotea.tfmg.content.engines.types.regular_engine.RegularEngineBlock.EXTENDED;
@@ -48,7 +47,7 @@ public class RegularEngineBlockEntity extends AbstractSmallEngineBlockEntity {
 
     public SmartInventory pistonInventory;
 
-    List<TagKey<Fluid>> supportedFuels = new ArrayList<>();
+    Predicate<FluidStack> supportedFuels = fs -> false;
 
     protected int soundTimer=0;
 
@@ -84,50 +83,39 @@ public class RegularEngineBlockEntity extends AbstractSmallEngineBlockEntity {
     }
 
     public void refreshFuels() {
+        CylinderFuels cylinderFuels = pistonInventory.getItem(0).getOrDefault(TFMGDataComponents.ENGINE_CYLINDER, CylinderFuels.EMPTY);
 
-        CompoundTag fuelsToAllow = pistonInventory.getItem(0).get(TFMGDataComponents.FUEL_TAGS);
-
-        if(fuelsToAllow == null)
+        if(cylinderFuels.isEmpty())
             return;
 
-        List<TagKey<Fluid>> fuelsFound = new ArrayList<>();
-        for (String key : fuelsToAllow.getAllKeys()) {
+        Predicate<FluidStack> isFuelValid = (fs) -> {
+            if (level == null)
+                return false;
+            return cylinderFuels.testFuel(fs, level.registryAccess());
+        };
 
-            String id = fuelsToAllow.getString(key);
-
-            TagKey<Fluid> tag = FluidTags.create(ResourceLocation.fromNamespaceAndPath("c",id.replace("c:","")));
-
-            fuelsFound.add(tag);
-        }
-
-        if (level.getBlockEntity(controller) instanceof RegularEngineBlockEntity be) {
-            be.supportedFuels = new ArrayList<>(fuelsFound);
-
-            for (Long position : be.engines) {
-                BlockPos pos = BlockPos.of(position);
-                if (level.getBlockEntity(pos) instanceof RegularEngineBlockEntity be1) {
-                    be1.supportedFuels = new ArrayList<>(fuelsFound);
+        if (level == null) return;
+        if (level.getBlockEntity(controller) instanceof RegularEngineBlockEntity ctrl) {
+            ctrl.supportedFuels = isFuelValid;
+            for (BlockPos pos : ctrl.engines) {
+                if (level.getBlockEntity(pos) instanceof RegularEngineBlockEntity engine) {
+                    engine.supportedFuels = isFuelValid;
                 }
             }
         }
     }
 
     @Override
-    public List<TagKey<Fluid>> getSupportedFuels() {
+    public Predicate<FluidStack> validFuels() {
         return supportedFuels;
     }
 
-
-
     @Override
     public boolean canWork() {
-
-
+        if (level == null) return false;
         if (level.getBlockEntity(controller) instanceof RegularEngineBlockEntity controller) {
-
-            for (Long position : controller.getAllEngines()) {
-
-                if (level.getBlockEntity(BlockPos.of(position)) instanceof RegularEngineBlockEntity be) {
+            for (BlockPos pos : controller.getAllEngines()) {
+                if (level.getBlockEntity(pos) instanceof RegularEngineBlockEntity be) {
                     for (int i = 0; i < be.pistonInventory.getSlots(); i++) {
                         if (be.pistonInventory.getItem(i).isEmpty()) {
                             return false;
@@ -140,10 +128,10 @@ public class RegularEngineBlockEntity extends AbstractSmallEngineBlockEntity {
         return false;
     }
 
-    public boolean hasAllPistons(){
-        for (Long position : getControllerBE().getAllEngines()) {
-
-            if (level.getBlockEntity(BlockPos.of(position)) instanceof RegularEngineBlockEntity be) {
+    public boolean hasAllPistons() {
+        if (level == null) return false;
+        for (BlockPos pos : getControllerBE().getAllEngines()) {
+            if (level.getBlockEntity(pos) instanceof RegularEngineBlockEntity be) {
                 for (int i = 0; i < be.pistonInventory.getSlots(); i++) {
                     if (be.pistonInventory.getItem(i).isEmpty()) {
                         return false;
@@ -156,13 +144,10 @@ public class RegularEngineBlockEntity extends AbstractSmallEngineBlockEntity {
 
     @Override
     public boolean insertItem(ItemStack itemStack, boolean shifting, Player player, InteractionHand hand) {
-
-
+        if (level == null) return false;
         if (itemStack.is(AllItems.EMPTY_SCHEMATIC.get())) {
-
             if(type == EngineType.RADIAL||type == EngineType.TURBINE)
                 return false;
-
             boolean next = false;
             if (type == EngineType.BOXER) {
                 if (level.getBlockEntity(controller) instanceof RegularEngineBlockEntity be)
@@ -243,30 +228,25 @@ public class RegularEngineBlockEntity extends AbstractSmallEngineBlockEntity {
     }
 
     public boolean isCylinderSame(ItemStack stack) {
-
+        if (level == null)
+            return false;
         if(stack.is(TFMGItems.TURBINE_BLADE.get()))
             return true;
 
-        CompoundTag tag = stack.get(TFMGDataComponents.FUELS);
+        CylinderFuels cylinderFuels = stack.getOrDefault(TFMGDataComponents.ENGINE_CYLINDER, CylinderFuels.EMPTY);
 
-
-        if (level.getBlockEntity(controller) instanceof RegularEngineBlockEntity controller) {
-
-            List<Long> engines = new ArrayList<>(controller.engines);
-            engines.add(this.controller.asLong());
-
-
-            for (int i = 0; i < controller.engineLength() + 1; i++) {
-                BlockPos pos = BlockPos.of(engines.get(i));
+        if (level.getBlockEntity(controller) instanceof RegularEngineBlockEntity ctrl) {
+            List<BlockPos> engines = new ArrayList<>(ctrl.engines);
+            engines.add(this.controller);
+            for (int i = 0; i < ctrl.engineLength() + 1; i++) {
+                BlockPos pos = engines.get(i);
                 if (level.getBlockEntity(pos) instanceof RegularEngineBlockEntity be) {
                     for (int y = 0; y < be.pistonInventory.getSlots(); y++) {
-                        if (!be.pistonInventory.getItem(y).is(TFMGItems.ENGINE_CYLINDER.get()))
+                        if (!be.pistonInventory.getItem(y).has(TFMGDataComponents.ENGINE_CYLINDER))
                             continue;
-
-                        CompoundTag tagInside = be.pistonInventory.getItem(y).get(TFMGDataComponents.FUELS);
-                        if (!Objects.equals(tagInside, tag))
+                        CylinderFuels fuelsInside = be.pistonInventory.getItem(y).getOrDefault(TFMGDataComponents.ENGINE_CYLINDER, CylinderFuels.EMPTY);
+                        if (!fuelsInside.isEmpty() && !fuelsInside.isSame(cylinderFuels))
                             return false;
-
                     }
                 }
             }
@@ -278,11 +258,9 @@ public class RegularEngineBlockEntity extends AbstractSmallEngineBlockEntity {
     @Override
     public void tick() {
         super.tick();
-
+        if (level == null) return;
         if (level.isClientSide)
             makeSound();
-
-
         if (updateFuel) {
             refreshFuels();
             updateFuel = false;
@@ -297,10 +275,8 @@ public class RegularEngineBlockEntity extends AbstractSmallEngineBlockEntity {
             return;
 
         if(soundTimer>1/Math.min(6000,(rpm*0.0002)*pistonInventory.getSlots())) {
-
-
+            if (level == null) return;
             soundTimer = 0;
-
             float randomPitch = (level.getRandom().nextFloat()-.5f)*0.05f;
 
             if (this instanceof TurbineEngineBlockEntity) {
@@ -313,7 +289,7 @@ public class RegularEngineBlockEntity extends AbstractSmallEngineBlockEntity {
     }
 
     public boolean updateEngineType(EngineType newType) {
-
+        if (level == null) return false;
         Direction updateDirection = getBlockState().getValue(HORIZONTAL_FACING);
         if (level.getBlockEntity(getBlockPos().relative(updateDirection)) instanceof RegularEngineBlockEntity be) {
             return be.updateEngineType(newType);

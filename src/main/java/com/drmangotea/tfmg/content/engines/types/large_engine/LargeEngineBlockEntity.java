@@ -26,11 +26,9 @@ import net.minecraft.core.Direction.AxisDirection;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.phys.AABB;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
@@ -44,6 +42,7 @@ import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Predicate;
 
 public class LargeEngineBlockEntity extends AbstractEngineBlockEntity {
 
@@ -75,8 +74,8 @@ public class LargeEngineBlockEntity extends AbstractEngineBlockEntity {
     public void refreshCapability() {}
 
     @Override
-    public List<TagKey<Fluid>> getSupportedFuels() {
-        return List.of(TFMGTags.TFMGFluidTags.DIESEL.tag, TFMGTags.TFMGFluidTags.KEROSENE.tag, TFMGTags.TFMGFluidTags.NAPHTHA.tag, TFMGTags.TFMGFluidTags.FURNACE_GAS.tag);
+    public Predicate<FluidStack> validFuels() {
+        return (fs -> fs.is(TFMGTags.TFMGFluidTags.DIESEL.tag) || fs.is(TFMGTags.TFMGFluidTags.KEROSENE.tag) || fs.is(TFMGTags.TFMGFluidTags.NAPHTHA.tag) || fs.is(TFMGTags.TFMGFluidTags.FURNACE_GAS.tag));
     }
 
     @Override
@@ -108,15 +107,10 @@ public class LargeEngineBlockEntity extends AbstractEngineBlockEntity {
         super.tick();
 
         PoweredShaftBlockEntity shaft = getShaft();
-
-        if (shaft == null) {
+        if (level == null) return;
+        if (shaft != null) {
             if (!level.isClientSide()) {
-
-                if (shaft == null)
-                    return;
-                if (!shaft.getBlockPos()
-                        .subtract(worldPosition)
-                        .equals(shaft.enginePos))
+                if (!shaft.getBlockPos().subtract(worldPosition).equals(shaft.enginePos))
                     return;
                 if (shaft.engineEfficiency == 0)
                     return;
@@ -167,8 +161,6 @@ public class LargeEngineBlockEntity extends AbstractEngineBlockEntity {
             return;
         if(fuelTank.isEmpty()||airTank.isEmpty()||exhaustTank.getSpace() == 0)
             return;
-        //if (engineStrength == 0)
-        //	return;
         PoweredShaftBlockEntity shaft = getShaft();
 
 
@@ -213,18 +205,12 @@ public class LargeEngineBlockEntity extends AbstractEngineBlockEntity {
     private void engineProcess() {
         PoweredShaftBlockEntity shaft = getShaft();
 
-
         if (!canWork()) {
             shaft.update(worldPosition, 0, 0);
             return;
         }
 
-        boolean isFuelValid = false;
-        for(TagKey<Fluid> tag : getSupportedFuels()){
-            if(fuelTank.getFluid().getFluid().is(tag))
-                isFuelValid = true;
-        }
-
+        boolean isFuelValid = validFuels().test(fuelTank.getFluid());
         AtomicReference<Float> fuelTypeTorque = new AtomicReference<>(1.0f);
         if (level != null) {
             Optional<EngineFuelType> fuelType = getFuelType().getFuelType(this.level.registryAccess());
@@ -264,6 +250,7 @@ public class LargeEngineBlockEntity extends AbstractEngineBlockEntity {
     }
 
     public PoweredShaftBlockEntity getShaft() {
+        if (level == null) return null;
         PoweredShaftBlockEntity shaft = target.get();
         if (shaft == null || shaft.isRemoved() || !shaft.canBePoweredBy(worldPosition)) {
             if (shaft != null)
