@@ -239,7 +239,7 @@ public class RegularEngineBlockEntity extends AbstractSmallEngineBlockEntity {
     }
 
     public boolean isCorrectCylinder(ItemStack itemStack) {
-        return itemStack.is(TFMGItems.ENGINE_CYLINDER.get())||itemStack.is(TFMGItems.SIMPLE_ENGINE_CYLINDER.get())||itemStack.is(TFMGItems.DIESEL_ENGINE_CYLINDER.get());
+        return itemStack.is(TFMGItems.ENGINE_CYLINDER.get())||itemStack.is(TFMGItems.AUTOGAS_ENGINE_CYLINDER.get())||itemStack.is(TFMGItems.SIMPLE_ENGINE_CYLINDER.get())||itemStack.is(TFMGItems.DIESEL_ENGINE_CYLINDER.get());
     }
 
     public boolean isCylinderSame(ItemStack stack) {

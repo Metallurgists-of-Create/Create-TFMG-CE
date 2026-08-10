@@ -16,7 +16,7 @@
   ],
   "result": {
     "count": 1,
-    "id": "tfmg:engine_cylinder",
+    "id": "tfmg:autogas_engine_cylinder",
     "components": {
       "tfmg:fuel_tags": {
         "lpg": "c:lpg"
