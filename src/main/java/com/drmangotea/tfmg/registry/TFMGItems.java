@@ -38,7 +38,7 @@ import com.tterrag.registrate.util.DataIngredient;
 import com.tterrag.registrate.util.entry.ItemEntry;
 import net.minecraft.core.Holder;
 import net.minecraft.data.recipes.RecipeCategory;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.*;
@@ -184,21 +184,14 @@ public class TFMGItems {
 
     public static final ItemEntry<ResistorItem>
             UNFINISHED_RESISTOR = REGISTRATE.item("unfinished_resistor", ResistorItem::new).register();
-   //public static final ItemEntry<CylinderItem>
-   //        DIESEL_ENGINE_CYLINDER = REGISTRATE.item("diesel_engine_cylinder", CylinderItem::new).register(),
-   //        SIMPLE_ENGINE_CYLINDER = REGISTRATE.item("simple_engine_cylinder", CylinderItem::new).register(),
-   //        ENGINE_CYLINDER = REGISTRATE.item("engine_cylinder", CylinderItem::new).register(),
-   //        TURBINE_BLADE = REGISTRATE.item("turbine_blade", CylinderItem::new).register();
+	
     public static final ItemEntry<SpoolItem>
-            EMPTY_SPOOL = spoolItem("empty", 0x000000, TFMG.asResource("empty"))
+		EMPTY_SPOOL = spoolItem("empty", 0x000000)
             .recipe((c, p) -> p.stonecutting(DataIngredient.items(TFMGBlocks.HARDENED_PLANKS.asItem()), RecipeCategory.BUILDING_BLOCKS, c, 1))
             .register(),
-            COPPER_SPOOL = spoolItem("copper", 0xD8735A, TFMG.asResource("copper"))
-                    .register(),
-            ALUMINUM_SPOOL = spoolItem("aluminum", 0xEDEFEF, TFMG.asResource("aluminum"))
-                    .register(),
-            CONSTANTAN_SPOOL = spoolItem("constantan", 0xCFC2A8, TFMG.asResource("constantan"))
-                    .register();
+		COPPER_SPOOL = fullSpoolItem("copper", 0xD8735A),
+		ALUMINUM_SPOOL = fullSpoolItem("aluminum", 0xEDEFEF),
+		CONSTANTAN_SPOOL = fullSpoolItem("constantan", 0xCFC2A8);
 
     public static final ItemEntry<ElectromagneticCoilItem> ELECTROMAGNETIC_COIL =
             REGISTRATE.item("electromagnetic_coil", ElectromagneticCoilItem::new)
@@ -297,10 +290,11 @@ public class TFMGItems {
             .register();
 
     public static final ItemEntry<CylinderItem>
-            DIESEL_ENGINE_CYLINDER = REGISTRATE.item("diesel_engine_cylinder", CylinderItem::new).register(),
-            SIMPLE_ENGINE_CYLINDER = REGISTRATE.item("simple_engine_cylinder", CylinderItem::new).register(),
-            ENGINE_CYLINDER = REGISTRATE.item("engine_cylinder", CylinderItem::new).register(),
-            TURBINE_BLADE = REGISTRATE.item("turbine_blade", CylinderItem::new).register();
+		DIESEL_ENGINE_CYLINDER = cylinder("diesel_engine_cylinder", "diesel"),
+		SIMPLE_ENGINE_CYLINDER = cylinder("simple_engine_cylinder", "creosote","furnace_gas"),
+		ENGINE_CYLINDER = cylinder("engine_cylinder", "gasoline","kerosene","naphtha"),
+		AUTOGAS_ENGINE_CYLINDER = cylinder("autogas_engine_cylinder", "lpg"),
+		TURBINE_BLADE = cylinder("turbine_blade", "kerosene");
 
 
     public static final ItemEntry<FluidContainingItem>
@@ -473,13 +467,38 @@ public class TFMGItems {
         return map;
     }
 
-    public static ItemBuilder<SpoolItem, CreateRegistrate> spoolItem(String name, int barColor, ResourceLocation type) {
-        return REGISTRATE.item(name + "_spool", p -> new SpoolItem(p, barColor, type))
+    public static ItemBuilder<SpoolItem, CreateRegistrate> spoolItem(String name, int barColor) {
+        return REGISTRATE.item(name + "_spool", p -> new SpoolItem(p, barColor, TFMG.asResource(name)))
                 .tag(TFMGItemTags.SPOOLS.tag)
                 .properties(p -> p.stacksTo(1));
-
     }
-
+	
+	public static ItemEntry<SpoolItem> fullSpoolItem(String name, int barColor) {
+		return spoolItem(name, barColor)
+			.tab(TFMGCreativeTabs.TFMG_MAIN.getKey(), (c,m) -> {
+				//custom creative tab addition
+				ItemStack spool = c.getEntry().getDefaultInstance();
+				spool.set(TFMGDataComponents.SPOOL_AMOUNT, 1000);
+				m.accept(spool, CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
+			}).register();
+	}
+	
+	public static ItemEntry<CylinderItem> cylinder(String name, String... fuelTypes) {
+		//for now, fuelTypes is just used to add them to the creative entry
+		return REGISTRATE.item(name, CylinderItem::new)
+			.tab(TFMGCreativeTabs.TFMG_MAIN.getKey(), (c,m) -> {
+				//custom creative tab addition
+				CompoundTag fuelTags = new CompoundTag(), fuels = new CompoundTag();
+				for (String fuel : fuelTypes) { //this will have to be reworked if the components get reworked
+					fuelTags.putString(fuel, "c:" + fuel);
+					fuels.putString(fuel, "fluid.tfmg." + fuel);
+				}
+				ItemStack stack = c.get().getDefaultInstance();
+				stack.set(TFMGDataComponents.FUEL_TAGS, fuelTags);
+				stack.set(TFMGDataComponents.FUELS, fuels);
+				m.accept(stack);
+			}).register();
+	}
 
     private static ItemEntry<ThermiteGrenadeItem> thermiteGrenade(String name, ThermiteGrenade.ChemicalColor color) {
         return REGISTRATE.item(name, p -> new ThermiteGrenadeItem(p, color))
