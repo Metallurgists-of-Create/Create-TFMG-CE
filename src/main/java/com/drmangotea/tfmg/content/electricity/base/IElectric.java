@@ -273,7 +273,7 @@ public interface IElectric {
         BlockPos pos = BlockPos.of(getPos());
         if (this instanceof CableConnectorBlockEntity be) {
             for (CableConnection connection : be.connections) {
-                if (getLevelAccessor().getBlockEntity(connection.blockPos1 == this.getBlockPos() ? connection.blockPos2 : connection.blockPos1) instanceof CableConnectorBlockEntity otherBe) {
+                if (getLevelAccessor().getBlockEntity(connection.pos1() == this.getBlockPos() ? connection.pos2() : connection.pos1()) instanceof CableConnectorBlockEntity otherBe) {
 
                     if (!otherBe.destroyed()) {
                         if (!getOrCreateElectricNetwork().members.contains(otherBe))
@@ -335,8 +335,7 @@ public interface IElectric {
 
         if (this instanceof CableConnectorBlockEntity connectorBE) {
             for (CableConnection connection : connectorBE.connections) {
-
-                if (getLevelAccessor().getBlockEntity(connection.blockPos1) instanceof CableConnectorBlockEntity be2 && !alreadyChecked.contains(BlockPos.of(be2.getPos()))
+                if (getLevelAccessor().getBlockEntity(connection.pos1()) instanceof CableConnectorBlockEntity be2 && !alreadyChecked.contains(BlockPos.of(be2.getPos()))
                 ) {
                     be2.updateUnpowered(alreadyChecked);
                 }

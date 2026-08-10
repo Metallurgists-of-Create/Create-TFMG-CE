@@ -33,7 +33,6 @@ import java.util.Objects;
 import static com.drmangotea.tfmg.base.blocks.WallMountBlock.FACING;
 
 public class SpoolItem extends Item {
-
     public final int barColor;
     public final ResourceLocation cableTypeKey;
 
@@ -48,24 +47,20 @@ public class SpoolItem extends Item {
     public void onCraftedBy(ItemStack stack, Level p_41448_, Player p_41449_) {
         stack.set(TFMGDataComponents.SPOOL_AMOUNT, 1000);
         super.onCraftedBy(stack, p_41448_, p_41449_);
-
     }
-
 
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
-        if (player.isCrouching() && stack.getOrDefault(TFMGDataComponents.POSITION, 0f).longValue() != 0f) {
-            if (level.getBlockEntity(BlockPos.of(stack.getOrDefault(TFMGDataComponents.POSITION, 0f).longValue())) instanceof CableConnectorBlockEntity be)
+        if (player.isCrouching() && stack.has(TFMGDataComponents.POSITION)) {
+            if (level.getBlockEntity(stack.get(TFMGDataComponents.POSITION)) instanceof CableConnectorBlockEntity be)
                 be.player = null;
-            stack.set(TFMGDataComponents.POSITION, 0l);
             stack.remove(TFMGDataComponents.POSITION);
-            stack.remove(TFMGDataComponents.X_POS);
-            stack.remove(TFMGDataComponents.Y_POS);
-            stack.remove(TFMGDataComponents.Z_POS);
             if (level.isClientSide)
-                player.displayClientMessage(TFMGLang.translateDirect("wires.removed_data")
-                        .withStyle(ChatFormatting.YELLOW), true);
+                player.displayClientMessage(
+					TFMGLang.translateDirect("wires.removed_data").withStyle(ChatFormatting.YELLOW),
+					true
+				);
             return InteractionResultHolder.success(stack);
 
         }
@@ -76,26 +71,19 @@ public class SpoolItem extends Item {
     @Override
     @OnlyIn(Dist.CLIENT)
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
-
         String text = TFMGLang.translateDirect("tooltip.coils").getString();
-
-        tooltip.add(TFMGLang.text(text + stack.getOrDefault(TFMGDataComponents.SPOOL_AMOUNT, 0)).component().withStyle(ChatFormatting.GREEN)
-
-        );
+        tooltip.add(TFMGLang.text(text + stack.getOrDefault(TFMGDataComponents.SPOOL_AMOUNT, 0)).component().withStyle(ChatFormatting.GREEN));
 
         if (stack.get(TFMGDataComponents.POSITION) == null)
             return;
-        BlockPos pos = BlockPos.of(stack.get(TFMGDataComponents.POSITION));
-        if (pos.asLong() != 0)
-            tooltip.add(TFMGLang.text(pos.getX() + " " + pos.getY() + " " + pos.getZ()).component()
-                    .withStyle(ChatFormatting.AQUA)
-            );
+        BlockPos pos = stack.get(TFMGDataComponents.POSITION);
+        if (pos != null)
+            tooltip.add(TFMGLang.text(pos.getX() + " " + pos.getY() + " " + pos.getZ()).component().withStyle(ChatFormatting.AQUA));
         super.appendHoverText(stack, context, tooltip, flag);
     }
 
     @Override
     public InteractionResult useOn(UseOnContext context) {
-
         Level level = context.getLevel();
         BlockPos pos = context.getClickedPos();
         Player player = context.getPlayer();
@@ -134,9 +122,9 @@ public class SpoolItem extends Item {
 
 
             if (stack.get(TFMGDataComponents.POSITION) != null) {
-                BlockPos posToConnect = BlockPos.of(stack.get(TFMGDataComponents.POSITION));
+                BlockPos posToConnect = stack.get(TFMGDataComponents.POSITION);
                 if (posToConnect.equals(pos)) {
-                    stack.set(TFMGDataComponents.POSITION, 0l);
+                    stack.remove(TFMGDataComponents.POSITION);
                     if (level.isClientSide)
                         player.displayClientMessage(TFMGLang.translateDirect("wires.cant_connect_itself")
                                 .withStyle(ChatFormatting.YELLOW), true);
@@ -153,19 +141,13 @@ public class SpoolItem extends Item {
 
                 }
                 if (level.getBlockEntity(posToConnect) instanceof CableConnectorBlockEntity otherBE) {
-                    //CableConnectorBlockEntity connectedBe1 = pos.asLong()>posToConnect.asLong() ? otherBE : be;
-                    //CableConnectorBlockEntity connectedBe2= pos.asLong()>posToConnect.asLong() ? be : otherBE;
                     CableType cableType = TFMGUtils.getCableType(cableTypeKey);
 
-                    CableConnection connection1 = new CableConnection(be.getCablePosition(), otherBE.getCablePosition(), otherBE.getBlockPos(),be.getBlockPos(), cableType, true);
-                    CableConnection connection2 = new CableConnection(otherBE.getCablePosition(), be.getCablePosition(), be.getBlockPos(),otherBE.getBlockPos(), cableType, false);
-
-                    float wireCost = (connection1.getLength() / 8);
-
-
-                    if (stack.get(TFMGDataComponents.SPOOL_AMOUNT) < wireCost * 125) {
-                        return InteractionResult.PASS;
-                    }
+                    CableConnection connection1 = new CableConnection(otherBE.getBlockPos(),be.getBlockPos(), cableType, true);
+                    CableConnection connection2 = new CableConnection(be.getBlockPos(),otherBE.getBlockPos(), cableType, false);
+					
+					int amount = stack.get(TFMGDataComponents.SPOOL_AMOUNT) - (int) (connection1.getLength() / 8)*125;
+                    if (amount < 0) { return InteractionResult.PASS; }
                     if (be.connections.contains(connection1) || otherBE.connections.contains(connection1)) {
                         if (level.isClientSide)
                             player.displayClientMessage(TFMGLang.translateDirect("wires.connection_already_created")
@@ -175,16 +157,10 @@ public class SpoolItem extends Item {
                         be.setChanged();
                         return InteractionResult.SUCCESS;
                     }
-                    //  if(!level.isClientSide) {
                     be.connections.add(connection1);
                     otherBE.connections.add(connection2);
 
-
-                    //   otherBE.onPlaced();
-                    //}
-
-                    //  connectedBe1.wiresUpdated();
-                    stack.set(TFMGDataComponents.SPOOL_AMOUNT, (int) (stack.get(TFMGDataComponents.SPOOL_AMOUNT) - (wireCost * 125)));
+                    stack.set(TFMGDataComponents.SPOOL_AMOUNT, amount);
                     be.player = null;
                     otherBE.player = null;
                     be.setChanged();
@@ -192,9 +168,6 @@ public class SpoolItem extends Item {
                     be.sendData();
                     otherBE.sendData();
                     stack.remove(TFMGDataComponents.POSITION);
-                    stack.remove(TFMGDataComponents.X_POS);
-                    stack.remove(TFMGDataComponents.Y_POS);
-                    stack.remove(TFMGDataComponents.Z_POS);
                 }
                 //
                 be.player = null;
@@ -205,10 +178,7 @@ public class SpoolItem extends Item {
                 }
                 return InteractionResult.SUCCESS;
             } else {
-                stack.set(TFMGDataComponents.POSITION, be.getBlockPos().asLong());
-                stack.set(TFMGDataComponents.X_POS, (int) be.getCablePosition().x());
-                stack.set(TFMGDataComponents.Y_POS, (int) be.getCablePosition().y());
-                stack.set(TFMGDataComponents.Z_POS, (int) be.getCablePosition().z());
+                stack.set(TFMGDataComponents.POSITION, be.getBlockPos());
                 be.player = player;
                 be.color = barColor;
                 be.sendData();
@@ -218,9 +188,6 @@ public class SpoolItem extends Item {
                 return InteractionResult.SUCCESS;
             }
         }
-//
-//
-
         return InteractionResult.PASS;
     }
 

@@ -1,7 +1,6 @@
 package com.drmangotea.tfmg.content.electricity.lights.neon_tube;
 
 import com.drmangotea.tfmg.content.electricity.base.IElectric;
-import com.drmangotea.tfmg.content.electricity.connection.cables.SimplePos;
 import com.drmangotea.tfmg.content.electricity.lights.LightBulbBlock;
 import com.drmangotea.tfmg.registry.TFMGBlockEntities;
 import com.drmangotea.tfmg.registry.TFMGBlocks;
@@ -60,40 +59,34 @@ public class NeonTubeBlock extends PipeBlock implements IBE<NeonTubeBlockEntity>
     public InteractionResult onWrenched(BlockState state, UseOnContext context) {
         Level level = context.getLevel();
         BlockPos pos = context.getClickedPos();
-        Direction facing = context.getClickedFace();
         Vec3 position = context.getClickLocation();
-
-        SimplePos clickPosition = new SimplePos(position.x()-pos.getX(),position.y()-pos.getY(),position.z()-pos.getZ());
-
-        Direction dirToToggle = Direction.NORTH;
-
-        if(clickPosition.x()>=0.375&&clickPosition.x()<=0.625&&clickPosition.y()>=0.375&&clickPosition.y()<=0.625&&clickPosition.z()>=0.375&&clickPosition.z()<=0.625){
-            dirToToggle = facing;
-        }
-
-        if(clickPosition.x()>0.625)
-            dirToToggle = Direction.EAST;
-        if(clickPosition.x()<0.375)
-            dirToToggle = Direction.WEST;
-        if(clickPosition.y()>0.625)
-            dirToToggle = Direction.UP;
-        if(clickPosition.y()<0.375)
-            dirToToggle = Direction.DOWN;
-        if(clickPosition.z()>0.625)
-            dirToToggle = Direction.SOUTH;
-        if(clickPosition.z()<0.375)
-            dirToToggle = Direction.NORTH;
-
-
-
-        switch (dirToToggle){
-            case UP -> level.setBlockAndUpdate(pos, state.setValue(UP,!state.getValue(UP)));
-            case DOWN -> level.setBlockAndUpdate(pos, state.setValue(DOWN,!state.getValue(DOWN)));
-            case WEST -> level.setBlockAndUpdate(pos, state.setValue(WEST,!state.getValue(WEST)));
-            case EAST -> level.setBlockAndUpdate(pos, state.setValue(EAST,!state.getValue(EAST)));
-            case NORTH -> level.setBlockAndUpdate(pos, state.setValue(NORTH,!state.getValue(NORTH)));
-            case SOUTH -> level.setBlockAndUpdate(pos, state.setValue(SOUTH,!state.getValue(SOUTH)));
-        }
+		
+		double X = position.x()-pos.getX();
+		double Y = position.y()-pos.getY();
+		double Z = position.z()-pos.getZ();
+		
+		Direction dirToToggle = Direction.NORTH;
+		
+		if (   X >= 0.375 && X <= 0.625
+			&& Y >= 0.375 && Y <= 0.625
+			&& Z >= 0.375 && Z <= 0.625
+		) { dirToToggle = context.getClickedFace(); }
+		
+		if(X>0.625) dirToToggle = Direction.EAST;
+		if(X<0.375) dirToToggle = Direction.WEST;
+		if(Y>0.625) dirToToggle = Direction.UP;
+		if(Y<0.375) dirToToggle = Direction.DOWN;
+		if(Z>0.625) dirToToggle = Direction.SOUTH;
+		if(Z<0.375) dirToToggle = Direction.NORTH;
+		
+		switch (dirToToggle) {
+			case UP -> level.setBlockAndUpdate(pos, state.setValue(UP,!state.getValue(UP)));
+			case DOWN -> level.setBlockAndUpdate(pos, state.setValue(DOWN,!state.getValue(DOWN)));
+			case WEST -> level.setBlockAndUpdate(pos, state.setValue(WEST,!state.getValue(WEST)));
+			case EAST -> level.setBlockAndUpdate(pos, state.setValue(EAST,!state.getValue(EAST)));
+			case NORTH -> level.setBlockAndUpdate(pos, state.setValue(NORTH,!state.getValue(NORTH)));
+			case SOUTH -> level.setBlockAndUpdate(pos, state.setValue(SOUTH,!state.getValue(SOUTH)));
+		}
 
         withBlockEntityDo(level,pos, IElectric::onPlaced);
 

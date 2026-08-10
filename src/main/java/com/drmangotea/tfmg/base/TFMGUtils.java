@@ -6,11 +6,8 @@ import com.drmangotea.tfmg.base.lang.TFMGLang;
 import com.drmangotea.tfmg.base.spark.ElectricSparkParticle;
 import com.drmangotea.tfmg.base.spark.Spark;
 import com.drmangotea.tfmg.content.electricity.connection.cable_type.CableType;
-import com.drmangotea.tfmg.content.electricity.connection.cables.CablePos;
 import com.drmangotea.tfmg.content.machinery.vat.electrode_holder.electrode.Electrode;
 import com.drmangotea.tfmg.registry.TFMGEntityTypes;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.simibubi.create.Create;
 import com.simibubi.create.content.fluids.tank.FluidTankBlockEntity;
 import com.simibubi.create.foundation.fluid.SmartFluidTank;
@@ -19,9 +16,6 @@ import net.createmod.catnip.lang.LangBuilder;
 import net.createmod.catnip.outliner.Outliner;
 import net.createmod.catnip.theme.Color;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.renderer.LightTexture;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -34,7 +28,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.phys.AABB;
@@ -44,7 +37,6 @@ import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.items.IItemHandlerModifiable;
 import org.apache.commons.lang3.StringUtils;
-import org.joml.Matrix4f;
 
 import java.util.Arrays;
 import java.util.List;
@@ -152,19 +144,11 @@ public class TFMGUtils {
     }
 
     public static float getDistance(BlockPos pos1, BlockPos pos2, boolean _2D) {
-
-
         float x = Math.abs(pos1.getX() - pos2.getX());
         float y = Math.abs(pos1.getY() - pos2.getY());
         float z = Math.abs(pos1.getZ() - pos2.getZ());
 
-
-        float distance2D = (float) Math.sqrt(x * x + z * z);
-
-        if (_2D) return distance2D;
-
-
-        return (float) Math.sqrt(distance2D * distance2D + y * y);
+        return (float) Math.sqrt(x * x + z * z + (_2D?0:y*y));
     }
 
     public static void createStorageTooltip(BlockEntity be, List<Component> tooltip) {
@@ -314,79 +298,6 @@ public class TFMGUtils {
     }
 
     /// //////////////////////
-    public static void renderWire(Level level, PoseStack pMatrixStack, MultiBufferSource pBuffer, CablePos pos1, CablePos pos2,
-                                  float curve, float r, float g, float b) {
-        renderWire(level, pMatrixStack, pBuffer, pos1, pos2, curve, r, g, b, false);
-    }
-
-    public static void renderWire(Level level, PoseStack pMatrixStack, MultiBufferSource pBuffer, CablePos pos1, CablePos pos2,
-                                  float curve, float r, float g, float b, boolean flippedLighting) {
-        pMatrixStack.pushPose();
-        Vec3 vec3 = new Vec3(0, 0, 0);
-        CablePos pos2Local = pos1.subtract(pos2);
-        pMatrixStack.translate(0.5, 0.5, 0.5);
-        vec3 = vec3.add(pos2Local.x() + 0.01, pos2Local.y(), pos2Local.z() + 0.01);
-        float f = (float) (vec3.x);
-        float f1 = (float) (vec3.y);
-        float f2 = (float) (vec3.z);
-        VertexConsumer vertexconsumer = pBuffer.getBuffer(RenderType.leash());
-        Matrix4f matrix4f = pMatrixStack.last().pose();
-        float f4 = (float) (Mth.fastInvSqrt(f * f + f2 * f2) * 0.025F / 2.0F);
-        float f5 = f2 * f4;
-        float f6 = f * f4;
-        //int i =15;
-        //int j = 15;
-
-        BlockPos blockpos2;
-        BlockPos blockpos1;
-        if (flippedLighting) {
-            blockpos1 = new BlockPos((int) pos1.x(), (int) pos1.y(), (int) pos1.z());
-            blockpos2 = new BlockPos((int) pos2.x(), (int) pos2.y(), (int) pos2.z());
-        } else {
-            blockpos2 = new BlockPos((int) pos1.x(), (int) pos1.y(), (int) pos1.z());
-            blockpos1 = new BlockPos((int) pos2.x(), (int) pos2.y(), (int) pos2.z());
-        }
-        int i = level.getBrightness(LightLayer.SKY, blockpos1);
-        int j = level.getBrightness(LightLayer.SKY, blockpos2);
-        int k = level.getBrightness(LightLayer.SKY, blockpos1);
-        int l = level.getBrightness(LightLayer.SKY, blockpos2);
-
-
-        //int k = 15;
-        //int l = 15;
-        for (int i1 = 0; i1 <= 24; ++i1) {
-            addVertexPair(vertexconsumer, matrix4f, f, f1, f2, i, j, k, l, 0.030F, 0.030F, f5, f6, i1, false, curve, r, g, b);
-        }
-
-        for (int j1 = 24; j1 >= 0; --j1) {
-            addVertexPair(vertexconsumer, matrix4f, f, f1, f2, i, j, k, l, 0.030F, 0.00F, f5, f6, j1, true, curve, r, g, b);
-        }
-        pMatrixStack.popPose();
-    }
-
-
-
-    private static void addVertexPair(VertexConsumer vertexConsumer, Matrix4f matrix4f, float p_174310_, float p_174311_, float p_174312_, int light_1, int light_2, int p_174315_, int p_174316_, float thickness, float p_174318_, float p_174319_, float p_174320_, int value, boolean p_174322_, float curve, float r, float g, float b) {
-        float f = (float) (value / 24.0F);
-        int i = (int) Mth.lerp(f, (float) light_1, (float) light_2);
-        int j = (int) Mth.lerp(f, (float) p_174315_, (float) p_174316_);
-        int k = LightTexture.pack(i, j);
-        float f1 = value % 2 == (p_174322_ ? 1 : 0) ? 0.7F : 1.0F;
-        float red = r / 255 * f1;
-        float green = g / 255 * f1;
-        float blue = b / 255 * f1;
-        float x = p_174310_ * f;
-
-        float pain;
-        pain = ((value * curve * 24) - (value * value * curve)) * -1f;
-
-        float y = p_174311_ > 0.0F ? p_174311_ * f * f : p_174311_ - p_174311_ * (1.0F - f) * (1.0F - f);
-        float z = p_174312_ * f;
-        vertexConsumer.addVertex(matrix4f, x - p_174319_, y + p_174318_ + pain, z + p_174320_).setColor(red, green, blue, 1.0F).setLight(k);
-        vertexConsumer.addVertex(matrix4f, x + p_174319_, y + thickness - p_174318_ + pain, z - p_174320_).setColor(red, green, blue, 1.0F).setLight(k);
-    }
-
-
     public static Electrode getElectrode(ResourceLocation key) {
         return TFMGRegistries.ELECTRODE_REGISTRY.get(key);
     }
@@ -394,5 +305,4 @@ public class TFMGUtils {
     public static CableType getCableType(ResourceLocation key) {
         return TFMGRegistries.CABLE_TYPE_REGISTRY.get(key);
     }
-
 }

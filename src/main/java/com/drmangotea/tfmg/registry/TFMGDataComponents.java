@@ -4,6 +4,7 @@ import java.util.function.UnaryOperator;
 
 import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.content.items.weapons.flamethrover.FlamethrowerFuel;
+import net.minecraft.core.BlockPos;
 import org.jetbrains.annotations.ApiStatus.Internal;
 
 import com.mojang.serialization.Codec;
@@ -65,25 +66,10 @@ public class TFMGDataComponents {
 			"amount",
 			builder -> builder.persistent(Codec.INT).networkSynchronized(ByteBufCodecs.VAR_INT)
 	);
-	public static final DataComponentType<Long> POSITION = register(
+	public static final DataComponentType<BlockPos> POSITION = register(
 			"position",
-			builder -> builder.persistent(Codec.LONG).networkSynchronized(ByteBufCodecs.VAR_LONG)
+			builder -> builder.persistent(BlockPos.CODEC).networkSynchronized(BlockPos.STREAM_CODEC)
 	);
-
-	public static final DataComponentType<Integer> X_POS = register(
-			"x_pos",
-			builder -> builder.persistent(Codec.INT).networkSynchronized(ByteBufCodecs.VAR_INT)
-	);
-	public static final DataComponentType<Integer> Y_POS = register(
-			"y_pos",
-			builder -> builder.persistent(Codec.INT).networkSynchronized(ByteBufCodecs.VAR_INT)
-	);
-	public static final DataComponentType<Integer> Z_POS = register(
-			"z_pos",
-			builder -> builder.persistent(Codec.INT).networkSynchronized(ByteBufCodecs.VAR_INT)
-	);
-
-
 
 	private static <T> DataComponentType<T> register(String name, UnaryOperator<Builder<T>> builder) {
 		DataComponentType<T> type = builder.apply(DataComponentType.builder()).build();
