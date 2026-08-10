@@ -54,8 +54,8 @@ public class ElectricBlockEntity extends SmartBlockEntity implements IElectric, 
 
 
     @Override
-    public long getPos() {
-        return getBlockPos().asLong();
+    public BlockPos getPos() {
+        return getBlockPos();
     }
 
     @Override

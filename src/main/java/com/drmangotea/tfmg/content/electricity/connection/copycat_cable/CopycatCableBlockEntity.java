@@ -53,8 +53,8 @@ public class CopycatCableBlockEntity extends CopycatBlockEntity implements IElec
 
 
     @Override
-    public long getPos() {
-        return getBlockPos().asLong();
+    public BlockPos getPos() {
+        return getBlockPos();
     }
 
     @Override

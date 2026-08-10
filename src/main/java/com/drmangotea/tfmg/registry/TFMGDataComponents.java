@@ -5,6 +5,7 @@ import java.util.function.UnaryOperator;
 import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.base.data_storage.CylinderFuels;
 import com.drmangotea.tfmg.content.items.weapons.flamethrover.FlamethrowerFuel;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import org.jetbrains.annotations.ApiStatus.Internal;
@@ -57,22 +58,9 @@ public class TFMGDataComponents {
 			"amount",
 			builder -> builder.persistent(Codec.INT).networkSynchronized(ByteBufCodecs.VAR_INT)
 	);
-	public static final DataComponentType<Long> POSITION = register(
+	public static final DataComponentType<BlockPos> POSITION = register(
 			"position",
-			builder -> builder.persistent(Codec.LONG).networkSynchronized(ByteBufCodecs.VAR_LONG)
-	);
-
-	public static final DataComponentType<Integer> X_POS = register(
-			"x_pos",
-			builder -> builder.persistent(Codec.INT).networkSynchronized(ByteBufCodecs.VAR_INT)
-	);
-	public static final DataComponentType<Integer> Y_POS = register(
-			"y_pos",
-			builder -> builder.persistent(Codec.INT).networkSynchronized(ByteBufCodecs.VAR_INT)
-	);
-	public static final DataComponentType<Integer> Z_POS = register(
-			"z_pos",
-			builder -> builder.persistent(Codec.INT).networkSynchronized(ByteBufCodecs.VAR_INT)
+			builder -> builder.persistent(BlockPos.CODEC).networkSynchronized(BlockPos.STREAM_CODEC)
 	);
 
 	public static final DataComponentType<CylinderFuels> ENGINE_CYLINDER = register("engine_cylinder", CylinderFuels.CODEC, CylinderFuels.STREAM_CODEC);

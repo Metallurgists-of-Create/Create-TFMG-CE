@@ -208,7 +208,7 @@ public class LargeTransformerBlockEntity extends KineticElectricBlockEntity {
     public void updateInFront() {
 
         if (level instanceof ServerLevel serverLevel)
-            CatnipServices.NETWORK.sendToClientsTrackingChunk(serverLevel, new ChunkPos(worldPosition), new UpdateInFrontPacket(BlockPos.of(getPos())));
+            CatnipServices.NETWORK.sendToClientsTrackingChunk(serverLevel, new ChunkPos(worldPosition), new UpdateInFrontPacket(getBlockPos()));
         Direction facing = getBlockState().getValue(HORIZONTAL_FACING);
         if (level.getBlockEntity(getBlockPos().relative(facing)) instanceof IElectric be && be.getData().getId() != data.getId()) {
             be.updateNextTick();

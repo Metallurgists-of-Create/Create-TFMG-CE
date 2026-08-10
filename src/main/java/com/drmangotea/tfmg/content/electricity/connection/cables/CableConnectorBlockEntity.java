@@ -1,6 +1,5 @@
 package com.drmangotea.tfmg.content.electricity.connection.cables;
 
-import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.base.TFMGUtils;
 import com.drmangotea.tfmg.config.TFMGConfigs;
 import com.drmangotea.tfmg.content.electricity.base.ElectricBlockEntity;
@@ -9,7 +8,6 @@ import com.drmangotea.tfmg.registry.TFMGBlocks;
 import com.simibubi.create.api.equipment.goggles.IHaveHoveringInformation;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import net.createmod.catnip.animation.AnimationTickHolder;
-import net.createmod.catnip.animation.LerpedFloat;
 import net.createmod.catnip.math.VecHelper;
 import net.createmod.catnip.theme.Color;
 import net.minecraft.client.Minecraft;
@@ -37,13 +35,9 @@ import static com.drmangotea.tfmg.base.blocks.WallMountBlock.FACING;
 import static com.drmangotea.tfmg.content.electricity.connection.cables.CableConnectorBlock.EXTENSION;
 
 public class CableConnectorBlockEntity extends ElectricBlockEntity implements IHaveHoveringInformation {
-
     //player held cable rendering
     public Player player;
     public int color = 0x000000;
-    public LerpedFloat wireMovementX = LerpedFloat.linear();
-    public LerpedFloat wireMovementY = LerpedFloat.linear();
-    public LerpedFloat wireMovementZ = LerpedFloat.linear();
     //
 
     public List<CableConnection> connections = new ArrayList<>();
@@ -52,9 +46,6 @@ public class CableConnectorBlockEntity extends ElectricBlockEntity implements IH
 
     public CableConnectorBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
-        wireMovementX.setValue(pos.getX());
-        wireMovementY.setValue(pos.getY());
-        wireMovementZ.setValue(pos.getZ());
         id = getBlockPos().asLong();
     }
 
@@ -83,19 +74,12 @@ public class CableConnectorBlockEntity extends ElectricBlockEntity implements IH
         super.onPlaced();
     }
 
-
     @Override
     public float resistance() {
-
         if (getData().energyTaken == 0 && getData().energyGiven != 0) {
-
             return (float) Math.pow(getData().getVoltage(), 2) / (this.getData().energyGiven*11);
         }
         return super.resistance();
-        //if(this.getData().energyGiven !=0) {
-        //    return (float) getData().getVoltage() / ((float) (this.getData().energyGiven * 20) / getData().getVoltage());
-        //} else return 0;
-
     }
 
 
@@ -108,49 +92,25 @@ public class CableConnectorBlockEntity extends ElectricBlockEntity implements IH
     }
 
     public void notifyRemoval() {
-
         if (level.isClientSide)
             return;
 
         for (CableConnection connection : connections) {
-            ItemEntity itemToDrop = new ItemEntity(level, getBlockPos().getX() + 0.5f, getBlockPos().getY() + 0.5f, getBlockPos().getZ() + 0.5f, new ItemStack(connection.type.getWire().asItem(), (int) (connection.getLength() / 8)));
+            ItemEntity itemToDrop = new ItemEntity(level, getBlockPos().getX() + 0.5f, getBlockPos().getY() + 0.5f, getBlockPos().getZ() + 0.5f, new ItemStack(connection.type().getWire().asItem(), (int) (connection.getLength() / 8)));
             if (itemToDrop.getItem().getCount() > 0) {
                 level.addFreshEntity(itemToDrop);
             }
-            BlockPos pos = connection.blockPos1;
-
-            // level.setBlock(connection.blockPos1.above(), Blocks.GOLD_BLOCK.defaultBlockState(),3);
-            if (level.getBlockEntity(pos) instanceof CableConnectorBlockEntity be) {
+            if (level.getBlockEntity(connection.pos1()) instanceof CableConnectorBlockEntity be) {
                 if (be.getBlockPos() == getBlockPos())
                     continue;
                 be.onPlaced();
                 be.removeWiresNextTick = true;
-
             }
         }
     }
 
-    //@Override
-    //public float resistance() {
-    //    float resistance = 0;
-
-    //    for(CableConnection connection : connections){
-    //        if(connection.visible){
-    //            resistance+=connection.type.resistivity*connection.getLength();
-    //        }
-    //    }
-
-    //    return resistance;
-    //}
-
-
     public void removeConnection() {
-        connections.removeIf(c -> {
-            BlockPos pos = c.blockPos1;
-
-            return !(level.getBlockEntity(pos) instanceof CableConnectorBlockEntity);
-
-        });
+        connections.removeIf(c -> !(level.getBlockEntity(c.pos1()) instanceof CableConnectorBlockEntity));
         sendStuff();
     }
 
@@ -168,7 +128,6 @@ public class CableConnectorBlockEntity extends ElectricBlockEntity implements IH
             be.sendStuff();
         }
         sendStuff();
-
     }
 
     public List<CableConnectorBlockEntity> getConnectedWires() {
@@ -176,23 +135,13 @@ public class CableConnectorBlockEntity extends ElectricBlockEntity implements IH
     }
 
     public List<CableConnectorBlockEntity> getConnectedWires(List<CableConnectorBlockEntity> foundList) {
-
-
         if (!foundList.contains(this)) {
             foundList.add(this);
         }
 
         for (CableConnection connection : connections) {
-            BlockPos pos = connection.blockPos1;
-
-
-            //level.setBlockAndUpdate(pos.above(), Blocks.GOLD_BLOCK.defaultBlockState());
-            //level.setBlockAndUpdate(pos2.above(2), Blocks.DIAMOND_BLOCK.defaultBlockState());
-
-
-            if (pos == getBlockPos()) {
-                continue;
-            }
+            BlockPos pos = connection.pos1();
+            if (pos == getBlockPos()) { continue; }
             //  TFMGUtils.debugMessage(level, "Eﴤ "+connections.size());
 
 
@@ -201,7 +150,6 @@ public class CableConnectorBlockEntity extends ElectricBlockEntity implements IH
                 be.getConnectedWires(foundList);
                 sendStuff();
                 be.sendStuff();
-
             }
         }
         sendStuff();
@@ -213,14 +161,9 @@ public class CableConnectorBlockEntity extends ElectricBlockEntity implements IH
     public void tick() {
         super.tick();
         if (removeWiresNextTick) {
-
             removeConnection();
             removeWiresNextTick = false;
         }
-        if (player != null)
-            managePlayerWire();
-
-
     }
 
     @Override
@@ -250,9 +193,7 @@ public class CableConnectorBlockEntity extends ElectricBlockEntity implements IH
             //  TFMG.LOGGER.debug("meowe "+powerNeeded);
 
             getData().energyOutputs.forEach((d, c) -> {
-
-
-                int energyToTake = (int) Math.min(Math.min(1028 * 10, Math.max(powerNeeded,10)), c.getEnergyStored());
+                int energyToTake = (int) Math.min(Math.clamp(powerNeeded, 10, 1028 * 10), c.getEnergyStored());
                 int FETaken = 0;
                 int energyLeft = energyToTake;
 
@@ -292,19 +233,6 @@ public class CableConnectorBlockEntity extends ElectricBlockEntity implements IH
             connections.add(CableConnection.loadConnection(compound.getCompound("Connection" + i)));
         }
 
-    }
-
-    public void managePlayerWire() {
-        wireMovementX.chase(player.getX() - .5, 0.7, LerpedFloat.Chaser.EXP);
-        wireMovementY.chase(player.getY() + (player.isCrouching() ? 0.6 : 0.9), 0.3, LerpedFloat.Chaser.EXP);
-        wireMovementZ.chase(player.getZ() - .5, 0.7, LerpedFloat.Chaser.EXP);
-        wireMovementX.tickChaser();
-        wireMovementY.tickChaser();
-        wireMovementZ.tickChaser();
-    }
-
-    public CablePos getCablePosition() {
-        return new CablePos(getBlockPos().getX(), getBlockPos().getY(), getBlockPos().getZ());
     }
 
     @Override
@@ -364,4 +292,3 @@ public class CableConnectorBlockEntity extends ElectricBlockEntity implements IH
         TFMGUtils.createOutline(corner1, corner2, "InsulatorOutline", Color.rainbowColor(AnimationTickHolder.getTicks() * 5));
     }
 }
-
