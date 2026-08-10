@@ -3,64 +3,75 @@ package com.drmangotea.tfmg.registry;
 import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.TFMGRegistries;
 import com.drmangotea.tfmg.content.engines.fuel.EngineFuelType;
-import com.drmangotea.tfmg.content.items.weapons.flamethrover.FlamethrowerFuelType;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.ResourceKey;
 
 public class TFMGEngineFuelTypes {
-    public static final ResourceKey<EngineFuelType> FALLBACK = ResourceKey.create(TFMGRegistries.ENGINE_FUEL_TYPE, TFMG.asResource("fallback"));
+    public static final ResourceKey<EngineFuelType> FALLBACK = key("fallback");
+
+    public static final ResourceKey<EngineFuelType> GASOLINE = key("gasoline");
+    public static final ResourceKey<EngineFuelType> DIESEL = key("diesel");
+    public static final ResourceKey<EngineFuelType> LPG = key("lpg");
+    public static final ResourceKey<EngineFuelType> KEROSENE = key("kerosene");
+    public static final ResourceKey<EngineFuelType> NAPHTHA = key("naphtha");
+    public static final ResourceKey<EngineFuelType> CREOSOTE = key("creosote");
+    public static final ResourceKey<EngineFuelType> FURNACE_GAS = key("furnace_gas");
+
+    private static ResourceKey<EngineFuelType> key(String name) {
+        return ResourceKey.create(TFMGRegistries.ENGINE_FUEL_TYPE, TFMG.asResource(name));
+    }
 
     public static void bootstrap(BootstrapContext<EngineFuelType> ctx) {
-        register(ctx, "fallback", new EngineFuelType.Builder()
+        register(ctx, FALLBACK, new EngineFuelType.Builder()
                 .speed(1)
                 .efficiency(1)
                 .torque(1)
                 .build());
 
-        register(ctx, "gasoline", new EngineFuelType.Builder(TFMGTags.TFMGFluidTags.GASOLINE.tag)
+        register(ctx, GASOLINE, new EngineFuelType.Builder(TFMGTags.TFMGFluidTags.GASOLINE.tag)
                 .speed(1)
                 .efficiency(1)
                 .torque(1)
                 .build());
 
-        register(ctx, "diesel", new EngineFuelType.Builder(TFMGTags.TFMGFluidTags.DIESEL.tag)
+        register(ctx, DIESEL, new EngineFuelType.Builder(TFMGTags.TFMGFluidTags.DIESEL.tag)
                 .speed(0.8f)
                 .efficiency(0.8f)
                 .torque(1.4f)
                 .build());
 
-        register(ctx, "lpg", new EngineFuelType.Builder(TFMGTags.TFMGFluidTags.LPG.tag)
+        register(ctx, LPG, new EngineFuelType.Builder(TFMGTags.TFMGFluidTags.LPG.tag)
                 .speed(1.2f)
                 .efficiency(0.7f)
                 .torque(0.7f)
                 .build());
 
-        register(ctx, "kerosene", new EngineFuelType.Builder(TFMGTags.TFMGFluidTags.KEROSENE.tag)
+        register(ctx, KEROSENE, new EngineFuelType.Builder(TFMGTags.TFMGFluidTags.KEROSENE.tag)
                 .speed(0.7f)
                 .efficiency(1f)
                 .torque(1.4f)
                 .build());
 
-        register(ctx, "naphtha", new EngineFuelType.Builder(TFMGTags.TFMGFluidTags.NAPHTHA.tag)
+        register(ctx, NAPHTHA, new EngineFuelType.Builder(TFMGTags.TFMGFluidTags.NAPHTHA.tag)
                 .speed(1f)
                 .efficiency(0.7f)
                 .torque(1.3f)
                 .build());
 
-        register(ctx, "creosote", new EngineFuelType.Builder(TFMGTags.TFMGFluidTags.CREOSOTE.tag)
+        register(ctx, CREOSOTE, new EngineFuelType.Builder(TFMGTags.TFMGFluidTags.CREOSOTE.tag)
                 .speed(0.7f)
                 .efficiency(0.4f)
                 .torque(0.5f)
                 .build());
 
-        register(ctx, "furnace_gas", new EngineFuelType.Builder(TFMGTags.TFMGFluidTags.FURNACE_GAS.tag)
+        register(ctx, FURNACE_GAS, new EngineFuelType.Builder(TFMGTags.TFMGFluidTags.FURNACE_GAS.tag)
                 .speed(0.5f)
                 .efficiency(0.3f)
                 .torque(0.3f)
                 .build());
     }
 
-    private static void register(BootstrapContext<EngineFuelType> ctx, String name, EngineFuelType type) {
-        ctx.register(ResourceKey.create(TFMGRegistries.ENGINE_FUEL_TYPE, TFMG.asResource(name)), type);
+    private static void register(BootstrapContext<EngineFuelType> ctx, ResourceKey<EngineFuelType> name, EngineFuelType type) {
+        ctx.register(name, type);
     }
 }

@@ -46,7 +46,6 @@ public class ScrewdriverItem extends Item {
         return super.useOn(pContext);
     }
 
-    private static BlockPos lastShownPos = null;
     private static AABB lastShownAABB = null;
     private static boolean render = false;
     private static int colour = PonderPalette.BLUE.getColor();
@@ -76,7 +75,6 @@ public class ScrewdriverItem extends Item {
 
         if (blockEntity instanceof ILockablePipe lockable) {
             lastShownAABB = shape.isEmpty() ? new AABB(BlockPos.ZERO) : shape.bounds().move(targetedPos);
-            lastShownPos = targetedPos;
             colour = lockable.locked() ? PonderPalette.RED.getColor() : PonderPalette.GREEN.getColor();
             render = true;
         } else {

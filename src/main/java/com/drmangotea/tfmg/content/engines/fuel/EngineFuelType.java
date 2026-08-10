@@ -12,6 +12,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.material.Fluid;
+import net.neoforged.neoforge.fluids.FluidStack;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.*;
@@ -31,6 +32,10 @@ public record EngineFuelType(HolderSet<Fluid> fluids, float speed, float efficie
                 .listElements()
                 .filter(ref -> ref.value().fluids.contains(f.builtInRegistryHolder()))
                 .findFirst());
+    }
+
+    public boolean test(FluidStack fluidStack) {
+        return fluidStack.is(fluids);
     }
 
     public static class Builder {

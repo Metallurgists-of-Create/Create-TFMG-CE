@@ -233,7 +233,7 @@ public class FlamethrowerItem extends Item implements CustomArmPoseItem {
         FlamethrowerFuelType fuelType = getFuel(player.registryAccess(), stack);
         FlamethrowerFuel fuel = stack.getOrDefault(TFMGDataComponents.FLAMETHROWER, FlamethrowerFuel.EMPTY);
 
-        if (fuelType == fallback || !fuel.hasFuel()) {
+        if (fuelType == null || fuelType == fallback || !fuel.hasFuel()) {
             super.appendHoverText(stack, context, tooltip, flag);
             return;
         }

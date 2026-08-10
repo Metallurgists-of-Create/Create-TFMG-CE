@@ -20,10 +20,10 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.tags.TagKey;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -32,7 +32,6 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 
@@ -61,7 +60,7 @@ public abstract class AbstractSmallEngineBlockEntity extends AbstractEngineBlock
     public boolean connectNextTick = true;
     public boolean delayedConnect = false;
 
-    public List<Long> engines = new ArrayList<>();
+    public List<BlockPos> engines = new ArrayList<>();
     public int engineNumber = 0;
 
 
@@ -88,20 +87,17 @@ public abstract class AbstractSmallEngineBlockEntity extends AbstractEngineBlock
     }
 
     public void setBlockStates(AbstractSmallEngineBlockEntity be, BlockPos last) {
-
-
+        if (level == null) return;
         if (!be.isController()) {
             level.setBlock(be.getBlockPos(), level.getBlockState(be.getBlockPos()).setValue(SHAFT_FACING, getBlockState().getValue(SHAFT_FACING).getOpposite()), 2);
         }
-
     }
 
     public boolean hasAllComponents() {
-
+        if (level == null) return false;
         if (level.getBlockEntity(controller) instanceof AbstractSmallEngineBlockEntity be) {
             return be.nextComponent() == Ingredient.EMPTY;
         }
-
         return false;
     }
 
@@ -111,10 +107,8 @@ public abstract class AbstractSmallEngineBlockEntity extends AbstractEngineBlock
 
     @Override
     public int voltageGeneration() {
-
         if (upgrade.isPresent() && upgrade.get().getItem() == TFMGBlocks.GENERATOR.asItem())
             return (int) (20 * (rpm / 500));
-
         return 0;
     }
 
@@ -122,7 +116,6 @@ public abstract class AbstractSmallEngineBlockEntity extends AbstractEngineBlock
     public float powerGeneration() {
         if (upgrade.isPresent() && upgrade.get().getItem() == TFMGBlocks.GENERATOR.asItem())
             return (int) rpm;
-
         return 0;
     }
 
@@ -131,10 +124,9 @@ public abstract class AbstractSmallEngineBlockEntity extends AbstractEngineBlock
         super.lazyTick();
         upgrade.ifPresent(engineUpgrade -> engineUpgrade.lazyTickUpgrade(this));
 
-        if (!canWork())
-            return;
-        if(rpm==0)
-            return;
+        if (!canWork()) return;
+        if(rpm==0) return;
+        if (level == null) return;
         if (level.random.nextInt(45) == 0) {
             if (oil > 0)
                 oil--;
@@ -150,18 +142,16 @@ public abstract class AbstractSmallEngineBlockEntity extends AbstractEngineBlock
     @Override
     public float calculateAddedStressCapacity() {
         float stress = (int)(super.calculateAddedStressCapacity() + (torque))*(TFMGConfigs.common().machines.enginePower.getF() /100)*(Math.max(1,engines.size()))*0.7f;
-
         return hasTwoShafts() ? stress / 2 : stress;
     }
 
     public boolean hasTwoShafts() {
-
         if (!isController())
             return getControllerBE().hasTwoShafts();
+        if (level == null) return false;
         if (this.getBlockState().getValue(ENGINE_STATE) == SHAFT) {
             BlockPos pos = getBlockPos().relative(this.getBlockState().getValue(SHAFT_FACING).getOpposite(), engineLength() );
-            if (level.getBlockState(pos).getValue(ENGINE_STATE) == SHAFT)
-                return true;
+            return level.getBlockState(pos).getValue(ENGINE_STATE) == SHAFT;
         }
         return false;
     }
@@ -184,13 +174,8 @@ public abstract class AbstractSmallEngineBlockEntity extends AbstractEngineBlock
 
     @Override
     protected void write(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {
-        compound.putLong("Controller", controller.asLong());
-        if (controller != null) {
-            compound.putLong("ControllerPos", controller.asLong());
-        } else compound.remove("ControllerPos");
-
-        if (upgrade.isPresent())
-            compound.put("UpgradeItem", upgrade.get().getItem().getDefaultInstance().saveOptional(registries));
+        compound.put("Controller", NbtUtils.writeBlockPos(controller));
+        upgrade.ifPresent(engineUpgrade -> compound.put("UpgradeItem", engineUpgrade.getItem().getDefaultInstance().saveOptional(registries)));
         compound.put("Components", componentsInventory.serializeNBT(registries));
         compound.putInt("Oil", oil);
         compound.putInt("CoolingFluid", coolingFluid);
@@ -201,15 +186,13 @@ public abstract class AbstractSmallEngineBlockEntity extends AbstractEngineBlock
     protected void read(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {
         if (compound.contains("UpgradeItem") && ItemStack.parse(registries, compound.getCompound("UpgradeItem")).isPresent()) {
             ItemStack stack = ItemStack.parse(registries, compound.getCompound("UpgradeItem")).get();
-            //.ifPresent(i -> upgrade = Optional.of(EngineUpgrade.getUpgrades().get(i)));
             upgrade = Optional.of(EngineUpgrade.getUpgrades().get(stack.getItem()));
-
         }
         oil = compound.getInt("Oil");
         coolingFluid = compound.getInt("CoolingFluid");
         componentsInventory.deserializeNBT(registries, compound.getCompound("Components"));
         super.read(compound, registries, clientPacket);
-        controller = BlockPos.of(compound.getLong("Controller"));
+        controller = NbtUtils.readBlockPos(compound, "Controller").orElse(getBlockPos());
     }
 
     public int engineLength() {
@@ -218,10 +201,8 @@ public abstract class AbstractSmallEngineBlockEntity extends AbstractEngineBlock
 
     @Override
     public boolean canWork() {
-
         if (!nextComponent().isEmpty())
             return false;
-
         return super.canWork();
     }
 
@@ -238,53 +219,42 @@ public abstract class AbstractSmallEngineBlockEntity extends AbstractEngineBlock
     }
 
     protected void analogSignalChanged() {
-
         if (controller == null)
             return;
-
-
-
         if (hasEngineController()) {
             return;
         }
 
         getControllerBE().updateRotation();
         getControllerBE().updateGeneratedRotation();
+        if (level == null) return;
+
         int newSignal = level.getBestNeighborSignal(getBlockPos());
-
         signal = newSignal;
-
         if (!isController()) {
-
             if (level.getBlockEntity(controller) instanceof AbstractSmallEngineBlockEntity be) {
                 be.analogSignalChanged();
                 return;
             }
         }
 
-        for (long posLong : engines) {
-            BlockPos pos = BlockPos.of(posLong);
+        for (BlockPos pos : engines) {
             newSignal = Math.max(level.getBestNeighborSignal(pos), newSignal);
-
         }
-
         newSignal = Math.max(level.getBestNeighborSignal(controller), newSignal);
         highestSignal = newSignal/15f;
         updateRotation();
-
     }
 
     @Override
     public IFluidHandler handlerForCapability() {
-
-
         return isController() || getControllerBE() == this ? new CombinedTankWrapper(fuelTank, exhaustTank)
                 : getControllerBE().handlerForCapability();
     }
 
 
     public void updateRotation() {
-
+        if (level == null) return;
         if (!isController()) {
             if (level.getBlockEntity(controller) instanceof AbstractSmallEngineBlockEntity be)
                 be.updateRotation();
@@ -296,74 +266,58 @@ public abstract class AbstractSmallEngineBlockEntity extends AbstractEngineBlock
             torque = 0;
         }
 
-        List<Long> allEngines = new ArrayList<>(engines);
-        allEngines.add(controller.asLong());
-        for (TagKey<Fluid> fluidTag : getSupportedFuels()) {
-
-
-            if (fuelTank.getFluid().getFluid().is(fluidTag)) {
-                if (!canWork()) {
-                    allEngines.forEach(l -> {
-                        BlockPos pos = BlockPos.of(l);
-                        if (level.getBlockEntity(pos) instanceof AbstractEngineBlockEntity be) {
-                            be.rpm = 0;
-                            be.torque = 0;
-                            be.updateGeneratedRotation();
-                        }
-
-                    });
-                    return;
-                }
-                allEngines.forEach(l -> {
-                    BlockPos pos = BlockPos.of(l);
+        List<BlockPos> allEngines = new ArrayList<>(engines);
+        allEngines.add(controller);
+        if (validFuels().test(fuelTank.getFluid())) {
+            if (!canWork()) {
+                allEngines.forEach(pos -> {
+                    if (level == null) return;
                     if (level.getBlockEntity(pos) instanceof AbstractEngineBlockEntity be) {
-                        be.rpm = 4000 * speedModifier() * highestSignal ;
-                        be.torque = 15 * torqueModifier() * highestSignal;
+                        be.rpm = 0;
+                        be.torque = 0;
                         be.updateGeneratedRotation();
                     }
                 });
                 return;
             }
-        }
-        updateGeneratedRotation();
-        getAllEngines().forEach(l -> {
-            if (hasLevel())
-                if (level.getBlockEntity(BlockPos.of(l)) instanceof AbstractEngineBlockEntity be) {
+            allEngines.forEach(pos -> {
+                if (level == null) return;
+                if (level.getBlockEntity(pos) instanceof AbstractEngineBlockEntity be) {
+                    be.rpm = 4000 * speedModifier() * highestSignal ;
+                    be.torque = 15 * torqueModifier() * highestSignal;
                     be.updateGeneratedRotation();
                 }
+            });
+            return;
+        }
+        updateGeneratedRotation();
+        getAllEngines().forEach(pos -> {
+            if (level == null) return;
+            if (level.getBlockEntity(pos) instanceof AbstractEngineBlockEntity be) {
+                be.updateGeneratedRotation();
+            }
         });
     }
 
     public boolean canGenerateSpeed() {
-        if (getBlockState().getValue(ENGINE_STATE) != SHAFT)
-            return false;
-
-
-        return true;
+        return getBlockState().getValue(ENGINE_STATE) == SHAFT;
     }
 
 
     @Override
     public float getGeneratedSpeed() {
-
         if (!canGenerateSpeed())
             return 0;
         float speed;
 
-
         if (hasLevel()) {
             if (getControllerBE().fuelTank.isEmpty())
                 return 0;
-
             if (!getControllerBE().canWork())
                 return 0;
-
             speed = rpm / 15;
             if (reverse)
                 speed = speed * -1;
-
-
-
             return convertToDirection(Math.min((int) speed, 256), getBlockState().getValue(HORIZONTAL_FACING));
         }
         return 0;
@@ -377,6 +331,7 @@ public abstract class AbstractSmallEngineBlockEntity extends AbstractEngineBlock
     }
 
     public boolean insertItem(ItemStack itemStack, boolean shifting, Player player, InteractionHand hand) {
+        if (level == null) return false;
         Direction shaft_facing = getBlockState().getValue(SHAFT_FACING);
         if (itemStack.is(AllBlocks.SHAFT.asItem()) && getBlockState().getValue(ENGINE_STATE) == NORMAL && !(level.getBlockEntity(getBlockPos().relative(shaft_facing)) instanceof AbstractEngineBlockEntity)) {
             playInsertionSound();
@@ -400,14 +355,11 @@ public abstract class AbstractSmallEngineBlockEntity extends AbstractEngineBlock
                 }
             }
         }
-
         if (itemStack.is(TFMGItems.COOLING_FLUID_BOTTLE.get())) {
-
             if (level.getBlockEntity(controller) instanceof AbstractSmallEngineBlockEntity be) {
                 Integer amount = itemStack.get(TFMGDataComponents.AMOUNT);
                 if (amount == null)
                     return false;
-
                 int toDrain = Math.min(2000 - be.coolingFluid, amount);
                 itemStack.set(TFMGDataComponents.AMOUNT, amount - toDrain);
                 be.coolingFluid += toDrain;
@@ -491,36 +443,28 @@ public abstract class AbstractSmallEngineBlockEntity extends AbstractEngineBlock
     }
 
     public List<AbstractSmallEngineBlockEntity> getEngines() {
-
         List<AbstractSmallEngineBlockEntity> values = new ArrayList<>();
-
-        for (Long position : getAllEngines()) {
-            BlockPos pos = BlockPos.of(position);
+        if (level == null) return values;
+        for (BlockPos pos : getAllEngines()) {
             if (level.getBlockEntity(pos) instanceof AbstractSmallEngineBlockEntity be)
                 values.add(be);
         }
         return values;
-
     }
 
     public boolean isController() {
-
         if (controller == null)
             controller = getBlockPos();
-
         if (engineNumber == 0)
             controller = getBlockPos();
-
         return controller.equals(getBlockPos());
     }
 
 
     @Override
     public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
-
-        if (controller.asLong() == getBlockPos().asLong())
+        if (controller == getBlockPos())
             TFMGTexts.header("engine_controller").forGoggles(tooltip);
-
         TFMGTexts.Engine.speedEfficiency(getSpeedEfficiency()).forGoggles(tooltip);
         TFMGTexts.Engine.efficiency(efficiencyModifier()).forGoggles(tooltip);
         TFMGTexts.Engine.fuelConsumption(getFuelConsumption()).forGoggles(tooltip);
@@ -538,24 +482,23 @@ public abstract class AbstractSmallEngineBlockEntity extends AbstractEngineBlock
     }
 
     public boolean isUpgradeFirst(EngineUpgrade itemUpgrade) {
-
         for (AbstractSmallEngineBlockEntity be : getEngines()) {
-
             if (be.upgrade.isPresent() && be.upgrade.get().getItem() == itemUpgrade.getItem())
                 return false;
         }
         return true;
     }
 
-    public List<Long> getAllEngines() {
-        List<Long> list = new ArrayList<>(engines);
-        list.add(controller.asLong());
+    public List<BlockPos> getAllEngines() {
+        List<BlockPos> list = new ArrayList<>(engines);
+        list.add(controller);
         return list;
     }
 
     public AbstractSmallEngineBlockEntity getControllerBE() {
         if (isController())
             return this;
+        if (level == null) return this;
         BlockEntity blockEntity = level.getBlockEntity(controller);
         if (blockEntity instanceof AbstractSmallEngineBlockEntity)
             return (AbstractSmallEngineBlockEntity) blockEntity;
@@ -565,21 +508,18 @@ public abstract class AbstractSmallEngineBlockEntity extends AbstractEngineBlock
 
     @Override
     public void tick() {
-
         upgrade.ifPresent(engineUpgrade -> engineUpgrade.tickUpgrade(this));
-
         if (connectNextTick) {
             if (isController()) {
                 connect();
                 connectNextTick = false;
             }
         }
-
         super.tick();
     }
 
     public void connect() {
-
+        if (level == null) return;
         try {
             Direction facing = getBlockState().getValue(HORIZONTAL_FACING);
             Direction updateDirection = facing.getOpposite();
@@ -597,18 +537,9 @@ public abstract class AbstractSmallEngineBlockEntity extends AbstractEngineBlock
                     if (be.getBlockState().getValue(HORIZONTAL_FACING) != facing) {
                         return;
                     }
-
                     level.setBlock(be.getBlockPos(), be.getBlockState().setValue(SHAFT_FACING, be.getBlockPos() == this.getBlockPos() ? facing : updateDirection), 2);
-
-                    //if (be instanceof RegularEngineBlockEntity be1 && this instanceof RegularEngineBlockEntity be2 && be1.type != be2.type) {
-                    //    setBlockStates(this, getBlockPos().relative(updateDirection, i - 1));
-                    //    TFMG.LOGGER.debug("set blockstates");
-                    //    return;
-                    //}
                     be.detashEngines();
-                    engines.add(pos.asLong());
-
-                    // level.setBlock(be.getBlockPos().above(), Blocks.GOLD_BLOCK.defaultBlockState(),3);
+                    engines.add(pos);
 
                     be.engineNumber = i;
                     be.engines = new ArrayList<>();
@@ -657,15 +588,12 @@ public abstract class AbstractSmallEngineBlockEntity extends AbstractEngineBlock
         if (!isController()) {
             getControllerBE().connectNextTick = true;
         }
-
-
         Direction facing = getBlockState().getValue(HORIZONTAL_FACING);
 
         for (Direction direction : Direction.values()) {
-
             if (direction.getAxis() != facing.getAxis())
                 continue;
-
+            if (level == null) return;
             if (level.getBlockEntity(getBlockPos().relative(direction)) instanceof AbstractSmallEngineBlockEntity be) {
                 level.setBlockAndUpdate(be.getBlockPos(), be.getBlockState().setValue(SHAFT_FACING, direction.getOpposite()));
                 be.delayedConnect = true;
