@@ -1,6 +1,5 @@
 package com.drmangotea.tfmg.content.decoration.tanks.steel;
 
-
 import com.drmangotea.tfmg.mixin.accessor.FluidTankBlockEntityAccessor;
 import com.drmangotea.tfmg.registry.TFMGPartialModels;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -22,62 +21,60 @@ import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
 
 public class SteelFluidTankRenderer extends SafeBlockEntityRenderer<SteelTankBlockEntity> {
-
     public SteelFluidTankRenderer(BlockEntityRendererProvider.Context context) {}
+
     @Override
-    protected void renderSafe(SteelTankBlockEntity te, float partialTicks, PoseStack ms, MultiBufferSource buffer,
-                              int light, int overlay) {
-        if (!te.isController())
-            return;
-        if (!((FluidTankBlockEntityAccessor)te).tfmg$getWindow()) {
-            if (te.isDistillationTower)
-                renderAsDistillationTower(te, partialTicks, ms, buffer, light, overlay);
-            return;
-        }
-        LerpedFloat fluidLevel = te.getFluidLevel();
-        if (fluidLevel == null)
-            return;
-
-        float capHeight = 1 / 4f;
-        float tankHullWidth = 1 / 16f + 1 / 128f;
-        float minPuddleHeight = 1 / 16f;
-        float totalHeight = ((FluidTankBlockEntityAccessor)te).tfmg$getHeight() - 2 * capHeight - minPuddleHeight;
-
-        float level = fluidLevel.getValue(partialTicks);
-        if (level < 1 / (512f * totalHeight))
-            return;
-        float clampedLevel = Mth.clamp(level * totalHeight, 0, totalHeight);
-
-        FluidTank tank = ((FluidTankBlockEntityAccessor)te).tfmg$getTankInventory();
-        FluidStack fluidStack = tank.getFluid();
-
-        if (fluidStack.isEmpty())
-            return;
-        boolean top = fluidStack.getFluid()
-                .getFluidType()
-                .isLighterThanAir();
-
-        float xMin = tankHullWidth;
-        float xMax = xMin + ((FluidTankBlockEntityAccessor)te).tfmg$getWidth() - 2 * tankHullWidth;
-        float yMin = totalHeight + capHeight + minPuddleHeight - clampedLevel;
-        float yMax = yMin + clampedLevel;
-
-        if (top) {
-            yMin += totalHeight - clampedLevel;
-            yMax += totalHeight - clampedLevel;
-        }
-
-        float zMin = tankHullWidth;
-        float zMax = zMin + ((FluidTankBlockEntityAccessor)te).tfmg$getWidth() - 2 * tankHullWidth;
-
-        ms.pushPose();
-        ms.translate(0, clampedLevel - totalHeight, 0);
-        NeoForgeCatnipServices.FLUID_RENDERER.renderFluidBox(fluidStack, xMin, yMin, zMin, xMax, yMax, zMax, buffer, ms, light, false,true);
-        ms.popPose();
+    protected void renderSafe(SteelTankBlockEntity te, float partialTicks, PoseStack ms, MultiBufferSource buffer, int light, int overlay) {
+		if (!te.isController())
+			return;
+		if (!((FluidTankBlockEntityAccessor)te).tfmg$getWindow()) {
+			if (te.isDistillationTower)
+				renderAsDistillationTower(te, partialTicks, ms, buffer, light, overlay);
+			return;
+		}
+		LerpedFloat fluidLevel = te.getFluidLevel();
+		if (fluidLevel == null)
+			return;
+		
+		float capHeight = 1 / 4f;
+		float tankHullWidth = 9 / 128f;
+		float minPuddleHeight = 1 / 16f;
+		float totalHeight = ((FluidTankBlockEntityAccessor)te).tfmg$getHeight() - 2 * capHeight - minPuddleHeight;
+		
+		float level = fluidLevel.getValue(partialTicks);
+		if (level < 1 / (512f * totalHeight))
+			return;
+		float clampedLevel = Mth.clamp(level * totalHeight, 0, totalHeight);
+		
+		FluidStack fluidStack = te.getTankInventory().getFluid();
+		
+		if (fluidStack.isEmpty())
+			return;
+		boolean top = fluidStack.getFluid()
+			.getFluidType()
+			.isLighterThanAir();
+		
+		float xzMax = ((FluidTankBlockEntityAccessor)te).tfmg$getWidth() - tankHullWidth;
+		float yMin = totalHeight + capHeight + minPuddleHeight - clampedLevel;
+		float yMax = yMin + clampedLevel;
+		
+		if (top) {
+			yMin += totalHeight - clampedLevel;
+			yMax += totalHeight - clampedLevel;
+		}
+		
+		ms.pushPose();
+		ms.translate(0, clampedLevel - totalHeight, 0);
+		NeoForgeCatnipServices.FLUID_RENDERER.renderFluidBox(
+			fluidStack,
+			tankHullWidth, yMin, tankHullWidth,
+			xzMax, yMax, xzMax,
+			buffer, ms, light, false,true
+		);
+		ms.popPose();
     }
 
-    protected void renderAsDistillationTower(SteelTankBlockEntity be, float partialTicks, PoseStack ms, MultiBufferSource buffer,
-                                             int light, int overlay) {
+    protected void renderAsDistillationTower(SteelTankBlockEntity be, float partialTicks, PoseStack ms, MultiBufferSource buffer, int light, int overlay) {
         BlockState blockState = be.getBlockState();
         VertexConsumer vb = buffer.getBuffer(RenderType.cutoutMipped());
         ms.pushPose();

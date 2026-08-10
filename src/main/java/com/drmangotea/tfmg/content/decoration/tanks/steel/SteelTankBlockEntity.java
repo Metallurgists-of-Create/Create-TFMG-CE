@@ -5,7 +5,6 @@ import com.drmangotea.tfmg.mixin.accessor.FluidTankBlockEntityAccessor;
 import com.drmangotea.tfmg.registry.TFMGBlockEntities;
 import com.drmangotea.tfmg.registry.TFMGBlocks;
 import com.simibubi.create.api.boiler.BoilerHeater;
-import com.simibubi.create.api.connectivity.ConnectivityHandler;
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.content.fluids.tank.FluidTankBlock;
 import com.simibubi.create.content.fluids.tank.FluidTankBlock.Shape;
@@ -24,8 +23,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
-import net.neoforged.neoforge.fluids.FluidStack;
-import net.neoforged.neoforge.fluids.FluidType;
 
 import java.util.List;
 
@@ -35,7 +32,6 @@ public class SteelTankBlockEntity extends TFMGFluidTankBlockEntity implements IH
     public boolean isDistillationTower = false;
 
     // For rendering purposes only
-    private LerpedFloat fluidLevel;
     public LerpedFloat visualGaugeRotation = LerpedFloat.angular();
     public SteelTankBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
@@ -80,44 +76,6 @@ public class SteelTankBlockEntity extends TFMGFluidTankBlockEntity implements IH
         sendData();
         if (level.isClientSide)
             invalidateRenderBoundingBox();
-    }
-
-    protected void onFluidStackChanged(FluidStack newFluidStack) {
-        if (!hasLevel())
-            return;
-        FluidType attributes = newFluidStack.getFluid()
-                .getFluidType();
-        int luminosity = (int) (attributes.getLightLevel(newFluidStack) / 1.2f);
-        boolean reversed = attributes.isLighterThanAir();
-        int maxY = (int) ((getFillState() * height) + 1);
-        for (int yOffset = 0; yOffset < height; yOffset++) {
-            boolean isBright = reversed ? (height - yOffset <= maxY) : (yOffset < maxY);
-            int actualLuminosity = isBright ? luminosity : luminosity > 0 ? 1 : 0;
-            for (int xOffset = 0; xOffset < width; xOffset++) {
-                for (int zOffset = 0; zOffset < width; zOffset++) {
-                    BlockPos pos = this.worldPosition.offset(xOffset, yOffset, zOffset);
-                    SteelTankBlockEntity tankAt = ConnectivityHandler.partAt(getType(), level, pos);
-                    if (tankAt == null)
-                        continue;
-                    level.updateNeighbourForOutputSignal(pos, tankAt.getBlockState()
-                            .getBlock());
-                    if (tankAt.luminosity == actualLuminosity)
-                        continue;
-                    tankAt.setLuminosity(actualLuminosity);
-                }
-            }
-        }
-
-        if (!level.isClientSide) {
-            setChanged();
-            sendData();
-        }
-
-        if (isVirtual()) {
-            if (fluidLevel == null)
-                fluidLevel = LerpedFloat.linear().startWithValue(getFillState());
-            fluidLevel.chase(getFillState(), .5f, LerpedFloat.Chaser.EXP);
-        }
     }
 	
 	@Override
@@ -263,13 +221,6 @@ public class SteelTankBlockEntity extends TFMGFluidTankBlockEntity implements IH
     @Override
     public void addBehaviours(List<BlockEntityBehaviour> behaviours) {
         //registerAwardables(behaviours, AllAdvancements.STEAM_ENGINE_MAXED, AllAdvancements.PIPE_ORGAN);
-    }
-	
-    public LerpedFloat getFluidLevel() {
-        return fluidLevel;
-    }
-    public void setFluidLevel(LerpedFloat fluidLevel) {
-        this.fluidLevel = fluidLevel;
     }
 	
 	public boolean isTank(BlockState state) {return SteelTankBlock.isTank(state);}
