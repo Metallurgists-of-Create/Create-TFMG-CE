@@ -24,6 +24,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
@@ -51,9 +52,13 @@ public class SpoolItem extends Item {
 
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+        BlockPos fallback = new BlockPos(0, level.getMaxBuildHeight() + 1, 0); // Impossible block position, better than 0,0,0
         ItemStack stack = player.getItemInHand(hand);
         if (player.isCrouching() && stack.has(TFMGDataComponents.POSITION)) {
-            if (level.getBlockEntity(stack.get(TFMGDataComponents.POSITION)) instanceof CableConnectorBlockEntity be)
+            BlockPos pos = stack.getOrDefault(TFMGDataComponents.POSITION, fallback);
+            if (pos == fallback)
+                return InteractionResultHolder.pass(stack);
+            if (level.getBlockEntity(pos) instanceof CableConnectorBlockEntity be)
                 be.player = null;
             stack.remove(TFMGDataComponents.POSITION);
             if (level.isClientSide)
@@ -89,40 +94,41 @@ public class SpoolItem extends Item {
         Player player = context.getPlayer();
         ItemStack stack = context.getItemInHand();
 
+        BlockPos fallback = new BlockPos(0, level.getMaxBuildHeight() + 1, 0); // Impossible block position, better than 0,0,0
+        BlockPos posToConnect = stack.getOrDefault(TFMGDataComponents.POSITION, fallback);
+
+        BlockState state = level.getBlockState(pos);
+
+        Direction direction = state.hasProperty(FACING) ? state.getValue(FACING) : null;
+
+        if (player == null)
+            return InteractionResult.PASS;
+
         if (level.getBlockEntity(pos) instanceof WindingMachineBlockEntity be) {
             ItemStack oldSpool = ItemStack.EMPTY;
             if (!be.spool.isEmpty()) {
                 oldSpool = be.spool;
             }
             be.spool = context.getItemInHand();
-            context.getPlayer().setItemInHand(context.getHand(), oldSpool);
+            player.setItemInHand(context.getHand(), oldSpool);
             be.sendData();
             be.setChanged();
-//
             return InteractionResult.SUCCESS;
         }
-
-        if (stack.get(TFMGDataComponents.SPOOL_AMOUNT) == null)
+        if (!stack.has(TFMGDataComponents.SPOOL_AMOUNT))
             return InteractionResult.PASS;
-        if (level.isClientSide)
-            return InteractionResult.SUCCESS;
-
-        if (Objects.equals(cableTypeKey, TFMG.asResource("empty")))
-            return InteractionResult.PASS;
-        Direction direction = level.getBlockState(pos).getValue(FACING);
-        for (int i = 0; i < 64; i++) {
-            if (level.getBlockEntity(pos.relative(direction)) instanceof CableConnectorBlockEntity) {
-                pos = pos.relative(direction);
-
-            } else break;
-
+        if (!level.isClientSide) {
+            if (Objects.equals(cableTypeKey, TFMG.asResource("empty")))
+                return InteractionResult.PASS;
+            for (int i = 0; i < 64; i++) {
+                if (direction != null && level.getBlockEntity(pos.relative(direction)) instanceof CableConnectorBlockEntity) {
+                    pos = pos.relative(direction);
+                } else break;
+            }
         }
 
         if (level.getBlockEntity(pos) instanceof CableConnectorBlockEntity be) {
-
-
-            if (stack.get(TFMGDataComponents.POSITION) != null) {
-                BlockPos posToConnect = stack.get(TFMGDataComponents.POSITION);
+            if (stack.has(TFMGDataComponents.POSITION)) {
                 if (posToConnect.equals(pos)) {
                     stack.remove(TFMGDataComponents.POSITION);
                     if (level.isClientSide)
@@ -134,7 +140,7 @@ public class SpoolItem extends Item {
                     return InteractionResult.SUCCESS;
                 }
                 for (int i = 0; i < 64; i++) {
-                    if (level.getBlockEntity(posToConnect.relative(direction)) instanceof CableConnectorBlockEntity) {
+                    if (direction != null && level.getBlockEntity(posToConnect.relative(direction)) instanceof CableConnectorBlockEntity) {
                         posToConnect = posToConnect.relative(direction);
 
                     } else break;
@@ -145,9 +151,11 @@ public class SpoolItem extends Item {
 
                     CableConnection connection1 = new CableConnection(otherBE.getBlockPos(),be.getBlockPos(), cableType, true);
                     CableConnection connection2 = new CableConnection(be.getBlockPos(),otherBE.getBlockPos(), cableType, false);
-					
-					int amount = stack.get(TFMGDataComponents.SPOOL_AMOUNT) - (int) (connection1.getLength() / 8)*125;
-                    if (amount < 0) { return InteractionResult.PASS; }
+
+                    double distance = otherBE.getBlockPos().distManhattan(be.getBlockPos());
+                    int turnsLeft = stack.getOrDefault(TFMGDataComponents.SPOOL_AMOUNT, 0);
+					int amount = Math.round((float)(distance / 4)*80);
+                    if (turnsLeft - amount < 0) { return InteractionResult.PASS; }
                     if (be.connections.contains(connection1) || otherBE.connections.contains(connection1)) {
                         if (level.isClientSide)
                             player.displayClientMessage(TFMGLang.translateDirect("wires.connection_already_created")
@@ -160,7 +168,7 @@ public class SpoolItem extends Item {
                     be.connections.add(connection1);
                     otherBE.connections.add(connection2);
 
-                    stack.set(TFMGDataComponents.SPOOL_AMOUNT, amount);
+                    stack.set(TFMGDataComponents.SPOOL_AMOUNT, turnsLeft - amount);
                     be.player = null;
                     otherBE.player = null;
                     be.setChanged();
@@ -176,7 +184,6 @@ public class SpoolItem extends Item {
                     be.data.connectNextTick = true;
 
                 }
-                return InteractionResult.SUCCESS;
             } else {
                 stack.set(TFMGDataComponents.POSITION, be.getBlockPos());
                 be.player = player;
@@ -185,8 +192,8 @@ public class SpoolItem extends Item {
                 be.setChanged();
                 if (!level.isClientSide())
                     be.onPlaced();
-                return InteractionResult.SUCCESS;
             }
+            return InteractionResult.SUCCESS;
         }
         return InteractionResult.PASS;
     }

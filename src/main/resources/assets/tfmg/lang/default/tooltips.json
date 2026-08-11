@@ -199,11 +199,11 @@
 	"item.tfmg.advanced_potato_cannon.tooltip.condition2": "While wearing Backtank",
 	"item.tfmg.advanced_potato_cannon.tooltip.behaviour2": "_No_ _Durability_ will be used. Instead, _Air_ _pressure_ is drained from the Tank",
 
-	"item.tfmg.flamethrower.tooltip.summary": "Burns  burnable _Gases_ and _Fluids_ to shoot out a burst of flame to burn your Enemies",
+	"item.tfmg.flamethrower.tooltip.summary": "Consumes burnable _Gases_ and _Fluids_ to shoot out a burst of flame to burn your Enemies",
 	"item.tfmg.flamethrower.tooltip.condition1": "When R-Clicked",
 	"item.tfmg.flamethrower.tooltip.behaviour1": "_Shoots out Flames_ ",
-	"item.tfmg.flamethrower.tooltip.condition2": "When R-Clicking a Fluid Container with _Valid Fuel_ inside",
-	"item.tfmg.flamethrower.tooltip.behaviour2": "The _Fuel_ will be consumed from the tank. _Range_ and _Spread_ change according to your _Fuel_ of choice",
+	"item.tfmg.flamethrower.tooltip.condition2": "When R-Clicking a Fluid Container with valid fuel inside",
+	"item.tfmg.flamethrower.tooltip.behaviour2": "The _Fuel_ will be consumed from the tank. _Range_, _Spread_ and _Amount_ change according to your _Fuel_ of choice",
 
 	"item.tfmg.pipebomb.tooltip.summary": "So cool",
 

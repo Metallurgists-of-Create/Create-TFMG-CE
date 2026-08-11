@@ -110,18 +110,14 @@ public class AdvancedPotatoCannonItem extends ProjectileWeaponItem implements Cu
 				.normalize()
 				.scale(2);
 
-			float soundPitch = 1 + (Create.RANDOM.nextFloat() - .5f) / 4f;
-
-
-
+			float soundPitch = 1 + (world.random.nextFloat() - .5f) / 4f;
 				NapalmPotato projectile = TFMGEntityTypes.NAPALM_POTATO.create(world);
-
-
-				projectile.setPos(barrelPos.x, barrelPos.y, barrelPos.z);
-				projectile.setDeltaMovement(motion);
-				projectile.setOwner(player);
-				world.addFreshEntity(projectile);
-
+				if (projectile != null) {
+					projectile.setPos(barrelPos.x, barrelPos.y, barrelPos.z);
+					projectile.setDeltaMovement(motion);
+					projectile.setOwner(player);
+					world.addFreshEntity(projectile);
+				}
 
 			if (!player.isCreative()) {
 				itemStack.shrink(1);
@@ -132,7 +128,7 @@ public class AdvancedPotatoCannonItem extends ProjectileWeaponItem implements Cu
 			if (!BacktankUtil.canAbsorbDamage(player, maxUses()))
 				stack.hurtAndBreak(1, player, LivingEntity.getSlotForHand(hand));
 
-			Integer cooldown = 75;
+			int cooldown = 75;
 
 
 			AllSoundEvents.FWOOMP.play(world,player,player.getX(),player.getY(),player.getZ(),1,0.2f);
@@ -141,8 +137,7 @@ public class AdvancedPotatoCannonItem extends ProjectileWeaponItem implements Cu
 			ShootableGadgetItemMethods.sendPackets(player,
 				b -> new AdvancedPotatoCannonPacket(barrelPos, lookVec.normalize(), itemStack, hand, soundPitch, b));
 			return InteractionResultHolder.success(stack);
-		})
-			.orElse(InteractionResultHolder.pass(stack));
+		}).orElse(InteractionResultHolder.pass(stack));
 	}
 
 	@Override
@@ -154,9 +149,7 @@ public class AdvancedPotatoCannonItem extends ProjectileWeaponItem implements Cu
 		for(int i = 0; i < player.getInventory().getContainerSize(); ++i) {
 			ItemStack stack = player.getInventory().getItem(i);
 			if(stack.is(TFMGItems.NAPALM_POTATO.get())){
-				if (!player.isCreative())
-					stack.shrink(1);
-				return Optional.of(TFMGItems.NAPALM_POTATO.get().getDefaultInstance());
+				return Optional.of(stack);
 			}
 		}
 
