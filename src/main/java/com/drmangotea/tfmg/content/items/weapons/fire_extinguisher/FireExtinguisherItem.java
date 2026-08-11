@@ -6,16 +6,16 @@ import com.drmangotea.tfmg.registry.TFMGSoundEvents;
 import com.simibubi.create.foundation.item.CustomArmPoseItem;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.player.AbstractClientPlayer;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
 import static com.drmangotea.tfmg.registry.TFMGDataComponents.AMOUNT;
@@ -34,9 +34,12 @@ public class FireExtinguisherItem extends Item implements CustomArmPoseItem {
         int fillLevel = stack.getOrDefault(AMOUNT,0);
         if(fillLevel == 0) return;
 
+        Vec3 barrelPos = getGunBarrelVec(entity, entity.getUsedItemHand() == InteractionHand.MAIN_HAND,
+                new Vec3(.75f, -0.45f, 1.5f));
+
         DryIceFlake flake = TFMGEntityTypes.DRY_ICE_FLAKE.create(level);
         if (flake != null) {
-            flake.setPos(entity.getX(),entity.getY()+1.2f,entity.getZ());
+            flake.setPos(barrelPos.x, barrelPos.y, barrelPos.z);
             flake.shoot(entity.getLookAngle().x,entity.getLookAngle().y,entity.getLookAngle().z,0.5f,10.0f);
             level.addFreshEntity(flake);
         }
@@ -45,6 +48,15 @@ public class FireExtinguisherItem extends Item implements CustomArmPoseItem {
         if (stack.getOrDefault(AMOUNT, 0) == 0) {
             entity.stopUsingItem();
         }
+    }
+
+    public static Vec3 getGunBarrelVec(LivingEntity entity, boolean mainHand, Vec3 rightHandForward) {
+        Vec3 start = entity.position().add(0, entity.getEyeHeight(), 0);
+        float yaw = (float) ((entity.getYRot()) / -180 * Math.PI);
+        float pitch = (float) ((entity.getXRot()) / -180 * Math.PI);
+        int flip = mainHand == (entity.getMainArm() == HumanoidArm.RIGHT) ? -1 : 1;
+        Vec3 barrelPosNoTransform = new Vec3(flip * rightHandForward.x, rightHandForward.y, rightHandForward.z);
+        return start.add(barrelPosNoTransform.xRot(pitch).yRot(yaw));
     }
 
     @Override
