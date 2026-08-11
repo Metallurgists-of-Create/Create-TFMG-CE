@@ -30,7 +30,7 @@ public class CableConnectorRenderer extends SafeBlockEntityRenderer<CableConnect
 
         for (CableConnection connection : be.connections) {
             if (connection.visible())
-                renderWire(be.getLevel(), ms, bufferSource, Vec3.atLowerCornerOf(connection.pos2()), Vec3.atLowerCornerOf(connection.pos1()), connection.getLength() / 4500, connection.type().getColor());
+                renderWire(be.getLevel(), ms, bufferSource, Vec3.atCenterOf(connection.pos2()), Vec3.atCenterOf(connection.pos1()), connection.getLength() / 4500, connection.type().getColor());
         }
     }
 
@@ -43,7 +43,7 @@ public class CableConnectorRenderer extends SafeBlockEntityRenderer<CableConnect
             if (stack.has(TFMGDataComponents.POSITION)) {
                 BlockPos pos = stack.get(TFMGDataComponents.POSITION);
 				if (pos.equals(be.getBlockPos()))
-                     renderWire(be.getLevel(), ms, bufferSource, player.getRopeHoldPosition(partialTicks), Vec3.atLowerCornerOf(pos), 0.0001f, be.color);
+                     renderWire(be.getLevel(), ms, bufferSource, player.getRopeHoldPosition(partialTicks), Vec3.atCenterOf(pos), 0.0001f, be.color);
             }
         }
     }
@@ -63,8 +63,8 @@ public class CableConnectorRenderer extends SafeBlockEntityRenderer<CableConnect
 		float dz = Z * f4;
 		float dx = X * f4;
 		
-		BlockPos bp1 = new BlockPos((int) pos2.x(), (int) pos2.y(), (int) pos2.z());
-		BlockPos bp2 = new BlockPos((int) pos1.x(), (int) pos1.y(), (int) pos1.z());
+		BlockPos bp1 = BlockPos.containing(pos1);
+		BlockPos bp2 = BlockPos.containing(pos2);
 		int skylight1 = level.getBrightness(LightLayer.SKY, bp1);
 		int skylight2 = level.getBrightness(LightLayer.SKY, bp2);
 		int blocklight1 = level.getBrightness(LightLayer.BLOCK, bp1);
