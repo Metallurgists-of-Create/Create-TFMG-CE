@@ -102,6 +102,7 @@ public class LargeEngineBlockEntity extends AbstractEngineBlockEntity {
 
     }
 
+    @SuppressWarnings({"DuplicateCondition", "ConstantValue"})
     @Override
     public void tick() {
         super.tick();
