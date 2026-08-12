@@ -276,5 +276,14 @@
   "engine_fuel.tfmg.kerosene": "Kerosene",
   "engine_fuel.tfmg.naphtha": "Naphtha",
   "engine_fuel.tfmg.creosote": "Creosote",
-  "engine_fuel.tfmg.furnace_gas": "Furnace Gas"
+  "engine_fuel.tfmg.furnace_gas": "Furnace Gas",
+
+  "flamethrower_fuel.tfmg.fallback": "[Missing]",
+  "flamethrower_fuel.tfmg.gasoline": "Gasoline",
+  "flamethrower_fuel.tfmg.diesel": "Diesel",
+  "flamethrower_fuel.tfmg.kerosene": "Kerosene",
+  "flamethrower_fuel.tfmg.naphtha": "Naphtha",
+  "flamethrower_fuel.tfmg.lpg": "LPG",
+  "flamethrower_fuel.tfmg.napalm": "Napalm",
+  "flamethrower_fuel.tfmg.molten_slag": "Molten Slag"
 }

@@ -62,7 +62,7 @@ public class FireExtinguisherItem extends Item implements CustomArmPoseItem {
     @Override
     public void onCraftedBy(ItemStack stack, Level level, Player player) {
         super.onCraftedBy(stack, level, player);
-        stack.set(AMOUNT,500);
+        stack.set(AMOUNT, 500);
     }
 
     @Override

@@ -108,8 +108,11 @@ public class LargeEngineBlockEntity extends AbstractEngineBlockEntity {
 
         PoweredShaftBlockEntity shaft = getShaft();
         if (level == null) return;
-        if (shaft != null) {
+        //Don't fix this. For some reason fixing the double null check stops the engine from running
+        if (shaft == null) {
             if (!level.isClientSide()) {
+                if (shaft == null)
+                    return;
                 if (!shaft.getBlockPos().subtract(worldPosition).equals(shaft.enginePos))
                     return;
                 if (shaft.engineEfficiency == 0)
