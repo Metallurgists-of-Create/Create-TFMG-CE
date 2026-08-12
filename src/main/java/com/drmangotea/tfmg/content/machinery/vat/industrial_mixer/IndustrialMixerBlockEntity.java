@@ -21,8 +21,6 @@ import java.util.Objects;
 
 
 public class IndustrialMixerBlockEntity extends KineticBlockEntity implements IVatMachine {
-
-
     public MixerMode mixerMode = MixerMode.NONE;
     public int vatSize = 1;
     public int vatHeight = 1;
@@ -37,27 +35,19 @@ public class IndustrialMixerBlockEntity extends KineticBlockEntity implements IV
 
     @Override
     public void vatUpdated(VatBlockEntity be) {
-
-
         vatSize = be.getWidth();
         vatHeight = be.getHeight();
         vatPos = be.getBlockPos();
-
-
     }
 
     @Override
     public void tick() {
         super.tick();
-
-        if (!level.isClientSide)
+        if (level == null || !level.isClientSide)
             return;
-
         float targetSpeed = getSpeed();
         visualSpeed.updateChaseTarget(targetSpeed);
         visualSpeed.tickChaser();
-
-
     }
 
 
@@ -73,9 +63,7 @@ public class IndustrialMixerBlockEntity extends KineticBlockEntity implements IV
 
     @Override
     protected void read(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {
-
         setMixerMode(compound.getString("MixerMode"), false);
-
         if (clientPacket)
             visualSpeed.chase(getGeneratedSpeed(), (double) 1 / 32, LerpedFloat.Chaser.EXP);
         super.read(compound, registries, clientPacket);
@@ -84,16 +72,12 @@ public class IndustrialMixerBlockEntity extends KineticBlockEntity implements IV
 
     @Override
     public void remove() {
-
+        if (level == null)
+            return;
         if (level.isClientSide || mixerMode == MixerMode.NONE)
             return;
-
-
         ItemEntity itemToDrop = new ItemEntity(level, getBlockPos().getX() + 0.5f, getBlockPos().getY() + 0.5f, getBlockPos().getZ() + 0.5f, mixerMode.item);
-
         level.addFreshEntity(itemToDrop);
-
-
     }
 
     @Override
@@ -104,7 +88,6 @@ public class IndustrialMixerBlockEntity extends KineticBlockEntity implements IV
     @Override
     public String getOperationId() {
         return switch (mixerMode) {
-
             case NONE -> "";
             case MIXING -> "tfmg:mixing";
             case CENTRIFUGE -> "tfmg:centrifuge";
@@ -117,6 +100,8 @@ public class IndustrialMixerBlockEntity extends KineticBlockEntity implements IV
     }
 
     public boolean setMixerMode(ItemStack modeItem, boolean simulate) {
+        if (level == null)
+            return false;
         for (MixerMode mode : MixerMode.values()) {
             if (mode.item.is(modeItem.getItem())) {
                 if (!simulate) {
@@ -125,24 +110,25 @@ public class IndustrialMixerBlockEntity extends KineticBlockEntity implements IV
             }
         }
         if (!simulate && hasLevel())
-            VatBlock.updateVatState(getBlockState(), getLevel(), getBlockPos().relative(Direction.DOWN));
+            VatBlock.updateVatState(getBlockState(), level, getBlockPos().relative(Direction.DOWN));
         sendData();
         return false;
     }
 
-    public boolean setMixerMode(String name, boolean simulate) {
+    public void setMixerMode(String name, boolean simulate) {
+        if (level == null)
+            return;
         for (MixerMode mode : MixerMode.values()) {
             if (Objects.equals(mode.name, name)) {
                 if (!simulate) {
                     mixerMode = mode;
 
-                } else return true;
+                } else return;
             }
         }
         if (!simulate && hasLevel())
-            VatBlock.updateVatState(getBlockState(), getLevel(), getBlockPos().relative(Direction.DOWN));
+            VatBlock.updateVatState(getBlockState(), level, getBlockPos().relative(Direction.DOWN));
         sendData();
-        return false;
     }
 
     @Override
@@ -157,10 +143,10 @@ public class IndustrialMixerBlockEntity extends KineticBlockEntity implements IV
 
     @Override
     public String[] doesntWorkWith() {
-        return new String[]{"electrodes"};
+        return new String[]{"tfmg:electrode", "tfmg:graphite_electrode"};
     }
 
-    enum MixerMode {
+    public enum MixerMode {
         NONE("none", ItemStack.EMPTY),
         MIXING("mixing", TFMGItems.MIXER_BLADE.asStack()),
         CENTRIFUGE("centrifuge", TFMGItems.CENTRIFUGE.asStack());

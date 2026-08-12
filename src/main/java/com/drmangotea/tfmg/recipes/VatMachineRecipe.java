@@ -20,9 +20,9 @@ public class VatMachineRecipe extends ProcessingRecipe<RecipeInput, VatRecipePar
     public List<String> machines;
     public List<String> allowedVatTypes;
     public int minSize;
-    public int heatLevel=0;
+    public int heatLevel= 0;
 
-    public int pressure=0;
+    public int pressure= 0;
 
     public VatMachineRecipe(VatRecipeParams params) {
         super(TFMGRecipeTypes.VAT_MACHINE_RECIPE, params);

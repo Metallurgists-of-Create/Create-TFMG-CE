@@ -28,6 +28,7 @@ import joptsimple.internal.Strings;
 import net.createmod.catnip.animation.LerpedFloat;
 import net.createmod.catnip.data.Couple;
 import net.createmod.catnip.lang.LangBuilder;
+import net.createmod.catnip.platform.CatnipServices;
 import net.createmod.ponder.api.level.PonderLevel;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -37,11 +38,13 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -527,8 +530,8 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
                 sendData();
         }
         if (evaluateNextTick) {
-            //  if (level instanceof ServerLevel serverLevel)
-            //      CatnipServices.NETWORK.sendToClientsTrackingChunk(serverLevel, new ChunkPos(worldPosition),new VatEvaluationPacket(this.getBlockPos()));
+            if (level instanceof ServerLevel serverLevel)
+                CatnipServices.NETWORK.sendToClientsTrackingChunk(serverLevel, new ChunkPos(worldPosition), new VatEvaluationPacket(this.getBlockPos()));
             evaluate();
             sendData();
             evaluateNextTick = false;
@@ -744,7 +747,6 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
     }
 
     public void evaluate() {
-
         if (!isController()) {
             if (getControllerBE() == null) {
                 return;
@@ -757,8 +759,6 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
         machineMap = new HashMap<>();
         heatLevel = 0;
         heatCondition = HeatCondition.NONE;
-
-
         float speed = 1;
 
         for (int xOffset = 0; xOffset < width; xOffset++) {
@@ -766,10 +766,8 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
                 for (int yOffset = 0; yOffset < getHeight() + 2; yOffset++) {
                     BlockPos pos = getBlockPos().below().offset(xOffset, yOffset, zOffset);
                     BlockState blockState = level.getBlockState(pos);
-
                     if (VatBlock.isVat(blockState))
                         continue;
-
                     BlockEntity blockEntity = level.getBlockEntity(pos);
 
                     if (blockEntity instanceof IVatMachine be) {
@@ -783,8 +781,6 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
                         machineMap.put(pos, be.getOperationId());
                         efficiency *= ((float) be.getWorkPercentage() / 100);
                     }
-
-
                 }
             }
         }

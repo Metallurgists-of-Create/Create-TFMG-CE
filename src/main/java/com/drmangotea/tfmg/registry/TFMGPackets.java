@@ -1,6 +1,7 @@
 package com.drmangotea.tfmg.registry;
 
 
+import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.content.electricity.base.*;
 import com.drmangotea.tfmg.content.electricity.connection.cables.CablePlacePacket;
 import com.drmangotea.tfmg.content.electricity.configuration_wrench.ElectriciansWrenchPacket;
@@ -9,7 +10,6 @@ import com.drmangotea.tfmg.content.items.weapons.quad_potato_cannon.QuadPotatoCa
 import com.drmangotea.tfmg.content.machinery.metallurgy.coke_oven.CokeOvenPacket;
 import com.drmangotea.tfmg.content.machinery.oil_processing.distillation_tower.controller.DistillationTowerPacket;
 import com.drmangotea.tfmg.content.machinery.vat.base.VatEvaluationPacket;
-import com.simibubi.create.Create;
 import net.createmod.catnip.net.base.BasePacketPayload;
 import net.createmod.catnip.net.base.CatnipPacketRegistry;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -50,10 +50,7 @@ public enum TFMGPackets implements BasePacketPayload.PacketTypeProvider {
 
     <T extends BasePacketPayload> TFMGPackets(Class<T> clazz, StreamCodec<? super RegistryFriendlyByteBuf, T> codec) {
         String name = this.name().toLowerCase(Locale.ROOT);
-        this.type = new CatnipPacketRegistry.PacketType<>(
-                new CustomPacketPayload.Type<>(Create.asResource(name)),
-                clazz, codec
-        );
+        this.type = new CatnipPacketRegistry.PacketType<>(new CustomPacketPayload.Type<>(TFMG.asResource(name)), clazz, codec);
     }
 
     @Override
@@ -63,7 +60,7 @@ public enum TFMGPackets implements BasePacketPayload.PacketTypeProvider {
     }
 
     public static void register() {
-        CatnipPacketRegistry packetRegistry = new CatnipPacketRegistry(Create.ID, 1);
+        CatnipPacketRegistry packetRegistry = new CatnipPacketRegistry(TFMG.MOD_ID, 1);
         for (TFMGPackets packet : TFMGPackets.values()) {
             packetRegistry.registerPacket(packet.type);
         }
