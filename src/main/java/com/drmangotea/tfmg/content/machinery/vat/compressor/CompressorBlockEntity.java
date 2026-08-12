@@ -34,6 +34,7 @@ public class CompressorBlockEntity extends KineticBlockEntity {
     public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
         if(getState()==CompressorState.NON_OPERATIONAL) {
             TFMGLang.translate("goggles.compressor.non_operational").style(ChatFormatting.RED).forGoggles(tooltip);
+            TFMGLang.translate("goggles.compressor.non_operational.rpm").style(ChatFormatting.RED).forGoggles(tooltip);
         }else if(getState()==CompressorState.PRESSURIZING){
             TFMGLang.translate("goggles.compressor.pressurizing").style(ChatFormatting.YELLOW).forGoggles(tooltip);
         }else {
