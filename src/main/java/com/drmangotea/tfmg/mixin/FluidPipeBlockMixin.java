@@ -1,7 +1,6 @@
 package com.drmangotea.tfmg.mixin;
 
 import com.drmangotea.tfmg.content.decoration.pipes.ILockablePipe;
-import com.drmangotea.tfmg.content.decoration.pipes.TFMGPipeBlockEntity;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.simibubi.create.content.fluids.pipes.FluidPipeBlock;

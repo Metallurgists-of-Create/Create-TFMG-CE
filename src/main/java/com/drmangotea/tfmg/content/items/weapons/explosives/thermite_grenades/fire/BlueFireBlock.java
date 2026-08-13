@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import com.mojang.serialization.MapCodec;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -12,7 +13,10 @@ import net.minecraft.tags.BiomeTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.*;
-import net.minecraft.world.level.block.*;
+import net.minecraft.world.level.block.BaseFireBlock;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.PipeBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -22,22 +26,22 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 public class BlueFireBlock extends BaseFireBlock {
     public static final MapCodec<BlueFireBlock> CODEC = simpleCodec(BlueFireBlock::new);
-    public static final int MAX_AGE = 15;
     public static final IntegerProperty AGE = BlockStateProperties.AGE_15;
     public static final BooleanProperty NORTH = PipeBlock.NORTH;
     public static final BooleanProperty EAST = PipeBlock.EAST;
     public static final BooleanProperty SOUTH = PipeBlock.SOUTH;
     public static final BooleanProperty WEST = PipeBlock.WEST;
     public static final BooleanProperty UP = PipeBlock.UP;
-    private static final Map<Direction, BooleanProperty> PROPERTY_BY_DIRECTION = PipeBlock.PROPERTY_BY_DIRECTION.entrySet().stream().filter((p_53467_) -> {
-        return p_53467_.getKey() != Direction.DOWN;
-    }).collect(Util.toMap());
+    private static final Map<Direction, BooleanProperty> PROPERTY_BY_DIRECTION = PipeBlock.PROPERTY_BY_DIRECTION.entrySet().stream().filter((p_53467_) -> p_53467_.getKey() != Direction.DOWN).collect(Util.toMap());
     private static final VoxelShape UP_AABB = Block.box(0.0D, 15.0D, 0.0D, 16.0D, 16.0D, 16.0D);
     private static final VoxelShape WEST_AABB = Block.box(0.0D, 0.0D, 0.0D, 1.0D, 16.0D, 16.0D);
     private static final VoxelShape EAST_AABB = Block.box(15.0D, 0.0D, 0.0D, 16.0D, 16.0D, 16.0D);
@@ -50,10 +54,8 @@ public class BlueFireBlock extends BaseFireBlock {
 
     public BlueFireBlock(Properties p_53425_) {
         super(p_53425_, 1.0F);
-        this.registerDefaultState(this.stateDefinition.any().setValue(AGE, Integer.valueOf(0)).setValue(NORTH, Boolean.valueOf(false)).setValue(EAST, Boolean.valueOf(false)).setValue(SOUTH, Boolean.valueOf(false)).setValue(WEST, Boolean.valueOf(false)).setValue(UP, Boolean.valueOf(false)));
-        this.shapesCache = ImmutableMap.copyOf(this.stateDefinition.getPossibleStates().stream().filter((p_53497_) -> {
-            return p_53497_.getValue(AGE) == 0;
-        }).collect(Collectors.toMap(Function.identity(), BlueFireBlock::calculateShape)));
+        this.registerDefaultState(this.stateDefinition.any().setValue(AGE, 0).setValue(NORTH, false).setValue(EAST, false).setValue(SOUTH, false).setValue(WEST, false).setValue(UP, false));
+        this.shapesCache = ImmutableMap.copyOf(this.stateDefinition.getPossibleStates().stream().filter((p_53497_) -> p_53497_.getValue(AGE) == 0).collect(Collectors.toMap(Function.identity(), BlueFireBlock::calculateShape)));
     }
 
     private static VoxelShape calculateShape(BlockState p_53491_) {
@@ -86,7 +88,7 @@ public class BlueFireBlock extends BaseFireBlock {
     }
 
     public VoxelShape getShape(BlockState p_53474_, BlockGetter p_53475_, BlockPos p_53476_, CollisionContext p_53477_) {
-        return this.shapesCache.get(p_53474_.setValue(AGE, Integer.valueOf(0)));
+        return this.shapesCache.get(p_53474_.setValue(AGE, 0));
     }
 
     @Override
@@ -107,7 +109,7 @@ public class BlueFireBlock extends BaseFireBlock {
             for(Direction direction : Direction.values()) {
                 BooleanProperty booleanproperty = PROPERTY_BY_DIRECTION.get(direction);
                 if (booleanproperty != null) {
-                    blockstate1 = blockstate1.setValue(booleanproperty, Boolean.valueOf(this.canCatchFire(p_53471_, p_53472_.relative(direction), direction.getOpposite())));
+                    blockstate1 = blockstate1.setValue(booleanproperty, this.canCatchFire(p_53471_, p_53472_.relative(direction), direction.getOpposite()));
                 }
             }
 
@@ -137,7 +139,7 @@ public class BlueFireBlock extends BaseFireBlock {
             } else {
                 int j = Math.min(15, i + p_221163_.nextInt(3) / 2);
                 if (i != j) {
-                    p_221160_ = p_221160_.setValue(AGE, Integer.valueOf(j));
+                    p_221160_ = p_221160_.setValue(AGE, j);
                     p_221161_.setBlock(p_221162_, p_221160_, 4);
                 }
 
@@ -159,12 +161,12 @@ public class BlueFireBlock extends BaseFireBlock {
 
                 boolean flag1 = p_221161_.getBiome(p_221162_).is(BiomeTags.INCREASED_FIRE_BURNOUT);
                 int k = flag1 ? -50 : 0;
-                this.tryCatchFire(p_221161_, p_221162_.east(), 300 + k, p_221163_, i, Direction.WEST);
-                this.tryCatchFire(p_221161_, p_221162_.west(), 300 + k, p_221163_, i, Direction.EAST);
-                this.tryCatchFire(p_221161_, p_221162_.below(), 250 + k, p_221163_, i, Direction.UP);
-                this.tryCatchFire(p_221161_, p_221162_.above(), 250 + k, p_221163_, i, Direction.DOWN);
-                this.tryCatchFire(p_221161_, p_221162_.north(), 300 + k, p_221163_, i, Direction.SOUTH);
-                this.tryCatchFire(p_221161_, p_221162_.south(), 300 + k, p_221163_, i, Direction.NORTH);
+                this.tryCatchFire(p_221161_, p_221162_.east(), 300 + k, p_221163_, Direction.WEST);
+                this.tryCatchFire(p_221161_, p_221162_.west(), 300 + k, p_221163_, Direction.EAST);
+                this.tryCatchFire(p_221161_, p_221162_.below(), 250 + k, p_221163_, Direction.UP);
+                this.tryCatchFire(p_221161_, p_221162_.above(), 250 + k, p_221163_, Direction.DOWN);
+                this.tryCatchFire(p_221161_, p_221162_.north(), 300 + k, p_221163_, Direction.SOUTH);
+                this.tryCatchFire(p_221161_, p_221162_.south(), 300 + k, p_221163_, Direction.NORTH);
                 BlockPos.MutableBlockPos blockpos$mutableblockpos = new BlockPos.MutableBlockPos();
 
                 for(int l = -1; l <= 1; ++l) {
@@ -212,9 +214,9 @@ public class BlueFireBlock extends BaseFireBlock {
         return p_221167_.hasProperty(BlockStateProperties.WATERLOGGED) && p_221167_.getValue(BlockStateProperties.WATERLOGGED) ? 0 : this.igniteOdds.getInt(p_221167_.getBlock());
     }
     public static BlockState getState(BlockGetter p_49246_, BlockPos p_49247_) {
-        return ((BlueFireBlock)TFMGColoredFires.BLUE_FIRE.get()).getStateForPlacement(p_49246_, p_49247_);
+        return TFMGColoredFires.BLUE_FIRE.get().getStateForPlacement(p_49246_, p_49247_);
     }
-    private void tryCatchFire(Level p_53432_, BlockPos p_53433_, int p_53434_, RandomSource p_53435_, int p_53436_, Direction face) {
+    private void tryCatchFire(Level p_53432_, BlockPos p_53433_, int p_53434_, RandomSource p_53435_, Direction face) {
         int i = p_53432_.getBlockState(p_53433_).getFlammability(p_53432_, p_53433_, face);
         if (p_53435_.nextInt(p_53434_) < i) {
             BlockState blockstate = p_53432_.getBlockState(p_53433_);
@@ -232,7 +234,7 @@ public class BlueFireBlock extends BaseFireBlock {
 
     private BlockState getStateWithAge(LevelAccessor p_53438_, BlockPos p_53439_, int p_53440_) {
         BlockState blockstate = getState(p_53438_, p_53439_);
-        return blockstate.is(TFMGColoredFires.BLUE_FIRE.get()) ? blockstate.setValue(AGE, Integer.valueOf(p_53440_)) : blockstate;
+        return blockstate.is(TFMGColoredFires.BLUE_FIRE.get()) ? blockstate.setValue(AGE, p_53440_) : blockstate;
     }
 
     private boolean isValidFireLocation(BlockGetter p_53486_, BlockPos p_53487_) {
@@ -276,12 +278,6 @@ public class BlueFireBlock extends BaseFireBlock {
 
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> p_53465_) {
         p_53465_.add(AGE, NORTH, EAST, SOUTH, WEST, UP);
-    }
-
-    private void setFlammable(Block p_53445_, int p_53446_, int p_53447_) {
-        if (p_53445_ == Blocks.AIR) throw new IllegalArgumentException("Tried to set air on fire... This is bad.");
-        this.igniteOdds.put(p_53445_, p_53446_);
-        this.burnOdds.put(p_53445_, p_53447_);
     }
 
 

@@ -12,15 +12,12 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jetbrains.annotations.NotNull;
 
 public class ElectricPumpBlock extends PumpBlock  {
-
-
     public ElectricPumpBlock(Properties p_i48415_1_) {
         super(p_i48415_1_);
     }
-
-
 
     @Override
     public void onPlace(BlockState pState, Level level, BlockPos pos, BlockState pOldState, boolean pIsMoving) {
@@ -30,7 +27,7 @@ public class ElectricPumpBlock extends PumpBlock  {
 
 
     @Override
-    public VoxelShape getShape(BlockState state, BlockGetter p_220053_2_, BlockPos p_220053_3_, CollisionContext p_220053_4_) {
+    public @NotNull VoxelShape getShape(BlockState state, BlockGetter p_220053_2_, BlockPos p_220053_3_, CollisionContext p_220053_4_) {
         return TFMGShapes.ELECTRIC_PUMP.get(state.getValue(FACING));
     }
 
@@ -44,8 +41,6 @@ public class ElectricPumpBlock extends PumpBlock  {
     public boolean isSmallCog() {
         return false;
     }
-
-
 
     @Override
     public BlockEntityType<? extends PumpBlockEntity> getBlockEntityType() {

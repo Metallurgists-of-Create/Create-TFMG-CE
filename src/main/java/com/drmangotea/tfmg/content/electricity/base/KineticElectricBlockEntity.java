@@ -11,7 +11,6 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class KineticElectricBlockEntity extends GeneratingKineticBlockEntity implements IElectric, IHaveGoggleInformation, IHaveHoveringInformation {
-
     public ElectricBlockValues data = new ElectricBlockValues(getPos());
 
     public KineticElectricBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
@@ -62,8 +61,7 @@ public class KineticElectricBlockEntity extends GeneratingKineticBlockEntity imp
     @Override
     public void tick() {
         super.tick();
-       tickElectricity();
-
+        tickElectricity();
     }
 
 

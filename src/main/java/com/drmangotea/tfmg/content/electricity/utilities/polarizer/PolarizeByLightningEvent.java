@@ -18,14 +18,10 @@ public class PolarizeByLightningEvent {
         if (event.getEntity() instanceof ItemEntity entity) {
            if (entity.getItem().is(TFMGItems.MAGNETIC_ALLOY_INGOT.get())) {
 
-               int random = entity.level().random.nextInt(entity.getItem().getCount()+1);
+               int random = entity.level().random.nextInt(entity.getItem().getCount() + 1);
 
-               if(random == 1){
-                    if(entity.level().random.nextBoolean()){
-                        random =0;
-                    }else {
-                        random =1;
-                    }
+               if(random == 1) {
+                   random = entity.level().random.nextBoolean() ? 0 : 1;
                }
 
                entity.setItem(new ItemStack(TFMGItems.MAGNET.get(),random));
@@ -33,11 +29,9 @@ public class PolarizeByLightningEvent {
                event.setCanceled(true);
             }
             if (entity.getItem().is(TFMGItems.MAGNET.get())) {
-
                 event.setCanceled(true);
             }
         }
 
     }
-
 }

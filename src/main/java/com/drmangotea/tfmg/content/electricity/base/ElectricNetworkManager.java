@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ElectricNetworkManager {
-
     public static Map<LevelAccessor, Map<Long, ElectricalNetwork>> networks = new HashMap<>();
 
     public void onLoadWorld(LevelAccessor world) {

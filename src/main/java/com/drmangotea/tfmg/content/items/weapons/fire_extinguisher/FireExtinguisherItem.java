@@ -21,8 +21,6 @@ import org.jetbrains.annotations.Nullable;
 import static com.drmangotea.tfmg.registry.TFMGDataComponents.AMOUNT;
 
 public class FireExtinguisherItem extends Item implements CustomArmPoseItem {
-
-
     public static final int DRY_ICE_CAPACITY = 500;
 
 

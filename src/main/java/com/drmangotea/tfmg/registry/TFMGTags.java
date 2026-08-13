@@ -11,7 +11,8 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.material.Fluid;
 
-import static com.drmangotea.tfmg.registry.TFMGTags.NameSpace.*;
+import static com.drmangotea.tfmg.registry.TFMGTags.NameSpace.COMMON;
+import static com.drmangotea.tfmg.registry.TFMGTags.NameSpace.MOD;
 
 
 public class TFMGTags {

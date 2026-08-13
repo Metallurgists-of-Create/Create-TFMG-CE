@@ -1,8 +1,8 @@
 package com.drmangotea.tfmg.content.machinery.misc.smokestack;
 
+import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.registry.TFMGBlockEntities;
 import com.drmangotea.tfmg.registry.TFMGFluids;
-import com.simibubi.create.Create;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.fluid.SmartFluidTank;
@@ -18,7 +18,6 @@ import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
-
 
 import java.util.List;
 import java.util.Random;
@@ -94,7 +93,7 @@ public class SmokestackBlockEntity extends SmartBlockEntity {
     }
 
     public static void makeParticles(Level level, BlockPos pos) {
-        Random random = Create.RANDOM;
+        Random random = TFMG.RANDOM;
         int shouldSpawnSmoke = random.nextInt(7);
         if (shouldSpawnSmoke == 0) {
 

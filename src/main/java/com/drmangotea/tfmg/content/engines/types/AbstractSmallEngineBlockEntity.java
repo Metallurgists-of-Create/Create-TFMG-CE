@@ -46,10 +46,7 @@ import static com.drmangotea.tfmg.content.engines.base.EngineBlock.SHAFT_FACING;
 import static com.simibubi.create.content.kinetics.base.HorizontalKineticBlock.HORIZONTAL_FACING;
 
 public abstract class AbstractSmallEngineBlockEntity extends AbstractEngineBlockEntity {
-
     public Optional<? extends EngineUpgrade> upgrade = Optional.empty();
-    public boolean clutchPressed = false;
-
 
     public int oil = 0;
     public int coolingFluid = 0;
@@ -83,7 +80,7 @@ public abstract class AbstractSmallEngineBlockEntity extends AbstractEngineBlock
         return (int) ((12.5f * (1 / efficiencyModifier()) * getSpeedEfficiency() * highestSignal / 15 * oilModifier * coolingFluidModifier) * (engineLength() )+ 1);
     }
 
-    public void detashEngines() {
+    public void detachEngines() {
     }
 
     public void setBlockStates(AbstractSmallEngineBlockEntity be, BlockPos last) {
@@ -538,7 +535,7 @@ public abstract class AbstractSmallEngineBlockEntity extends AbstractEngineBlock
                         return;
                     }
                     level.setBlock(be.getBlockPos(), be.getBlockState().setValue(SHAFT_FACING, be.getBlockPos() == this.getBlockPos() ? facing : updateDirection), 2);
-                    be.detashEngines();
+                    be.detachEngines();
                     engines.add(pos);
 
                     be.engineNumber = i;

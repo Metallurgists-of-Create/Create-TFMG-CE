@@ -1,6 +1,5 @@
 package com.drmangotea.tfmg.content.electricity.network.potentiometer;
 
-import com.drmangotea.tfmg.base.blocks.TFMGHorizontalDirectionalBlock;
 import com.drmangotea.tfmg.base.lang.TFMGLang;
 import com.drmangotea.tfmg.content.electricity.base.VoltageAlteringBlockEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -14,7 +13,6 @@ import net.createmod.catnip.math.VecHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.block.DirectionalBlock;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
@@ -22,8 +20,6 @@ import net.minecraft.world.phys.Vec3;
 import java.util.List;
 
 public class PotentiometerBlockEntity extends VoltageAlteringBlockEntity {
-
-
     protected ScrollValueBehaviour outputPercentage;
     public PotentiometerBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
@@ -41,15 +37,6 @@ public class PotentiometerBlockEntity extends VoltageAlteringBlockEntity {
         behaviours.add(outputPercentage);
 
     }
-
-    public Direction getDirection(){
-        if(!getBlockState().hasProperty(DirectionalBlock.FACING)){
-            return getBlockState().getValue(TFMGHorizontalDirectionalBlock.FACING).getCounterClockWise();
-        }
-
-        return getBlockState().getValue(DirectionalBlock.FACING);
-    }
-
 
     @Override
     public int getOutputVoltage() {

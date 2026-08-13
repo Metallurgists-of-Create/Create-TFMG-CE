@@ -3,26 +3,18 @@ package com.drmangotea.tfmg.content.items.weapons.flamethrover;
 import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.TFMGClient;
 import com.drmangotea.tfmg.TFMGRegistries;
-import com.drmangotea.tfmg.base.lang.TFMGLang;
 import com.drmangotea.tfmg.base.spark.Spark;
 import com.drmangotea.tfmg.registry.TFMGDataComponents;
 import com.drmangotea.tfmg.registry.TFMGEntityTypes;
 import com.drmangotea.tfmg.registry.TFMGFlamethrowerFuelTypes;
 import com.simibubi.create.foundation.item.CustomArmPoseItem;
-import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.player.AbstractClientPlayer;
-import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.network.chat.CommonComponents;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
@@ -32,20 +24,15 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
 
 public class FlamethrowerItem extends Item implements CustomArmPoseItem {
 
@@ -182,27 +169,25 @@ public class FlamethrowerItem extends Item implements CustomArmPoseItem {
         if (blockEntity != null) {
             IFluidHandler capability = level.getCapability(Capabilities.FluidHandler.BLOCK, blockEntity.getBlockPos(), context.getClickedFace());
             if (capability != null) {
-                if (!foundFluid) {
-                    for (int i = 0; i < capability.getTanks(); i++) {
-                        if (capability.getFluidInTank(i).isEmpty()) continue;
-                        FluidStack fluidStack = capability.getFluidInTank(i);
-                        int toDrain = Math.min(FUEL_CAPACITY - containedFuel, fluidStack.getAmount());
-                        FluidStack stackToDrain = fluidStack.copyWithAmount(toDrain);
-                        FlamethrowerFuel fuel = FlamethrowerFuel.createForType(level.registryAccess(), fluidStack.getFluid(), toDrain);
-                        if (fuel == FlamethrowerFuel.EMPTY) continue;
-                        if (fuelType != TFMGFlamethrowerFuelTypes.FALLBACK) {
-                            if (fuelType.equals(fuel.fuelType())) {
-                                stack.set(TFMGDataComponents.FLAMETHROWER, existingFuel.increment(toDrain, FUEL_CAPACITY));
-                                capability.drain(stackToDrain, IFluidHandler.FluidAction.EXECUTE);
-                                context.getPlayer().getCooldowns().addCooldown(stack.getItem(), 20);
-                                foundFluid = true;
-                            }
-                        } else {
-                            stack.set(TFMGDataComponents.FLAMETHROWER, fuel);
+                for (int i = 0; i < capability.getTanks(); i++) {
+                    if (capability.getFluidInTank(i).isEmpty()) continue;
+                    FluidStack fluidStack = capability.getFluidInTank(i);
+                    int toDrain = Math.min(FUEL_CAPACITY - containedFuel, fluidStack.getAmount());
+                    FluidStack stackToDrain = fluidStack.copyWithAmount(toDrain);
+                    FlamethrowerFuel fuel = FlamethrowerFuel.createForType(level.registryAccess(), fluidStack.getFluid(), toDrain);
+                    if (fuel == FlamethrowerFuel.EMPTY) continue;
+                    if (fuelType != TFMGFlamethrowerFuelTypes.FALLBACK) {
+                        if (fuelType.equals(fuel.fuelType())) {
+                            stack.set(TFMGDataComponents.FLAMETHROWER, existingFuel.increment(toDrain, FUEL_CAPACITY));
                             capability.drain(stackToDrain, IFluidHandler.FluidAction.EXECUTE);
                             context.getPlayer().getCooldowns().addCooldown(stack.getItem(), 20);
                             foundFluid = true;
                         }
+                    } else {
+                        stack.set(TFMGDataComponents.FLAMETHROWER, fuel);
+                        capability.drain(stackToDrain, IFluidHandler.FluidAction.EXECUTE);
+                        context.getPlayer().getCooldowns().addCooldown(stack.getItem(), 20);
+                        foundFluid = true;
                     }
                 }
             }

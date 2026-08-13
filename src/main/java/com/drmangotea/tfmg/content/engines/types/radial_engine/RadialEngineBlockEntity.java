@@ -13,7 +13,6 @@ import static com.drmangotea.tfmg.content.engines.base.EngineBlock.EngineState.*
 import static com.drmangotea.tfmg.content.engines.base.EngineBlock.SHAFT_FACING;
 
 public class RadialEngineBlockEntity extends RegularEngineBlockEntity {
-
     public RadialEngineBlockEntity(BlockEntityType<?> typeIn, BlockPos pos, BlockState state) {
         super(typeIn, pos, state);
 

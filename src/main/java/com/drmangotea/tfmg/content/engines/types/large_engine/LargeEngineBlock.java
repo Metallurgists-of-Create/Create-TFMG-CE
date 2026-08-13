@@ -1,6 +1,5 @@
 package com.drmangotea.tfmg.content.engines.types.large_engine;
 
-
 import com.drmangotea.tfmg.base.TFMGShapes;
 import com.drmangotea.tfmg.registry.TFMGBlockEntities;
 import com.drmangotea.tfmg.registry.TFMGBlocks;
@@ -44,10 +43,13 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.function.Predicate;
 
 import static net.minecraft.world.level.block.state.properties.BlockStateProperties.WATERLOGGED;
 
+@MethodsReturnNonnullByDefault
+@ParametersAreNonnullByDefault
 public class LargeEngineBlock extends HorizontalDirectionalBlock
         implements IWrenchable, IBE<LargeEngineBlockEntity> {
     public static final EnumProperty<AttachFace> FACE = BlockStateProperties.ATTACH_FACE;
@@ -67,14 +69,11 @@ public class LargeEngineBlock extends HorizontalDirectionalBlock
     }
 
     public static Direction getConnectedDirection(BlockState p_53201_) {
-        switch ((AttachFace) p_53201_.getValue(FACE)) {
-            case CEILING:
-                return Direction.DOWN;
-            case FLOOR:
-                return Direction.UP;
-            default:
-                return p_53201_.getValue(FACING);
-        }
+        return switch (p_53201_.getValue(FACE)) {
+            case CEILING -> Direction.DOWN;
+            case FLOOR -> Direction.UP;
+            default -> p_53201_.getValue(FACING);
+        };
     }
 
     @Override

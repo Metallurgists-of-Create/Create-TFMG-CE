@@ -35,10 +35,12 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.function.Predicate;
 
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 public class CableTubeBlock extends RotatedPillarBlock implements IBE<CableTubeBlockEntity>, ConcreteloggedBlock {
-
     public static final int placementHelperId = PlacementHelpers.register(new PlacementHelper());
 
     public final boolean concreteEncased;

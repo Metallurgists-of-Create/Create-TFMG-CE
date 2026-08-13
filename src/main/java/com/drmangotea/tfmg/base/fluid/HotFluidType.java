@@ -1,7 +1,7 @@
 package com.drmangotea.tfmg.base.fluid;
 
+import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.registry.TFMGFluids;
-import com.simibubi.create.Create;
 import com.tterrag.registrate.builders.FluidBuilder;
 import net.createmod.catnip.theme.Color;
 import net.minecraft.core.BlockPos;
@@ -71,7 +71,7 @@ public class HotFluidType extends TFMGFluids.SolidRenderedPlaceableFluidType {
 
         entity.setRemainingFireTicks(10);
 
-        if(Create.RANDOM.nextInt(30)==27)
+        if(TFMG.RANDOM.nextInt(30)==27)
             entity.lavaHurt();
 
         return false;

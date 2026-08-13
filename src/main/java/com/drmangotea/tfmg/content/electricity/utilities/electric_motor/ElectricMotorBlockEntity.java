@@ -25,12 +25,7 @@ import java.util.List;
 import static com.simibubi.create.content.kinetics.base.DirectionalKineticBlock.FACING;
 
 public class ElectricMotorBlockEntity extends KineticElectricBlockEntity {
-
-
-
     public boolean delayedUpdate = false;
-
-
 
     protected ScrollOptionBehaviour<WindmillBearingBlockEntity.RotationDirection> movementDirection;
 
@@ -116,12 +111,7 @@ public class ElectricMotorBlockEntity extends KineticElectricBlockEntity {
 
         int rotation = movementDirection.get() == WindmillBearingBlockEntity.RotationDirection.CLOCKWISE ? 1 : -1;
 
-        float speed = Math.min(255,data.getVoltage()*.8f)*rotation;
-
-        return speed;
-
-
-
+        return Math.min(255,data.getVoltage()*.8f)*rotation;
     }
 
     @Override

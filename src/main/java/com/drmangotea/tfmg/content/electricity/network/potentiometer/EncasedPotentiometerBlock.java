@@ -21,6 +21,9 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 
+import javax.annotation.ParametersAreNonnullByDefault;
+
+@ParametersAreNonnullByDefault
 public class EncasedPotentiometerBlock extends TFMGDirectionalBlock implements IBE<PotentiometerBlockEntity>, IVoltageChanger, EncasedBlock, IWrenchable {
     public EncasedPotentiometerBlock(Properties p_54120_) {
         super(p_54120_);

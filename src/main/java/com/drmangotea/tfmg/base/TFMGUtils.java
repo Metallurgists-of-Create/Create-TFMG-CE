@@ -1,6 +1,7 @@
 package com.drmangotea.tfmg.base;
 
 
+import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.TFMGRegistries;
 import com.drmangotea.tfmg.base.lang.TFMGLang;
 import com.drmangotea.tfmg.base.spark.ElectricSparkParticle;
@@ -8,7 +9,6 @@ import com.drmangotea.tfmg.base.spark.Spark;
 import com.drmangotea.tfmg.content.electricity.connection.cable_type.CableType;
 import com.drmangotea.tfmg.content.machinery.vat.electrode_holder.electrode.Electrode;
 import com.drmangotea.tfmg.registry.TFMGEntityTypes;
-import com.simibubi.create.Create;
 import com.simibubi.create.content.fluids.tank.FluidTankBlockEntity;
 import com.simibubi.create.foundation.fluid.SmartFluidTank;
 import com.simibubi.create.foundation.utility.CreateLang;
@@ -47,9 +47,7 @@ public class TFMGUtils {
 
     public static float toYRot(Direction facing) {
         return switch (facing){
-            case DOWN -> 0.0F;
-            case UP -> 0.0F;
-            case NORTH -> 0.0F;
+            case DOWN, UP, NORTH -> 0.0F;
             case SOUTH -> 180F;
             case WEST -> 90;
             case EAST -> 270F;
@@ -60,9 +58,9 @@ public class TFMGUtils {
         if (level.isClientSide && entity != null) level.broadcastEntityEvent(entity, (byte) 3);
 
         for (int i = 0; i < sparkAmount; i++) {
-            float x = Create.RANDOM.nextFloat(360);
-            float y = Create.RANDOM.nextFloat(360);
-            float z = Create.RANDOM.nextFloat(360);
+            float x = TFMG.RANDOM.nextFloat(360);
+            float y = TFMG.RANDOM.nextFloat(360);
+            float z = TFMG.RANDOM.nextFloat(360);
             Spark spark = TFMGEntityTypes.SPARK.create(level);
             spark.moveTo(pos.getX(), pos.getY() + 1, pos.getZ());
 
@@ -135,9 +133,9 @@ public class TFMGUtils {
         RandomSource r = level.getRandom();
 
         for (int i = 0; i < r.nextInt(40); i++) {
-            float x = Create.RANDOM.nextFloat(2) - 1;
-            float y = Create.RANDOM.nextFloat(2) - 1;
-            float z = Create.RANDOM.nextFloat(2) - 1;
+            float x = TFMG.RANDOM.nextFloat(2) - 1;
+            float y = TFMG.RANDOM.nextFloat(2) - 1;
+            float z = TFMG.RANDOM.nextFloat(2) - 1;
 
             level.addParticle(new ElectricSparkParticle.Data(), pos.getX() + 0.5f + x, pos.getY() + 0.5f + y, pos.getZ() + 0.5f + z, x, y, z);
         }

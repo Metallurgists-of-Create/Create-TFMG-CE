@@ -1,13 +1,11 @@
 package com.drmangotea.tfmg.content.items.weapons.advanced_potato_cannon;
 
 
-
 import com.drmangotea.tfmg.TFMGClient;
 import com.drmangotea.tfmg.content.items.weapons.advanced_potato_cannon.projectile.NapalmPotato;
 import com.drmangotea.tfmg.registry.TFMGEntityTypes;
 import com.drmangotea.tfmg.registry.TFMGItems;
 import com.simibubi.create.AllSoundEvents;
-import com.simibubi.create.Create;
 import com.simibubi.create.content.equipment.armor.BacktankUtil;
 import com.simibubi.create.content.equipment.zapper.ShootableGadgetItemMethods;
 import com.simibubi.create.foundation.item.CustomArmPoseItem;
@@ -29,7 +27,6 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
@@ -40,8 +37,6 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 public class AdvancedPotatoCannonItem extends ProjectileWeaponItem implements CustomArmPoseItem {
-
-	public static ItemStack CLIENT_CURRENT_AMMO = ItemStack.EMPTY;
 	public static final int MAX_DAMAGE = 500;
 
 	public AdvancedPotatoCannonItem(Properties properties) {

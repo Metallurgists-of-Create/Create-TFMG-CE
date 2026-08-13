@@ -1,11 +1,8 @@
 package com.drmangotea.tfmg.content.electricity.storage;
 
-import com.drmangotea.tfmg.base.lang.TFMGLang;
 import com.drmangotea.tfmg.base.lang.TFMGTexts;
 import com.drmangotea.tfmg.config.TFMGConfigs;
 import com.drmangotea.tfmg.content.electricity.base.ElectricBlockEntity;
-import com.drmangotea.tfmg.content.electricity.base.IElectric;
-import com.drmangotea.tfmg.content.electricity.utilities.converter.ConverterBlockEntity;
 import com.drmangotea.tfmg.registry.TFMGBlockEntities;
 import com.drmangotea.tfmg.registry.TFMGDataComponents;
 import net.minecraft.core.BlockPos;
@@ -25,7 +22,6 @@ import java.util.List;
 import static net.minecraft.world.level.block.DirectionalBlock.FACING;
 
 public class AccumulatorBlockEntity extends ElectricBlockEntity {
-
     public TFMGForgeEnergyStorage energy = createEnergyStorage(1);
     private IEnergyStorage energyCapability;
     public int length = 1;
@@ -55,12 +51,10 @@ public class AccumulatorBlockEntity extends ElectricBlockEntity {
     }
 
     public void neighbourChanged() {
+        if (level == null) return;
 
-        if (!hasLevel())
-            return;
         if (isController()) {
             int power = level.getBestNeighborSignal(worldPosition);
-
 
             if (power != signal)
                 signalChanged = true;
@@ -89,6 +83,7 @@ public class AccumulatorBlockEntity extends ElectricBlockEntity {
 
     @Override
     public boolean makeMultimeterTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
+        if (level == null) return true;
         if (!isController())
             if (level.getBlockEntity(controller) instanceof AccumulatorBlockEntity be)
                 return be.makeMultimeterTooltip(tooltip, isPlayerSneaking);
@@ -101,6 +96,8 @@ public class AccumulatorBlockEntity extends ElectricBlockEntity {
     }
 
     public void refreshController() {
+        if (level == null) return;
+
         Direction facing = getBlockState().getValue(FACING);
         for (int i = 0; i < 15; i++) {
             BlockPos pos = getBlockPos().relative(getBlockState().getValue(FACING), i);
@@ -112,6 +109,8 @@ public class AccumulatorBlockEntity extends ElectricBlockEntity {
     }
 
     public void refreshMultiblock() {
+        if (level == null) return;
+
         Direction facing = getBlockState().getValue(FACING);
         refreshCapability();
         if (!(level.getBlockEntity(getBlockPos().relative(facing)) instanceof AccumulatorBlockEntity be && be.getBlockState().getValue(FACING) == facing)) {
@@ -146,7 +145,7 @@ public class AccumulatorBlockEntity extends ElectricBlockEntity {
     }
 
     public void refreshCapability() {
-        IEnergyStorage oldCap = energyCapability;
+        if (level == null) return;
         if (level.getBlockEntity(controller) instanceof AccumulatorBlockEntity be) {
             energyCapability = be.energy;
         } else energyCapability = energy;
@@ -176,7 +175,6 @@ public class AccumulatorBlockEntity extends ElectricBlockEntity {
     }
 
     protected void analogSignalChanged() {
-
         if (!isController()) {
             signal = level.getBestNeighborSignal(controller);
             return;

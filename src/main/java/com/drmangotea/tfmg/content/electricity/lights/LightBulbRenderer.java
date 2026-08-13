@@ -16,16 +16,13 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class LightBulbRenderer extends SafeBlockEntityRenderer<LightBulbBlockEntity> {
-
-
-
     public LightBulbRenderer(BlockEntityRendererProvider.Context context) {
 
     }
 
     @Override
     protected void renderSafe(LightBulbBlockEntity be, float partialTicks, PoseStack ms, MultiBufferSource buffer, int light, int overlay) {
-        if(getLightModel() ==null)
+        if(getLightModel() == null)
             return;
         BlockState blockState = be.getBlockState();
         ms.pushPose();

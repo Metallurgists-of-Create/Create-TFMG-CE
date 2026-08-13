@@ -1,11 +1,11 @@
 package com.drmangotea.tfmg.content.items.weapons.explosives.thermite_grenades;
 
+import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.base.spark.BlueSpark;
 import com.drmangotea.tfmg.base.spark.GreenSpark;
 import com.drmangotea.tfmg.base.spark.Spark;
 import com.drmangotea.tfmg.registry.TFMGEntityTypes;
 import com.drmangotea.tfmg.registry.TFMGItems;
-import com.simibubi.create.Create;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.entity.Entity;
@@ -64,9 +64,9 @@ public class ThermiteGrenade extends ThrowableItemProjectile {
             this.level().broadcastEntityEvent(this, (byte) 3);
 
             for (int i=0; i<20;i++){
-                float x= Create.RANDOM.nextFloat(360);
-                float y= Create.RANDOM.nextFloat(360);
-                float z= Create.RANDOM.nextFloat(360);
+                float x= TFMG.RANDOM.nextFloat(360);
+                float y= TFMG.RANDOM.nextFloat(360);
+                float z= TFMG.RANDOM.nextFloat(360);
 
                 if(flameColor==ChemicalColor.GREEN){
                     GreenSpark spark = TFMGEntityTypes.GREEN_SPARK.create(level());
@@ -89,20 +89,9 @@ public class ThermiteGrenade extends ThrowableItemProjectile {
                     spark.moveTo(this.getX(), this.getY()+1, this.getZ());
                     spark.shootFromRotation( this,x,y,z,0.2f,1);
                     this.level().addFreshEntity(spark);}
-
-
-
-
-
-
-
         }
-
-
             this.level().explode(this, this.getX(), this.getY(0.0625D), this.getZ(), 2.0F, Level.ExplosionInteraction.NONE);
             this.discard();
-
-
     }
 
     @SuppressWarnings("unchecked")

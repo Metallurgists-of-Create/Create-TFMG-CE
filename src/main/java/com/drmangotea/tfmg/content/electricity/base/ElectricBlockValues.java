@@ -11,8 +11,6 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 public class ElectricBlockValues {
-
-
     public long electricalNetworkId;
 
     public boolean destroyed = false;

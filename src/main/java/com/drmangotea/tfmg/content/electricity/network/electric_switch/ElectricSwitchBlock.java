@@ -10,6 +10,9 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
+import javax.annotation.ParametersAreNonnullByDefault;
+
+@ParametersAreNonnullByDefault
 public class ElectricSwitchBlock extends TFMGDirectionalBlock implements IBE<ElectricSwitchBlockEntity>, IVoltageChanger {
     public ElectricSwitchBlock(Properties p_54120_) {
         super(p_54120_);

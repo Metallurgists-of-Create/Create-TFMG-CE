@@ -79,7 +79,7 @@ public interface IElectric {
      */
     default void onPlaced() {
         if (getLevelAccessor() instanceof ServerLevel serverLevel)
-            CatnipServices.NETWORK.sendToClientsTrackingChunk(serverLevel, new ChunkPos(getPos()), new ConnectNeightborsPacket(getPos()));
+            CatnipServices.NETWORK.sendToClientsTrackingChunk(serverLevel, new ChunkPos(getPos()), new ConnectNeighborsPacket(getPos()));
         ElectricalNetwork network = TFMG.NETWORK_MANAGER.getOrCreateNetworkFor(this);
         setNetwork(getPos().asLong());
         getData().electricalNetworkId = getPos().asLong();

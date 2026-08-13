@@ -41,13 +41,8 @@ public class CreativeGeneratorBlockEntity extends ElectricBlockEntity {
         return 0;
     }
 
-    @Override
-    public int getMaxCurrent() {
-        return 0;
-    }
-
     public static void update(CreativeGeneratorBlockEntity be){
-        be.updateNextTick();;
+        be.updateNextTick();
     }
 
     @Override
@@ -60,8 +55,7 @@ public class CreativeGeneratorBlockEntity extends ElectricBlockEntity {
         return 999999999;
     }
 
-    class CreativeGeneratorValueBox extends ValueBoxTransform.Sided {
-
+    static class CreativeGeneratorValueBox extends ValueBoxTransform.Sided {
         @Override
         protected Vec3 getSouthLocation() {
             return VecHelper.voxelSpace(8, 8, 16);

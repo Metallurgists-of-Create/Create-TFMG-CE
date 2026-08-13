@@ -9,7 +9,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.codec.StreamCodec;
 
 public class NetworkUpdatePacket extends BlockEntityDataPacket<SmartBlockEntity> {
-
     public static final StreamCodec<ByteBuf, NetworkUpdatePacket> STREAM_CODEC = StreamCodec.composite(
             BlockPos.STREAM_CODEC, packet -> packet.pos,
             NetworkUpdatePacket::new
@@ -22,7 +21,6 @@ public class NetworkUpdatePacket extends BlockEntityDataPacket<SmartBlockEntity>
 
     @Override
     protected void handlePacket(SmartBlockEntity blockEntity) {
-
         if (blockEntity instanceof IElectric be) {
             be.updateNetwork();
         }

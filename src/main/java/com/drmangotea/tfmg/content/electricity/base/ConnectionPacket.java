@@ -9,8 +9,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.codec.StreamCodec;
 
 public class ConnectionPacket extends BlockEntityDataPacket<SmartBlockEntity> {
-
-
     public static final StreamCodec<ByteBuf, ConnectionPacket> STREAM_CODEC = StreamCodec.composite(
             BlockPos.STREAM_CODEC, packet -> packet.pos,
             ConnectionPacket::new

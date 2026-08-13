@@ -20,8 +20,6 @@ import java.util.Optional;
 import static net.minecraft.world.level.block.HorizontalDirectionalBlock.FACING;
 
 public class TurboUpgradeData extends EngineUpgrade {
-
-
     LerpedFloat speed = LerpedFloat.linear();
 
     float angle;
@@ -37,16 +35,6 @@ public class TurboUpgradeData extends EngineUpgrade {
 
     public PartialModel getModel() {
         return TFMGPartialModels.TURBO;
-    }
-
-    @Override
-    public void tickUpgrade(AbstractSmallEngineBlockEntity engine) {
-        if (!engine.getLevel().isClientSide)
-            return;
-
-
-
-
     }
 
 

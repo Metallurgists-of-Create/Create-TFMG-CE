@@ -11,8 +11,6 @@ import net.neoforged.neoforge.client.model.generators.ModelFile;
 import static com.simibubi.create.foundation.data.AssetLookup.partialBaseModel;
 
 public class ConverterGenerator extends SpecialBlockStateGen {
-
-
     @Override
     protected int getXRotation(BlockState state) {
         return 0;
@@ -24,9 +22,7 @@ public class ConverterGenerator extends SpecialBlockStateGen {
             case NORTH -> 0;
             case SOUTH -> 180;
             case WEST -> 270;
-            case EAST -> 90;
-            case DOWN -> 90;
-            case UP -> 90;
+            case EAST, UP, DOWN -> 90;
         };
     }
 

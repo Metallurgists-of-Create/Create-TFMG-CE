@@ -15,9 +15,6 @@ public class LeadAxeItem extends AxeItem {
         pStack.hurtAndBreak(2, pAttacker, LivingEntity.getSlotForHand(pTarget.getUsedItemHand()));
         MobEffectInstance poison = pTarget.getEffect(MobEffects.POISON);
 
-        ;
-
-
         if(poison!=null) {
             pTarget.addEffect(new MobEffectInstance(MobEffects.POISON, 160 + poison.getDuration()));
         }

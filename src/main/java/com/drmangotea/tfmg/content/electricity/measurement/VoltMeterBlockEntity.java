@@ -1,6 +1,5 @@
 package com.drmangotea.tfmg.content.electricity.measurement;
 
-import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.base.lang.TFMGTexts;
 import com.drmangotea.tfmg.content.electricity.base.IElectric;
 import com.drmangotea.tfmg.content.electricity.storage.AccumulatorBlockEntity;
@@ -22,8 +21,6 @@ import static net.minecraft.world.level.block.HorizontalDirectionalBlock.FACING;
 
 
 public class VoltMeterBlockEntity extends SmartBlockEntity implements IHaveGoggleInformation {
-
-
     public LerpedFloat angle = LerpedFloat.angular();
 
 
@@ -94,15 +91,13 @@ public class VoltMeterBlockEntity extends SmartBlockEntity implements IHaveGoggl
     @Override
     public void tick() {
         super.tick();
-        if (!level.isClientSide)
+        if (level == null || !level.isClientSide)
             return;
 
-        float value = (float) Math.abs(this.value) / getRange();
-        if (value > 1)
-            value = 1;
-       // TFMG.LOGGER.debug("angle "+value);
-        float targetAngle = Math.abs(value * 180);
+        float range = getRange();
+        float value = range == 0 ? 0.0f : Math.min(Math.abs(this.value) / range, 1.0f);
 
+        float targetAngle = Math.abs(value * 180);
 
         angle.chase(Math.min(Math.abs(targetAngle), 180), 0.05f, LerpedFloat.Chaser.EXP);
         angle.tickChaser();
@@ -115,7 +110,6 @@ public class VoltMeterBlockEntity extends SmartBlockEntity implements IHaveGoggl
     }
 
     @Override
-    @SuppressWarnings("removal")
     public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
         TFMGTexts.Voltmeter.mode(mode.langKey).forGoggles(tooltip, 1);
 

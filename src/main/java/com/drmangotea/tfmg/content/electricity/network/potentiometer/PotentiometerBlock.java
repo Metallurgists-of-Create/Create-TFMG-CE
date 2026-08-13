@@ -1,10 +1,11 @@
 package com.drmangotea.tfmg.content.electricity.network.potentiometer;
 
-import com.drmangotea.tfmg.base.blocks.TFMGDirectionalBlock;
 import com.drmangotea.tfmg.base.TFMGShapes;
+import com.drmangotea.tfmg.base.blocks.TFMGDirectionalBlock;
 import com.drmangotea.tfmg.content.electricity.base.IElectric;
 import com.drmangotea.tfmg.content.electricity.base.IVoltageChanger;
 import com.drmangotea.tfmg.registry.TFMGBlockEntities;
+import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
 import com.simibubi.create.content.decoration.encasing.EncasableBlock;
 import com.simibubi.create.foundation.block.IBE;
 import net.minecraft.core.BlockPos;
@@ -20,6 +21,10 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
+import javax.annotation.ParametersAreNonnullByDefault;
+
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 public class PotentiometerBlock extends TFMGDirectionalBlock implements IBE<PotentiometerBlockEntity>, IVoltageChanger, EncasableBlock {
     public PotentiometerBlock(Properties p_54120_) {
         super(p_54120_);

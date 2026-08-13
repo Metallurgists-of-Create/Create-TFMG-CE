@@ -71,6 +71,7 @@ public class TransformerBlockEntity extends VoltageAlteringBlockEntity {
 
     @Override
     public void destroy() {
+        if (level == null) return;
         super.destroy();
         BlockPos pos = this.getBlockPos();
         if(!primaryCoil.isEmpty()){
@@ -119,7 +120,7 @@ public class TransformerBlockEntity extends VoltageAlteringBlockEntity {
             return;
         }
 
-        coilRatio = (float) (float)secondaryTurns/(float) primaryTurns;
+        coilRatio = (float)secondaryTurns /(float) primaryTurns;
 
         updateNextTick();
         updateInFront();
@@ -139,6 +140,7 @@ public class TransformerBlockEntity extends VoltageAlteringBlockEntity {
 
     @Override
     public float resistance() {
+        if (level == null) return 0;
         Direction facing = getBlockState().getValue(FACING).getCounterClockWise();
         if (level.getBlockEntity(getBlockPos().relative(facing)) instanceof IElectric be && be.getData().getId() != data.getId()) {
             if (be.hasElectricitySlot(facing.getOpposite())) {
@@ -208,7 +210,6 @@ public class TransformerBlockEntity extends VoltageAlteringBlockEntity {
         if (compound.contains("SecondaryCoil")) {
             ItemStack.parse(registries, compound.getCompound("SecondaryCoil")).ifPresent(i -> secondaryCoil = i);
         }
-;
 
         coilRatio = compound.getFloat("CoilRation");
     }
@@ -246,7 +247,7 @@ public class TransformerBlockEntity extends VoltageAlteringBlockEntity {
         Direction direction = level.getBlockState(pos).getValue(FACING);
 
 
-        Direction coilDirection = getCoilDirections(level,pos,result).get(0);
+        Direction coilDirection = getCoilDirections(level,pos,result).getFirst();
         /////////
 
         Vec3 center = VecHelper.getCenterOf(pos);

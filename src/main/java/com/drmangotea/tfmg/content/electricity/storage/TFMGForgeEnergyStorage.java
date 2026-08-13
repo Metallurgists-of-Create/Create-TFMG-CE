@@ -4,7 +4,6 @@ package com.drmangotea.tfmg.content.electricity.storage;
 import net.neoforged.neoforge.energy.EnergyStorage;
 
 public abstract class TFMGForgeEnergyStorage extends EnergyStorage {
-
     public TFMGForgeEnergyStorage(int capacity, int maxTransfer) {
         super(capacity, maxTransfer);
 

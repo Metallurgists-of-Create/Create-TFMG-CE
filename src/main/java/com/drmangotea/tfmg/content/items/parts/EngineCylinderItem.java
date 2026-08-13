@@ -1,6 +1,5 @@
 package com.drmangotea.tfmg.content.items.parts;
 
-
 import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.TFMGRegistries;
 import com.drmangotea.tfmg.base.data_storage.CylinderFuels;
@@ -15,10 +14,12 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@ParametersAreNonnullByDefault
 public class EngineCylinderItem extends Item {
 
     public EngineCylinderItem(Properties properties) {

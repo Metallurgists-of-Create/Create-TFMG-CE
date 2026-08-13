@@ -1,14 +1,13 @@
 package com.drmangotea.tfmg.content.electricity.measurement;
 
-
-import com.drmangotea.tfmg.base.blocks.TFMGHorizontalDirectionalBlock;
 import com.drmangotea.tfmg.base.TFMGShapes;
+import com.drmangotea.tfmg.base.blocks.TFMGHorizontalDirectionalBlock;
 import com.drmangotea.tfmg.registry.TFMGBlockEntities;
 import com.drmangotea.tfmg.registry.TFMGBlocks;
 import com.simibubi.create.content.equipment.wrench.IWrenchable;
 import com.simibubi.create.foundation.block.IBE;
+import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.BlockGetter;
@@ -18,31 +17,27 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 public class VoltMeterBlock extends TFMGHorizontalDirectionalBlock implements IBE<VoltMeterBlockEntity>, IWrenchable {
-
-
     public VoltMeterBlock(Properties p_54120_) {
         super(p_54120_);
     }
 
     @Override
     public VoxelShape getShape(BlockState pState, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
-
         return pState.is(TFMGBlocks.VOLTMETER) ? TFMGShapes.VOLTMETER.get(pState.getValue(FACING)) : super.getShape(pState,worldIn,pos,context);
     }
 
 
     @Override
     public InteractionResult onWrenched(BlockState state, UseOnContext context) {
-
         Level level = context.getLevel();
         BlockPos pos = context.getClickedPos();
-        Direction direction = context.getClickedFace();
-
 
         return onBlockEntityUse(level, pos, be -> {
-
             boolean shouldChange = false;
 
             for(VoltMeterBlockEntity.MeasureMode mode : VoltMeterBlockEntity.MeasureMode.values()){

@@ -1,6 +1,5 @@
 package com.drmangotea.tfmg.content.engines.types.large_engine;
 
-
 import com.drmangotea.tfmg.base.TFMGUtils;
 import com.drmangotea.tfmg.base.lang.TFMGLang;
 import com.drmangotea.tfmg.config.TFMGConfigs;
@@ -45,14 +44,9 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Predicate;
 
 public class LargeEngineBlockEntity extends AbstractEngineBlockEntity {
-
-
     public WeakReference<PoweredShaftBlockEntity> target;
-
-
     public EngineFluidTank airTank;
-
-    public IFluidHandler fluidCapabilityy;
+    public IFluidHandler fluidCapability;
 
 
     public LargeEngineBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
@@ -61,7 +55,7 @@ public class LargeEngineBlockEntity extends AbstractEngineBlockEntity {
         exhaustTank = new EngineFluidTank(2000, true, false, f->tankUpdated(f,false));
         fuelTank = new EngineFluidTank(2000, false, true, f->tankUpdated(f,true), TFMGTags.TFMGFluidTags.AIR.tag);
         airTank = new EngineFluidTank(1000, false, true, TFMGTags.TFMGFluidTags.AIR.tag, f->tankUpdated(f,true));
-        fluidCapabilityy = new CombinedTankWrapper(exhaustTank,fuelTank,airTank);
+        fluidCapability = new CombinedTankWrapper(exhaustTank,fuelTank,airTank);
     }
 
     @Override
@@ -274,7 +268,7 @@ public class LargeEngineBlockEntity extends AbstractEngineBlockEntity {
     @Nullable
     @OnlyIn(Dist.CLIENT)
     public Float getTargetAngle() {
-        float angle = 0;
+        float angle;
         BlockState blockState = getBlockState();
         if (!TFMGBlocks.LARGE_ENGINE.has(blockState)&&!TFMGBlocks.SIMPLE_LARGE_ENGINE.has(blockState))
             return null;
@@ -282,7 +276,7 @@ public class LargeEngineBlockEntity extends AbstractEngineBlockEntity {
         Direction facing = SteamEngineBlock.getFacing(blockState);
         PoweredShaftBlockEntity shaft = getShaft();
         Axis facingAxis = facing.getAxis();
-        Axis axis = Axis.Y;
+        Axis axis;
 
         if (shaft == null)
             return null;
@@ -310,7 +304,7 @@ public class LargeEngineBlockEntity extends AbstractEngineBlockEntity {
         event.registerBlockEntity(
                 Capabilities.FluidHandler.BLOCK,
                 TFMGBlockEntities.LARGE_ENGINE.get(),
-                (be, context) -> be.fluidCapabilityy
+                (be, context) -> be.fluidCapability
         );
     }
     @Override

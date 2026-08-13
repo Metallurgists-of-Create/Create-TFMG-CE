@@ -15,8 +15,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import static com.drmangotea.tfmg.content.electricity.lights.LightBulbBlock.LIGHT;
 
 public class NeonTubeBlockEntity extends ElectricBlockEntity {
-
-    public DyeColor color= DyeColor.WHITE;
+    public DyeColor color = DyeColor.WHITE;
 
     public LerpedFloat glow = LerpedFloat.linear();
 
@@ -32,12 +31,10 @@ public class NeonTubeBlockEntity extends ElectricBlockEntity {
     @Override
     public void tick() {
         super.tick();
-
-
             glow.chase(getPowerUsage()*1.5, 0.4, LerpedFloat.Chaser.EXP);
             glow.tickChaser();
             if (Math.min(getData().getVoltage() / 10, 15) != getBlockState().getValue(LIGHT))
-                level.setBlock(getBlockPos(), getBlockState().setValue(LIGHT, (int) Math.min(getData().getVoltage() / 10, 15)), 2);
+                level.setBlock(getBlockPos(), getBlockState().setValue(LIGHT, Math.min(getData().getVoltage() / 10, 15)), 2);
 
     }
     @Override

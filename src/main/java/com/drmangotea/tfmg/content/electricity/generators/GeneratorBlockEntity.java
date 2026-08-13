@@ -7,16 +7,13 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class GeneratorBlockEntity extends KineticElectricBlockEntity  {
-
-
     public GeneratorBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
     }
 
-
     @Override
     public int voltageGeneration() {
-        return (int) Math.min(255,generation());
+        return Math.min(255,generation());
     }
 
     @Override

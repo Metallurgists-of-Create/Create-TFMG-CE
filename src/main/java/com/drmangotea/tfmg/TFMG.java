@@ -1,14 +1,16 @@
 package com.drmangotea.tfmg;
 
-import com.drmangotea.tfmg.base.*;
-import com.drmangotea.tfmg.content.electricity.base.ElectricNetworkManager;
-
-import com.drmangotea.tfmg.content.items.weapons.explosives.thermite_grenades.fire.TFMGColoredFires;
-import com.drmangotea.tfmg.content.machinery.oil_processing.pumpjack.base.TestSavedDataManager;
-import com.drmangotea.tfmg.datagen.TFMGDatagen;
+import com.drmangotea.tfmg.base.TFMGBoilerHeaters;
+import com.drmangotea.tfmg.base.TFMGContraptions;
+import com.drmangotea.tfmg.base.TFMGCreativeTabs;
+import com.drmangotea.tfmg.base.TFMGRegistrate;
 import com.drmangotea.tfmg.base.fluid.TFMGFluidInteractions;
 import com.drmangotea.tfmg.config.TFMGConfigs;
 import com.drmangotea.tfmg.content.decoration.pipes.TFMGPipes;
+import com.drmangotea.tfmg.content.electricity.base.ElectricNetworkManager;
+import com.drmangotea.tfmg.content.items.weapons.explosives.thermite_grenades.fire.TFMGColoredFires;
+import com.drmangotea.tfmg.content.machinery.oil_processing.pumpjack.base.TestSavedDataManager;
+import com.drmangotea.tfmg.datagen.TFMGDatagen;
 import com.drmangotea.tfmg.registry.*;
 import com.drmangotea.tfmg.worldgen.TFMGFeatures;
 import com.mojang.logging.LogUtils;
@@ -29,10 +31,12 @@ import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.registries.RegisterEvent;
 import org.slf4j.Logger;
 
+import java.util.Random;
+
 
 @Mod(TFMG.MOD_ID)
 public class TFMG {
-
+    public static final Random RANDOM = new Random();
     public static final String MOD_ID = "tfmg";
     public static final ElectricNetworkManager NETWORK_MANAGER = new ElectricNetworkManager();
     public static final Logger LOGGER = LogUtils.getLogger();

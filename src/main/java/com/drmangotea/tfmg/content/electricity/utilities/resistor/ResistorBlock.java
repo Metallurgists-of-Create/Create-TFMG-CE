@@ -6,6 +6,7 @@ import com.drmangotea.tfmg.content.electricity.base.IElectric;
 import com.drmangotea.tfmg.registry.TFMGBlockEntities;
 import com.drmangotea.tfmg.registry.TFMGBlocks;
 import com.drmangotea.tfmg.registry.TFMGDataComponents;
+import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
 import com.simibubi.create.foundation.block.IBE;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.LivingEntity;
@@ -21,9 +22,12 @@ import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Collections;
 import java.util.List;
 
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 public class ResistorBlock extends WallMountBlock implements IBE<ResistorBlockEntity> {
     public ResistorBlock(Properties p_49795_) {
         super(p_49795_);
@@ -44,7 +48,7 @@ public class ResistorBlock extends WallMountBlock implements IBE<ResistorBlockEn
         if(!player.isCreative()&&level.getBlockEntity(pos) instanceof ResistorBlockEntity be) {
             ItemStack item = TFMGBlocks.RESISTOR.asItem().getDefaultInstance();
             item.set(TFMGDataComponents.RESISTANCE, be.resistance);
-            ItemEntity itemToSpawn = new ItemEntity((Level) level, pos.getX() + 0.5f, pos.getY() + 0.5f, pos.getZ() + 0.5f, item);
+            ItemEntity itemToSpawn = new ItemEntity(level, pos.getX() + 0.5f, pos.getY() + 0.5f, pos.getZ() + 0.5f, item);
             if (itemToSpawn.getItem().getCount() > 0)
                 level.addFreshEntity(itemToSpawn);
         }

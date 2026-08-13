@@ -1,9 +1,6 @@
 package com.drmangotea.tfmg.content.electricity.connection;
 
-import com.drmangotea.tfmg.TFMG;
-import com.drmangotea.tfmg.content.electricity.base.ElectricBlockEntity;
 import com.drmangotea.tfmg.content.electricity.base.IElectric;
-import com.drmangotea.tfmg.content.electricity.connection.cables.CableConnectorBlockEntity;
 import com.drmangotea.tfmg.registry.TFMGBlockEntities;
 import com.simibubi.create.content.equipment.wrench.IWrenchable;
 import com.simibubi.create.foundation.block.IBE;
@@ -15,12 +12,11 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
-import java.util.ArrayList;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Arrays;
-import java.util.List;
 
+@ParametersAreNonnullByDefault
 public class CableHubBlock extends Block implements IBE<CableHubBlockEntity>, IWrenchable {
-
     public int maxCurrent;
 
     public CableHubBlock(Properties properties, int maxCurrent) {

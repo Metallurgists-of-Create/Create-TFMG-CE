@@ -4,6 +4,7 @@ package com.drmangotea.tfmg.content.electricity.generators.large_generator;
 import com.drmangotea.tfmg.base.TFMGShapes;
 import com.drmangotea.tfmg.content.electricity.base.IElectric;
 import com.drmangotea.tfmg.registry.TFMGBlockEntities;
+import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
 import com.simibubi.create.content.kinetics.base.RotatedPillarKineticBlock;
 import com.simibubi.create.foundation.block.IBE;
 import net.minecraft.core.BlockPos;
@@ -17,7 +18,10 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 public class RotorBlock extends RotatedPillarKineticBlock implements IBE<RotorBlockEntity> {
     public RotorBlock(Properties properties) {
         super(properties);
@@ -39,11 +43,6 @@ public class RotorBlock extends RotatedPillarKineticBlock implements IBE<RotorBl
     public void onPlace(BlockState pState, Level level, BlockPos pos, BlockState pOldState, boolean pIsMoving) {
         withBlockEntityDo(level, pos, IElectric::onPlaced);
     }
-    @Override
-    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
-        IBE.onRemove(state, level, pos, newState);
-    }
-
 
     @Override
     public RenderShape getRenderShape(BlockState pState) {

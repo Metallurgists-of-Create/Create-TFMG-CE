@@ -1,6 +1,5 @@
 package com.drmangotea.tfmg.content.electricity.utilities.resistor;
 
-
 import com.drmangotea.tfmg.base.lang.TFMGLang;
 import com.drmangotea.tfmg.registry.TFMGDataComponents;
 import net.minecraft.ChatFormatting;
@@ -12,8 +11,10 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 
+@ParametersAreNonnullByDefault
 public class ResistorItem extends Item {
     public ResistorItem(Properties p_40566_) {
         super(p_40566_);

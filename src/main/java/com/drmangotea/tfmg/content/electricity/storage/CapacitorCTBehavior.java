@@ -13,7 +13,6 @@ import javax.annotation.Nullable;
 import static net.minecraft.world.level.block.DirectionalBlock.FACING;
 
 public class CapacitorCTBehavior extends ConnectedTextureBehaviour.Base {
-
 	protected CTSpriteShiftEntry layerShift;
 
 	public CapacitorCTBehavior(CTSpriteShiftEntry layerShift){
@@ -29,12 +28,8 @@ public class CapacitorCTBehavior extends ConnectedTextureBehaviour.Base {
 		Direction direction = state.getValue(FACING);
 		Direction otherDirection = other.getValue(FACING);
 
-		if(direction != otherDirection)
-			return false;
-
-
-		return true;
-	}
+        return direction == otherDirection;
+    }
 
 	@Override
 	public CTSpriteShiftEntry getShift(BlockState state, Direction direction, @Nullable TextureAtlasSprite sprite) {

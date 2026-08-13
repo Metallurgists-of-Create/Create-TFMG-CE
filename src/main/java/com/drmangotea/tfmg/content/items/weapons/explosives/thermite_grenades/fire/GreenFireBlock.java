@@ -31,16 +31,13 @@ import java.util.stream.Collectors;
 
 public class GreenFireBlock extends BaseFireBlock {
     public static final MapCodec<GreenFireBlock> CODEC = simpleCodec(GreenFireBlock::new);
-    public static final int MAX_AGE = 15;
     public static final IntegerProperty AGE = BlockStateProperties.AGE_15;
     public static final BooleanProperty NORTH = PipeBlock.NORTH;
     public static final BooleanProperty EAST = PipeBlock.EAST;
     public static final BooleanProperty SOUTH = PipeBlock.SOUTH;
     public static final BooleanProperty WEST = PipeBlock.WEST;
     public static final BooleanProperty UP = PipeBlock.UP;
-    private static final Map<Direction, BooleanProperty> PROPERTY_BY_DIRECTION = PipeBlock.PROPERTY_BY_DIRECTION.entrySet().stream().filter((p_53467_) -> {
-        return p_53467_.getKey() != Direction.DOWN;
-    }).collect(Util.toMap());
+    private static final Map<Direction, BooleanProperty> PROPERTY_BY_DIRECTION = PipeBlock.PROPERTY_BY_DIRECTION.entrySet().stream().filter((p_53467_) -> p_53467_.getKey() != Direction.DOWN).collect(Util.toMap());
     private static final VoxelShape UP_AABB = Block.box(0.0D, 15.0D, 0.0D, 16.0D, 16.0D, 16.0D);
     private static final VoxelShape WEST_AABB = Block.box(0.0D, 0.0D, 0.0D, 1.0D, 16.0D, 16.0D);
     private static final VoxelShape EAST_AABB = Block.box(15.0D, 0.0D, 0.0D, 16.0D, 16.0D, 16.0D);
@@ -52,7 +49,7 @@ public class GreenFireBlock extends BaseFireBlock {
 
     public GreenFireBlock(Properties p_53425_) {
         super(p_53425_, 1.0F);
-        this.registerDefaultState(this.stateDefinition.any().setValue(AGE, Integer.valueOf(0)).setValue(NORTH, Boolean.valueOf(false)).setValue(EAST, Boolean.valueOf(false)).setValue(SOUTH, Boolean.valueOf(false)).setValue(WEST, Boolean.valueOf(false)).setValue(UP, Boolean.valueOf(false)));
+        this.registerDefaultState(this.stateDefinition.any().setValue(AGE, 0).setValue(NORTH, false).setValue(EAST, false).setValue(SOUTH, false).setValue(WEST, false).setValue(UP, false));
         this.shapesCache = ImmutableMap.copyOf(this.stateDefinition.getPossibleStates().stream().filter((p_53497_) -> {
             return p_53497_.getValue(AGE) == 0;
         }).collect(Collectors.toMap(Function.identity(), GreenFireBlock::calculateShape)));
@@ -88,7 +85,7 @@ public class GreenFireBlock extends BaseFireBlock {
     }
 
     public VoxelShape getShape(BlockState p_53474_, BlockGetter p_53475_, BlockPos p_53476_, CollisionContext p_53477_) {
-        return this.shapesCache.get(p_53474_.setValue(AGE, Integer.valueOf(0)));
+        return this.shapesCache.get(p_53474_.setValue(AGE, 0));
     }
 
     @Override
@@ -231,7 +228,7 @@ public class GreenFireBlock extends BaseFireBlock {
     }
     private BlockState getStateWithAge(LevelAccessor p_53438_, BlockPos p_53439_, int p_53440_) {
         BlockState blockstate = getState(p_53438_, p_53439_);
-        return blockstate.is(TFMGColoredFires.GREEN_FIRE.get()) ? blockstate.setValue(AGE, Integer.valueOf(p_53440_)) : blockstate;
+        return blockstate.is(TFMGColoredFires.GREEN_FIRE.get()) ? blockstate.setValue(AGE, p_53440_) : blockstate;
     }
 
     private boolean isValidFireLocation(BlockGetter p_53486_, BlockPos p_53487_) {
