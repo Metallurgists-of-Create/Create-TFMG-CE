@@ -18,10 +18,14 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.storage.loot.LootParams;
+import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Collections;
 import java.util.List;
 
+@ParametersAreNonnullByDefault
 public class AccumulatorBlock extends TFMGDirectionalBlock implements IBE<AccumulatorBlockEntity> {
 
     public AccumulatorBlock(Properties p_49795_) {
@@ -30,24 +34,22 @@ public class AccumulatorBlock extends TFMGDirectionalBlock implements IBE<Accumu
 
 
     @Override
-    public void setPlacedBy(Level level, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack) {
+    public void setPlacedBy(Level level, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
         super.setPlacedBy(level, pos, state, placer, stack);
         withBlockEntityDo(level, pos, be -> be.setCapacity(stack));
     }
 
     @Override
-    public List<ItemStack> getDrops(BlockState p_287732_, LootParams.Builder p_287596_) {
+    public @NotNull List<ItemStack> getDrops(BlockState p_287732_, LootParams.Builder p_287596_) {
         return Collections.emptyList();
     }
-
-
 
     @Override
     public boolean onDestroyedByPlayer(BlockState state, Level level, BlockPos pos, Player player, boolean willHarvest, FluidState fluid) {
         if(!player.isCreative()&&level.getBlockEntity(pos) instanceof AccumulatorBlockEntity be) {
             ItemStack item = TFMGBlocks.ACCUMULATOR.asItem().getDefaultInstance();
             item.set(TFMGDataComponents.ACCUMULATOR_STORAGE, be.energy.getEnergyStored());
-            ItemEntity itemToSpawn = new ItemEntity((Level) level, pos.getX() + 0.5f, pos.getY() + 0.5f, pos.getZ() + 0.5f, item);
+            ItemEntity itemToSpawn = new ItemEntity(level, pos.getX() + 0.5f, pos.getY() + 0.5f, pos.getZ() + 0.5f, item);
             if (itemToSpawn.getItem().getCount() > 0)
                 level.addFreshEntity(itemToSpawn);
         }

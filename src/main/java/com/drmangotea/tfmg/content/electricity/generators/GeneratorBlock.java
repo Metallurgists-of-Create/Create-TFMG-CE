@@ -15,24 +15,25 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.ParametersAreNonnullByDefault;
+
+@ParametersAreNonnullByDefault
 
 public class GeneratorBlock extends DirectionalKineticBlock implements IBE<GeneratorBlockEntity> {
     public GeneratorBlock(Properties properties) {
         super(properties);
     }
     @Override
-    public VoxelShape getShape(BlockState pState, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
-
+    public @NotNull VoxelShape getShape(BlockState pState, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
         return TFMGShapes.GENERATOR.get(pState.getValue(FACING));
     }
     @Override
     public void onPlace(BlockState pState, Level level, BlockPos pos, BlockState pOldState, boolean pIsMoving) {
         withBlockEntityDo(level,pos, IElectric::onPlaced);
     }
-    @Override
-    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
-        IBE.onRemove(state, level, pos, newState);
-    }
+
     @Override
     public Class<GeneratorBlockEntity> getBlockEntityClass() {
         return GeneratorBlockEntity.class;

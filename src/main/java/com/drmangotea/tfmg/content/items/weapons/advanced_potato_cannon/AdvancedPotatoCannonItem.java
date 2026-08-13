@@ -40,8 +40,6 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 public class AdvancedPotatoCannonItem extends ProjectileWeaponItem implements CustomArmPoseItem {
-
-	public static ItemStack CLIENT_CURRENT_AMMO = ItemStack.EMPTY;
 	public static final int MAX_DAMAGE = 500;
 
 	public AdvancedPotatoCannonItem(Properties properties) {

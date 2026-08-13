@@ -12,6 +12,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jetbrains.annotations.NotNull;
 
 public class RadialEngineBlock extends RegularEngineBlock {
     public RadialEngineBlock(Properties properties) {
@@ -29,7 +30,7 @@ public class RadialEngineBlock extends RegularEngineBlock {
     }
 
     @Override
-    public VoxelShape getShape(BlockState state, BlockGetter p_60556_, BlockPos pos, CollisionContext p_60558_) {
+    public @NotNull VoxelShape getShape(BlockState state, BlockGetter p_60556_, BlockPos pos, CollisionContext p_60558_) {
         return switch (state.getValue(ENGINE_STATE)){
             case NORMAL -> TFMGShapes.RADIAL_ENGINE_MIDDLE.get(state.getValue(HORIZONTAL_FACING));
             case SHAFT -> TFMGShapes.RADIAL_ENGINE_SIDE.get(state.getValue(HORIZONTAL_FACING).getOpposite());

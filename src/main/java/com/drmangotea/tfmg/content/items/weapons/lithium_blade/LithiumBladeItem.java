@@ -25,8 +25,6 @@ import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.common.util.FakePlayer;
 
 public class LithiumBladeItem extends SwordItem {
-
-
     public static final int MAX_TIME = 2000;
 
     public LithiumBladeItem(Tier pTier, Properties pProperties) {

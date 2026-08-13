@@ -34,12 +34,10 @@ import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Objects;
 
-@SuppressWarnings({"unused","deprecation"})
+@SuppressWarnings({"unused"})
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 public class DiagonalCableBlock extends DirectionalBlock implements SimpleWaterloggedBlock, IWrenchable, IBE<DiagonalCableBlockEntity> {
-
-
     public static final MapCodec<DiagonalCableBlock> CODEC = simpleCodec(DiagonalCableBlock::new);
 
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
@@ -58,33 +56,26 @@ public class DiagonalCableBlock extends DirectionalBlock implements SimpleWaterl
         p_55125_.add(WATERLOGGED,FACING, FACING_UP);
     }
 
-
-
     @Override
     public FluidState getFluidState(BlockState p_51475_) {
         return p_51475_.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : super.getFluidState(p_51475_);
     }
+
     @Override
     public void onPlace(BlockState pState, Level level, BlockPos pos, BlockState pOldState, boolean pIsMoving) {
         withBlockEntityDo(level,pos, IElectric::onPlaced);
     }
+
     @Override
     public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
         IBE.onRemove(state, level, pos, newState);
     }
+
     public VoxelShape getShape(BlockState state, BlockGetter p_54562_, BlockPos p_54563_, CollisionContext p_54564_) {
-
-
-
-
         if (state.getValue(FACING_UP)) {
             return TFMGShapes.DIAGONAL_CABLE_BLOCK_UP.get(state.getValue(FACING));
         }
-
-
             return TFMGShapes.DIAGONAL_CABLE_BLOCK_DOWN.get(state.getValue(FACING));
-
-
     }
 
     @Override
@@ -121,14 +112,11 @@ public class DiagonalCableBlock extends DirectionalBlock implements SimpleWaterl
         if (context.getPlayer() != null && context.getPlayer().isShiftKeyDown()) {
             if (clickedFace == Direction.DOWN)
                 return defaultBlockState().setValue(FACING, facing.getOpposite()).setValue(FACING_UP,true).setValue(WATERLOGGED, flag);
-                else
-            return defaultBlockState().setValue(FACING, facing.getOpposite()).setValue(FACING_UP,false).setValue(WATERLOGGED, flag);
+                else return defaultBlockState().setValue(FACING, facing.getOpposite()).setValue(FACING_UP,false).setValue(WATERLOGGED, flag);
         }
         if (clickedFace == Direction.DOWN)
             return defaultBlockState().setValue(FACING, facing).setValue(FACING_UP,true).setValue(WATERLOGGED, flag);
-
-
-    return defaultBlockState().setValue(FACING, facing).setValue(FACING_UP,false).setValue(WATERLOGGED, flag);
+        return defaultBlockState().setValue(FACING, facing).setValue(FACING_UP,false).setValue(WATERLOGGED, flag);
     }
 
     @Override

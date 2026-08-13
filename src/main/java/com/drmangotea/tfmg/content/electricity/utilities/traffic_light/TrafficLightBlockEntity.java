@@ -61,6 +61,8 @@ public class TrafficLightBlockEntity extends ElectricBlockEntity {
 
     @Override
     public void tick() {
+        if (level == null) return;
+
         super.tick();
 
         if(!level.isClientSide)

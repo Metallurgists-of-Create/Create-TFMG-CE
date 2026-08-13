@@ -25,8 +25,6 @@ public class TimerScrollBehaviour extends ScrollValueBehaviour {
 			new ValueSettingsFormatter(this::formatSettings));
 	}
 
-
-
 	@Override
 	public void setValueSettings(Player player, ValueSettings valueSetting, boolean ctrlHeld) {
 		int value = valueSetting.value();

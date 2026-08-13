@@ -9,7 +9,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.codec.StreamCodec;
 
 public class UpdateInFrontPacket extends BlockEntityDataPacket<SmartBlockEntity> {
-
     public static final StreamCodec<ByteBuf, UpdateInFrontPacket> STREAM_CODEC = StreamCodec.composite(
             BlockPos.STREAM_CODEC, packet -> packet.pos,
             UpdateInFrontPacket::new
@@ -21,7 +20,6 @@ public class UpdateInFrontPacket extends BlockEntityDataPacket<SmartBlockEntity>
 
     @Override
     protected void handlePacket(SmartBlockEntity blockEntity) {
-
         if (blockEntity instanceof VoltageAlteringBlockEntity be) {
             be.updateInFrontNextTick();
 

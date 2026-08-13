@@ -1,6 +1,5 @@
 package com.drmangotea.tfmg.content.items.weapons.explosives.pipe_bomb;
 
-
 import com.drmangotea.tfmg.registry.TFMGItems;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
@@ -15,17 +14,14 @@ import net.minecraft.world.item.ItemDisplayContext;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
-
 @OnlyIn(Dist.CLIENT)
 public class PipeBombRenderer extends EntityRenderer<PipeBomb> {
     private final ItemRenderer itemRenderer;
-
 
     public PipeBombRenderer(EntityRendererProvider.Context p_174114_) {
         super(p_174114_);
         this.itemRenderer = p_174114_.getItemRenderer();
     }
-
 
     public void render(PipeBomb grenade, float p_114657_, float p_114658_, PoseStack p_114659_, MultiBufferSource p_114660_, int p_114661_) {
         p_114659_.pushPose();

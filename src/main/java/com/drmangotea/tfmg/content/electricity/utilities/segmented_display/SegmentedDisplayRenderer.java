@@ -25,8 +25,6 @@ public class SegmentedDisplayRenderer extends SafeBlockEntityRenderer<SegmentedD
         BlockState blockState = be.getBlockState();
         VertexConsumer vb = bufferSource.getBuffer(RenderType.cutoutMipped());
         ms.pushPose();
-        var msr = TransformStack.of(ms);
-    //    msr.translate(0.5, 0.5, 0.5);
 
         int color =  be.color.getTextColor();
 

@@ -24,10 +24,6 @@ public class GeneratorEngineUpgrade extends EngineUpgrade {
 
     @Override
     public void render(AbstractSmallEngineBlockEntity be, float partialTicks, PoseStack ms, MultiBufferSource buffer, int light) {
-
-
-
-
         BlockState state = be.getBlockState();
         Direction facing = state.getValue(FACING);
         boolean side = false;

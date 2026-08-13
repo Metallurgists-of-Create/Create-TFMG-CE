@@ -16,7 +16,6 @@ import javax.annotation.Nullable;
 
 public class NapalmBombEntity extends Entity {
     private static final EntityDataAccessor<Integer> DATA_FUSE_ID = SynchedEntityData.defineId(NapalmBombEntity.class, EntityDataSerializers.INT);
-    private static final int DEFAULT_FUSE_TIME = 80;
     @Nullable
     private LivingEntity owner;
 
@@ -29,7 +28,7 @@ public class NapalmBombEntity extends Entity {
         this(TFMGEntityTypes.NAPALM_BOMB.get(), p_32079_);
         this.setPos(p_32080_, p_32081_, p_32082_);
         double d0 = p_32079_.random.nextDouble() * (double)((float)Math.PI * 2F);
-        this.setDeltaMovement(-Math.sin(d0) * 0.02D, (double)0.2F, -Math.cos(d0) * 0.02D);
+        this.setDeltaMovement(-Math.sin(d0) * 0.02D, 0.2F, -Math.cos(d0) * 0.02D);
         this.setFuse(80);
         this.xo = p_32080_;
         this.yo = p_32081_;
@@ -42,8 +41,6 @@ public class NapalmBombEntity extends Entity {
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
         builder.define(DATA_FUSE_ID, 80);
     }
-
-
 
     protected MovementEmission getMovementEmission() {
         return MovementEmission.NONE;

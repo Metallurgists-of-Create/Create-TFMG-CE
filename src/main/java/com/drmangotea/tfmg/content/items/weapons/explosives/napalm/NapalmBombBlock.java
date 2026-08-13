@@ -1,5 +1,6 @@
 package com.drmangotea.tfmg.content.items.weapons.explosives.napalm;
 
+import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -25,13 +26,16 @@ import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.BlockHitResult;
 
 import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 public class NapalmBombBlock extends Block {
     public static final BooleanProperty UNSTABLE = BlockStateProperties.UNSTABLE;
 
     public NapalmBombBlock(Properties p_57422_) {
         super(p_57422_);
-        this.registerDefaultState(this.defaultBlockState().setValue(UNSTABLE, Boolean.valueOf(false)));
+        this.registerDefaultState(this.defaultBlockState().setValue(UNSTABLE, false));
     }
 
     public void onCaughtFire(BlockState state, Level world, BlockPos pos, @Nullable net.minecraft.core.Direction face, @Nullable LivingEntity igniter) {
@@ -66,10 +70,9 @@ public class NapalmBombBlock extends Block {
     }
 
 
-
     public void wasExploded(Level p_57441_, BlockPos p_57442_, Explosion sourceMob) {
         if (!p_57441_.isClientSide) {
-            NapalmBombEntity napalmBomb = new NapalmBombEntity(p_57441_, (double)p_57442_.getX() + 0.5D, (double)p_57442_.getY(), (double)p_57442_.getZ() + 0.5D, sourceMob.getIndirectSourceEntity());
+            NapalmBombEntity napalmBomb = new NapalmBombEntity(p_57441_, (double)p_57442_.getX() + 0.5D, p_57442_.getY(), (double)p_57442_.getZ() + 0.5D, sourceMob.getIndirectSourceEntity());
             int i = napalmBomb.getFuse();
             napalmBomb.setFuse((short)(p_57441_.random.nextInt(i / 4) + i / 8));
             p_57441_.addFreshEntity(napalmBomb);
@@ -78,15 +81,15 @@ public class NapalmBombBlock extends Block {
 
     @Deprecated //Forge: Prefer using IForgeBlock#catchFire
     public static void explode(Level p_57434_, BlockPos p_57435_) {
-        explode(p_57434_, p_57435_, (LivingEntity)null);
+        explode(p_57434_, p_57435_, null);
     }
 
     @Deprecated //Forge: Prefer using IForgeBlock#catchFire
     private static void explode(Level p_57437_, BlockPos p_57438_, @Nullable LivingEntity p_57439_) {
         if (!p_57437_.isClientSide) {
-            NapalmBombEntity napalmBomb = new NapalmBombEntity(p_57437_, (double)p_57438_.getX() + 0.5D, (double)p_57438_.getY(), (double)p_57438_.getZ() + 0.5D, p_57439_);
+            NapalmBombEntity napalmBomb = new NapalmBombEntity(p_57437_, (double)p_57438_.getX() + 0.5D, p_57438_.getY(), (double)p_57438_.getZ() + 0.5D, p_57439_);
             p_57437_.addFreshEntity(napalmBomb);
-            p_57437_.playSound((Player)null, napalmBomb.getX(), napalmBomb.getY(), napalmBomb.getZ(), SoundEvents.TNT_PRIMED, SoundSource.BLOCKS, 1.0F, 1.0F);
+            p_57437_.playSound(null, napalmBomb.getX(), napalmBomb.getY(), napalmBomb.getZ(), SoundEvents.TNT_PRIMED, SoundSource.BLOCKS, 1.0F, 1.0F);
             p_57437_.gameEvent(p_57439_, GameEvent.PRIME_FUSE, p_57438_);
         }
     }

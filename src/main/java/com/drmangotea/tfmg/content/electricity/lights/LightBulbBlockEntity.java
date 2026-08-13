@@ -1,8 +1,5 @@
 package com.drmangotea.tfmg.content.electricity.lights;
 
-
-
-import com.drmangotea.tfmg.base.TFMGUtils;
 import com.drmangotea.tfmg.content.electricity.base.ElectricBlockEntity;
 import net.createmod.catnip.animation.LerpedFloat;
 import net.createmod.catnip.nbt.NBTHelper;
@@ -10,8 +7,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -19,9 +14,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import static com.drmangotea.tfmg.base.blocks.WallMountBlock.FACING;
 import static com.drmangotea.tfmg.content.electricity.lights.LightBulbBlock.LIGHT;
 
-
 public class LightBulbBlockEntity extends ElectricBlockEntity {
-
     public LerpedFloat glow = LerpedFloat.linear();
 
     boolean signalChanged;
@@ -37,12 +30,12 @@ public class LightBulbBlockEntity extends ElectricBlockEntity {
     @Override
     public void tick() {
         super.tick();
-        if(!hasSignal&&canWork()) {
+        if (!hasSignal&&canWork()) {
             glow.chase(getPowerUsage()*2.5, 0.4, LerpedFloat.Chaser.EXP);
             glow.tickChaser();
             if (Math.min(getData().getVoltage() / 10, 15) != getBlockState().getValue(LIGHT))
-                level.setBlock(getBlockPos(), getBlockState().setValue(LIGHT, (int) Math.min(getData().getVoltage() / 10, 15)), 2);
-        }else {
+                level.setBlock(getBlockPos(), getBlockState().setValue(LIGHT, Math.min(getData().getVoltage() / 10, 15)), 2);
+        } else {
             if (getBlockState().getValue(LIGHT)!=0)
                 level.setBlock(getBlockPos(), getBlockState().setValue(LIGHT, 0), 2);
             glow.chase(0, 0.4, LerpedFloat.Chaser.EXP);
@@ -55,7 +48,7 @@ public class LightBulbBlockEntity extends ElectricBlockEntity {
         }
     }
     public void setColor(DyeColor color) {
-        if(color==DyeColor.BLACK||color == DyeColor.LIGHT_GRAY|| color == DyeColor.GRAY)
+        if(color == DyeColor.BLACK||color == DyeColor.LIGHT_GRAY|| color == DyeColor.GRAY)
             return;
 
         this.color = color;
@@ -74,7 +67,6 @@ public class LightBulbBlockEntity extends ElectricBlockEntity {
       //  TFMGUtils.playSound(level,getBlockPos(), SoundEvents.GLASS_BREAK, SoundSource.BLOCKS);
     }
 
-
     @Override
     public void setVoltage(int newVoltage) {
         super.setVoltage(newVoltage);
@@ -84,7 +76,6 @@ public class LightBulbBlockEntity extends ElectricBlockEntity {
     public float resistance() {
         return 400;
     }
-
 
     public void neighbourChanged() {
         if (!hasLevel())
@@ -110,8 +101,6 @@ public class LightBulbBlockEntity extends ElectricBlockEntity {
         super.read(compound,registries , clientPacket);
         color = NBTHelper.readEnum(compound,"color",DyeColor.class);
     }
-
-
 
     protected void analogSignalChanged(int newSignal) {
             hasSignal = newSignal > 0;

@@ -3,6 +3,7 @@ package com.drmangotea.tfmg.content.items.weapons.advanced_potato_cannon.project
 import com.drmangotea.tfmg.base.TFMGUtils;
 import com.drmangotea.tfmg.registry.TFMGEntityTypes;
 import com.drmangotea.tfmg.registry.TFMGItems;
+import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
@@ -15,14 +16,15 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 
+import javax.annotation.ParametersAreNonnullByDefault;
+
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 public class NapalmPotato extends ThrowableItemProjectile {
-
-
     public NapalmPotato(EntityType<? extends NapalmPotato> entityType, Level level) {
         super(entityType,level);
-
-
     }
+
     public NapalmPotato(Level p_37399_, LivingEntity p_37400, EntityType bomb) {
         super(bomb, p_37400, p_37399_);
 
@@ -49,12 +51,6 @@ public class NapalmPotato extends ThrowableItemProjectile {
                 this.level().addParticle(particleoptions, this.getX(), this.getY(), this.getZ(), 0.0D, 0.0D, 0.0D);
             }
         }
-
-    }
-
-    protected void onHitEntity(EntityHitResult p_37404_) {
-        super.onHitEntity(p_37404_);
-        Entity entity = p_37404_.getEntity();
 
     }
 

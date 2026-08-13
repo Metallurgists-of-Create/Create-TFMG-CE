@@ -10,7 +10,6 @@ import net.minecraft.world.item.Tier;
 public class LeadSwordItem extends SwordItem {
     public LeadSwordItem(Tier pTier, Properties pProperties) {
         super(pTier,pProperties);
-
     }
 
     public boolean hurtEnemy(ItemStack pStack, LivingEntity pTarget, LivingEntity pAttacker) {

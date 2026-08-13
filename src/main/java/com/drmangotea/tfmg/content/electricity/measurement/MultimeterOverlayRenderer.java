@@ -42,7 +42,6 @@ import java.util.List;
 import java.util.Map;
 
 public class MultimeterOverlayRenderer {
-
     public static final LayeredDraw.Layer OVERLAY = MultimeterOverlayRenderer::renderOverlay;
 
     private static final Map<Object, OutlineEntry> outlines = Outliner.getInstance().getOutlines();
@@ -74,14 +73,12 @@ public class MultimeterOverlayRenderer {
         ClientLevel world = mc.level;
         BlockPos pos = result.getBlockPos();
 
-        int prevHoverTicks = hoverTicks;
         hoverTicks++;
         lastHovered = pos;
 
         pos = proxiedOverlayPosition(world, pos);
 
         BlockEntity be = world.getBlockEntity(pos);
-        boolean holdsMultimeter = MultimeterItem.isHeldByPlayer(mc.player);
 
         boolean isShifting = mc.player.isShiftKeyDown();
 

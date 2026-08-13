@@ -22,6 +22,9 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 
+import javax.annotation.ParametersAreNonnullByDefault;
+
+@ParametersAreNonnullByDefault
 public class EncasedDiodeBlock extends TFMGDirectionalBlock implements IBE<VoltageAlteringBlockEntity>, IVoltageChanger, EncasedBlock, IWrenchable {
     public EncasedDiodeBlock(Properties p_54120_) {
         super(p_54120_);

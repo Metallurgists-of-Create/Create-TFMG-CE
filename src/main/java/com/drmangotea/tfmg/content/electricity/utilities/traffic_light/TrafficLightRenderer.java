@@ -20,11 +20,7 @@ public class TrafficLightRenderer extends SafeBlockEntityRenderer<TrafficLightBl
 
     @Override
     protected void renderSafe(TrafficLightBlockEntity be, float partialTicks, PoseStack ms, MultiBufferSource buffer, int light, int overlay) {
-
-
         BlockState blockState = be.getBlockState();
-        var msr = TransformStack.of(ms);
-
 
         ms.pushPose();
 

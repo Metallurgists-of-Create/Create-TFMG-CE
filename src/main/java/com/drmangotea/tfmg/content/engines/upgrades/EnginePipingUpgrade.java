@@ -14,9 +14,7 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import java.util.Optional;
 
 public class EnginePipingUpgrade extends EngineUpgrade {
-
     public Optional<FluidTankBlockEntity> tank = Optional.empty();
-
 
     public void findTank(AbstractSmallEngineBlockEntity be) {
         Level level = be.getLevel();

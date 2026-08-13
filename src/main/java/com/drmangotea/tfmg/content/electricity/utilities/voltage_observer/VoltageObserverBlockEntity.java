@@ -43,6 +43,8 @@ public class VoltageObserverBlockEntity extends ElectricBlockEntity {
 
     @Override
     public void tick() {
+        if (level == null) return;
+
         super.tick();
         if(update){
             level.setBlock(getBlockPos(),getBlockState().setValue(POWERED,getData().getVoltage() != 0),2);

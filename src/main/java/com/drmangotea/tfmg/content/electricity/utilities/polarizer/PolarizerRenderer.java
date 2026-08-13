@@ -42,18 +42,8 @@ public class PolarizerRenderer extends SafeBlockEntityRenderer<PolarizerBlockEnt
 
 		ItemRenderer itemRenderer = Minecraft.getInstance()
 			.getItemRenderer();
-		boolean blockItem = itemRenderer.getModel(heldItem, null, null, 0)
-			.isGui3d();
 
-		ms.pushPose();
-
-
-		var msr = TransformStack.of(ms)
-			.center()
-			.rotateYDegrees(blockState.getValue(HorizontalDirectionalBlock.FACING).getAxis()== Direction.Axis.X ? 90 : 0)
-			.translate(0, 0.4, 0)
-			.rotateXDegrees(90)
-			.scale(blockItem ? .5f : .375f);
+        ms.pushPose();
 
 		itemRenderer.renderStatic(heldItem, ItemDisplayContext.FIXED, light, overlay, ms, buffer,be.getLevel(), 0);
 

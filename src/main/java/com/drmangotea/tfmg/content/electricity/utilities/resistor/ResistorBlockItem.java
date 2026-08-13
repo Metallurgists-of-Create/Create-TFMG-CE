@@ -12,13 +12,14 @@ import net.minecraft.world.level.block.Block;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 
+@ParametersAreNonnullByDefault
 public class ResistorBlockItem extends BlockItem {
     public ResistorBlockItem(Block p_40565_, Properties p_40566_) {
         super(p_40565_, p_40566_);
     }
-
 
     @Override
     @OnlyIn(Dist.CLIENT)

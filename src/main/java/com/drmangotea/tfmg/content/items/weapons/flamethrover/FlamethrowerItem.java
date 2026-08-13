@@ -182,27 +182,25 @@ public class FlamethrowerItem extends Item implements CustomArmPoseItem {
         if (blockEntity != null) {
             IFluidHandler capability = level.getCapability(Capabilities.FluidHandler.BLOCK, blockEntity.getBlockPos(), context.getClickedFace());
             if (capability != null) {
-                if (!foundFluid) {
-                    for (int i = 0; i < capability.getTanks(); i++) {
-                        if (capability.getFluidInTank(i).isEmpty()) continue;
-                        FluidStack fluidStack = capability.getFluidInTank(i);
-                        int toDrain = Math.min(FUEL_CAPACITY - containedFuel, fluidStack.getAmount());
-                        FluidStack stackToDrain = fluidStack.copyWithAmount(toDrain);
-                        FlamethrowerFuel fuel = FlamethrowerFuel.createForType(level.registryAccess(), fluidStack.getFluid(), toDrain);
-                        if (fuel == FlamethrowerFuel.EMPTY) continue;
-                        if (fuelType != TFMGFlamethrowerFuelTypes.FALLBACK) {
-                            if (fuelType.equals(fuel.fuelType())) {
-                                stack.set(TFMGDataComponents.FLAMETHROWER, existingFuel.increment(toDrain, FUEL_CAPACITY));
-                                capability.drain(stackToDrain, IFluidHandler.FluidAction.EXECUTE);
-                                context.getPlayer().getCooldowns().addCooldown(stack.getItem(), 20);
-                                foundFluid = true;
-                            }
-                        } else {
-                            stack.set(TFMGDataComponents.FLAMETHROWER, fuel);
+                for (int i = 0; i < capability.getTanks(); i++) {
+                    if (capability.getFluidInTank(i).isEmpty()) continue;
+                    FluidStack fluidStack = capability.getFluidInTank(i);
+                    int toDrain = Math.min(FUEL_CAPACITY - containedFuel, fluidStack.getAmount());
+                    FluidStack stackToDrain = fluidStack.copyWithAmount(toDrain);
+                    FlamethrowerFuel fuel = FlamethrowerFuel.createForType(level.registryAccess(), fluidStack.getFluid(), toDrain);
+                    if (fuel == FlamethrowerFuel.EMPTY) continue;
+                    if (fuelType != TFMGFlamethrowerFuelTypes.FALLBACK) {
+                        if (fuelType.equals(fuel.fuelType())) {
+                            stack.set(TFMGDataComponents.FLAMETHROWER, existingFuel.increment(toDrain, FUEL_CAPACITY));
                             capability.drain(stackToDrain, IFluidHandler.FluidAction.EXECUTE);
                             context.getPlayer().getCooldowns().addCooldown(stack.getItem(), 20);
                             foundFluid = true;
                         }
+                    } else {
+                        stack.set(TFMGDataComponents.FLAMETHROWER, fuel);
+                        capability.drain(stackToDrain, IFluidHandler.FluidAction.EXECUTE);
+                        context.getPlayer().getCooldowns().addCooldown(stack.getItem(), 20);
+                        foundFluid = true;
                     }
                 }
             }

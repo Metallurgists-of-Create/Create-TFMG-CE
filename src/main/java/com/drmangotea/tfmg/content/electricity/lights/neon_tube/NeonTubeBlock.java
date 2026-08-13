@@ -30,14 +30,17 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.ParametersAreNonnullByDefault;
+
+@ParametersAreNonnullByDefault
 public class NeonTubeBlock extends PipeBlock implements IBE<NeonTubeBlockEntity>, IWrenchable {
-
     public static final IntegerProperty LIGHT = LightBulbBlock.LIGHT;
 
     public NeonTubeBlock(Properties p_55160_) {
         super(0.3125F/2.5f, p_55160_);
-        this.registerDefaultState(this.stateDefinition.any().setValue(LIGHT, 0).setValue(NORTH, Boolean.valueOf(false)).setValue(EAST, Boolean.valueOf(false)).setValue(SOUTH, Boolean.valueOf(false)).setValue(WEST, Boolean.valueOf(false)).setValue(UP, Boolean.valueOf(true)).setValue(DOWN, Boolean.valueOf(true)));
+        this.registerDefaultState(this.stateDefinition.any().setValue(LIGHT, 0).setValue(NORTH, false).setValue(EAST, Boolean.FALSE).setValue(SOUTH, false).setValue(WEST, false).setValue(UP, true).setValue(DOWN, true));
     }
     public BlockState getStateForPlacement(BlockPlaceContext p_51709_) {
         return this.getStateForPlacement(p_51709_.getLevel(), p_51709_.getClickedPos());
@@ -49,7 +52,7 @@ public class NeonTubeBlock extends PipeBlock implements IBE<NeonTubeBlockEntity>
         BlockState blockstate3 = p_51711_.getBlockState(p_51712_.east());
         BlockState blockstate4 = p_51711_.getBlockState(p_51712_.south());
         BlockState blockstate5 = p_51711_.getBlockState(p_51712_.west());
-        return this.defaultBlockState().setValue(DOWN, Boolean.valueOf(blockstate.is(this) || blockstate.is(Blocks.CHORUS_FLOWER) || blockstate.is(Blocks.END_STONE))).setValue(UP, Boolean.valueOf(blockstate1.is(this) || blockstate1.is(Blocks.CHORUS_FLOWER))).setValue(NORTH, Boolean.valueOf(blockstate2.is(this) || blockstate2.is(Blocks.CHORUS_FLOWER))).setValue(EAST, Boolean.valueOf(blockstate3.is(this) || blockstate3.is(Blocks.CHORUS_FLOWER))).setValue(SOUTH, Boolean.valueOf(blockstate4.is(this) || blockstate4.is(Blocks.CHORUS_FLOWER))).setValue(WEST, Boolean.valueOf(blockstate5.is(this) || blockstate5.is(Blocks.CHORUS_FLOWER)));
+        return this.defaultBlockState().setValue(DOWN, blockstate.is(this) || blockstate.is(Blocks.CHORUS_FLOWER) || blockstate.is(Blocks.END_STONE)).setValue(UP, blockstate1.is(this) || blockstate1.is(Blocks.CHORUS_FLOWER)).setValue(NORTH, blockstate2.is(this) || blockstate2.is(Blocks.CHORUS_FLOWER)).setValue(EAST, blockstate3.is(this) || blockstate3.is(Blocks.CHORUS_FLOWER)).setValue(SOUTH, blockstate4.is(this) || blockstate4.is(Blocks.CHORUS_FLOWER)).setValue(WEST, blockstate5.is(this) || blockstate5.is(Blocks.CHORUS_FLOWER));
     }
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> p_51735_) {
         p_51735_.add(NORTH, EAST, SOUTH, WEST, UP, DOWN,LIGHT);
@@ -59,27 +62,9 @@ public class NeonTubeBlock extends PipeBlock implements IBE<NeonTubeBlockEntity>
     public InteractionResult onWrenched(BlockState state, UseOnContext context) {
         Level level = context.getLevel();
         BlockPos pos = context.getClickedPos();
-        Vec3 position = context.getClickLocation();
-		
-		double X = position.x()-pos.getX();
-		double Y = position.y()-pos.getY();
-		double Z = position.z()-pos.getZ();
-		
-		Direction dirToToggle = Direction.NORTH;
-		
-		if (   X >= 0.375 && X <= 0.625
-			&& Y >= 0.375 && Y <= 0.625
-			&& Z >= 0.375 && Z <= 0.625
-		) { dirToToggle = context.getClickedFace(); }
-		
-		if(X>0.625) dirToToggle = Direction.EAST;
-		if(X<0.375) dirToToggle = Direction.WEST;
-		if(Y>0.625) dirToToggle = Direction.UP;
-		if(Y<0.375) dirToToggle = Direction.DOWN;
-		if(Z>0.625) dirToToggle = Direction.SOUTH;
-		if(Z<0.375) dirToToggle = Direction.NORTH;
-		
-		switch (dirToToggle) {
+        Direction dirToToggle = getDirToToggle(context, pos);
+
+        switch (dirToToggle) {
 			case UP -> level.setBlockAndUpdate(pos, state.setValue(UP,!state.getValue(UP)));
 			case DOWN -> level.setBlockAndUpdate(pos, state.setValue(DOWN,!state.getValue(DOWN)));
 			case WEST -> level.setBlockAndUpdate(pos, state.setValue(WEST,!state.getValue(WEST)));
@@ -99,9 +84,31 @@ public class NeonTubeBlock extends PipeBlock implements IBE<NeonTubeBlockEntity>
         return InteractionResult.SUCCESS;
     }
 
+    private static @NotNull Direction getDirToToggle(UseOnContext context, BlockPos pos) {
+        Vec3 position = context.getClickLocation();
+
+        double X = position.x()- pos.getX();
+        double Y = position.y()- pos.getY();
+        double Z = position.z()- pos.getZ();
+
+        Direction dirToToggle = Direction.NORTH;
+
+        if (   X >= 0.375 && X <= 0.625
+            && Y >= 0.375 && Y <= 0.625
+            && Z >= 0.375 && Z <= 0.625
+        ) { dirToToggle = context.getClickedFace(); }
+
+        if(X>0.625) dirToToggle = Direction.EAST;
+        if(X<0.375) dirToToggle = Direction.WEST;
+        if(Y>0.625) dirToToggle = Direction.UP;
+        if(Y<0.375) dirToToggle = Direction.DOWN;
+        if(Z>0.625) dirToToggle = Direction.SOUTH;
+        if(Z<0.375) dirToToggle = Direction.NORTH;
+        return dirToToggle;
+    }
 
 
-@Override
+    @Override
 protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand pHand, BlockHitResult hitResult) {
         if (player.isShiftKeyDown())
             return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
@@ -131,7 +138,7 @@ protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Lev
                  level.setBlockAndUpdate(pos.relative(facing), neighbourState.setValue(PipeBlock.PROPERTY_BY_DIRECTION.get(facing.getOpposite()), true));
              }
         }
-        withBlockEntityDo(level,pos, IElectric::onPlaced);
+    withBlockEntityDo(level,pos, IElectric::onPlaced);
         super.onPlace(state, level, pos, p_60569_, p_60570_);
 
     }
@@ -139,8 +146,6 @@ protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Lev
     public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
         IBE.onRemove(state, level, pos, newState);
     }
-
-
 
     @Override
     public Class<NeonTubeBlockEntity> getBlockEntityClass() {
@@ -152,6 +157,7 @@ protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Lev
         return TFMGBlockEntities.NEON_TUBE.get();
     }
     public static final MapCodec<NeonTubeBlock> CODEC = simpleCodec(NeonTubeBlock::new);
+
     @Override
     protected MapCodec<? extends PipeBlock> codec() {
         return CODEC;

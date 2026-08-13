@@ -1,9 +1,9 @@
 package com.drmangotea.tfmg.content.electricity.utilities.segmented_display;
 
-
 import com.drmangotea.tfmg.base.blocks.TFMGHorizontalDirectionalBlock;
 import com.drmangotea.tfmg.content.electricity.base.IElectric;
 import com.drmangotea.tfmg.registry.TFMGBlockEntities;
+import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.foundation.block.IBE;
 import net.minecraft.core.BlockPos;
@@ -24,13 +24,12 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.function.BiConsumer;
 
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 public class SegmentedDisplayBlock extends TFMGHorizontalDirectionalBlock implements IBE<SegmentedDisplayBlockEntity> {
-
-
-
-
     public SegmentedDisplayBlock(Properties properties) {
         super(properties);
 
@@ -103,13 +102,8 @@ public class SegmentedDisplayBlock extends TFMGHorizontalDirectionalBlock implem
 
         if(!display)
             return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
-        String tagElement = stack.getOrDefault(DataComponents.CUSTOM_NAME, Component.empty()).getString();
-        String tagUsed = tagElement;
-        walkParts(world, pos, (currentPos, rowPosition) -> {
-            if (display)
-                withBlockEntityDo(world, currentPos, be -> be.displayCustomText(tagUsed, rowPosition));
-
-        });
+        String tagUsed = stack.getOrDefault(DataComponents.CUSTOM_NAME, Component.empty()).getString();
+        walkParts(world, pos, (currentPos, rowPosition) -> withBlockEntityDo(world, currentPos, be -> be.displayCustomText(tagUsed, rowPosition)));
         return ItemInteractionResult.SUCCESS;
     }
 
@@ -130,9 +124,4 @@ public class SegmentedDisplayBlock extends TFMGHorizontalDirectionalBlock implem
     public BlockEntityType<? extends SegmentedDisplayBlockEntity> getBlockEntityType() {
         return TFMGBlockEntities.SEGMENTED_DISPLAY.get();
     }
-
-
-
-
-
 }

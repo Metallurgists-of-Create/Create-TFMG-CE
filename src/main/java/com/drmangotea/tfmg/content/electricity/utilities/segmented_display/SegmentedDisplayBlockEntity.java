@@ -22,7 +22,6 @@ import java.util.Optional;
 import static net.minecraft.world.level.block.HorizontalDirectionalBlock.FACING;
 
 public class SegmentedDisplayBlockEntity extends ElectricBlockEntity {
-
     private static final Couple<String> EMPTY = Couple.create("", "");
 
     private Optional<DynamicComponent> customText;
@@ -105,6 +104,8 @@ public class SegmentedDisplayBlockEntity extends ElectricBlockEntity {
 
     @Override
     public void initialize() {
+        if (level == null) return;
+
         if (level.isClientSide)
             updateDisplayedStrings();
     }

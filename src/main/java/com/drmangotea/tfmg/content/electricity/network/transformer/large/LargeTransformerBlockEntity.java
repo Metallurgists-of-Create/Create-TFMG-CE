@@ -18,6 +18,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -35,10 +36,7 @@ import static com.simibubi.create.content.kinetics.base.HorizontalKineticBlock.H
 
 public class LargeTransformerBlockEntity extends KineticElectricBlockEntity {
     public boolean updateInFront = false;
-
-
     public float turnRatio = 1;
-
     public int resistanceTimer = -1;
 
 
@@ -64,7 +62,8 @@ public class LargeTransformerBlockEntity extends KineticElectricBlockEntity {
     // }
 
     public ItemInteractionResult addComponent(ItemStack stack, Player player, InteractionHand hand) {
-
+        // level is never null, but to get idea to shut up
+        if (level == null) return ItemInteractionResult.FAIL;
 
         if (constructionState == TransformerConstructionState.NEEDS_STEEL && stack.is(CommonMetal.STEEL.storageBlocks.items())) {
             if (!player.isCreative())
@@ -110,16 +109,15 @@ public class LargeTransformerBlockEntity extends KineticElectricBlockEntity {
             if (be.getData().getId() != getData().getId())
                 if (be.getData().getVoltage() != 0)
                     voltageGeneration = (int) Math.max(voltageGeneration, be.data.getVoltage() * turnRatio);
-        getData().getsOutsidePower = true;
 
 
-        if (voltageGeneration == 0)
-            getData().getsOutsidePower = false;
+        getData().getsOutsidePower = voltageGeneration != 0;
 
         return voltageGeneration;
     }
 
     public IElectric getControlledBlock() {
+        if (level == null) return null;
         Direction facing = getBlockState().getValue(HORIZONTAL_FACING);
         if (level.getBlockEntity(getBlockPos().relative(facing)) instanceof LargeTransformerBlockEntity be) {
             return be;
@@ -143,7 +141,7 @@ public class LargeTransformerBlockEntity extends KineticElectricBlockEntity {
 
     @Override
     public float resistance() {
-        if (!isMainPart)
+        if (!isMainPart || level == null)
             return 0;
 
         Direction facing = getBlockState().getValue(HORIZONTAL_FACING);
@@ -158,6 +156,7 @@ public class LargeTransformerBlockEntity extends KineticElectricBlockEntity {
 
     @Override
     public void onNetworkChanged(int oldVoltage, float oldPower) {
+        if (level == null) return;
         super.onNetworkChanged(oldVoltage, oldPower);
 
         if (oldVoltage != getData().getVoltage() || oldPower != getPowerUsage()) {
@@ -165,8 +164,7 @@ public class LargeTransformerBlockEntity extends KineticElectricBlockEntity {
             getOrCreateElectricNetwork().handleInsufficientPower();
         }
 
-        if (!isMainPart &&level.getBlockEntity(getBlockPos().relative(getBlockState().getValue(HORIZONTAL_FACING)))instanceof LargeTransformerBlockEntity be) {
-
+        if (!isMainPart && level.getBlockEntity(getBlockPos().relative(getBlockState().getValue(HORIZONTAL_FACING)))instanceof LargeTransformerBlockEntity be) {
             be.resistanceTimer = 20;
 
         }
@@ -176,8 +174,7 @@ public class LargeTransformerBlockEntity extends KineticElectricBlockEntity {
     }
 
     public float powerGeneration() {
-
-        if (isMainPart)
+        if (isMainPart || level == null)
             return 0;
 
         if (level.getBlockEntity(getBlockPos().relative(getBlockState().getValue(HORIZONTAL_FACING).getOpposite())) instanceof LargeTransformerBlockEntity be && be.data.notEnoughPower)
@@ -189,24 +186,21 @@ public class LargeTransformerBlockEntity extends KineticElectricBlockEntity {
         if (getLevelAccessor().getBlockEntity(getBlockPos().relative(getBlockState().getValue(HORIZONTAL_FACING).getOpposite())) instanceof LargeTransformerBlockEntity be)
             if (be.getData().getId() != getData().getId())
                 if (be.getData().getVoltage() != 0) {
-                    int maxPower = switch (constructionState) {
+                    powerGeneration = switch (constructionState) {
                         case FINISHED -> 100000;
                         case NEEDS_OIL -> 50000;
                         case NEEDS_STEEL -> 30000;
                     };
-                    powerGeneration = Math.max(powerGeneration, maxPower);
                 }
-        getData().getsOutsidePower = true;
 
 
-        if (powerGeneration == 0)
-            getData().getsOutsidePower = false;
+        getData().getsOutsidePower = powerGeneration != 0;
 
         return powerGeneration;
     }
 
     public void updateInFront() {
-
+        if (level == null) return;
         if (level instanceof ServerLevel serverLevel)
             CatnipServices.NETWORK.sendToClientsTrackingChunk(serverLevel, new ChunkPos(worldPosition), new UpdateInFrontPacket(getBlockPos()));
         Direction facing = getBlockState().getValue(HORIZONTAL_FACING);
@@ -222,7 +216,7 @@ public class LargeTransformerBlockEntity extends KineticElectricBlockEntity {
     @Override
     public void tick() {
         super.tick();
-
+        if (level == null) return;
         if (updateInFront) {
             updateInFront();
             updateInFront = false;
@@ -250,7 +244,6 @@ public class LargeTransformerBlockEntity extends KineticElectricBlockEntity {
 
     @Override
     public boolean makeMultimeterTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
-
         String stateKey = switch (constructionState) {
             case FINISHED -> "multimeter.large_transformer.oil_cooled";
             case NEEDS_OIL -> "multimeter.large_transformer.metal_cooled";
@@ -260,25 +253,18 @@ public class LargeTransformerBlockEntity extends KineticElectricBlockEntity {
         TFMGTexts.CommonMachines.state(stateKey).color(0x69c9c5).forGoggles(tooltip);
         TFMGTexts.Multimeter.transformerRatio(turnRatio);
 
-
         super.makeMultimeterTooltip(tooltip, isPlayerSneaking);
         return true;
     }
-
-
+    
     @Override
     public boolean hasElectricitySlot(Direction direction) {
-
         return direction == Direction.UP;
-
     }
 
-    enum TransformerConstructionState {
-
+    public enum TransformerConstructionState {
         FINISHED,
         NEEDS_OIL,
         NEEDS_STEEL
-
-
     }
 }

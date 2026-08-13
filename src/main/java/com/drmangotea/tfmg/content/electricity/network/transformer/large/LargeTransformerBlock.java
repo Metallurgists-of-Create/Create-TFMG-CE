@@ -6,6 +6,7 @@ import com.drmangotea.tfmg.content.electricity.network.large_switch.LargeSwitchB
 
 import com.drmangotea.tfmg.registry.TFMGBlockEntities;
 import com.drmangotea.tfmg.registry.TFMGBlocks;
+import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
 import com.simibubi.create.content.kinetics.base.HorizontalKineticBlock;
 import com.simibubi.create.foundation.block.IBE;
 import net.minecraft.core.BlockPos;
@@ -32,14 +33,15 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
 import java.util.List;
 
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 public class LargeTransformerBlock extends HorizontalKineticBlock implements IBE<LargeTransformerBlockEntity> {
-
     public static final BooleanProperty IS_MAIN_PART = LargeSwitchBlock.IS_MAIN_PART;
     public static final BooleanProperty UNFINISHED_MODEL = BooleanProperty.create("unfinished_model");
-
 
     public LargeTransformerBlock(Properties properties) {
         super(properties);
@@ -93,7 +95,7 @@ public class LargeTransformerBlock extends HorizontalKineticBlock implements IBE
     }
 
     @Override
-    public BlockState getStateForPlacement(BlockPlaceContext context) {
+    public @org.jetbrains.annotations.Nullable BlockState getStateForPlacement(BlockPlaceContext context) {
         Level level = context.getLevel();
         BlockPos pos = context.getClickedPos();
 
@@ -141,10 +143,7 @@ public class LargeTransformerBlock extends HorizontalKineticBlock implements IBE
     public void onPlace(BlockState pState, Level level, BlockPos pos, BlockState pOldState, boolean pIsMoving) {
         withBlockEntityDo(level, pos, IElectric::onPlaced);
     }
-    @Override
-    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
-        IBE.onRemove(state, level, pos, newState);
-    }
+
     @Override
     public Direction.Axis getRotationAxis(BlockState state) {
         return state.getValue(HORIZONTAL_FACING).getClockWise().getAxis();

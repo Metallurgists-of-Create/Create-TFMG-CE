@@ -56,7 +56,7 @@ public class LithiumFireBlock extends BaseFireBlock {
 
     public LithiumFireBlock(Properties p_53425_) {
         super(p_53425_, 1.0F);
-        this.registerDefaultState(this.stateDefinition.any().setValue(AGE, Integer.valueOf(0)).setValue(NORTH, Boolean.valueOf(false)).setValue(EAST, Boolean.valueOf(false)).setValue(SOUTH, Boolean.valueOf(false)).setValue(WEST, Boolean.valueOf(false)).setValue(UP, Boolean.valueOf(false)));
+        this.registerDefaultState(this.stateDefinition.any().setValue(AGE, 0).setValue(NORTH, false).setValue(EAST, false).setValue(SOUTH, false).setValue(WEST, false).setValue(UP, false));
         this.shapesCache = ImmutableMap.copyOf(this.stateDefinition.getPossibleStates().stream().filter((p_53497_) -> {
             return p_53497_.getValue(AGE) == 0;
         }).collect(Collectors.toMap(Function.identity(), LithiumFireBlock::calculateShape)));
@@ -106,7 +106,7 @@ public class LithiumFireBlock extends BaseFireBlock {
     }
 
     public VoxelShape getShape(BlockState p_53474_, BlockGetter p_53475_, BlockPos p_53476_, CollisionContext p_53477_) {
-        return this.shapesCache.get(p_53474_.setValue(AGE, Integer.valueOf(0)));
+        return this.shapesCache.get(p_53474_.setValue(AGE, 0));
     }
 
     @Override
@@ -127,7 +127,7 @@ public class LithiumFireBlock extends BaseFireBlock {
             for(Direction direction : Direction.values()) {
                 BooleanProperty booleanproperty = PROPERTY_BY_DIRECTION.get(direction);
                 if (booleanproperty != null) {
-                    blockstate1 = blockstate1.setValue(booleanproperty, Boolean.valueOf(this.canCatchFire(p_53471_, p_53472_.relative(direction), direction.getOpposite())));
+                    blockstate1 = blockstate1.setValue(booleanproperty, this.canCatchFire(p_53471_, p_53472_.relative(direction), direction.getOpposite()));
                 }
             }
 
@@ -157,7 +157,7 @@ public class LithiumFireBlock extends BaseFireBlock {
             } else {
                 int j = Math.min(15, i + p_221163_.nextInt(3) / 2);
                 if (i != j) {
-                    p_221160_ = p_221160_.setValue(AGE, Integer.valueOf(j));
+                    p_221160_ = p_221160_.setValue(AGE, j);
                     p_221161_.setBlock(p_221162_, p_221160_, 4);
                 }
 
@@ -297,6 +297,7 @@ public class LithiumFireBlock extends BaseFireBlock {
     public static BlockState getState(BlockGetter p_49246_, BlockPos p_49247_) {
         return ((LithiumFireBlock)TFMGColoredFires.LITHIUM_FIRE.get()).getStateForPlacement(p_49246_, p_49247_);
     }
+
     private void setFlammable(Block p_53445_, int p_53446_, int p_53447_) {
         if (p_53445_ == Blocks.AIR) throw new IllegalArgumentException("Tried to set air on fire... This is bad.");
         this.igniteOdds.put(p_53445_, p_53446_);

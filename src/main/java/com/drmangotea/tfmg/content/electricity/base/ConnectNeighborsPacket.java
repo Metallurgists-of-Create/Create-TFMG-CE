@@ -8,14 +8,13 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.codec.StreamCodec;
 
-public class ConnectNeightborsPacket extends BlockEntityDataPacket<SmartBlockEntity> {
-
-    public static final StreamCodec<ByteBuf, ConnectNeightborsPacket> STREAM_CODEC = StreamCodec.composite(
+public class ConnectNeighborsPacket extends BlockEntityDataPacket<SmartBlockEntity> {
+    public static final StreamCodec<ByteBuf, ConnectNeighborsPacket> STREAM_CODEC = StreamCodec.composite(
             BlockPos.STREAM_CODEC, packet -> packet.pos,
-            ConnectNeightborsPacket::new
+            ConnectNeighborsPacket::new
     );
 
-    public ConnectNeightborsPacket(BlockPos pos) {
+    public ConnectNeighborsPacket(BlockPos pos) {
         super(pos);
 
     }

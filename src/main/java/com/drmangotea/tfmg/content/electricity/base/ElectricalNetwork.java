@@ -1,6 +1,5 @@
 package com.drmangotea.tfmg.content.electricity.base;
 
-import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.content.electricity.network.large_switch.LargeSwitchBlockEntity;
 import com.drmangotea.tfmg.content.electricity.network.transformer.large.LargeTransformerBlockEntity;
 import com.drmangotea.tfmg.content.electricity.utilities.electric_motor.ElectricMotorBlockEntity;
@@ -10,12 +9,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ElectricalNetwork {
-
     /**
      * This class manages individual networks
      */
-
-
     public ElectricalNetwork(long id) {
         this.id = id;
     }
@@ -58,8 +54,6 @@ public class ElectricalNetwork {
          *  3) counts the resistance and power generation of the network
          *  4) creates groups
          */
-
-
         for (IElectric member : members) {
             member.getData().notEnoughPower = false;
 
@@ -69,7 +63,7 @@ public class ElectricalNetwork {
 
             maxVoltage = Math.max(member.voltageGeneration(), maxVoltage);
 
-            powerGeneration += member.powerGeneration();
+            powerGeneration = (int) (powerGeneration + member.powerGeneration());
         }
         /**
          *  Phase II:
@@ -120,7 +114,7 @@ public class ElectricalNetwork {
          * 1) stops the network from functioning if it consumes more power than it creates
          */
         if (!members.isEmpty())
-            members.get(0).doActionNextTick(i-> members.get(0).recalculateNetworkResistance());
+            members.getFirst().doActionNextTick(i-> members.getFirst().recalculateNetworkResistance());
         handleInsufficientPower();
 
     }
@@ -128,7 +122,7 @@ public class ElectricalNetwork {
 
     public void handleInsufficientPower() {
         if (!members.isEmpty())
-            if (members.get(0).getNetworkPowerUsage() > members.get(0).getNetworkPowerGeneration()) {
+            if (members.getFirst().getNetworkPowerUsage() > members.getFirst().getNetworkPowerGeneration()) {
                 for (IElectric member : members) {
                     member.getData().notEnoughPower = true;
                     member.getData().tickUntilConnectFE = 20 * 2;
@@ -178,7 +172,7 @@ public class ElectricalNetwork {
 
         if (network.contains(this)) {
             if (!members.isEmpty())
-                members.get(0).getLevelAccessor().destroyBlock(pos, false);
+                members.getFirst().getLevelAccessor().destroyBlock(pos, false);
             return;
         }
         network.add(this);

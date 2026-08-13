@@ -24,8 +24,6 @@ import static net.minecraft.world.level.block.DirectionalBlock.FACING;
 
 
 public class RotorBlockEntity extends KineticElectricBlockEntity {
-
-
     LerpedFloat visualSpeed = LerpedFloat.linear();
     float angle;
     boolean findNextTick = false;
@@ -83,7 +81,7 @@ public class RotorBlockEntity extends KineticElectricBlockEntity {
 
     @Override
     public int voltageGeneration() {
-        return (int) Math.min(3000, generation() * 3);
+        return Math.min(3000, generation() * 3);
     }
 
     public int generation() {
@@ -201,19 +199,6 @@ public class RotorBlockEntity extends KineticElectricBlockEntity {
         return new StatorOffset(dir1, Optional.of(dir2));
     }
 
-
-    private static class StatorOffset {
-        public final Direction direction1;
-        public final Optional<Direction> direction2;
-
-        public StatorOffset(Direction dir1, Optional<Direction> dir2) {
-            this.direction1 = dir1;
-            this.direction2 = dir2;
-
-        }
-
-
+    public record StatorOffset(Direction direction1, Optional<Direction> direction2) {
     }
-
-
 }

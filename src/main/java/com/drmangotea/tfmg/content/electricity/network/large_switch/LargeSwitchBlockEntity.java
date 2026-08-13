@@ -1,7 +1,5 @@
 package com.drmangotea.tfmg.content.electricity.network.large_switch;
 
-import com.drmangotea.tfmg.TFMG;
-import com.drmangotea.tfmg.base.lang.TFMGLang;
 import com.drmangotea.tfmg.content.electricity.base.IElectric;
 import com.drmangotea.tfmg.content.electricity.base.KineticElectricBlockEntity;
 import com.drmangotea.tfmg.content.electricity.base.UpdateInFrontPacket;
@@ -14,8 +12,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.ChunkPos;
-import net.minecraft.world.level.block.DirectionalBlock;
-import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -91,11 +87,12 @@ public class LargeSwitchBlockEntity extends KineticElectricBlockEntity {
     public void lazyTick() {
         super.lazyTick();
         if(data.notEnoughPower&&!getBlockState().getValue(IS_MAIN_PART))
-            if(level.getBlockEntity(getBlockPos().relative(getBlockState().getValue(HORIZONTAL_FACING).getOpposite()))instanceof LargeSwitchBlockEntity be)
+            if(level != null && level.getBlockEntity(getBlockPos().relative(getBlockState().getValue(HORIZONTAL_FACING).getOpposite()))instanceof LargeSwitchBlockEntity be)
                 be.onPlaced();
     }
 
     public IElectric getControlledBlock() {
+        if (level == null) return null;
         Direction facing = getBlockState().getValue(HORIZONTAL_FACING);
         if(level.getBlockEntity(getBlockPos().relative(facing))instanceof LargeSwitchBlockEntity be){
             return be;
@@ -110,7 +107,7 @@ public class LargeSwitchBlockEntity extends KineticElectricBlockEntity {
             return 0;
 
         Direction facing = getBlockState().getValue(HORIZONTAL_FACING);
-        if (level.getBlockEntity(getBlockPos().relative(facing)) instanceof IElectric be && be.getData().getId() != data.getId()) {
+        if (level != null && level.getBlockEntity(getBlockPos().relative(facing)) instanceof IElectric be && be.getData().getId() != data.getId()) {
             int count = getBlocksConnectedToNetworkCount(getControlledBlock().getData().getId());
 
             if(count!=0)
@@ -131,21 +128,19 @@ public class LargeSwitchBlockEntity extends KineticElectricBlockEntity {
     }
 
     public float powerGeneration() {
-
         if (isMainPart)
             return 0;
 
-        if(level.getBlockEntity(getBlockPos().relative(getBlockState().getValue(HORIZONTAL_FACING).getOpposite())) instanceof LargeSwitchBlockEntity be&&be.data.notEnoughPower)
+        if(level != null && level.getBlockEntity(getBlockPos().relative(getBlockState().getValue(HORIZONTAL_FACING).getOpposite())) instanceof LargeSwitchBlockEntity be&&be.data.notEnoughPower)
             return 0;
 
         int powerGeneration = 0;
-
 
         if (getLevelAccessor().getBlockEntity(getBlockPos().relative(getBlockState().getValue(HORIZONTAL_FACING).getOpposite())) instanceof LargeSwitchBlockEntity be)
             if (be.getData().getId() != getData().getId())
                 if (be.getData().getVoltage() != 0)
                     if (be.closed) {
-                        powerGeneration = Math.max(powerGeneration, 100000);
+                        powerGeneration = 100000;
                         getData().getsOutsidePower = true;
                     }
 
@@ -160,7 +155,7 @@ public class LargeSwitchBlockEntity extends KineticElectricBlockEntity {
         if (level instanceof ServerLevel serverLevel)
             CatnipServices.NETWORK.sendToClientsTrackingChunk(serverLevel, new ChunkPos(worldPosition), new UpdateInFrontPacket(getBlockPos()));
         Direction facing = getBlockState().getValue(HORIZONTAL_FACING);
-        if (level.getBlockEntity(getBlockPos().relative(facing)) instanceof IElectric be && be.getData().getId() != data.getId()) {
+        if (level != null && level.getBlockEntity(getBlockPos().relative(facing)) instanceof IElectric be && be.getData().getId() != data.getId()) {
             be.updateNextTick();
 
         }
@@ -172,6 +167,7 @@ public class LargeSwitchBlockEntity extends KineticElectricBlockEntity {
     @Override
     public void tick() {
         super.tick();
+        if (level == null) return;
         if (level.isClientSide) {
             visualAngle.chase(angle / 10d, 1d, LerpedFloat.Chaser.EXP);
             visualAngle.tickChaser();

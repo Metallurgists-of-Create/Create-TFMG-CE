@@ -21,7 +21,7 @@ import static com.drmangotea.tfmg.content.items.weapons.explosives.thermite_gren
 @OnlyIn(Dist.CLIENT)
 public class ThermiteGrenadeRenderer extends EntityRenderer<ThermiteGrenade> {
     private final ItemRenderer itemRenderer;
-    private ChemicalColor chemicalColor;
+    private final ChemicalColor chemicalColor;
     public static ThermiteGrenadeRenderer regular(EntityRendererProvider.Context p_i48440_1_) {
         return new ThermiteGrenadeRenderer(p_i48440_1_, ChemicalColor.BASE);
     }

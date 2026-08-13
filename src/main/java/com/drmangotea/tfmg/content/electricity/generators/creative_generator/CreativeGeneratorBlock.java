@@ -9,6 +9,9 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
+import javax.annotation.ParametersAreNonnullByDefault;
+
+@ParametersAreNonnullByDefault
 public class CreativeGeneratorBlock extends Block implements IBE<CreativeGeneratorBlockEntity> {
     public CreativeGeneratorBlock(Properties p_49795_) {
         super(p_49795_);

@@ -41,8 +41,6 @@ import static com.drmangotea.tfmg.content.engines.types.regular_engine.RegularEn
 import static com.simibubi.create.content.kinetics.base.HorizontalKineticBlock.HORIZONTAL_FACING;
 
 public class RegularEngineBlockEntity extends AbstractSmallEngineBlockEntity {
-
-
     public EngineType type = getDefaultEngineType();
 
     public SmartInventory pistonInventory;
@@ -113,8 +111,8 @@ public class RegularEngineBlockEntity extends AbstractSmallEngineBlockEntity {
     @Override
     public boolean canWork() {
         if (level == null) return false;
-        if (level.getBlockEntity(controller) instanceof RegularEngineBlockEntity controller) {
-            for (BlockPos pos : controller.getAllEngines()) {
+        if (level.getBlockEntity(controller) instanceof RegularEngineBlockEntity controllerBlock) {
+            for (BlockPos pos : controllerBlock.getAllEngines()) {
                 if (level.getBlockEntity(pos) instanceof RegularEngineBlockEntity be) {
                     for (int i = 0; i < be.pistonInventory.getSlots(); i++) {
                         if (be.pistonInventory.getItem(i).isEmpty()) {
@@ -341,7 +339,7 @@ public class RegularEngineBlockEntity extends AbstractSmallEngineBlockEntity {
             Optional<EngineFuelType> fuelType = getFuelType().getFuelType(this.level.registryAccess());
             fuelType.ifPresent(type -> fuelTypeEfficiency.set(type.efficiency()));
         }
-        return type.effeciencyModifier * fuelTypeEfficiency.get() * getUpgradeEfficiencyModifier()*(TFMGConfigs.common().machines.engineFuelConsumption.getF()/100f);
+        return type.efficiencyModifier * fuelTypeEfficiency.get() * getUpgradeEfficiencyModifier()*(TFMGConfigs.common().machines.engineFuelConsumption.getF()/100f);
     }
 
     @Override
@@ -413,7 +411,7 @@ public class RegularEngineBlockEntity extends AbstractSmallEngineBlockEntity {
         TURBINE("turbine", pistonsTurbine(), 1.5f, 1.5f, 0.5f);
         public final float speedModifier;
         public final float torqueModifier;
-        public final float effeciencyModifier;
+        public final float efficiencyModifier;
         public final List<PistonPosition> pistons;
         public final List<Fluid> fluidBlacklist;
         public final String name;
@@ -436,7 +434,7 @@ public class RegularEngineBlockEntity extends AbstractSmallEngineBlockEntity {
             this.pistons = positions;
             this.speedModifier = speedModifier;
             this.torqueModifier = torqueModifier;
-            this.effeciencyModifier = efficiencyModifier;
+            this.efficiencyModifier = efficiencyModifier;
             this.fluidBlacklist = fluidBlacklist;
             this.upgradesOnSide = upgradesOnSide;
             this.langKey = "engine.type." + name;

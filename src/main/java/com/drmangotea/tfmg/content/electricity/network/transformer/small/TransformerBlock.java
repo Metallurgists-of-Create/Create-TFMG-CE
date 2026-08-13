@@ -6,6 +6,7 @@ import com.drmangotea.tfmg.content.electricity.base.IElectric;
 import com.drmangotea.tfmg.content.electricity.base.IVoltageChanger;
 import com.drmangotea.tfmg.registry.TFMGBlockEntities;
 import com.drmangotea.tfmg.registry.TFMGItems;
+import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
 import com.simibubi.create.foundation.block.IBE;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -21,6 +22,10 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
+import javax.annotation.ParametersAreNonnullByDefault;
+
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 public class TransformerBlock extends TFMGHorizontalDirectionalBlock implements IBE<TransformerBlockEntity>, IVoltageChanger {
     public TransformerBlock(Properties p_54120_) {
         super(p_54120_);
@@ -41,7 +46,7 @@ public class TransformerBlock extends TFMGHorizontalDirectionalBlock implements 
         ItemStack inHand = player.getItemInHand(hand);
         if(level.getBlockEntity(pos) instanceof TransformerBlockEntity be){
         Direction facing = state.getValue(FACING);
-        Direction lookingDirection = TransformerBlockEntity.getCoilDirections(level,pos,hitResult).get(0);
+        Direction lookingDirection = TransformerBlockEntity.getCoilDirections(level,pos,hitResult).getFirst();
         boolean primary =lookingDirection == facing.getClockWise();
         ItemStack coil = primary  ? be.primaryCoil : be.secondaryCoil;
 

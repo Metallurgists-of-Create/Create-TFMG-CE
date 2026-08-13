@@ -13,7 +13,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import static com.drmangotea.tfmg.base.blocks.WallMountBlock.FACING;
 
 public class ResistorBlockEntity extends ElectricBlockEntity {
-
     public int resistance = 500;
 
     public ResistorBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
@@ -34,7 +33,7 @@ public class ResistorBlockEntity extends ElectricBlockEntity {
 
     public void setResistance(ItemStack stack){
         if(stack.get(TFMGDataComponents.RESISTANCE)!=null)
-        this.resistance = stack.get(TFMGDataComponents.RESISTANCE);
+            this.resistance = stack.get(TFMGDataComponents.RESISTANCE);
     }
 
     @Override

@@ -10,7 +10,6 @@ import net.neoforged.neoforge.client.model.generators.ModelFile;
 import static com.simibubi.create.foundation.data.AssetLookup.partialBaseModel;
 
 public class DiagonalCableGenerator extends SpecialBlockStateGen {
-
     @Override
     protected int getXRotation(BlockState state) {
         return 0;
@@ -22,9 +21,7 @@ public class DiagonalCableGenerator extends SpecialBlockStateGen {
             case NORTH -> 270;
             case SOUTH -> 90;
             case WEST -> 180;
-            case EAST -> 0;
-            case DOWN -> 0;
-            case UP -> 0;
+            case EAST, UP, DOWN -> 0;
         };
     }
 

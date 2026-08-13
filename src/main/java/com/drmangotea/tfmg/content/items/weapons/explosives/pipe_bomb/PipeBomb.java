@@ -15,8 +15,6 @@ import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 
 public class PipeBomb extends ThrowableItemProjectile {
-
-
     public PipeBomb(EntityType<? extends PipeBomb> entityType, Level level) {
         super(entityType,level);
 

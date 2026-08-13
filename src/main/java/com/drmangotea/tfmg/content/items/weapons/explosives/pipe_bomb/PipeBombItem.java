@@ -12,9 +12,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
 public class PipeBombItem extends Item {
-
-
-
     public PipeBombItem(Properties p_41383_) {
         super(p_41383_);
     }

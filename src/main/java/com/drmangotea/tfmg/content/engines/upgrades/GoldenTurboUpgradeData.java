@@ -19,8 +19,6 @@ import java.util.Optional;
 import static net.minecraft.world.level.block.HorizontalDirectionalBlock.FACING;
 
 public class GoldenTurboUpgradeData extends EngineUpgrade {
-
-
     LerpedFloat speed = LerpedFloat.linear();
 
     float angle;
@@ -40,7 +38,7 @@ public class GoldenTurboUpgradeData extends EngineUpgrade {
 
     @Override
     public void tickUpgrade(AbstractSmallEngineBlockEntity engine) {
-        if (!engine.getLevel().isClientSide)
+        if (engine.getLevel() == null || !engine.getLevel().isClientSide)
             return;
         speed.chase(engine.rpm / 200, 1 / 128f, LerpedFloat.Chaser.EXP);
         speed.tickChaser();

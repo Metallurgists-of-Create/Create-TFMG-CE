@@ -2,6 +2,7 @@ package com.drmangotea.tfmg.content.engines;
 
 import com.drmangotea.tfmg.base.lang.TFMGLang;
 import com.drmangotea.tfmg.registry.TFMGDataComponents;
+import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
 import com.simibubi.create.content.fluids.tank.FluidTankBlockEntity;
 import com.tterrag.registrate.util.entry.FluidEntry;
 import net.minecraft.ChatFormatting;
@@ -18,8 +19,11 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 public class FluidContainingItem extends Item {
 
     public final FluidEntry<?> fluid;

@@ -89,20 +89,9 @@ public class ThermiteGrenade extends ThrowableItemProjectile {
                     spark.moveTo(this.getX(), this.getY()+1, this.getZ());
                     spark.shootFromRotation( this,x,y,z,0.2f,1);
                     this.level().addFreshEntity(spark);}
-
-
-
-
-
-
-
         }
-
-
             this.level().explode(this, this.getX(), this.getY(0.0625D), this.getZ(), 2.0F, Level.ExplosionInteraction.NONE);
             this.discard();
-
-
     }
 
     @SuppressWarnings("unchecked")

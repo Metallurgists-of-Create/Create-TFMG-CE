@@ -32,9 +32,8 @@ import static com.simibubi.create.content.kinetics.base.HorizontalKineticBlock.H
 import static net.minecraft.world.level.block.HorizontalDirectionalBlock.FACING;
 
 public class ConverterBlockEntity extends ElectricBlockEntity {
-
     public final TFMGForgeEnergyStorage energy = createEnergyStorage();
-    private IEnergyStorage energyCapability;
+    // private IEnergyStorage energyCapability;
 
 
     public int timer = 0;
@@ -43,7 +42,7 @@ public class ConverterBlockEntity extends ElectricBlockEntity {
 
     public ConverterBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
-        energyCapability = energy;
+        //energyCapability = energy;
     }
 
     public TFMGForgeEnergyStorage createEnergyStorage() {
@@ -154,14 +153,14 @@ public class ConverterBlockEntity extends ElectricBlockEntity {
         }
 
 
-        if (getBlockState().getValue(INPUT)) {
-           // if (getData().getVoltage() > TFMGConfigs.common().machines.accumulatorVoltage.get()) {
-           //     energy.receiveEnergy((int) (getChargingRate() / 1), false);
-//
-           // }
-        } else if (canPower()) {
-
-            float energyToExtract = data.networkPowerGeneration == 0 ? getNetworkPowerUsage() : (int) Math.max(0, Math.max(((float) powerGeneration() / (float) data.networkPowerGeneration) * (float) getNetworkPowerUsage(), 0));
+//        if (getBlockState().getValue(INPUT)) {
+//           // if (getData().getVoltage() > TFMGConfigs.common().machines.accumulatorVoltage.get()) {
+//           //     energy.receiveEnergy((int) (getChargingRate() / 1), false);
+////
+//           // }
+//        } else
+        if (canPower()) {
+            float energyToExtract = data.networkPowerGeneration == 0 ? getNetworkPowerUsage() : (int) Math.max(0, Math.max((powerGeneration() / (float) data.networkPowerGeneration) * getNetworkPowerUsage(), 0));
             energyToExtract /= 1;
             energy.extractEnergy((int) Math.max(energyToExtract, 1), false);
             if (energy.getEnergyStored() == 0) {

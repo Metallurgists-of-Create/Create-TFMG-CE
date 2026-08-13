@@ -21,30 +21,26 @@ public class ElectricSwitchBlockEntity extends VoltageAlteringBlockEntity {
     public void lazyTick() {
         super.lazyTick();
         neighbourChanged();
-
-
     }
 
     @Override
     public void tick() {
         super.tick();
 
-        if (signalChanged) {
+        if (signalChanged && level != null) {
             signalChanged = false;
             analogSignalChanged(level.getBestNeighborSignal(worldPosition));
         }
     }
     protected void analogSignalChanged(int newSignal) {
         signal = newSignal;
-
-
         updateInFrontNextTick();
         updateNextTick();
 
     }
 
     public void neighbourChanged() {
-        if (!hasLevel())
+        if (level == null)
             return;
         int power = level.getBestNeighborSignal(worldPosition);
         if (power != signal)

@@ -69,10 +69,7 @@ public class ElectricBlockEntity extends SmartBlockEntity implements IElectric, 
     public void tick() {
         super.tick();
         tickElectricity();
-
     }
-
-
 
     @Override
     protected void read(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {

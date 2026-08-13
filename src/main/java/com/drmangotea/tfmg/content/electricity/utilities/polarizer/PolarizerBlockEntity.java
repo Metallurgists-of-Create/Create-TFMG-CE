@@ -34,7 +34,6 @@ import static net.minecraft.world.level.block.HorizontalDirectionalBlock.FACING;
 
 
 public class PolarizerBlockEntity extends ElectricBlockEntity implements IHaveGoggleInformation {
-
     public SmartInventory inventory = new SmartInventory(1, this, 1, false)
             .whenContentsChanged(this::onInventoryChanged);
     public IItemHandlerModifiable itemCapability;
@@ -111,8 +110,8 @@ public class PolarizerBlockEntity extends ElectricBlockEntity implements IHaveGo
 
     @Override
     public void tick() {
+        if (level == null) return;
         super.tick();
-
 
         if (level.isClientSide) {
             angle.chase(180 * (capacitorPercentage / 200f), 0.2f, LerpedFloat.Chaser.EXP);
@@ -131,14 +130,16 @@ public class PolarizerBlockEntity extends ElectricBlockEntity implements IHaveGo
     }
 
     public void performRecipe(PolarizingRecipe recipe) {
-        ItemStack stack = recipe.getRollableResults().get(0).rollOutput(level.random);
+        if (level == null) return;
+
+        ItemStack stack = recipe.getRollableResults().getFirst().rollOutput(level.random);
         inventory.setStackInSlot(0, stack);
         TFMGUtils.spawnElectricParticles(level, getBlockPos());
         capacitorPercentage = 0;
     }
 
     public Optional<RecipeHolder<PolarizingRecipe>> getRecipe(ItemStack item) {
-        if (!hasLevel())
+        if (level == null)
             return Optional.empty();
         Optional<RecipeHolder<PolarizingRecipe>> assemblyRecipe = SequencedAssemblyRecipe.getRecipe(this.level, item, TFMGRecipeTypes.POLARIZING.getType(), PolarizingRecipe.class);
         if (assemblyRecipe.isPresent()) {

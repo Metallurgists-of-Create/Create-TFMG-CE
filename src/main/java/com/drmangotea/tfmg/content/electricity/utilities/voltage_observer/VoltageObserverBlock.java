@@ -2,7 +2,7 @@ package com.drmangotea.tfmg.content.electricity.utilities.voltage_observer;
 
 
 import com.drmangotea.tfmg.base.blocks.WallMountBlock;
-import com.drmangotea.tfmg.content.electricity.base.ConnectNeightborsPacket;
+import com.drmangotea.tfmg.content.electricity.base.ConnectNeighborsPacket;
 import com.drmangotea.tfmg.registry.TFMGBlockEntities;
 import com.simibubi.create.foundation.block.IBE;
 import net.createmod.catnip.platform.CatnipServices;
@@ -21,7 +21,9 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 
 import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 
+@ParametersAreNonnullByDefault
 public class VoltageObserverBlock extends WallMountBlock implements IBE<VoltageObserverBlockEntity> {
 
     public static final BooleanProperty POWERED = BooleanProperty.create("powered");
@@ -34,7 +36,7 @@ public class VoltageObserverBlock extends WallMountBlock implements IBE<VoltageO
     @Override
     public void onPlace(BlockState pState, Level level, BlockPos pos, BlockState pOldState, boolean pIsMoving) {
         if (level instanceof ServerLevel serverLevel)
-            CatnipServices.NETWORK.sendToClientsTrackingChunk(serverLevel, new ChunkPos(pos),new ConnectNeightborsPacket(pos));
+            CatnipServices.NETWORK.sendToClientsTrackingChunk(serverLevel, new ChunkPos(pos),new ConnectNeighborsPacket(pos));
         withBlockEntityDo(level,pos, VoltageObserverBlockEntity::onPlaced);
 
     }
@@ -84,8 +86,6 @@ public class VoltageObserverBlock extends WallMountBlock implements IBE<VoltageO
     @Nullable
     public BlockState getStateForPlacement(BlockPlaceContext p_58126_) {
         BlockState blockstate = this.defaultBlockState();
-        LevelReader levelreader = p_58126_.getLevel();
-        BlockPos blockpos = p_58126_.getClickedPos();
         Direction[] adirection = p_58126_.getNearestLookingDirections();
 
         for(Direction direction : adirection) {
