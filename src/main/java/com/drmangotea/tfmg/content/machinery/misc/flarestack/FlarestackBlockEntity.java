@@ -30,35 +30,13 @@ import java.util.Random;
 
 public class FlarestackBlockEntity extends SmartBlockEntity implements IHaveGoggleInformation {
 
-
-
-    protected IFluidHandler fluidCapability;
     public FluidTank tankInventory;
-    public boolean spawnsSmoke=false;
-    public int smokeTimer=0;
+    public int smokeTimer = 0;
 
 
     public FlarestackBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
         tankInventory = createInventory();
-        fluidCapability = tankInventory;
-
-
-    }
-    public static void registerCapabilities(RegisterCapabilitiesEvent event) {
-        event.registerBlockEntity(
-                Capabilities.FluidHandler.BLOCK,
-                TFMGBlockEntities.FLARESTACK.get(),
-                (be, context) -> be.fluidCapability
-        );
-    }
-    @Override
-    @SuppressWarnings("removal")
-    public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
-
-        return TFMGUtils.createFluidTooltip(this, tooltip);
-
-
     }
 
     protected SmartFluidTank createInventory() {
@@ -66,73 +44,76 @@ public class FlarestackBlockEntity extends SmartBlockEntity implements IHaveGogg
             @Override
             public boolean isFluidValid(FluidStack stack) {
                 return stack.getFluid().is(TFMGTags.TFMGFluidTags.FLAMMABLE.tag)||
-                       stack.getFluid().is(TFMGTags.TFMGFluidTags.FUEL.tag);
+                        stack.getFluid().is(TFMGTags.TFMGFluidTags.FUEL.tag);
             }
         };
     }
 
+    public static void registerCapabilities(RegisterCapabilitiesEvent event) {
+        event.registerBlockEntity(
+                Capabilities.FluidHandler.BLOCK,
+                TFMGBlockEntities.FLARESTACK.get(),
+                (be, context) -> be.tankInventory
+        );
+    }
+
+    @Override
+    public void invalidate() {
+        super.invalidate();
+        invalidateCapabilities();
+    }
+
     protected void onFluidStackChanged(FluidStack newFluidStack) {
+        if (!hasLevel()) return;
         sendData();
         setChanged();
     }
 
     @Override
+    public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
+        return TFMGUtils.createFluidTooltip(this, tooltip);
+    }
+
+
+
+    @Override
     public void tick() {
         super.tick();
 
-
-        if(smokeTimer!=0) {
-            spawnsSmoke = true;
-            smokeTimer--;
-        }else {
-            spawnsSmoke = false;
-
+        if (tankInventory.isEmpty() || !tankInventory.isFluidValid(tankInventory.getFluid())) {
+            level.setBlock(getBlockPos(), this.getBlockState().setValue(FlarestackBlock.LIT, false), 2);
+            return;
         }
 
-            if(spawnsSmoke) {
-                level.setBlock(getBlockPos(), this.getBlockState()
-                        .setValue(FlarestackBlock.LIT, true), 2);
-                makeParticles(level, this.getBlockPos());
-
-            } else
-    {
-        level.setBlock(getBlockPos(), this.getBlockState()
-                .setValue(FlarestackBlock.LIT, false), 2);
-    }
-        if(tankInventory.getFluidAmount()>0) {
-
-            smokeTimer = 100;
-            spawnsSmoke = true;
-
-            if(tankInventory.getFluidAmount()>1000) {
+        if (tankInventory.getFluidAmount() > 0 && smokeTimer < 97) {
+            if(tankInventory.getFluidAmount() > 1000) {
                 tankInventory.drain(100, IFluidHandler.FluidAction.EXECUTE);
-            }else tankInventory.drain(30, IFluidHandler.FluidAction.EXECUTE);
-
+            } else
+                tankInventory.drain(30, IFluidHandler.FluidAction.EXECUTE);
+            smokeTimer = 100;
         }
 
+        if (smokeTimer > 0) {
+            smokeTimer--;
+            makeParticles(level, this.getBlockPos());
+            level.setBlock(getBlockPos(), this.getBlockState().setValue(FlarestackBlock.LIT, true), 2);
+        }
     }
 
     public static void makeParticles(Level level, BlockPos pos) {
         Random random = Create.RANDOM;
         int shouldSpawnSmoke = random.nextInt(7);
         if(shouldSpawnSmoke==0) {
-
-
             level.addParticle(ParticleTypes.CAMPFIRE_SIGNAL_SMOKE, pos.getX()  +random.nextFloat(1), pos.getY() + 1, pos.getZ()  +random.nextFloat(1), 0.0D, 0.08D, 0.0D);
             level.addParticle(ParticleTypes.FLAME, pos.getX()  +random.nextFloat(1), pos.getY() + 1, pos.getZ()  +random.nextFloat(1), Create.RANDOM.nextDouble(0.28)-0.14D, 0.14D, Create.RANDOM.nextDouble(0.28)-0.14D);
             level.addParticle(ParticleTypes.FLAME, pos.getX()  +random.nextFloat(1), pos.getY() + 1, pos.getZ()  +random.nextFloat(1), Create.RANDOM.nextDouble(0.28)-0.14D, 0.14D, Create.RANDOM.nextDouble(0.28)-0.14D);
             level.addParticle(ParticleTypes.FLAME, pos.getX()  +random.nextFloat(1), pos.getY() + 1, pos.getZ()  +random.nextFloat(1), Create.RANDOM.nextDouble(0.28)-0.14D, 0.14D, Create.RANDOM.nextDouble(0.28)-0.14D);
-
         }
-
     }
-
-
 
     @Override
     protected void read(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {
         super.read(compound,registries , clientPacket);
-
         tankInventory.readFromNBT(registries,compound.getCompound("TankContent"));
     }
 
@@ -140,17 +121,10 @@ public class FlarestackBlockEntity extends SmartBlockEntity implements IHaveGogg
     public void write(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {
         super.write(compound,registries , clientPacket);
         compound.put("TankContent", tankInventory.writeToNBT(registries,new CompoundTag()));
-
-
-
     }
-
-
-
 
     @Override
     public void addBehaviours(List<BlockEntityBehaviour> behaviours) {
     }
-
 }
 

@@ -1,6 +1,6 @@
 package com.drmangotea.tfmg.content.machinery.vat.base;
 
-import com.drmangotea.tfmg.base.lang.TFMGLang;
+import com.drmangotea.tfmg.base.TFMGUtils;
 import com.drmangotea.tfmg.base.lang.TFMGTexts;
 import com.drmangotea.tfmg.content.machinery.vat.compressor.CompressorBlockEntity;
 import com.drmangotea.tfmg.content.machinery.vat.freezer.FreezerBlockEntity;
@@ -1052,12 +1052,8 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
         TFMGTexts.header("vat").style(ChatFormatting.GRAY)
                 .forGoggles(tooltip);
 
-
-        ;
         CreateLang.builder().add(getPressureComponent(true, false)).forGoggles(tooltip, 1);
         CreateLang.builder().add(getHeatComponent(true, false)).forGoggles(tooltip, 1);
-
-        TFMGTexts.Vat.contents().forGoggles(tooltip);
 
         TFMGTexts.Vat.attachments()
                 .style(ChatFormatting.GRAY)
@@ -1067,54 +1063,13 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
             addMachineTooltip(machines.getValue(), operational, tooltip);
         }
 
-
-        TFMGTexts.Vat.contents().forGoggles(tooltip);
-
-        ///
-
-        IItemHandlerModifiable items = itemCapability;
-        IFluidHandler fluids = fluidCapability;
-        boolean isEmpty = true;
-
-        for (int i = 0; i < items.getSlots(); i++) {
-            ItemStack stackInSlot = items.getStackInSlot(i);
-            if (stackInSlot.isEmpty())
-                continue;
-            TFMGLang.text("")
-                    .add(Component.translatable(stackInSlot.getDescriptionId())
-                            .withStyle(ChatFormatting.GRAY))
-                    .add(TFMGLang.text(" x" + stackInSlot.getCount())
-                            .style(ChatFormatting.GREEN))
-                    .forGoggles(tooltip, 1);
-            isEmpty = false;
-        }
-
-        LangBuilder mb = CreateLang.translate("generic.unit.millibuckets");
-        for (int i = 0; i < fluids.getTanks(); i++) {
-            FluidStack fluidStack = fluids.getFluidInTank(i);
-            if (fluidStack.isEmpty())
-                continue;
-            TFMGLang.text("")
-                    .add(TFMGLang.fluidName(fluidStack)
-                            .add(TFMGLang.text(" "))
-                            .style(ChatFormatting.GRAY)
-                            .add(TFMGLang.number(fluidStack.getAmount())
-                                    .add(mb)
-                                    .style(ChatFormatting.BLUE)))
-                    .forGoggles(tooltip, 1);
-            isEmpty = false;
-        }
-
-        if (isEmpty)
-            tooltip.remove(0);
-
+        TFMGUtils.createStorageTooltip(this, tooltip);
         return true;
     }
 
     @Override
     protected void read(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {
         super.read(compound, registries, clientPacket);
-
         BlockPos controllerBefore = controller;
         int prevSize = width;
         int prevHeight = height;

@@ -1,5 +1,4 @@
-package com.drmangotea.tfmg.content.machinery.metallurgy.blast_stove;
-
+package com.drmangotea.tfmg.content.machinery.vat.base;
 
 import com.drmangotea.tfmg.registry.TFMGBlockEntities;
 import com.simibubi.create.api.connectivity.ConnectivityHandler;
@@ -22,10 +21,10 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.fluids.FluidStack;
 
-public class BlastStoveItem extends BlockItem {
+public class VatItem extends BlockItem {
 
-    public BlastStoveItem(Block p_i48527_1_, Properties p_i48527_2_) {
-        super(p_i48527_1_, p_i48527_2_);
+    public VatItem(Block block, Properties properties) {
+        super(block, properties);
     }
 
     @Override
@@ -79,15 +78,12 @@ public class BlastStoveItem extends BlockItem {
         BlockPos placedOnPos = pos.relative(face.getOpposite());
         BlockState placedOnState = world.getBlockState(placedOnPos);
 
-        if (!BlastStoveBlock.isBlastStove(placedOnState))
+        if (!VatBlock.isVat(placedOnState))
             return;
-
-        BlastStoveBlockEntity tankAt = ConnectivityHandler.partAt(
-                TFMGBlockEntities.BLAST_STOVE.get(), world, placedOnPos
-        );
+        VatBlockEntity tankAt = ConnectivityHandler.partAt(TFMGBlockEntities.CHEMICAL_VAT.get(), world, placedOnPos);
         if (tankAt == null)
             return;
-        BlastStoveBlockEntity controllerTE =  tankAt.getControllerBE();
+        VatBlockEntity controllerTE =  tankAt.getControllerBE();
         if (controllerTE == null)
             return;
 
@@ -108,7 +104,7 @@ public class BlastStoveItem extends BlockItem {
             for (int zOffset = 0; zOffset < width; zOffset++) {
                 BlockPos offsetPos = startPos.offset(xOffset, 0, zOffset);
                 BlockState blockState = world.getBlockState(offsetPos);
-                if (BlastStoveBlock.isBlastStove(blockState))
+                if (VatBlock.isVat(blockState))
                     continue;
                 if (!blockState.canBeReplaced())
                     return;
@@ -123,7 +119,7 @@ public class BlastStoveItem extends BlockItem {
             for (int zOffset = 0; zOffset < width; zOffset++) {
                 BlockPos offsetPos = startPos.offset(xOffset, 0, zOffset);
                 BlockState blockState = world.getBlockState(offsetPos);
-                if (BlastStoveBlock.isBlastStove(blockState))
+                if (VatBlock.isVat(blockState))
                     continue;
                 BlockPlaceContext context = BlockPlaceContext.at(ctx, offsetPos, face);
                 player.getPersistentData()
@@ -134,5 +130,4 @@ public class BlastStoveItem extends BlockItem {
             }
         }
     }
-
 }

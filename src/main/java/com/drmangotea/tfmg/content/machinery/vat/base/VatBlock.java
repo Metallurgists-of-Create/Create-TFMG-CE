@@ -57,9 +57,11 @@ public class VatBlock extends Block implements IWrenchable, IBE<VatBlockEntity> 
                 .setValue(SHAPE, Shape.PLAIN));
         this.vatType = vatType;
     }
+
     public static boolean isVat(BlockState state) {
         return state.getBlock() instanceof VatBlock;
     }
+
     public static void updateVatState(BlockState pState, Level pLevel, BlockPos tankPos) {
         BlockState tankState = pLevel.getBlockState(tankPos);
 
