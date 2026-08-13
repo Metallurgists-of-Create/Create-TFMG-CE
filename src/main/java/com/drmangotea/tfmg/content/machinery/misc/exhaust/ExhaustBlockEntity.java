@@ -2,6 +2,7 @@ package com.drmangotea.tfmg.content.machinery.misc.exhaust;
 
 
 
+import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.base.TFMGUtils;
 import com.drmangotea.tfmg.registry.TFMGBlockEntities;
 import com.drmangotea.tfmg.registry.TFMGFluids;
@@ -146,7 +147,7 @@ public class ExhaustBlockEntity extends SmartBlockEntity implements IHaveGoggleI
     }
 
     public static void makeParticles(Level level, BlockPos pos, int particleRotation) {
-        Random random = Create.RANDOM;
+        Random random = TFMG.RANDOM;
         int shouldSpawnSmoke = random.nextInt(7);
         if(shouldSpawnSmoke==0) {
 

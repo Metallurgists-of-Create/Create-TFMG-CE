@@ -1,5 +1,6 @@
 package com.drmangotea.tfmg.content.items.weapons.explosives.thermite_grenades;
 
+import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.base.spark.BlueSpark;
 import com.drmangotea.tfmg.base.spark.GreenSpark;
 import com.drmangotea.tfmg.base.spark.Spark;
@@ -64,9 +65,9 @@ public class ThermiteGrenade extends ThrowableItemProjectile {
             this.level().broadcastEntityEvent(this, (byte) 3);
 
             for (int i=0; i<20;i++){
-                float x= Create.RANDOM.nextFloat(360);
-                float y= Create.RANDOM.nextFloat(360);
-                float z= Create.RANDOM.nextFloat(360);
+                float x= TFMG.RANDOM.nextFloat(360);
+                float y= TFMG.RANDOM.nextFloat(360);
+                float z= TFMG.RANDOM.nextFloat(360);
 
                 if(flameColor==ChemicalColor.GREEN){
                     GreenSpark spark = TFMGEntityTypes.GREEN_SPARK.create(level());

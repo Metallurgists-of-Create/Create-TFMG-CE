@@ -1,5 +1,6 @@
 package com.drmangotea.tfmg.content.machinery.misc.smokestack;
 
+import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.registry.TFMGBlockEntities;
 import com.drmangotea.tfmg.registry.TFMGFluids;
 import com.simibubi.create.Create;
@@ -94,7 +95,7 @@ public class SmokestackBlockEntity extends SmartBlockEntity {
     }
 
     public static void makeParticles(Level level, BlockPos pos) {
-        Random random = Create.RANDOM;
+        Random random = TFMG.RANDOM;
         int shouldSpawnSmoke = random.nextInt(7);
         if (shouldSpawnSmoke == 0) {
 

@@ -83,9 +83,9 @@ public class NapalmBombEntity extends Entity {
 
        // float f = 4.0F;
        // for (int i=0; i<40;i++){
-       //     float x= Create.RANDOM.nextFloat(360);
-       //     float y= Create.RANDOM.nextFloat(360);
-       //     float z= Create.RANDOM.nextFloat(360);
+       //     float x= TFMG.RANDOM.nextFloat(360);
+       //     float y= TFMG.RANDOM.nextFloat(360);
+       //     float z= TFMG.RANDOM.nextFloat(360);
        //     Spark spark = TFMGEntityTypes.SPARK.create(level);
        //     spark.moveTo(this.getX(), this.getY()+1, this.getZ());
        //     spark.shootFromRotation( this,x,y,z,0.3f,1);

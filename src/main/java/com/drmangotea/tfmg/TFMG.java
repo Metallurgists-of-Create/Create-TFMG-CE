@@ -29,10 +29,12 @@ import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.registries.RegisterEvent;
 import org.slf4j.Logger;
 
+import java.util.Random;
+
 
 @Mod(TFMG.MOD_ID)
 public class TFMG {
-
+    public static final Random RANDOM = new Random();
     public static final String MOD_ID = "tfmg";
     public static final ElectricNetworkManager NETWORK_MANAGER = new ElectricNetworkManager();
     public static final Logger LOGGER = LogUtils.getLogger();
