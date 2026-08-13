@@ -1,5 +1,6 @@
 package com.drmangotea.tfmg.base.spark;
 
+import com.drmangotea.tfmg.content.items.weapons.explosives.thermite_grenades.fire.BlueFireBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
@@ -21,6 +22,6 @@ public class BlueSpark extends Spark{
 
     @Override
     public Optional<BlockState> getFireState(BlockPos pos) {
-        return Optional.empty();
+        return Optional.of(BlueFireBlock.getState(this.level(),pos));
     }
 }
