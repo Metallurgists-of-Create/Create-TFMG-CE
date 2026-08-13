@@ -31,10 +31,11 @@ public class NeonTubeBlockEntity extends ElectricBlockEntity {
     @Override
     public void tick() {
         super.tick();
-            glow.chase(getPowerUsage()*1.5, 0.4, LerpedFloat.Chaser.EXP);
-            glow.tickChaser();
-            if (Math.min(getData().getVoltage() / 10, 15) != getBlockState().getValue(LIGHT))
-                level.setBlock(getBlockPos(), getBlockState().setValue(LIGHT, Math.min(getData().getVoltage() / 10, 15)), 2);
+		glow.chase(getPowerUsage()*1.5, 0.4, LerpedFloat.Chaser.EXP);
+		glow.tickChaser();
+		int light = Math.min(getData().getVoltage() / 10, 15);
+		if (light != getBlockState().getValue(LIGHT))
+			level.setBlock(getBlockPos(), getBlockState().setValue(LIGHT, light), 2);
 
     }
     @Override

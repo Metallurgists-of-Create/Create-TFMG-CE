@@ -22,7 +22,6 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.PipeBlock;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -38,24 +37,26 @@ import javax.annotation.ParametersAreNonnullByDefault;
 public class NeonTubeBlock extends PipeBlock implements IBE<NeonTubeBlockEntity>, IWrenchable {
     public static final IntegerProperty LIGHT = LightBulbBlock.LIGHT;
 
-    public NeonTubeBlock(Properties p_55160_) {
-        super(0.3125F/2.5f, p_55160_);
+    public NeonTubeBlock(Properties properties) {
+        super(0.3125F/2.5f, properties);
         this.registerDefaultState(this.stateDefinition.any().setValue(LIGHT, 0).setValue(NORTH, false).setValue(EAST, Boolean.FALSE).setValue(SOUTH, false).setValue(WEST, false).setValue(UP, true).setValue(DOWN, true));
     }
-    public BlockState getStateForPlacement(BlockPlaceContext p_51709_) {
-        return this.getStateForPlacement(p_51709_.getLevel(), p_51709_.getClickedPos());
+	
+    public BlockState getStateForPlacement(BlockPlaceContext context) {
+		BlockGetter level = context.getLevel();
+		BlockPos pos = context.getClickedPos();
+
+        return this.defaultBlockState()
+			.setValue(DOWN, level.getBlockState(pos.below()).is(this))
+			.setValue(UP, level.getBlockState(pos.above()).is(this))
+			.setValue(NORTH, level.getBlockState(pos.north()).is(this))
+			.setValue(EAST, level.getBlockState(pos.east()).is(this))
+			.setValue(SOUTH, level.getBlockState(pos.south()).is(this))
+			.setValue(WEST, level.getBlockState(pos.west()).is(this));
     }
-    public BlockState getStateForPlacement(BlockGetter p_51711_, BlockPos p_51712_) {
-        BlockState blockstate = p_51711_.getBlockState(p_51712_.below());
-        BlockState blockstate1 = p_51711_.getBlockState(p_51712_.above());
-        BlockState blockstate2 = p_51711_.getBlockState(p_51712_.north());
-        BlockState blockstate3 = p_51711_.getBlockState(p_51712_.east());
-        BlockState blockstate4 = p_51711_.getBlockState(p_51712_.south());
-        BlockState blockstate5 = p_51711_.getBlockState(p_51712_.west());
-        return this.defaultBlockState().setValue(DOWN, blockstate.is(this) || blockstate.is(Blocks.CHORUS_FLOWER) || blockstate.is(Blocks.END_STONE)).setValue(UP, blockstate1.is(this) || blockstate1.is(Blocks.CHORUS_FLOWER)).setValue(NORTH, blockstate2.is(this) || blockstate2.is(Blocks.CHORUS_FLOWER)).setValue(EAST, blockstate3.is(this) || blockstate3.is(Blocks.CHORUS_FLOWER)).setValue(SOUTH, blockstate4.is(this) || blockstate4.is(Blocks.CHORUS_FLOWER)).setValue(WEST, blockstate5.is(this) || blockstate5.is(Blocks.CHORUS_FLOWER));
-    }
-    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> p_51735_) {
-        p_51735_.add(NORTH, EAST, SOUTH, WEST, UP, DOWN,LIGHT);
+	
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+		builder.add(NORTH, EAST, SOUTH, WEST, UP, DOWN,LIGHT);
     }
 
     @Override
@@ -109,39 +110,33 @@ public class NeonTubeBlock extends PipeBlock implements IBE<NeonTubeBlockEntity>
 
 
     @Override
-protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand pHand, BlockHitResult hitResult) {
+	protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand pHand, BlockHitResult hitResult) {
         if (player.isShiftKeyDown())
             return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         ItemStack heldItem = player.getItemInHand(pHand);
         NeonTubeBlockEntity be = getBlockEntity(level, pos);
         DyeColor dye = DyeColor.getColor(heldItem);
-        if (be != null) {
-            if (dye != null) {
-                level.playSound(null, pos, SoundEvents.DYE_USE, SoundSource.BLOCKS, 1.0F, 1.0F);
-                be.setColor(dye);
-                return ItemInteractionResult.SUCCESS;
-            }
-        }
-
-
+        if (be != null && dye != null) {
+			level.playSound(null, pos, SoundEvents.DYE_USE, SoundSource.BLOCKS, 1.0F, 1.0F);
+			be.setColor(dye);
+			return ItemInteractionResult.SUCCESS;
+		}
         return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
     }
 
     @Override
-    public void onPlace(BlockState state, Level level, BlockPos pos, BlockState p_60569_, boolean p_60570_) {
-
-
-    if(!p_60569_.is(TFMGBlocks.NEON_TUBE.get()))
-        for(Direction facing : Direction.values()) {
-            BlockState neighbourState = level.getBlockState(pos.relative(facing));
-             if (neighbourState.is(TFMGBlocks.NEON_TUBE.get())) {
-                 level.setBlockAndUpdate(pos.relative(facing), neighbourState.setValue(PipeBlock.PROPERTY_BY_DIRECTION.get(facing.getOpposite()), true));
-             }
-        }
-    withBlockEntityDo(level,pos, IElectric::onPlaced);
-        super.onPlace(state, level, pos, p_60569_, p_60570_);
-
+    public void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean movedByPiston) {
+		if(!oldState.is(TFMGBlocks.NEON_TUBE.get()))
+			for(Direction facing : Direction.values()) {
+				BlockState neighbourState = level.getBlockState(pos.relative(facing));
+				 if (neighbourState.is(TFMGBlocks.NEON_TUBE.get())) {
+					 level.setBlockAndUpdate(pos.relative(facing), neighbourState.setValue(PipeBlock.PROPERTY_BY_DIRECTION.get(facing.getOpposite()), true));
+				 }
+			}
+		withBlockEntityDo(level,pos, IElectric::onPlaced);
+        super.onPlace(state, level, pos, oldState, movedByPiston);
     }
+	
     @Override
     public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
         IBE.onRemove(state, level, pos, newState);
