@@ -46,9 +46,9 @@ public class FreezerBlockEntity extends ElectricBlockEntity  {
     public boolean makeMultimeterTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
         boolean operational = getCurrent() >= TFMGConfigs.common().machines.freezerMinimumCurrent.get();
         TFMGTexts.CommonMachines.state("goggles." + (operational ? "operational" : "not_operational")).style(operational ? ChatFormatting.GREEN : ChatFormatting.RED).forGoggles(tooltip);
-        super.makeMultimeterTooltip(tooltip, isPlayerSneaking);
         if (!operational)
             TFMGTexts.Multimeter.notEnoughCurrent(TFMGConfigs.common().machines.freezerMinimumCurrent.get()).forGoggles(tooltip);
+        super.makeMultimeterTooltip(tooltip, isPlayerSneaking);
         return true;
     }
 
