@@ -24,16 +24,12 @@ import java.util.List;
 
 public class GasLampBlockEntity extends SmartBlockEntity implements IHaveGoggleInformation {
 
-
     public FluidTank tankInventory;
-
     public int lightTimer = 0;
-
 
     public GasLampBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
         tankInventory = createInventory();
-
     }
 
     protected SmartFluidTank createInventory() {
@@ -66,7 +62,6 @@ public class GasLampBlockEntity extends SmartBlockEntity implements IHaveGoggleI
     }
 
     @Override
-    @SuppressWarnings("removal")
     public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
         return TFMGUtils.createFluidTooltip(this, tooltip);
     }
@@ -98,7 +93,6 @@ public class GasLampBlockEntity extends SmartBlockEntity implements IHaveGoggleI
     @Override
     protected void read(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {
         super.read(compound,registries , clientPacket);
-
         tankInventory.readFromNBT(registries,compound.getCompound("TankContent"));
     }
 
@@ -106,9 +100,6 @@ public class GasLampBlockEntity extends SmartBlockEntity implements IHaveGoggleI
     public void write(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {
         super.write(compound,registries , clientPacket);
         compound.put("TankContent", tankInventory.writeToNBT(registries,new CompoundTag()));
-
-
-
     }
 
     @Override

@@ -113,6 +113,7 @@ import com.drmangotea.tfmg.content.machinery.oil_processing.pumpjack.hammer.part
 import com.drmangotea.tfmg.content.machinery.oil_processing.surface_scanner.SurfaceScannerBlock;
 import com.drmangotea.tfmg.content.machinery.vat.base.VatBlock;
 import com.drmangotea.tfmg.content.machinery.vat.base.VatGenerator;
+import com.drmangotea.tfmg.content.machinery.vat.base.VatItem;
 import com.drmangotea.tfmg.content.machinery.vat.compressor.CompressorBlock;
 import com.drmangotea.tfmg.content.machinery.vat.electrode_holder.ElectrodeHolderBlock;
 import com.drmangotea.tfmg.content.machinery.vat.freezer.FreezerBlock;
@@ -440,7 +441,7 @@ public class TFMGBlocks {
                     .blockstate(new VatGenerator()::generate)
                     .onRegister(CreateRegistrate.blockModel(() -> SteelFluidTankModel::steelVat))
                     .addLayer(() -> RenderType::cutoutMipped)
-                    .item(SteelTankItem::new)
+                    .item(VatItem::new)
                     .model(AssetLookup.customBlockItemModel("_", "block_single_window"))
                     .build()
                     .register();
@@ -454,7 +455,7 @@ public class TFMGBlocks {
                     .blockstate(new VatGenerator()::generate)
                     .onRegister(CreateRegistrate.blockModel(() -> SteelFluidTankModel::castIronVat))
                     .addLayer(() -> RenderType::cutoutMipped)
-                    .item(SteelTankItem::new)
+                    .item(VatItem::new)
                     .model(AssetLookup.customBlockItemModel("_", "block_single_window"))
                     .build()
                     .register();
@@ -468,7 +469,7 @@ public class TFMGBlocks {
                     .blockstate(new VatGenerator()::generate)
                     .onRegister(CreateRegistrate.blockModel(() -> SteelFluidTankModel::fireproofVat))
                     .addLayer(() -> RenderType::cutoutMipped)
-                    .item(SteelTankItem::new)
+                    .item(VatItem::new)
                     .model(AssetLookup.customBlockItemModel("_", "block_single"))
                     .build()
                     .register();
