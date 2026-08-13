@@ -24,7 +24,7 @@ public enum TFMGPackets implements BasePacketPayload.PacketTypeProvider {
     // Server to Client
     ADVANCED_POTATO_CANNON(AdvancedPotatoCannonPacket.class, AdvancedPotatoCannonPacket.STREAM_CODEC),
     QUAD_POTATO_CANNON(QuadPotatoCannonPacket.class, QuadPotatoCannonPacket.STREAM_CODEC),
-    CONNECT_NEIGHBORS(ConnectNeightborsPacket.class, ConnectNeightborsPacket.STREAM_CODEC),
+    CONNECT_NEIGHBORS(ConnectNeighborsPacket.class, ConnectNeighborsPacket.STREAM_CODEC),
     NETWORK_UPDATE(NetworkUpdatePacket.class, NetworkUpdatePacket.STREAM_CODEC),
     ELECTRICAL_BLOCK_FAIL(ElectricalBlockFailPacket.class, ElectricalBlockFailPacket.STREAM_CODEC),
     CONNECTION_PACKET(ConnectionPacket.class, ConnectionPacket.STREAM_CODEC),
