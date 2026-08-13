@@ -341,7 +341,7 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
                 if (level.getBlockEntity(pos) instanceof FreezerBlockEntity freezer && freezer.isOperational()) {
                     heatLevel--;
                 }
-                if (level.getBlockEntity(pos) instanceof CompressorBlockEntity compressor && compressor.getState() != CompressorBlockEntity.CompressorState.NON_OPERATIONAL) {
+                if (level.getBlockEntity(pos) instanceof CompressorBlockEntity compressor && compressor.getState() != CompressorBlockEntity.CompressorState.NOT_OPERATIONAL) {
                     if (compressor.getState() == CompressorBlockEntity.CompressorState.PRESSURIZING)
                         pressure++;
                     if (compressor.getState() == CompressorBlockEntity.CompressorState.DEPRESSURIZING)
@@ -1035,6 +1035,8 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
         LangBuilder operation = TFMGTexts.Vat.operation(operationId);
         if (!isOperational) {
             operation.add(TFMGTexts.Vat.notOperational());
+        } else {
+            operation.add(TFMGTexts.Vat.operational());
         }
         operation.forGoggles(tooltip);
     }

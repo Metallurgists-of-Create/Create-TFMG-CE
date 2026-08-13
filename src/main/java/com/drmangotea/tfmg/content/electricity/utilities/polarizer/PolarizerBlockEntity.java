@@ -99,15 +99,12 @@ public class PolarizerBlockEntity extends ElectricBlockEntity implements IHaveGo
     //
     @Override
     public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
+        TFMGTexts.header("polarizer").style(ChatFormatting.GRAY).forGoggles(tooltip, 1);
         TFMGTexts.Multimeter.charge(capacitorPercentage/2f).forGoggles(tooltip);
-        if(getPowerUsage()<2000&&!inventory.isEmpty()){
-            TFMGTexts.Multimeter.notEnoughPower(2000).forGoggles(tooltip, 1);
+        if(getPowerUsage() < TFMGConfigs.common().machines.polarizerMinimumPower.get() && !inventory.isEmpty()){
+            TFMGTexts.Multimeter.notEnoughPower(TFMGConfigs.common().machines.polarizerMinimumPower.get()).forGoggles(tooltip, 1);
             return true;
         }
-        TFMGTexts.header("polarizer").style(ChatFormatting.GRAY).forGoggles(tooltip, 1);
-
-
-
         return true;
     }
 

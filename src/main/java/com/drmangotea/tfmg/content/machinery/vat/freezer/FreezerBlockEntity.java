@@ -1,23 +1,13 @@
 package com.drmangotea.tfmg.content.machinery.vat.freezer;
 
-import com.drmangotea.tfmg.TFMG;
-import com.drmangotea.tfmg.TFMGRegistries;
-import com.drmangotea.tfmg.base.TFMGUtils;
 import com.drmangotea.tfmg.base.lang.TFMGTexts;
 import com.drmangotea.tfmg.config.TFMGConfigs;
 import com.drmangotea.tfmg.content.electricity.base.ElectricBlockEntity;
-import com.drmangotea.tfmg.content.machinery.vat.base.IVatMachine;
 import com.drmangotea.tfmg.content.machinery.vat.base.VatBlock;
-import com.drmangotea.tfmg.content.machinery.vat.base.VatBlockEntity;
-import com.drmangotea.tfmg.content.machinery.vat.electrode_holder.electrode.Electrode;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
@@ -48,17 +38,17 @@ public class FreezerBlockEntity extends ElectricBlockEntity  {
     }
 
     public boolean isOperational(){
-        return getCurrent()>3&&!data.notEnoughPower;
+        return getCurrent() >= TFMGConfigs.common().machines.freezerMinimumCurrent.get() && canWork();
     }
 
 
     @Override
     public boolean makeMultimeterTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
-
+        boolean operational = getCurrent() >= TFMGConfigs.common().machines.freezerMinimumCurrent.get();
+        TFMGTexts.CommonMachines.state("goggles." + (operational ? "operational" : "not_operational")).style(operational ? ChatFormatting.GREEN : ChatFormatting.RED).forGoggles(tooltip);
         super.makeMultimeterTooltip(tooltip, isPlayerSneaking);
-        if (!isOperational())
-            TFMGTexts.Multimeter.notEnoughCurrent(3).forGoggles(tooltip);
-
+        if (!operational)
+            TFMGTexts.Multimeter.notEnoughCurrent(TFMGConfigs.common().machines.freezerMinimumCurrent.get()).forGoggles(tooltip);
         return true;
     }
 

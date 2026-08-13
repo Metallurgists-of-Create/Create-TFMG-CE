@@ -1,15 +1,17 @@
 package com.drmangotea.tfmg.content.machinery.vat.compressor;
 
-import com.drmangotea.tfmg.base.lang.TFMGLang;
 import com.drmangotea.tfmg.base.lang.TFMGTexts;
+import com.drmangotea.tfmg.config.TFMGConfigs;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.List;
+import java.util.Locale;
 
 public class CompressorBlockEntity extends KineticBlockEntity {
 
@@ -19,9 +21,9 @@ public class CompressorBlockEntity extends KineticBlockEntity {
 
 
 
-    public CompressorState getState(){
-        if(Math.abs(getSpeed())<120){
-            return CompressorState.NON_OPERATIONAL;
+    public CompressorState getState() {
+        if(Math.abs(getSpeed()) < TFMGConfigs.common().machines.compressorMinimumRPM.get()){
+            return CompressorState.NOT_OPERATIONAL;
         }
         if(getSpeed()>0){
             return CompressorState.PRESSURIZING;
@@ -32,23 +34,28 @@ public class CompressorBlockEntity extends KineticBlockEntity {
 
     @Override
     public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
-        if(getState()==CompressorState.NON_OPERATIONAL) {
-            TFMGLang.translate("goggles.compressor.non_operational").style(ChatFormatting.RED).forGoggles(tooltip);
-            TFMGLang.translate("goggles.compressor.non_operational.rpm").style(ChatFormatting.RED).forGoggles(tooltip);
-        }else if(getState()==CompressorState.PRESSURIZING){
-            TFMGLang.translate("goggles.compressor.pressurizing").style(ChatFormatting.YELLOW).forGoggles(tooltip);
-        }else {
-            TFMGLang.translate("goggles.compressor.depressurizing").style(ChatFormatting.AQUA).forGoggles(tooltip);
+        TFMGTexts.CommonMachines.state("goggles." + getState().getSerializedName()).style(getState().color).forGoggles(tooltip);
+        if(getState() == CompressorState.NOT_OPERATIONAL) {
+            TFMGTexts.CommonMachines.minRPM(TFMGConfigs.common().machines.compressorMinimumRPM.get()).style(ChatFormatting.RED).forGoggles(tooltip);
         }
-
         return super.addToGoggleTooltip(tooltip, isPlayerSneaking);
     }
 
-    public enum CompressorState{
-        PRESSURIZING,
-        DEPRESSURIZING,
-        NON_OPERATIONAL
+    public enum CompressorState implements StringRepresentable {
+        PRESSURIZING(ChatFormatting.YELLOW),
+        DEPRESSURIZING(ChatFormatting.AQUA),
+        NOT_OPERATIONAL(ChatFormatting.RED);
 
+        public final ChatFormatting color;
+
+        CompressorState(ChatFormatting color) {
+            this.color = color;
+        }
+
+        @Override
+        public String getSerializedName() {
+            return this.name().toLowerCase(Locale.ROOT);
+        }
     }
 
 }

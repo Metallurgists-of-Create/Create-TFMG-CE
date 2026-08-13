@@ -34,7 +34,7 @@ public class DryIceFlake extends Spark{
                 BlockPos hitBlockPos = blockHit.getBlockPos().relative(blockHit.getDirection());
 
                 AABB extinguisRadius = new AABB(hitBlockPos);
-                extinguisRadius = extinguisRadius.inflate(TFMGConfigs.common().machines.fireExtinguisherClearRadius.get());
+                extinguisRadius = extinguisRadius.inflate(TFMGConfigs.common().equipment.fireExtinguisherClearRadius.get());
 
                 Stream<BlockPos> positions = BlockPos.betweenClosedStream(extinguisRadius);
 

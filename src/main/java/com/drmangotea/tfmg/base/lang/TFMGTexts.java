@@ -13,7 +13,7 @@ import net.minecraft.world.item.ItemStack;
  */
 public class TFMGTexts {
     public static String percent(double value) {
-        return String.valueOf(value) + "%";
+        return value + "%";
     }
     // Electricity info
     public static String power(double value) {
@@ -50,6 +50,10 @@ public class TFMGTexts {
         return TFMGLang.translate("goggles.winding_machine.turns").add(TFMGLang.text(String.valueOf(turns)));
     }
 
+    public static String rpm(int value) {
+        return TFMGUtils.formatUnits(value, "RPM");
+    }
+
     public static LangBuilder invalidMachine() {
         return TFMGLang.translate("goggles.invalid_machine").style(ChatFormatting.DARK_RED);
     }
@@ -62,6 +66,16 @@ public class TFMGTexts {
         return TFMGLang.translate("goggles.heat_status")
                 .add(TFMGLang.translate(heatCondition == HeatCondition.NONE ? "goggles.no_heat" : heatCondition == HeatCondition.HEATED ? "goggles.heated" : "goggles.superheated"))
                 .color(heatCondition == HeatCondition.NONE ? 0x7a7a77 : heatCondition == HeatCondition.HEATED ? 0xdea216 : 0x16c7de);
+    }
+
+    public static class CommonMachines {
+        public static LangBuilder state(String state) {
+            return TFMGLang.translate("goggles.machine_state", TFMGLang.translateDirect(state));
+        }
+
+        public static LangBuilder minRPM(int rpm) {
+            return TFMGLang.translate("goggles.minimum_rpm", rpm);
+        }
     }
 
     // Multimeter Tooltips
@@ -223,18 +237,18 @@ public class TFMGTexts {
         public static LangBuilder noDeposit() {
             return TFMGLang.translate("goggles.surface_scanner.no_deposit").style(ChatFormatting.RED);
         }
-        public static LangBuilder noRotation() {
-            return TFMGLang.translate("goggles.surface_scanner.no_rotation").style(ChatFormatting.DARK_RED);
-        }
     }
 
     // Vat Tooltips
     public static class Vat {
         public static LangBuilder operation(String operationId) {
-            return TFMGLang.translate("goggles.vat." + operationId.replace(":","."));
+            return TFMGLang.builder().space().space().space().translate("goggles.vat." + operationId.replace(":","."));
         }
         public static LangBuilder notOperational() {
-            return TFMGLang.text(" - ").add(TFMGLang.translate("goggles.vat.not_operational").style(ChatFormatting.RED));
+            return TFMGLang.text(" - ").add(TFMGLang.translate("goggles.not_operational").style(ChatFormatting.RED));
+        }
+        public static LangBuilder operational() {
+            return TFMGLang.text(" - ").add(TFMGLang.translate("goggles.operational").style(ChatFormatting.GREEN));
         }
         public static LangBuilder contents() {
             return TFMGLang.translate("goggles.vat.contents");

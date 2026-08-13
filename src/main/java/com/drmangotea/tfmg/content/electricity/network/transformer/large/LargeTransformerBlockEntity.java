@@ -257,7 +257,7 @@ public class LargeTransformerBlockEntity extends KineticElectricBlockEntity {
             case NEEDS_STEEL -> "multimeter.large_transformer.air_cooled";
         };
 
-        TFMGLang.translate(stateKey).color(0x69c9c5).forGoggles(tooltip);
+        TFMGTexts.CommonMachines.state(stateKey).color(0x69c9c5).forGoggles(tooltip);
         TFMGTexts.Multimeter.transformerRatio(turnRatio);
 
 

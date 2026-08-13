@@ -478,6 +478,7 @@ public class TFMGBlocks {
             .transform(pickaxeOnly())
             .properties(BlockBehaviour.Properties::noOcclusion)
             .blockstate((ctx, prov) -> prov.simpleBlock(ctx.getEntry(), AssetLookup.partialBaseModel(ctx, prov)))
+            .transform(TFMGStress.setImpact(3.0))
             .item()
             .transform(customItemModel())
             .register();

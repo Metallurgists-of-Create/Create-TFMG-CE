@@ -8,7 +8,6 @@
 
   "tfmg.surface_scanner.header": "Surface Scanner",
   "tfmg.goggles.surface_scanner.no_deposit": "No Deposits Found",
-  "tfmg.goggles.surface_scanner.no_rotation": "Not Enough Rotation (Needs 64rpm)",
   "tfmg.goggles.surface_scanner.deposits_found": "%s Chunks With Oil Deposits Found",
 
   "tfmg.distillation_tower.header": "Distillation Tower Info:",
@@ -31,7 +30,6 @@
   "tfmg.goggles.blast_stove.tank4": "Output Tank 2: ",
 
   "tfmg.coke_oven.header": "Coke Oven:",
-  "tfmg.goggles.coke_oven.progress": "Progress: %1$s",
 
   "tfmg.pumpjack.header": "Pumpjack Info:",
   "tfmg.goggles.pumpjack.reserves": "Deposit Reserves: ",
@@ -57,18 +55,21 @@
 
   "tfmg.winding_machine.header": "Winding Machine",
   "tfmg.goggles.winding_machine.turns": "Turns Left: ",
-  "tfmg.goggles.winding_machine.progress": "Progress: ",
 
   "tfmg.polarizer.header": "Polarizer",
-  "tfmg.goggles.polarizer.charge": "Charge: ",
-  "tfmg.goggles.polarizer.insufficient_power": "Not Enough Power (Needs 2000W)",
 
   "tfmg.goggles.electric_machine.no_power": "No Power",
   "tfmg.goggles.electricity.insufficient_voltage": "Insufficient Voltage",
 
-  "tfmg.goggles.compressor.non_operational": "State: Non Operational(Needs at least 120 RPM)",
-  "tfmg.goggles.compressor.pressurizing": "State: Pressurizing",
-  "tfmg.goggles.compressor.depressurizing": "State: Depressurizing",
+  "tfmg.goggles.machine_state": "State: %s",
+  "tfmg.goggles.operational": "Operational",
+  "tfmg.goggles.not_operational": "Not Operational",
+  "tfmg.goggles.minimum_rpm": "Needs at least %sRPM",
+
+  "tfmg.goggles.compressor.non_operational": "State: Non Operational",
+  "tfmg.goggles.compressor.non_operational.rpm": "Needs at least 120 RPM",
+  "tfmg.goggles.pressurizing": "Pressurizing",
+  "tfmg.goggles.depressurizing": "Depressurizing",
 
   "tfmg.goggles.voltmeter": "Voltmeter:",
   "tfmg.goggles.gauge.value": "   Measured Voltage:",
@@ -87,8 +88,6 @@
   "tfmg.goggles.engine.pistons_missing": "Pistons Missing",
   "tfmg.goggles.engine.turbines_missing": "Turbines Missing",
 
-  "tfmg.goggles.electrode_holder.min_amps": "Not Enough Current (Needs ",
-
   "tfmg.vat.header": "Chemical Vat",
   "tfmg.goggles.vat.attachments": "Attachments:",
   "tfmg.goggles.vat.contents": "Vat Contents:",
@@ -96,11 +95,10 @@
   "tfmg.goggles.no_heat": "No Heat",
   "tfmg.goggles.heated": "Heated",
   "tfmg.goggles.superheated": "Superheated",
-  "tfmg.goggles.vat.not_operational": "Not Operational",
-  "tfmg.goggles.vat.tfmg.graphite_electrode": "   Graphite Electrode",
-  "tfmg.goggles.vat.tfmg.electrode": "   Electrode",
-  "tfmg.goggles.vat.tfmg.mixing": "   Mixer",
-  "tfmg.goggles.vat.tfmg.centrifuge": "   Centrifuge",
+  "tfmg.goggles.vat.tfmg.graphite_electrode": "Graphite Electrode",
+  "tfmg.goggles.vat.tfmg.electrode": "Electrode",
+  "tfmg.goggles.vat.tfmg.mixing": "Mixer",
+  "tfmg.goggles.vat.tfmg.centrifuge": "Centrifuge",
   "create.vat.pressure_dots": "... ",
   "create.vat.pressure": "Pressure",
   "create.vat.heat_dots": "................ ",
@@ -181,9 +179,9 @@
   "tfmg.multimeter.network.generation": "Network Power Generation: %s",
   "tfmg.multimeter.network.consumption": "Network Power Consumption: %s",
   "tfmg.multimeter.transformer_ratio": "   Turn Ratio: ",
-  "tfmg.multimeter.large_transformer.air_cooled": "   State: Air Cooled",
-  "tfmg.multimeter.large_transformer.metal_cooled": "   State: Metal Heat Sink Cooled",
-  "tfmg.multimeter.large_transformer.oil_cooled": "   State: Oil + Heat Sink Cooled",
+  "tfmg.multimeter.large_transformer.air_cooled": "Air Cooled",
+  "tfmg.multimeter.large_transformer.metal_cooled": "Metal Heat Sink Cooled",
+  "tfmg.multimeter.large_transformer.oil_cooled": "Oil + Heat Sink Cooled",
   "tfmg.multimeter.fe_output": "   Sending ",
   "tfmg.multimeter.fe_input": "   Taking ",
 

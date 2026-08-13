@@ -1,22 +1,26 @@
 package com.drmangotea.tfmg.content.machinery.vat.industrial_mixer;
 
+import com.drmangotea.tfmg.base.lang.TFMGTexts;
+import com.drmangotea.tfmg.config.TFMGConfigs;
 import com.drmangotea.tfmg.content.machinery.vat.base.IVatMachine;
 import com.drmangotea.tfmg.content.machinery.vat.base.VatBlock;
 import com.drmangotea.tfmg.content.machinery.vat.base.VatBlockEntity;
 import com.drmangotea.tfmg.registry.TFMGItems;
-import com.simibubi.create.content.kinetics.base.IRotate;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import net.createmod.catnip.animation.LerpedFloat;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 
+import java.util.List;
 import java.util.Objects;
 
 
@@ -50,6 +54,18 @@ public class IndustrialMixerBlockEntity extends KineticBlockEntity implements IV
         visualSpeed.tickChaser();
     }
 
+    @Override
+    public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
+        boolean operational = Math.abs(getSpeed()) >= TFMGConfigs.common().machines.industrialMixerMinimumRPM.get();
+        boolean needsAttachment = mixerMode == MixerMode.NONE;
+        String state = operational && !needsAttachment ? "goggles.operational" : "goggles.not_operational";
+        TFMGTexts.CommonMachines.state(state).style(operational && !needsAttachment ? ChatFormatting.GREEN : ChatFormatting.RED).forGoggles(tooltip);
+        if(!operational) {
+            TFMGTexts.CommonMachines.minRPM(TFMGConfigs.common().machines.industrialMixerMinimumRPM.get()).style(ChatFormatting.RED).forGoggles(tooltip);
+        }
+        super.addToGoggleTooltip(tooltip, isPlayerSneaking);
+        return true;
+    }
 
     @Override
     public void write(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {
@@ -96,7 +112,7 @@ public class IndustrialMixerBlockEntity extends KineticBlockEntity implements IV
 
     @Override
     public boolean canOperate(VatBlockEntity vat) {
-        return getSpeed() >= IRotate.SpeedLevel.MEDIUM.getSpeedValue() || getSpeed() <= -IRotate.SpeedLevel.MEDIUM.getSpeedValue();
+        return Math.abs(getSpeed()) >= TFMGConfigs.common().machines.industrialMixerMinimumRPM.get();
     }
 
     public boolean setMixerMode(ItemStack modeItem, boolean simulate) {

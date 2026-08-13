@@ -49,30 +49,30 @@ public class SurfaceScannerBlockEntity extends SmartBlockEntity implements IHave
         TFMGTexts.header("surface_scanner")
                 .style(ChatFormatting.GRAY)
                 .forGoggles(tooltip);
-        if(level.getBlockEntity(getBlockPos().below()) instanceof MachineInputBlockEntity be&&Math.abs(be.getSpeed())>=64) {
+        if (level == null) return false;
+        boolean operational = level.getBlockEntity(getBlockPos().below()) instanceof MachineInputBlockEntity be && Math.abs(be.getSpeed()) >= TFMGConfigs.common().machines.industrialMixerMinimumRPM.get();
+        if(operational) {
             int depositsFound = 0;
             for(Boolean[] row : grid){
                 for(Boolean light : row){
-                    if(light!=null&&light)
+                    if(light != null && light)
                         depositsFound++;
                 }
             }
-
-            if(depositsFound>0){
+            if(depositsFound > 0){
                 TFMGTexts.SurfaceScanner.deposits(depositsFound).forGoggles(tooltip);
             }else
                 TFMGTexts.SurfaceScanner.noDeposit().forGoggles(tooltip);
-        }else
-            TFMGTexts.SurfaceScanner.noRotation().forGoggles(tooltip);
-
+        } else
+            TFMGTexts.CommonMachines.minRPM(TFMGConfigs.common().machines.surfaceScannerMinimumRPM.get()).style(ChatFormatting.DARK_RED).forGoggles(tooltip);
         return true;
     }
 
     @Override
     public void lazyTick() {
         super.lazyTick();
-
-        if(level.getBlockEntity(getBlockPos().below()) instanceof MachineInputBlockEntity be&&Math.abs(be.getSpeed())>=64) {
+        if (level == null) return;
+        if(level.getBlockEntity(getBlockPos().below()) instanceof MachineInputBlockEntity be&&Math.abs(be.getSpeed()) >= TFMGConfigs.common().machines.surfaceScannerMinimumRPM.get()) {
             findDeposits();
         }else {
             grid = new Boolean[5][5];

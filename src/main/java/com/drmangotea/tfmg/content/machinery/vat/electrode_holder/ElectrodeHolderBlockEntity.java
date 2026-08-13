@@ -9,6 +9,7 @@ import com.drmangotea.tfmg.content.machinery.vat.base.IVatMachine;
 import com.drmangotea.tfmg.content.machinery.vat.base.VatBlock;
 import com.drmangotea.tfmg.content.machinery.vat.base.VatBlockEntity;
 import com.drmangotea.tfmg.content.machinery.vat.electrode_holder.electrode.Electrode;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -47,20 +48,18 @@ public class ElectrodeHolderBlockEntity extends ElectricBlockEntity implements I
 
     @Override
     public boolean makeMultimeterTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
-
+        boolean operational = getCurrent() >= TFMGConfigs.common().machines.electrolysisMinimumCurrent.get();
+        TFMGTexts.CommonMachines.state("goggles." + (operational ? "operational" : "not_operational")).style(operational ? ChatFormatting.GREEN : ChatFormatting.RED).forGoggles(tooltip);
         super.makeMultimeterTooltip(tooltip, isPlayerSneaking);
-        if (getCurrent() < TFMGConfigs.common().machines.electrolysisMinimumCurrent.get())
+        if (!operational)
             TFMGTexts.Multimeter.notEnoughCurrent(TFMGConfigs.common().machines.electrolysisMinimumCurrent.get()).forGoggles(tooltip);
-
         return true;
     }
 
     @Override
     public void tick() {
         super.tick();
-
         if (level == null) return;
-
         var vatBE = level.getBlockEntity(getBlockPos().relative(Direction.DOWN));
         if (vatBE instanceof VatBlockEntity vat) {
             BlockPos electrodePos = getBlockPos().relative(Direction.DOWN);
