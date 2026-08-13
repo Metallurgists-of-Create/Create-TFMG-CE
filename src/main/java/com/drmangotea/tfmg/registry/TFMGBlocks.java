@@ -1348,17 +1348,6 @@ public class TFMGBlocks {
                     .addLayer(() -> RenderType::cutoutMipped)
                     .register();
 
-
-    //public static final BlockEntry<ConverterBlock> CONVERTER =
-    //        REGISTRATE.block("converter", ConverterBlock::new)
-    //                .initialProperties(SharedProperties::softMetal)
-    //                .transform(pickaxeOnly())
-    //                .blockstate(new ConverterGenerator()::generate)
-    //                .properties(BlockBehaviour.Properties::noOcclusion)
-    //                .item()
-    //                .transform(customItemModel())
-    //                .register();
-
     public static final BlockEntry<LargeCoilBlock> LARGE_COIL =
             REGISTRATE.block("large_coil", LargeCoilBlock::new)
                     .initialProperties(SharedProperties::softMetal)

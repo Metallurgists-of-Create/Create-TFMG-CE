@@ -13,8 +13,7 @@ public class MachineConfig extends ConfigBase {
 
     public final ConfigGroup accumulator = group(1, "accumulator", "Accumulator");
     public final ConfigInt accumulatorStorage = i(2500000, 1, "accumulatorStorage", Comments.accumulatorStorage);
-   // public final ConfigInt accumulatorVoltage = i(12, 1, "accumulatorVoltage", Comments.accumulatorVoltage);
-   // public final ConfigInt accumulatorChargingRate = i(100, 1, "accumulatorChargingRate", Comments.accumulatorChargingRate);
+
 
     public final ConfigGroup firebox = group(1, "firebox", "Firebox");
     public final ConfigBool fireboxExhaustRequirement = b(true, "fireboxExhaustRequirement", Comments.fireboxExhaustRequirement);
@@ -73,9 +72,6 @@ public class MachineConfig extends ConfigBase {
         static String electricMotorInternalResistance = "Sets the internal resistance of the electric motor.";
         static String cokeOvenMaxSize = "Determines the maximum size of coke ovens.";
         static String accumulatorStorage = "Determines the storage space of accumulators.";
-        static String accumulatorVoltage = "Determines the voltage accumulators output.";
-        static String accumulatorMaxAmpOutput = "Sets the maximum amperage an accumulator can provide.";
-        static String accumulatorChargingRate = "Sets the maximum charging rate of accumulators.";
         static String fireboxExhaustRequirement = "If set to true,fireboxes will require exhaust management.";
         static String fireboxFuelConsumption = "Determines the amount of fuel a firebox needs to run for 3 seconds.";
         static String engineMaxLength = "The maximum length of engines.";

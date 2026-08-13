@@ -9,9 +9,9 @@ displayName = "${mod_name}"
 updateJSONURL="https://github.com/Metallurgists-of-Create/Create-TFMG-CE/raw/refs/heads/1.21.1/updates.json"
 displayURL="https://github.com/Metallurgists-of-Create/Create-TFMG-CE"
 logoFile="tfmg.png"
-#credits=""
-authors = "${mod_authors}"
-description = '''${mod_description}'''
+credits="${mod_credits}"
+authors="${mod_authors}"
+description='''${mod_description}'''
 
 [[mixins]]
 config = "${mod_id}.mixins.json"
