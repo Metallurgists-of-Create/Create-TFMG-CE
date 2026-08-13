@@ -1,11 +1,8 @@
 package com.drmangotea.tfmg.content.items;
 
 import com.drmangotea.tfmg.content.decoration.pipes.ILockablePipe;
-import com.drmangotea.tfmg.ponder.TFMGPonderScenes;
-import com.simibubi.create.content.redstone.displayLink.ClickToLinkBlockItem;
 import com.simibubi.create.foundation.utility.RaycastHelper;
 import net.createmod.catnip.outliner.Outliner;
-import net.createmod.catnip.theme.Color;
 import net.createmod.ponder.api.PonderPalette;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;

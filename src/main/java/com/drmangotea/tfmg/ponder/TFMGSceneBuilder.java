@@ -1,7 +1,6 @@
 package com.drmangotea.tfmg.ponder;
 
 
-import com.drmangotea.tfmg.registry.TFMGItems;
 import com.simibubi.create.foundation.ponder.CreateSceneBuilder;
 import net.createmod.ponder.api.scene.SceneBuilder;
 import net.minecraft.core.BlockPos;

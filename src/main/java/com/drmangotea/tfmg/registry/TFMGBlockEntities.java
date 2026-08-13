@@ -8,10 +8,10 @@ import com.drmangotea.tfmg.content.decoration.kinetics.cogs.TFMGEncasedCogRender
 import com.drmangotea.tfmg.content.decoration.kinetics.cogs.TFMGEncasedCogVisual;
 import com.drmangotea.tfmg.content.decoration.kinetics.flywheels.TFMGFlywheelRenderer;
 import com.drmangotea.tfmg.content.decoration.kinetics.flywheels.TFMGFlywheelVisual;
-import com.drmangotea.tfmg.content.decoration.pipes.rendering.TFMGMechanicalPumpRenderer;
-import com.drmangotea.tfmg.content.decoration.pipes.rendering.TFMGMechanicalPumpVisual;
 import com.drmangotea.tfmg.content.decoration.pipes.TFMGPipeBlockEntity;
 import com.drmangotea.tfmg.content.decoration.pipes.TFMGPipes;
+import com.drmangotea.tfmg.content.decoration.pipes.rendering.TFMGMechanicalPumpRenderer;
+import com.drmangotea.tfmg.content.decoration.pipes.rendering.TFMGMechanicalPumpVisual;
 import com.drmangotea.tfmg.content.decoration.tanks.TFMGFluidTankBlockEntity;
 import com.drmangotea.tfmg.content.decoration.tanks.TFMGFluidTankRenderer;
 import com.drmangotea.tfmg.content.decoration.tanks.steel.SteelFluidTankRenderer;

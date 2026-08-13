@@ -19,7 +19,6 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.client.model.data.ModelData;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 

@@ -1,10 +1,11 @@
 package com.drmangotea.tfmg.content.electricity.connection.copycat_cable;
 
-import com.drmangotea.tfmg.content.electricity.base.*;
+import com.drmangotea.tfmg.content.electricity.base.ElectricBlockValues;
+import com.drmangotea.tfmg.content.electricity.base.IElectric;
 import com.simibubi.create.AllBlocks;
+import com.simibubi.create.api.equipment.goggles.IHaveHoveringInformation;
 import com.simibubi.create.content.decoration.copycat.CopycatBlock;
 import com.simibubi.create.content.decoration.copycat.CopycatBlockEntity;
-import com.simibubi.create.api.equipment.goggles.IHaveHoveringInformation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;

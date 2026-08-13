@@ -4,12 +4,11 @@ import com.drmangotea.tfmg.recipes.DistillationRecipe;
 import com.drmangotea.tfmg.registry.TFMGGuiTextures;
 import com.simibubi.create.compat.jei.category.CreateRecipeCategory;
 import com.simibubi.create.foundation.gui.AllGuiTextures;
-import net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient;
-
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.recipe.IFocusGroup;
 import net.minecraft.client.gui.GuiGraphics;
+import net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 

@@ -2,7 +2,6 @@ package com.drmangotea.tfmg.base.fluid;
 
 import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.registry.TFMGFluids;
-import com.simibubi.create.Create;
 import com.tterrag.registrate.builders.FluidBuilder;
 import net.createmod.catnip.theme.Color;
 import net.minecraft.core.BlockPos;

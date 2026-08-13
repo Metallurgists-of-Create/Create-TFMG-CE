@@ -19,8 +19,6 @@ import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
 
-import java.awt.*;
-
 public class CableConnectorRenderer extends SafeBlockEntityRenderer<CableConnectorBlockEntity> {
     public CableConnectorRenderer(BlockEntityRendererProvider.Context context) {}
 

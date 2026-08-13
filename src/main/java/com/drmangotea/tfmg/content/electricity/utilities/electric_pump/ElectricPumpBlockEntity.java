@@ -1,6 +1,7 @@
 package com.drmangotea.tfmg.content.electricity.utilities.electric_pump;
 
-import com.drmangotea.tfmg.content.electricity.base.*;
+import com.drmangotea.tfmg.content.electricity.base.ElectricBlockValues;
+import com.drmangotea.tfmg.content.electricity.base.IElectric;
 import com.simibubi.create.content.fluids.FluidPropagator;
 import com.simibubi.create.content.fluids.FluidTransportBehaviour;
 import com.simibubi.create.content.fluids.PipeConnection;

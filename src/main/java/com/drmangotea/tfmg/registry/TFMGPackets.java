@@ -3,8 +3,8 @@ package com.drmangotea.tfmg.registry;
 
 import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.content.electricity.base.*;
-import com.drmangotea.tfmg.content.electricity.connection.cables.CablePlacePacket;
 import com.drmangotea.tfmg.content.electricity.configuration_wrench.ElectriciansWrenchPacket;
+import com.drmangotea.tfmg.content.electricity.connection.cables.CablePlacePacket;
 import com.drmangotea.tfmg.content.items.weapons.advanced_potato_cannon.AdvancedPotatoCannonPacket;
 import com.drmangotea.tfmg.content.items.weapons.quad_potato_cannon.QuadPotatoCannonPacket;
 import com.drmangotea.tfmg.content.machinery.metallurgy.coke_oven.CokeOvenPacket;
