@@ -5,6 +5,16 @@
   <a href="https://modrinth.com/mod/create-tfmg"><picture><source srcset="https://img.shields.io/badge/Modrinth-202830?style=for-the-badge&logo=modrinth" media="(prefers-color-scheme: dark)"><img src="https://img.shields.io/badge/Modrinth-white?style=for-the-badge&logo=modrinth" alt="Modrinth"></picture></a>
   <a href="https://discord.gg/HCRF9PYdSy"><picture><source srcset="https://img.shields.io/badge/Discord-202830?style=for-the-badge&logo=discord" media="(prefers-color-scheme: dark)"><img src="https://img.shields.io/badge/Discord-white?style=for-the-badge&logo=discord" alt="Discord"></picture></a>
   <br>
+  <a href="https://github.com/Metallurgists-of-Create/Create-TFMG-CE/stargazers"><picture><img alt="Stars" src="https://img.shields.io/github/stars/Metallurgists-of-Create/Create-TFMG-CE?style=flat"></picture></a>
+  <a href="https://github.com/Metallurgists-of-Create/Create-TFMG-CE/releases/latest"><picture><img alt="Latest Release" src="https://img.shields.io/github/v/release/Metallurgists-of-Create/Create-TFMG-CE"></picture></a>
+  <a href="https://github.com/Metallurgists-of-Create/Create-TFMG-CE/releases/latest"><picture><img alt="Total GitHub Downloads" src="https://img.shields.io/github/downloads/Metallurgists-of-Create/Create-TFMG-CE/total"></picture></a>
+  <a href="https://github.com/Metallurgists-of-Create/Create-TFMG-CE/commits/"><picture><img alt="Commit activity" src="https://img.shields.io/github/commit-activity/t/Metallurgists-of-Create/Create-TFMG-CE"></picture></a>
+  <br>
+  <a href="https://github.com/Metallurgists-of-Create/Create-TFMG-CE/issues"><picture><img alt="Open Issues" src="https://img.shields.io/github/issues-raw/Metallurgists-of-Create/Create-TFMG-CE"></picture></a>
+  <a href="https://github.com/Metallurgists-of-Create/Create-TFMG-CE/issues?q=is%3Aissue+state%3Aclosed"><picture><img alt="Closed Issues" src="https://img.shields.io/github/issues-closed-raw/Metallurgists-of-Create/Create-TFMG-CE"></picture></a>
+  <a href="https://github.com/Metallurgists-of-Create/Create-TFMG-CE/pulls"><picture><img alt="Pull Requests" src="https://img.shields.io/github/issues-pr-raw/Metallurgists-of-Create/Create-TFMG-CE"></picture></a>
+  <a href="https://github.com/Metallurgists-of-Create/Create-TFMG-CE/pulls?q=is%3Apr+state%3Aclosed"><picture><img alt="Closed Pull Requests" src="https://img.shields.io/github/issues-pr-closed-raw/Metallurgists-Of-Create/Create-TFMG-CE"></picture></a>
+  <br>
   <a>Heavy Engineering & Oil For The Create Mod</a>
 </div>
 
