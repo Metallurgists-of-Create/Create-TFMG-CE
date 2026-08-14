@@ -1,6 +1,7 @@
 package com.drmangotea.tfmg.content.electricity.utilities.polarizer;
 
 import com.drmangotea.tfmg.base.TFMGShapes;
+import com.drmangotea.tfmg.base.TFMGUtils;
 import com.drmangotea.tfmg.base.blocks.TFMGHorizontalDirectionalBlock;
 import com.drmangotea.tfmg.content.electricity.base.IElectric;
 import com.drmangotea.tfmg.registry.TFMGBlockEntities;
@@ -31,23 +32,18 @@ public class PolarizerBlock extends TFMGHorizontalDirectionalBlock implements IB
     @Override
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
         if(level.getBlockEntity(pos) instanceof PolarizerBlockEntity be){
-            if(player.getItemInHand(hand).isEmpty()){
-                if(!be.inventory.isEmpty()) {
-                    player.setItemInHand(hand, be.inventory.getStackInSlot(0));
-                    be.inventory.setItem(0, ItemStack.EMPTY);
-                    return ItemInteractionResult.SUCCESS;
-                }
-            }else {
-                if(be.inventory.isEmpty()&&!stack.isEmpty()){
-                    ItemStack stack1 = player.getItemInHand(hand).copy();
-                    stack1.setCount(1);
-                    be.inventory.setItem(0, stack1);
+            if (!TFMGUtils.returnItemToInventory(be.inventory, 0, player, hand)) {
+                if(be.inventory.isEmpty() && !stack.isEmpty()) {
+                    ItemStack heldCopy = player.getItemInHand(hand).copy();
+                    heldCopy.setCount(1);
+                    be.inventory.insertItem(0, heldCopy, false);
                     player.getItemInHand(hand).shrink(1);
                     return ItemInteractionResult.SUCCESS;
                 }
+            } else {
+                return ItemInteractionResult.SUCCESS;
             }
         }
-
         return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
     }
 

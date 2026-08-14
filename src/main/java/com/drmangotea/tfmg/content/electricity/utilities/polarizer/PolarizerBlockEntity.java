@@ -70,11 +70,7 @@ public class PolarizerBlockEntity extends ElectricBlockEntity implements IHaveGo
             return;
         }
         ItemStack itemStack = inventory.getItem(0);
-
         if (getRecipe(itemStack).isPresent()) {
-
-
-
             chargeCapacitors = true;
             updateNextTick();
             if (capacitorPercentage >= 200) {

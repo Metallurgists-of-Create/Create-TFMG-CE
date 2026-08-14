@@ -4,6 +4,7 @@ package com.drmangotea.tfmg.base;
 import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.TFMGRegistries;
 import com.drmangotea.tfmg.base.lang.TFMGLang;
+import com.drmangotea.tfmg.base.lang.TFMGTexts;
 import com.drmangotea.tfmg.base.spark.ElectricSparkParticle;
 import com.drmangotea.tfmg.base.spark.Spark;
 import com.drmangotea.tfmg.content.electricity.connection.cable_type.CableType;
@@ -11,6 +12,7 @@ import com.drmangotea.tfmg.content.machinery.vat.electrode_holder.electrode.Elec
 import com.drmangotea.tfmg.registry.TFMGEntityTypes;
 import com.simibubi.create.content.fluids.tank.FluidTankBlockEntity;
 import com.simibubi.create.foundation.fluid.SmartFluidTank;
+import com.simibubi.create.foundation.item.SmartInventory;
 import com.simibubi.create.foundation.utility.CreateLang;
 import net.createmod.catnip.lang.LangBuilder;
 import net.createmod.catnip.outliner.Outliner;
@@ -24,6 +26,7 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -247,27 +250,27 @@ public class TFMGUtils {
 
     public static String formatUnits(double n, String unit) {
         if (n == 0)
-            return Math.round(n) + unit;
-        double var10000;
+            return TFMGTexts.DECIMAL_FORMAT.format(n) + unit;
+        double value;
         if (n >= 1000000000) {
-            var10000 = (double) Math.round((double) n / 1.0E8);
-            return var10000 / 10.0 + "G" + unit;
+            value = n / 1.0E8;
+            return TFMGTexts.DECIMAL_FORMAT.format(value / 10.0) + "G" + unit;
         } else if (n >= 1000000) {
-            var10000 = (double) Math.round((double) n / 100000.0);
-            return var10000 / 10.0 + "M" + unit;
+            value = n / 100000.0;
+            return TFMGTexts.DECIMAL_FORMAT.format(value / 10.0) + "M" + unit;
         } else if (n >= 1000) {
-            var10000 = (double) Math.round((double) n / 100.0);
-            return var10000 / 10.0 + "k" + unit;
+            value = n / 100.0;
+            return TFMGTexts.DECIMAL_FORMAT.format(value / 10.0) + "k" + unit;
         }
-        // else if (n < 0.001) {
-        //     var10000 = (double) Math.round((double) n * 10000000.0);
-        //     return var10000 / 10.0 + "μ" + unit;
-        // }
+        else if (n < 0.001) {
+            value = n * 10000000.0;
+            return TFMGTexts.DECIMAL_FORMAT.format(value / 10.0) + "μ" + unit;
+        }
         else if (n < 1) {
-            var10000 = (double) Math.round((double) n * 10000.0);
-            return var10000 / 10.0 + "m" + unit;
+            value = n * 10000.0;
+            return TFMGTexts.DECIMAL_FORMAT.format(value / 10.0) + "m" + unit;
         } else {
-            return Math.round(n) + unit;
+            return TFMGTexts.DECIMAL_FORMAT.format(n) + unit;
         }
     }
 
@@ -333,5 +336,21 @@ public class TFMGUtils {
 
     public static CableType getCableType(ResourceLocation key) {
         return TFMGRegistries.CABLE_TYPE_REGISTRY.get(key);
+    }
+
+    public static boolean returnItemToInventory(SmartInventory container, int slot, Player player, InteractionHand hand) {
+        if(!container.isEmpty()) {
+            if (ItemStack.isSameItemSameComponents(player.getItemInHand(hand), container.getItem(slot))) {
+                ItemStack newStack = player.getItemInHand(hand).copyWithCount(player.getItemInHand(hand).getCount() + container.getItem(slot).getCount());
+                player.setItemInHand(hand, newStack);
+                container.extractItem(slot, container.getItem(slot).getCount(), false);
+                return true;
+            } else if (player.getInventory().add(container.getItem(slot))) {
+                player.drop(container.getItem(slot), false);
+                container.extractItem(slot, container.getItem(slot).getCount(), false);
+                return true;
+            }
+        }
+        return false;
     }
 }

@@ -7,13 +7,18 @@ import net.createmod.catnip.theme.Color;
 import net.minecraft.ChatFormatting;
 import net.minecraft.world.item.ItemStack;
 
+import java.text.DecimalFormat;
+
 /**
  * Utility class for storing translations and texts that could occur more than once.
  * Easier than copying the lang.translate() method everywhere.
  */
 public class TFMGTexts {
+    public static DecimalFormat DECIMAL_FORMAT = new DecimalFormat("##.##");
+    public static DecimalFormat PERCENT_FORMAT = new DecimalFormat("##.##%");
+
     public static String percent(double value) {
-        return value + "%";
+        return PERCENT_FORMAT.format(value / 100);
     }
     // Electricity info
     public static String power(double value) {
