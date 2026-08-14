@@ -216,11 +216,11 @@ public class BlastFurnaceOutputBlockEntity extends SmartBlockEntity implements I
                 if (multiblock.getTuyereBlockEntity() != null) {
                     if (multiblock.getTuyereBlockEntity().tank.getFluidAmount() < recipe.hotAirUsage || !multiblock.getTuyereBlockEntity().tank.getFluid().getFluid().isSame(TFMGFluids.HOT_AIR.getSource()))
                         return;
-                    multiblock.getTuyereBlockEntity().tank.getFluidInTank(0).setAmount(Math.max(multiblock.getTuyereBlockEntity().tank.getFluidInTank(0).getAmount() - recipe.hotAirUsage, 0));
+                    multiblock.getTuyereBlockEntity().tank.drain(new FluidStack(TFMGFluids.HOT_AIR, recipe.hotAirUsage), IFluidHandler.FluidAction.EXECUTE);
                 }
                 if (!recipe.getGasByproduct().isEmpty()) {
-                    if (level.getBlockEntity(getBlockPos().relative(getBlockState().getValue(FACING).getOpposite()).above(multiblock.getSize())) instanceof BlastFurnaceHatchBlockEntity be) {
-                        be.tank.fill(recipe.getGasByproduct(), IFluidHandler.FluidAction.EXECUTE);
+                    if (level.getBlockEntity(getBlockPos().relative(getBlockState().getValue(FACING).getOpposite()).above(multiblock.getSize())) instanceof BlastFurnaceHatchBlockEntity topHatch) {
+                        topHatch.tank.fill(recipe.getGasByproduct(), IFluidHandler.FluidAction.EXECUTE);
                     }
                 }
                 if (level.isClientSide())
