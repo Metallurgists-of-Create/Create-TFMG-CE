@@ -38,13 +38,10 @@ public class LargeSwitchBlockEntity extends KineticElectricBlockEntity {
 
 
     public int voltageGeneration() {
-
         if (isMainPart)
             return 0;
 
         int voltageGeneration = 0;
-
-
         if (getLevelAccessor().getBlockEntity(getBlockPos().relative(getBlockState().getValue(HORIZONTAL_FACING).getOpposite())) instanceof LargeSwitchBlockEntity be)
             if (be.getData().getId() != getData().getId())
                 if (be.getData().getVoltage() != 0)
@@ -99,11 +96,14 @@ public class LargeSwitchBlockEntity extends KineticElectricBlockEntity {
         }
         return null;
     }
+
     @Override
     public float resistance() {
         if (!isMainPart)
             return 0;
         if(!closed)
+            return 0;
+        if (getControlledBlock() == null)
             return 0;
 
         Direction facing = getBlockState().getValue(HORIZONTAL_FACING);
