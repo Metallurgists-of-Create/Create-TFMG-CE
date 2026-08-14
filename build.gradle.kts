@@ -95,11 +95,12 @@ repositories {
     }
     mavenLocal()
     mavenCentral()
-    maven { url = uri("https://maven.createmod.net") } // Create, Ponder, Flywheel
-    maven { url = uri("https://mvn.devos.one/snapshots") } // Registrate
-    maven { url = uri("https://raw.githubusercontent.com/Fuzss/modresources/main/maven/") } // ForgeConfigAPIPort
-    maven { url = uri("https://maven.blamejared.com") } // JEI, Vazkii's Mods
-    maven { url = uri("https://cursemaven.com") }
+    maven("https://maven.createmod.net") // Create, Ponder, Flywheel
+    maven("https://mvn.devos.one/snapshots") // Registrate
+    maven("https://raw.githubusercontent.com/Fuzss/modresources/main/maven/") // ForgeConfigAPIPort
+    maven("https://maven.blamejared.com") // JEI, Vazkii's Mods
+    maven("https://cursemaven.com")
+    maven("https://maven.ryanhcode.dev/releases")
 
     maven {
         name = "DevAuth Maven"
@@ -108,6 +109,11 @@ repositories {
 }
 
 dependencies {
+    jarJar(api("dev.ryanhcode.sable-companion:sable-companion-common-${property("minecraft_version")}:${property("sable_companion_version")}") {
+        version {
+            prefer(property("sable_companion_version") as String)
+        }
+    })
     implementation("com.simibubi.create:create-${property("minecraft_version")}:${property("create_version")}:slim") { isTransitive = false }
     implementation("net.createmod.ponder:ponder-neoforge:${property("ponder_version")}+mc1.21.1")
     compileOnly("dev.engine-room.flywheel:flywheel-neoforge-api-${property("minecraft_version")}:${property("flywheel_version")}")
