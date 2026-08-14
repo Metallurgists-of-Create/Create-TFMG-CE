@@ -1,5 +1,6 @@
 package com.drmangotea.tfmg.content.electricity.connection.cables;
 
+import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.base.TFMGUtils;
 import com.drmangotea.tfmg.config.TFMGConfigs;
 import com.drmangotea.tfmg.content.electricity.base.ElectricBlockEntity;
@@ -26,6 +27,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.energy.IEnergyStorage;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -181,6 +183,7 @@ public class CableConnectorBlockEntity extends ElectricBlockEntity implements IH
     @Override
     public void lazyTick() {
         super.lazyTick();
+        checkForFEOutputs(List.of(getBlockState().getValue(FACING).getOpposite()));
 
         if (getBlockState().getValue(CableConnectorBlock.INPUT_MODE)) {
             int oldValue = getData().energyTaken;
@@ -189,21 +192,23 @@ public class CableConnectorBlockEntity extends ElectricBlockEntity implements IH
             double powerNeeded = getData().networkResistance != 0 ? 1.1 * (Math.pow(getData().getVoltage() == 0 ? 230 : getData().getVoltage(), 2) / getData().networkResistance) : 0;
             //  TFMG.LOGGER.debug("meowe "+powerNeeded);
 
-            getData().energyOutputs.forEach((d, c) -> {
-                int energyToTake = (int) Math.min(Math.clamp(powerNeeded, 10, 1028 * 10), c.getEnergyStored());
+            for (var entry : getData().energyOutputs.entrySet()) {
+                Direction direction = entry.getKey();
+                IEnergyStorage energyStorage = entry.getValue();
+
+                int energyToTake = energyStorage.extractEnergy(Math.round((float)Math.clamp(powerNeeded, 0, energyStorage.getEnergyStored())), true);//(int) Math.min(Math.clamp(powerNeeded, 10, 1028 * 10), c.getEnergyStored());
                 int FETaken = 0;
                 int energyLeft = energyToTake;
 
-                while(energyLeft>0) {
-                    int taken = c.extractEnergy(Math.min(energyLeft,100), false);
+                while(energyLeft > 0) {
+                    int taken = energyStorage.extractEnergy(Math.min(energyLeft, 100), false);
                     energyLeft-=taken;
                     FETaken += taken;
                 }
 
-               // TFMG.LOGGER.debug(FETaken + "");
                 getData().energyTakenPerTick = FETaken;
                 getData().energyTaken += energyToTake;
-            });
+            }
             if (oldValue != getData().energyTaken)
                 updateNextTick();
         } else getData().energyTaken = 0;
