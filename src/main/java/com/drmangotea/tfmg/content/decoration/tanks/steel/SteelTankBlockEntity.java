@@ -74,6 +74,8 @@ public class SteelTankBlockEntity extends TFMGFluidTankBlockEntity implements IH
     public void initialize() {
         super.initialize();
         sendData();
+        if (level == null)
+            return;
         if (level.isClientSide)
             invalidateRenderBoundingBox();
     }
@@ -87,7 +89,7 @@ public class SteelTankBlockEntity extends TFMGFluidTankBlockEntity implements IH
 	}
 
     public void removeController(boolean keepFluids) {
-        if (level.isClientSide)
+        if (level == null || level.isClientSide)
             return;
         updateConnectivity = true;
         if (!keepFluids)
@@ -118,23 +120,24 @@ public class SteelTankBlockEntity extends TFMGFluidTankBlockEntity implements IH
     }
 
     public void updateBoilerState() {
+        if (level == null)
+            return;
         if (!isController() || getControllerBE() == null) return;
-
         boolean changed = evaluate();
-
         if (changed) {
             if (isDistillationTower) setWindows(false);
             for (int Y = 0; Y < height; Y++) { for (int X = 0; X < width; X++) { for (int Z = 0; Z < width; Z++) {
 				if (level.getBlockEntity(worldPosition.offset(X, Y, Z)) instanceof SteelTankBlockEntity fte)
 					((FluidTankBlockEntityAccessor) fte).tfmg$refreshCapability();
 			}}}
-			
             notifyUpdate();
             ((FluidTankBlockEntityAccessor)this).tfmg$refreshCapability();
         }
     }
 	
     public boolean evaluate() {
+        if (level == null)
+            return false;
         boolean hadController = isDistillationTower;
         boolean foundController = false;
         BlockPos pos1 = controller == null ? getBlockPos() : controller;
@@ -159,11 +162,15 @@ public class SteelTankBlockEntity extends TFMGFluidTankBlockEntity implements IH
     @Override
     public void lazyTick() {
         super.lazyTick();
-        if (isDistillationTower)
+        updateBoilerState();
+        if (isDistillationTower) {
             updateTemperature();
+        }
     }
 	
     public void updateTemperature() {
+        if (level == null)
+            return;
         int prevHeat = activeHeat;
         activeHeat = 0;
         BlockPos pos1 = controller == null ? getBlockPos() : controller;
@@ -175,7 +182,7 @@ public class SteelTankBlockEntity extends TFMGFluidTankBlockEntity implements IH
                 BlockState blockState = level.getBlockState(pos);
                 float heat = BoilerHeater.findHeat(level, pos, blockState);
                 if (heat > 0) {
-                    activeHeat += heat;
+                    activeHeat = (int) (activeHeat + heat);
                 }
             }
         }
@@ -195,7 +202,7 @@ public class SteelTankBlockEntity extends TFMGFluidTankBlockEntity implements IH
     @Override
     public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
         SteelTankBlockEntity controllerBE = getControllerBE();
-        if (isDistillationTower || controllerBE == null || controllerBE.isDistillationTower)
+        if (level == null || isDistillationTower || controllerBE == null || controllerBE.isDistillationTower)
             return false;
 
         return containedFluidTooltip(tooltip, isPlayerSneaking,
@@ -205,7 +212,9 @@ public class SteelTankBlockEntity extends TFMGFluidTankBlockEntity implements IH
     @Override
     protected void read(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {
         super.read(compound, registries, clientPacket);
-        if (isController()) { isDistillationTower = compound.getBoolean("IsDistillationTower"); }
+        if (isController()) {
+            isDistillationTower = compound.getBoolean("IsDistillationTower");
+        }
     }
 	
     public void getGaugeRotation() {
@@ -214,7 +223,9 @@ public class SteelTankBlockEntity extends TFMGFluidTankBlockEntity implements IH
 	
 	@Override
     public void write(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {
-        if (isController()) { compound.putBoolean("IsDistillationTower",isDistillationTower); }
+        if (isController()) {
+            compound.putBoolean("IsDistillationTower",isDistillationTower);
+        }
         super.write(compound, registries, clientPacket);
     }
 
@@ -223,5 +234,7 @@ public class SteelTankBlockEntity extends TFMGFluidTankBlockEntity implements IH
         //registerAwardables(behaviours, AllAdvancements.STEAM_ENGINE_MAXED, AllAdvancements.PIPE_ORGAN);
     }
 	
-	public boolean isTank(BlockState state) {return SteelTankBlock.isTank(state);}
+	public boolean isTank(BlockState state) {
+        return SteelTankBlock.isTank(state);
+    }
 }
