@@ -13,14 +13,6 @@
   ],
   "result": {
     "count": 1,
-    "id": "tfmg:diesel_engine_cylinder",
-    "components": {
-      "tfmg:fuel_tags": {
-        "diesel": "c:diesel"
-      },
-      "tfmg:fuels": {
-        "diesel": "fluid.tfmg.diesel"
-      }
-    }
+    "id": "tfmg:diesel_engine_cylinder"
   }
 }

@@ -180,38 +180,6 @@ public class TFMGStandardRecipeGen extends TFMGRecipeProvider {
                     .pattern("CCC")
                     .pattern("CCC")),
 
-    //STEEL_HELMET = create(TFMGItems.STEEL_HELMET)
-    //        .unlockedBy(TFMGItems.STEEL_INGOT::get)
-    //        .viaShaped(b -> b
-    //                .define('C', steelIngot())
-    //                .pattern("CCC")
-    //                .pattern("C C")
-    //                .pattern("   ")),
-//
-   // STEEL_CHESTPLATE = create(TFMGItems.STEEL_CHESTPLATE)
-   //         .unlockedBy(TFMGItems.STEEL_INGOT::get)
-   //         .viaShaped(b -> b
-   //                 .define('C', steelIngot())
-   //                 .pattern("C C")
-   //                 .pattern("CCC")
-   //                 .pattern("CCC")),
-//
-   // STEEL_LEGGINGS = create(TFMGItems.STEEL_LEGGINGS)
-   //         .unlockedBy(TFMGItems.STEEL_INGOT::get)
-   //         .viaShaped(b -> b
-   //                 .define('C', steelIngot())
-   //                 .pattern("CCC")
-   //                 .pattern("C C")
-   //                 .pattern("C C")),
-//
-   // STEEL_BOOTS = create(TFMGItems.STEEL_BOOTS)
-   //         .unlockedBy(TFMGItems.STEEL_INGOT::get)
-   //         .viaShaped(b -> b
-   //                 .define('C', steelIngot())
-   //                 .pattern("C C")
-   //                 .pattern("C C")
-   //                 .pattern("   ")),
-
     STEEL_SWORD = create(TFMGItems.STEEL_TOOLS.get(0))
             .unlockedBy(TFMGItems.STEEL_INGOT::get)
             .viaShaped(b -> b
@@ -1054,35 +1022,6 @@ public class TFMGStandardRecipeGen extends TFMGRecipeProvider {
                     .pattern("P P")
                     .pattern("HMH")
                     .pattern("RCR")),
-
-
-
-   // COPPER_SPOOL = create(TFMGItems.COPPER_SPOOL)
-   //         .unlockedBy(TFMGItems.EMPTY_SPOOL::get)
-   //         .viaShaped(b -> b
-   //                 .define('S', TFMGItems.EMPTY_SPOOL)
-   //                 .define('W', copperWire())
-   //                 .pattern("WWW")
-   //                 .pattern("WSW")
-   //                 .pattern("WWW")),
-//
-   // ALUMINUM_SPOOL = create(TFMGItems.ALUMINUM_SPOOL)
-   //         .unlockedBy(TFMGItems.EMPTY_SPOOL::get)
-   //         .viaShaped(b -> b
-   //                 .define('S', TFMGItems.EMPTY_SPOOL)
-   //                 .define('W', aluminumWire())
-   //                 .pattern("WWW")
-   //                 .pattern("WSW")
-   //                 .pattern("WWW")),
-//
-   // CONSTANTAN_SPOOL = create(TFMGItems.CONSTANTAN_SPOOL)
-   //         .unlockedBy(TFMGItems.EMPTY_SPOOL::get)
-   //         .viaShaped(b -> b
-   //                 .define('S', TFMGItems.EMPTY_SPOOL)
-   //                 .define('W', constantanWire())
-   //                 .pattern("WWW")
-   //                 .pattern("WSW")
-   //                 .pattern("WWW")),
 
     REGULAR_ENGINE = create(TFMGBlocks.REGULAR_ENGINE).returns(2)
             .unlockedBy(TFMGBlocks.HEAVY_MACHINERY_CASING::asItem)

@@ -84,12 +84,6 @@ public class TFMGCreativeTabs {
 		
 		list.add(TFMGItems.GOLDEN_TURBO);
 		//add these to the blacklist so there aren't duplicate entries
-		list.add(TFMGItems.DIESEL_ENGINE_CYLINDER);
-		list.add(TFMGItems.SIMPLE_ENGINE_CYLINDER);
-		list.add(TFMGItems.ENGINE_CYLINDER);
-		list.add(TFMGItems.AUTOGAS_ENGINE_CYLINDER);
-		list.add(TFMGItems.TURBINE_BLADE);
-		//note: I think this is redundant? addCreative already skips non-empty spools
         list.add(TFMGItems.ALUMINUM_SPOOL);
         list.add(TFMGItems.COPPER_SPOOL);
         list.add(TFMGItems.CONSTANTAN_SPOOL);

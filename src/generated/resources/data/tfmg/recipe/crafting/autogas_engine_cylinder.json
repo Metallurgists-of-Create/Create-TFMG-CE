@@ -5,25 +5,17 @@
     "C": {
       "item": "tfmg:engine_cylinder"
     },
-    "B": {
+    "P": {
       "item": "tfmg:brass_pipe"
     }
   },
   "pattern": [
     "   ",
     " C ",
-    " B "
+    " P "
   ],
   "result": {
     "count": 1,
-    "id": "tfmg:autogas_engine_cylinder",
-    "components": {
-      "tfmg:fuel_tags": {
-        "lpg": "c:lpg"
-      },
-      "tfmg:fuels": {
-        "lpg": "LPG"
-      }
-    }
+    "id": "tfmg:autogas_engine_cylinder"
   }
 }

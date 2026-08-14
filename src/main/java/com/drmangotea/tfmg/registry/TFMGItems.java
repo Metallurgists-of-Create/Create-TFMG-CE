@@ -7,6 +7,7 @@ import com.drmangotea.tfmg.base.TFMGTiers;
 import com.drmangotea.tfmg.base.data_storage.CylinderFuels;
 import com.drmangotea.tfmg.base.debug.DebugCinderBlockItem;
 import com.drmangotea.tfmg.content.decoration.kinetics.gearbox.SteelVerticalGearboxItem;
+import com.drmangotea.tfmg.content.decoration.pipes.TFMGPipes;
 import com.drmangotea.tfmg.content.electricity.configuration_wrench.ElectriciansWrenchItem;
 import com.drmangotea.tfmg.content.electricity.measurement.MultimeterItem;
 import com.drmangotea.tfmg.content.electricity.network.transformer.small.ElectromagneticCoilItem;
@@ -29,16 +30,21 @@ import com.drmangotea.tfmg.content.items.weapons.quad_potato_cannon.QuadPotatoCa
 import com.drmangotea.tfmg.content.machinery.misc.winding_machine.SpoolItem;
 import com.drmangotea.tfmg.content.machinery.oil_processing.OilHammerItem;
 import com.drmangotea.tfmg.registry.TFMGTags.TFMGItemTags;
+import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllTags;
 import com.simibubi.create.content.processing.sequenced.SequencedAssemblyItem;
 import com.simibubi.create.foundation.data.AssetLookup;
 import com.simibubi.create.foundation.data.CreateRegistrate;
 import com.simibubi.create.foundation.data.recipe.CommonMetal;
 import com.tterrag.registrate.builders.ItemBuilder;
+import com.tterrag.registrate.providers.DataGenContext;
+import com.tterrag.registrate.providers.RegistrateRecipeProvider;
 import com.tterrag.registrate.util.DataIngredient;
 import com.tterrag.registrate.util.entry.ItemEntry;
+import com.tterrag.registrate.util.nullness.NonNullBiConsumer;
 import net.minecraft.core.Holder;
 import net.minecraft.data.recipes.RecipeCategory;
+import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
@@ -288,11 +294,40 @@ public class TFMGItems {
             .register();
 
     public static final ItemEntry<EngineCylinderItem>
-		DIESEL_ENGINE_CYLINDER = cylinder("diesel_engine_cylinder", TFMGEngineFuelTypes.DIESEL),
-		SIMPLE_ENGINE_CYLINDER = cylinder("simple_engine_cylinder", TFMGEngineFuelTypes.CREOSOTE, TFMGEngineFuelTypes.FURNACE_GAS),
-		ENGINE_CYLINDER = cylinder("engine_cylinder", TFMGEngineFuelTypes.GASOLINE, TFMGEngineFuelTypes.KEROSENE, TFMGEngineFuelTypes.NAPHTHA),
-		AUTOGAS_ENGINE_CYLINDER = cylinder("autogas_engine_cylinder", TFMGEngineFuelTypes.LPG),
-		TURBINE_BLADE = cylinder("turbine_blade", TFMGEngineFuelTypes.KEROSENE);
+		DIESEL_ENGINE_CYLINDER = cylinder("diesel_engine_cylinder", (ctx, prov) ->
+            ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ctx.get())
+                    .pattern("   ").pattern("P P").pattern("P P")
+                    .define('P', CommonMetal.ALUMINUM.plates)
+                    .unlockedBy("has_plate", DataIngredient.tag(CommonMetal.ALUMINUM.plates).getCriterion(prov))
+                    .save(prov, ctx.getId().withPrefix("crafting/")), TFMGEngineFuelTypes.DIESEL),
+		SIMPLE_ENGINE_CYLINDER = cylinder("simple_engine_cylinder", (ctx, prov) ->
+                ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ctx.get())
+                        .pattern(" F ").pattern("P P").pattern("P P")
+                        .define('P', CommonMetal.IRON.plates)
+                        .define('F', Items.FLINT_AND_STEEL)
+                        .unlockedBy("has_plate", DataIngredient.tag(CommonMetal.IRON.plates).getCriterion(prov))
+                        .save(prov, ctx.getId().withPrefix("crafting/")), TFMGEngineFuelTypes.CREOSOTE, TFMGEngineFuelTypes.FURNACE_GAS),
+		ENGINE_CYLINDER = cylinder("engine_cylinder", (ctx, prov) ->
+                ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ctx.get())
+                        .pattern("   ").pattern(" S ").pattern(" C ")
+                        .define('S', SPARK_PLUG)
+                        .define('C', DIESEL_ENGINE_CYLINDER)
+                        .unlockedBy("has_cylinder", DataIngredient.items(DIESEL_ENGINE_CYLINDER.asItem()).getCriterion(prov))
+                        .save(prov, ctx.getId().withPrefix("crafting/")), TFMGEngineFuelTypes.GASOLINE, TFMGEngineFuelTypes.KEROSENE, TFMGEngineFuelTypes.NAPHTHA),
+		AUTOGAS_ENGINE_CYLINDER = cylinder("autogas_engine_cylinder", (ctx, prov) ->
+                ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ctx.get())
+                        .pattern("   ").pattern(" C ").pattern(" P ")
+                        .define('C', ENGINE_CYLINDER)
+                        .define('P', TFMGPipes.PIPES.get(TFMGPipes.PipeMaterial.BRASS).getPipe())
+                        .unlockedBy("has_cylinder", DataIngredient.items(ENGINE_CYLINDER.asItem()).getCriterion(prov))
+                        .save(prov, ctx.getId().withPrefix("crafting/")), TFMGEngineFuelTypes.LPG),
+		TURBINE_BLADE = cylinder("turbine_blade", (ctx, prov) ->
+                ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ctx.get())
+                        .pattern("PPP").pattern("PSP").pattern("PPP")
+                        .define('P', CommonMetal.IRON.plates)
+                        .define('S', AllBlocks.SHAFT)
+                        .unlockedBy("has_plate", DataIngredient.tag(CommonMetal.IRON.plates).getCriterion(prov))
+                        .save(prov, ctx.getId().withPrefix("crafting/")), TFMGEngineFuelTypes.KEROSENE);
 
 
     public static final ItemEntry<FluidContainingItem>
@@ -481,13 +516,11 @@ public class TFMGItems {
 	}
 	
 	@SafeVarargs
-    public static ItemEntry<EngineCylinderItem> cylinder(String name, ResourceKey<EngineFuelType>... fuelTypes) {
+    public static ItemEntry<EngineCylinderItem> cylinder(String name, NonNullBiConsumer<DataGenContext<Item, EngineCylinderItem>, RegistrateRecipeProvider> recipe, ResourceKey<EngineFuelType>... fuelTypes) {
 		return REGISTRATE.item(name, EngineCylinderItem::new)
-			.tab(TFMGCreativeTabs.TFMG_MAIN.getKey(), (c,m) -> {
-				ItemStack stack = c.get().getDefaultInstance();
-				stack.set(TFMGDataComponents.ENGINE_CYLINDER, new CylinderFuels(Arrays.asList(fuelTypes)));
-				m.accept(stack);
-			}).register();
+                .properties(p -> p.component(TFMGDataComponents.ENGINE_CYLINDER, new CylinderFuels(Arrays.asList(fuelTypes))))
+                .recipe(recipe)
+                .register();
 	}
 
     private static ItemEntry<ThermiteGrenadeItem> thermiteGrenade(String name, ThermiteGrenade.ChemicalColor color) {
