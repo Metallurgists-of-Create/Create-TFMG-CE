@@ -87,7 +87,9 @@ public class WindingMachineBlockEntity extends KineticBlockEntity implements IHa
     }
 
     public void findRecipe() {
-
+        if (level == null) {
+            return;
+        }
         Optional<RecipeHolder<WindingRecipe>> optional = TFMGRecipeTypes.WINDING.find(new RecipeWrapper(inventory), level);
         Optional<RecipeHolder<WindingRecipe>> assemblyRecipe = SequencedAssemblyRecipe.getRecipe(this.level, new RecipeWrapper(inventory), TFMGRecipeTypes.WINDING.getType(), WindingRecipe.class);
 
@@ -110,7 +112,9 @@ public class WindingMachineBlockEntity extends KineticBlockEntity implements IHa
     public void lazyTick() {
         super.lazyTick();
         onContentsChanged();
-
+        if (level == null) {
+            return;
+        }
         if (spool.is(TFMGItems.EMPTY_SPOOL.get()) && !getBlockState().getValue(POWERED)) {
             level.setBlock(getBlockPos(), getBlockState().setValue(POWERED, true), 2);
             update = true;
@@ -174,6 +178,9 @@ public class WindingMachineBlockEntity extends KineticBlockEntity implements IHa
         int defaultResistance = 0;
         int defaultSpoolAmount = 0;
         int defaultCoilTurns = 0;
+        if (level == null) {
+            return;
+        }
 
         if (getSpeed() == 0)
             return;
@@ -204,7 +211,7 @@ public class WindingMachineBlockEntity extends KineticBlockEntity implements IHa
 
 
         if (amountWinded >= recipe.getProcessingDuration()) {
-            inventory.setStackInSlot(0, recipe.rollResults(level.random).get(0));
+            inventory.setStackInSlot(0, recipe.rollResults(level.random).getFirst());
             recipe = null;
             amountWinded = 0;
 
@@ -215,28 +222,19 @@ public class WindingMachineBlockEntity extends KineticBlockEntity implements IHa
             if (spool.isEmpty() || spool.is(TFMGItems.EMPTY_SPOOL.get())) {
                 return;
             }
-            if (spool.get(TFMGDataComponents.SPOOL_AMOUNT) > 0) {
+            if (spool.getOrDefault(TFMGDataComponents.SPOOL_AMOUNT, defaultCoilTurns) > 0) {
                 if (recipe.getSpool().test(spool)) {
-                    spool.set(TFMGDataComponents.SPOOL_AMOUNT, spool.get(TFMGDataComponents.SPOOL_AMOUNT) - 1);
+                    spool.set(TFMGDataComponents.SPOOL_AMOUNT, spool.getOrDefault(TFMGDataComponents.SPOOL_AMOUNT, defaultCoilTurns) - 1);
                     amountWinded++;
                 }
             } else {
-                inventory.setStackInSlot(0, recipe.rollResults(level.random).get(0));
+                inventory.setStackInSlot(0, recipe.rollResults(level.random).getFirst());
                 sendData();
                 setChanged();
             }
 
         }
     }
-
-   //@Override
-   //public @NotNull <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
-
-   //    if (cap == ForgeCapabilities.ITEM_HANDLER)
-   //        return itemCapability.cast();
-
-   //    return super.getCapability(cap, side);
-   //}
 
     public void manageRotation() {
         float targetSpeed = (float) Math.min(Math.abs(getSpeed() * 1.5), 30);
@@ -249,7 +247,6 @@ public class WindingMachineBlockEntity extends KineticBlockEntity implements IHa
     protected void write(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {
         super.write(compound,registries , clientPacket);
         compound.put("Inventory", inventory.serializeNBT(registries));
-
         compound.put("Spool", spool.saveOptional(registries));
         compound.putInt("AmountWinded", amountWinded);
     }
@@ -258,7 +255,6 @@ public class WindingMachineBlockEntity extends KineticBlockEntity implements IHa
     protected void read(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {
         super.read(compound,registries , clientPacket);
         inventory.deserializeNBT(registries,compound.getCompound("Inventory"));
-
   
         if (compound.contains("Spool")) {
             ItemStack.parse(registries, compound.getCompound("Spool")).ifPresent(i -> spool = i);
