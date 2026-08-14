@@ -46,18 +46,6 @@ public class LargeTransformerBlockEntity extends KineticElectricBlockEntity {
         isMainPart = state.getValue(IS_MAIN_PART);
     }
 
-    // @Override
-    // public int getPowerUsage() {
-//
-    //     if (super.getPowerUsage() == 0)
-    //         return 0;
-//
-    //     if (isMainPart && level.getBlockEntity(getBlockPos().relative(getBlockState().getValue(HORIZONTAL_FACING))) instanceof LargeTransformerBlockEntity be)
-    //         return (int) ((Math.pow(be.data.getVoltage(), 2) / resistance())/(turnRatio/10));
-//
-    //     return (int) (super.getPowerUsage()/(turnRatio/10));
-    // }
-
     public ItemInteractionResult addComponent(ItemStack stack, Player player, InteractionHand hand) {
         // level is never null, but to get idea to shut up
         if (level == null) return ItemInteractionResult.FAIL;
@@ -95,21 +83,14 @@ public class LargeTransformerBlockEntity extends KineticElectricBlockEntity {
 
 
     public int voltageGeneration() {
-
         if (isMainPart)
             return 0;
-
         int voltageGeneration = 0;
-
-
         if (getLevelAccessor().getBlockEntity(getBlockPos().relative(getBlockState().getValue(HORIZONTAL_FACING).getOpposite())) instanceof LargeTransformerBlockEntity be)
             if (be.getData().getId() != getData().getId())
                 if (be.getData().getVoltage() != 0)
                     voltageGeneration = (int) Math.max(voltageGeneration, be.data.getVoltage() * turnRatio);
-
-
         getData().getsOutsidePower = voltageGeneration != 0;
-
         return voltageGeneration;
     }
 
@@ -140,7 +121,8 @@ public class LargeTransformerBlockEntity extends KineticElectricBlockEntity {
     public float resistance() {
         if (!isMainPart || level == null)
             return 0;
-
+        if (getControlledBlock() == null)
+            return 0;
         Direction facing = getBlockState().getValue(HORIZONTAL_FACING);
         if (level.getBlockEntity(getBlockPos().relative(facing)) instanceof IElectric be && be.getData().getId() != data.getId()) {
             int count = getBlocksConnectedToNetworkCount(getControlledBlock().getData().getId());
