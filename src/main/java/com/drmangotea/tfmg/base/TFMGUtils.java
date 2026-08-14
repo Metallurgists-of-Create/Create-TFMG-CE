@@ -269,9 +269,20 @@ public class TFMGUtils {
         else if (n < 1) {
             value = n * 10000.0;
             return TFMGTexts.DECIMAL_FORMAT.format(value / 10.0) + "m" + unit;
-        } else {
-            return TFMGTexts.DECIMAL_FORMAT.format(n) + unit;
         }
+
+        return TFMGTexts.DECIMAL_FORMAT.format(n) + unit;
+    }
+
+    public static String formatFluid(double amount) {
+        if (amount == 0)
+            return TFMGTexts.DECIMAL_FORMAT.format(amount) + "mB";
+        double value;
+        if (amount >= 1000) {
+            value = amount / 1000;
+            return TFMGTexts.DECIMAL_FORMAT.format(value) + "B";
+        }
+        return TFMGTexts.DECIMAL_FORMAT.format(amount) + "mB";
     }
 
     public static void drainFilteredTank(SmartFluidTank tank, int amount) {

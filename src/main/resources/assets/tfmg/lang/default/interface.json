@@ -104,6 +104,8 @@
   "create.vat.heat_dots": "................ ",
   "create.vat.heat": "Heat",
 
+  "tfmg.goggles.fluid_production": "Production: %1$s/t",
+  "tfmg.goggles.fluid_production.named": "%1$s Production: %2$s/t",
 
   "tfmg.goggles.ammeter": "Ammeter:",
   "tfmg.goggles.ammeter.amps": "   Measured Amps: %1$s V",

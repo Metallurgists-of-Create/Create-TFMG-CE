@@ -6,6 +6,7 @@ import net.createmod.catnip.lang.LangBuilder;
 import net.createmod.catnip.theme.Color;
 import net.minecraft.ChatFormatting;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.material.Fluid;
 
 import java.text.DecimalFormat;
 
@@ -57,6 +58,14 @@ public class TFMGTexts {
 
     public static String rpm(int value) {
         return TFMGUtils.formatUnits(value, "RPM");
+    }
+
+    public static LangBuilder fluidProduction(int amount) {
+        return TFMGLang.translate("goggles.fluid_production", TFMGUtils.formatFluid(amount));
+    }
+
+    public static LangBuilder fluidProduction(int amount, Fluid fluid) {
+        return TFMGLang.translate("goggles.fluid_production.named", fluid.getFluidType().getDescription(), TFMGUtils.formatFluid(amount));
     }
 
     public static LangBuilder invalidMachine() {

@@ -976,6 +976,8 @@
   "tfmg.goggles.engine.turbines_missing": "buıssıW sǝuıqɹn⟘",
   "tfmg.goggles.engine.type": "%s :ǝdʎ⟘",
   "tfmg.goggles.engine.unfinished": "pǝɥsıuıɟu∩ ǝuıbuƎ",
+  "tfmg.goggles.fluid_production": "ʇ/%1$s :uoıʇɔnpoɹԀ",
+  "tfmg.goggles.fluid_production.named": "ʇ/%2$s :uoıʇɔnpoɹԀ %1$s",
   "tfmg.goggles.fluid_storage": ":ǝbɐɹoʇS pınןℲ",
   "tfmg.goggles.gauge.value": ":ǝbɐʇןoΛ pǝɹnsɐǝW   ",
   "tfmg.goggles.generator.production": "ʇ/ǝɟ %1$s :uoıʇɔnpoɹԀ ʎbɹǝuƎ",

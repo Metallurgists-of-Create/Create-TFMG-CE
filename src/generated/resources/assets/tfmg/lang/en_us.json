@@ -976,6 +976,8 @@
   "tfmg.goggles.engine.turbines_missing": "Turbines Missing",
   "tfmg.goggles.engine.type": "Type: %s",
   "tfmg.goggles.engine.unfinished": "Engine Unfinished",
+  "tfmg.goggles.fluid_production": "Production: %1$s/t",
+  "tfmg.goggles.fluid_production.named": "%1$s Production: %2$s/t",
   "tfmg.goggles.fluid_storage": "Fluid Storage:",
   "tfmg.goggles.gauge.value": "   Measured Voltage:",
   "tfmg.goggles.generator.production": "Energy Production: %1$s fe/t",
