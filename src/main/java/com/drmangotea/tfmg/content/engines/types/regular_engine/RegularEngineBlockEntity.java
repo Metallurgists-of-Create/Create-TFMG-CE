@@ -12,6 +12,7 @@ import com.drmangotea.tfmg.registry.TFMGItems;
 import com.drmangotea.tfmg.registry.TFMGSoundEvents;
 import com.simibubi.create.AllItems;
 import com.simibubi.create.AllSoundEvents;
+import com.simibubi.create.foundation.item.ItemHelper;
 import com.simibubi.create.foundation.item.SmartInventory;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -330,6 +331,14 @@ public class RegularEngineBlockEntity extends AbstractSmallEngineBlockEntity {
             }
         }
         pistonInventory.deserializeNBT(registries,compound.getCompound("Cylinders"));
+    }
+
+    @Override
+    public void destroy() {
+        if (level == null || level.isClientSide) {
+            return;
+        }
+        ItemHelper.dropContents(level, getBlockPos(), pistonInventory);
     }
 
     @Override

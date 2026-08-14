@@ -9,6 +9,7 @@ import com.drmangotea.tfmg.registry.TFMGBlockEntities;
 import com.drmangotea.tfmg.registry.TFMGRecipeTypes;
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.content.processing.sequenced.SequencedAssemblyRecipe;
+import com.simibubi.create.foundation.item.ItemHelper;
 import com.simibubi.create.foundation.item.SmartInventory;
 
 import net.createmod.catnip.animation.LerpedFloat;
@@ -150,6 +151,14 @@ public class PolarizerBlockEntity extends ElectricBlockEntity implements IHaveGo
 
     public int getItemChargingRate() {
         return TFMGConfigs.common().machines.polarizerItemChargingRate.get();
+    }
+
+    @Override
+    public void destroy() {
+        if (level == null || level.isClientSide) {
+            return;
+        }
+        ItemHelper.dropContents(level, getBlockPos(), inventory);
     }
 
     @Override

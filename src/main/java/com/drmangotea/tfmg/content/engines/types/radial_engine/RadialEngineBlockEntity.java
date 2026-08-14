@@ -2,6 +2,7 @@ package com.drmangotea.tfmg.content.engines.types.radial_engine;
 
 import com.drmangotea.tfmg.content.engines.types.AbstractSmallEngineBlockEntity;
 import com.drmangotea.tfmg.content.engines.types.regular_engine.RegularEngineBlockEntity;
+import com.simibubi.create.foundation.item.ItemHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -21,26 +22,6 @@ public class RadialEngineBlockEntity extends RegularEngineBlockEntity {
     public boolean canGenerateSpeed() {
         return true;
     }
-    //@Override
-    //public float getGeneratedSpeed() {
-//
-    //    float speed;
-//
-    //    if (hasLevel())
-//
-    //        if (level.getBlockEntity(controller) instanceof AbstractEngineBlockEntity controller) {
-    //            if (controller.fuelTank.isEmpty())
-    //                return 0;
-    //            if (!controller.canWork())
-    //                return 0;
-    //            speed = rpm / 40;
-    //            if (reverse)
-    //                speed = speed * -1;
-//
-    //            return convertToDirection(Math.min((int) speed, 256), getBlockState().getValue(HORIZONTAL_FACING));
-    //        }
-    //    return 0;
-    //}
 
     @Override
     public boolean hasTwoShafts() {
@@ -57,8 +38,6 @@ public class RadialEngineBlockEntity extends RegularEngineBlockEntity {
         return EngineType.RADIAL;
     }
 
-
-
     public void setBlockStates(AbstractSmallEngineBlockEntity be, BlockPos last) {
 
         Direction facing = getBlockState().getValue(SHAFT_FACING).getOpposite();
@@ -67,11 +46,6 @@ public class RadialEngineBlockEntity extends RegularEngineBlockEntity {
             level.setBlock(getBlockPos(), level.getBlockState(getBlockPos()).setValue(ENGINE_STATE, SINGLE), 2);
             return;
         }
-
-        //if(level.getBlockState(getBlockPos().relative(facing.getOpposite())).getBlock()!=this.getBlockState().getBlock()&&isController()){
-        //    level.setBlock(getBlockPos(), level.getBlockState(getBlockPos()).setValue(ENGINE_STATE, SINGLE), 2);
-        //    return;
-        //}
 
         if(last!=null){
             level.setBlock(last, level.getBlockState(last).setValue(ENGINE_STATE, BACK), 2);

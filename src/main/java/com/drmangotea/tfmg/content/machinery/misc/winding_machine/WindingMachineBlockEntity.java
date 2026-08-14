@@ -146,13 +146,19 @@ public class WindingMachineBlockEntity extends KineticBlockEntity implements IHa
 
     public void destroy() {
         super.destroy();
+        if (level == null || level.isClientSide) {
+            return;
+        }
         ItemHelper.dropContents(level, worldPosition, inventory);
-        Containers.dropItemStack(getLevel(), getBlockPos().getX(), getBlockPos().getY(), getBlockPos().getZ(), spool);
+        Containers.dropItemStack(level, getBlockPos().getX(), getBlockPos().getY(), getBlockPos().getZ(), spool);
     }
 
     @Override
     public void tick() {
         super.tick();
+        if (level == null) {
+            return;
+        }
         performRecipe();
         if (update) {
             level.updateNeighborsAt(getBlockPos(), getBlockState().getBlock());
