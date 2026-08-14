@@ -146,7 +146,7 @@ public abstract class AbstractSmallEngineBlockEntity extends AbstractEngineBlock
         if (!isController())
             return getControllerBE().hasTwoShafts();
         if (level == null) return false;
-        if (this.getBlockState().getValue(ENGINE_STATE) == SHAFT) {
+        if (this.getBlockState().hasProperty(ENGINE_STATE) && this.getBlockState().getValue(ENGINE_STATE) == SHAFT) {
             BlockPos pos = getBlockPos().relative(this.getBlockState().getValue(SHAFT_FACING).getOpposite(), engineLength() );
             return level.getBlockState(pos).getValue(ENGINE_STATE) == SHAFT;
         }
