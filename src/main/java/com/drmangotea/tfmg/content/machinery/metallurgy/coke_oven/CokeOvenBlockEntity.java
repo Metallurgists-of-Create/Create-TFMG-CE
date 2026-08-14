@@ -323,14 +323,13 @@ public class CokeOvenBlockEntity extends SmartBlockEntity implements IHaveGoggle
     }
 
     public void updateOvenBlocks(){
+        if (level == null) return;
+
         int maxSize = TFMGConfigs.common().machines.cokeOvenMaxSize.get();
         Direction facing = getBlockState().getValue(FACING);
-
-        for(BlockPos pos : BlockPos.betweenClosed(getBlockPos(), getBlockPos().below(maxSize).relative(facing,maxSize))){
-           //
+        for(BlockPos pos : BlockPos.betweenClosed(getBlockPos(), getBlockPos().below(maxSize).relative(facing.getOpposite(), maxSize))){
             if(level.getBlockEntity(pos) instanceof CokeOvenBlockEntity be){
                 be.createMultiblock();
-
             }
         }
     }
@@ -353,17 +352,7 @@ public class CokeOvenBlockEntity extends SmartBlockEntity implements IHaveGoggle
     }
     @Override
     public void addBehaviours(List<BlockEntityBehaviour> behaviours) {}
-    //@Override
-    //public @NotNull <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
-//
-    //    if(cap == ForgeCapabilities.FLUID_HANDLER){
-    //        return side == Direction.UP ? secondaryFluidCapability.cast() : primaryFluidCapability.cast();
-    //    }
-    //    if(cap == ForgeCapabilities.ITEM_HANDLER)
-    //        return itemCapability.cast();
-//
-    //    return super.getCapability(cap, side);
-    //}
+
     public static void registerCapabilities(RegisterCapabilitiesEvent event) {
         event.registerBlockEntity(
                 Capabilities.FluidHandler.BLOCK,
