@@ -144,6 +144,12 @@ public class BlastStoveBlockEntity extends FluidTankBlockEntity implements IHave
 
     }
 
+    @Override
+    public void lazyTick() {
+        super.lazyTick();
+        updateConnectivity = true;
+    }
+
     public int getSpeedModifier() {
         return 100;
     }
