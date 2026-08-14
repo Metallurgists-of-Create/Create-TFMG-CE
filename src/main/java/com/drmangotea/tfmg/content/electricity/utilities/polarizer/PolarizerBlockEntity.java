@@ -114,15 +114,17 @@ public class PolarizerBlockEntity extends ElectricBlockEntity implements IHaveGo
             angle.tickChaser();
         }
 
-
-            if (getPowerUsage() >= 1000) {
-                if (chargeCapacitors) {
-                    if (capacitorPercentage < 200) {
-                        capacitorPercentage++;
-                    } else onInventoryChanged(inventory.getStackInSlot(0).getCount());
+        if (getPowerUsage() >= 1000) {
+            if (chargeCapacitors) {
+                if (capacitorPercentage < 200) {
+                    capacitorPercentage++;
                 }
             }
+        }
 
+        if (chargeCapacitors && capacitorPercentage >= 200) {
+            onInventoryChanged(inventory.getStackInSlot(0).getCount());
+        }
     }
 
     public void performRecipe(PolarizingRecipe recipe) {
