@@ -83,7 +83,7 @@ public class FlarestackBlockEntity extends SmartBlockEntity implements IHaveGogg
             return;
         }
 
-        if (tankInventory.getFluidAmount() > 0 && smokeTimer < 97) {
+        if (tankInventory.getFluidAmount() > 0 && smokeTimer < 96) {
             if(tankInventory.getFluidAmount() > 1000) {
                 tankInventory.drain(100, IFluidHandler.FluidAction.EXECUTE);
             } else
