@@ -34,8 +34,7 @@ import java.util.List;
 import static com.drmangotea.tfmg.content.machinery.oil_processing.pumpjack.hammer.PumpjackBlock.WIDE;
 import static net.minecraft.world.level.block.DirectionalBlock.FACING;
 
-public class PumpjackBlockEntity extends GeneratingKineticBlockEntity
-        implements IBearingBlockEntity, IDisplayAssemblyExceptions {
+public class PumpjackBlockEntity extends GeneratingKineticBlockEntity implements IBearingBlockEntity, IDisplayAssemblyExceptions {
     protected ControlledContraptionEntity movedContraption;
     protected float angle;
     protected boolean running;
@@ -366,14 +365,15 @@ public class PumpjackBlockEntity extends GeneratingKineticBlockEntity
         sendData();
     }
 
+    private int incompleteTimer = 0;
+
     @Override
     public void tick() {
         super.tick();
+        if (level == null) return;
         if (!isRunning())
             findHeadAndConnector();
-        if (!isRunning() && isComplete()
-                && !level.isClientSide
-        ) {
+        if (!isRunning() && isComplete() && !level.isClientSide) {
             assemble();
         }
         if (base != null)
@@ -381,7 +381,13 @@ public class PumpjackBlockEntity extends GeneratingKineticBlockEntity
                 if (isRunning())
                     base.setControllerHammer(this);
             }
-        if (!isComplete())
+        boolean actuallyComplete = isComplete();
+        if (actuallyComplete) {
+            incompleteTimer = 0;
+        } else {
+            incompleteTimer++;
+        }
+        if (incompleteTimer > 40)
             if (!level.isClientSide)
                 disassemble();
 
