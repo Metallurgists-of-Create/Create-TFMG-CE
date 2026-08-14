@@ -71,21 +71,18 @@ public class PolarizerBlockEntity extends ElectricBlockEntity implements IHaveGo
             return;
         }
         ItemStack itemStack = inventory.getItem(0);
-        if (getRecipe(itemStack).isPresent()) {
+        Optional<PolarizingRecipe> recipe = PolarizerCommons.getRecipe(this.level, itemStack).map(RecipeHolder::value);
+        if (recipe.isPresent()) {
             chargeCapacitors = true;
             updateNextTick();
             if (capacitorPercentage >= 200) {
-                performRecipe(getRecipe(itemStack).get().value());
+                performRecipe(recipe.get());
             }
         } else {
             chargeCapacitors = false;
             updateNextTick();
         }
-
     }
-
-
-
 
     @Override
     public float resistance() {
@@ -130,23 +127,9 @@ public class PolarizerBlockEntity extends ElectricBlockEntity implements IHaveGo
 
     public void performRecipe(PolarizingRecipe recipe) {
         if (level == null) return;
-
-        ItemStack stack = recipe.getRollableResults().getFirst().rollOutput(level.random);
+        ItemStack stack = PolarizerCommons.assembleResult(level, getBlockPos().getCenter(), recipe);
         inventory.setStackInSlot(0, stack);
-        TFMGUtils.spawnElectricParticles(level, getBlockPos());
         capacitorPercentage = 0;
-    }
-
-    public Optional<RecipeHolder<PolarizingRecipe>> getRecipe(ItemStack item) {
-        if (level == null)
-            return Optional.empty();
-        Optional<RecipeHolder<PolarizingRecipe>> assemblyRecipe = SequencedAssemblyRecipe.getRecipe(this.level, item, TFMGRecipeTypes.POLARIZING.getType(), PolarizingRecipe.class);
-        if (assemblyRecipe.isPresent()) {
-            return assemblyRecipe;
-        } else {
-            //  inventory.setItem(0, item);
-            return TFMGRecipeTypes.POLARIZING.find(new RecipeWrapper(inventory), this.level);
-        }
     }
 
     public int getItemChargingRate() {

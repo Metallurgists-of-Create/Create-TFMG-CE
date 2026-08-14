@@ -11,7 +11,7 @@ import com.simibubi.create.content.processing.sequenced.IAssemblyRecipe;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.RecipeInput;
+import net.minecraft.world.item.crafting.SingleRecipeInput;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
 
@@ -21,7 +21,7 @@ import java.util.Set;
 import java.util.function.Supplier;
 
 @ParametersAreNonnullByDefault
-public class PolarizingRecipe extends StandardProcessingRecipe<RecipeInput> implements IAssemblyRecipe {
+public class PolarizingRecipe extends StandardProcessingRecipe<SingleRecipeInput> implements IAssemblyRecipe {
     public PolarizingRecipe(ProcessingRecipeParams params) {
         super(TFMGRecipeTypes.POLARIZING, params);
     }
@@ -39,8 +39,8 @@ public class PolarizingRecipe extends StandardProcessingRecipe<RecipeInput> impl
         return 1;
     }
     
-    public boolean matches(RecipeInput inv, Level worldIn) {
-        return !inv.isEmpty() && this.ingredients.getFirst().test(inv.getItem(0));
+    public boolean matches(SingleRecipeInput input, Level worldIn) {
+        return !input.isEmpty() && this.ingredients.getFirst().test(input.getItem(0));
     }
     
     @Override
