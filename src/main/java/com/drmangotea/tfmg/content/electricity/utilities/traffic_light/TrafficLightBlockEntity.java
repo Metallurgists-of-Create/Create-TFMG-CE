@@ -31,15 +31,13 @@ public class TrafficLightBlockEntity extends ElectricBlockEntity {
     @Override
     public void addBehaviours(List<BlockEntityBehaviour> behaviours) {
         super.addBehaviours(behaviours);
-        timerLength = new TimerScrollBehaviour(TFMGLang.translateDirect("traffic_light.timer"), this,
-                new TrafficLightScrollSlot()).between(180, 60 * 20 * 60);
+        timerLength = new TimerScrollBehaviour(TFMGLang.translateDirect("traffic_light.timer"), this, new TrafficLightScrollSlot()).between(180, 60 * 20 * 60);
         timerLength.withFormatter(this::format);
-        timerLength.withCallback(value-> timer = value);
+        timerLength.withCallback(value -> timer = value);
         timerLength.setValue(2);
         behaviours.add(timerLength);
-
-
     }
+
     private String format(int value) {
         if (value < 60)
             return value + "t";
@@ -47,7 +45,6 @@ public class TrafficLightBlockEntity extends ElectricBlockEntity {
             return (value / 20) + "s";
         return (value / 20 / 60) + "m";
     }
-
 
     @Override
     public boolean hasElectricitySlot(Direction direction) {
@@ -62,55 +59,41 @@ public class TrafficLightBlockEntity extends ElectricBlockEntity {
     @Override
     public void tick() {
         if (level == null) return;
-
         super.tick();
 
         if(!level.isClientSide)
             return;
-        if(timer>0) {
+        if(timer > 0) {
             timer--;
         }
 
-
         glow.chase(200f,0.4, LerpedFloat.Chaser.EXP);
 
+        int halfTimer = timerLength.getValue() / 2;
 
-        int halfTimer = timerLength.getValue()/2;
-
-
-        if(timer<halfTimer-30&&timer>60) {
+        if(timer < halfTimer - Math.min(30, halfTimer / 4) && timer > Math.min(60, halfTimer / 4)) {
             light = 0;
-        }else
-
-        if(timer>halfTimer+30) {
+        } else if (timer > halfTimer + Math.min(30, halfTimer / 4)) {
             light = 2;
-        }else{ light = 1;
+        } else {
+            light = 1;
         }
 
         if(timer == 0){
-
-
-
             glow.setValue(0);
-
             timer = timerLength.getValue();
         }
-
-
     }
 
     @Override
     protected void read(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {
         super.read(compound,registries , clientPacket);
-
         timer = compound.getInt("Timer");
-
     }
 
     @Override
     public void write(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {
         super.write(compound,registries , clientPacket);
-
         compound.putInt("Timer", timer);
     }
 }
