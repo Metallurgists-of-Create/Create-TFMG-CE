@@ -2,7 +2,7 @@
   "required": true,
   "minVersion": "0.8",
   "package": "com.drmangotea.tfmg.mixin",
-  "compatibilityLevel": "JAVA_8",
+  "compatibilityLevel": "JAVA_21",
   "refmap": "tfmg.refmap.json",
   "mixins": [
     "DeployerBlockEntityMixin",

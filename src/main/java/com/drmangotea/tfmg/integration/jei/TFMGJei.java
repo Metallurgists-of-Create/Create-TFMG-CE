@@ -1,46 +1,28 @@
-package com.drmangotea.tfmg.recipes.jei;
+package com.drmangotea.tfmg.integration.jei;
 
 import com.drmangotea.tfmg.TFMG;
+import com.drmangotea.tfmg.integration.jei.category.*;
 import com.drmangotea.tfmg.recipes.*;
 import com.drmangotea.tfmg.registry.TFMGBlocks;
 import com.drmangotea.tfmg.registry.TFMGItems;
 import com.drmangotea.tfmg.registry.TFMGRecipeTypes;
-import com.simibubi.create.AllFluids;
-import com.simibubi.create.compat.jei.*;
 import com.simibubi.create.compat.jei.category.CreateRecipeCategory;
-import com.simibubi.create.content.equipment.blueprint.BlueprintScreen;
-import com.simibubi.create.content.fluids.potion.PotionFluid;
-import com.simibubi.create.content.logistics.factoryBoard.FactoryPanelSetItemScreen;
-import com.simibubi.create.content.logistics.filter.AbstractFilterScreen;
-import com.simibubi.create.content.logistics.redstoneRequester.RedstoneRequesterScreen;
-import com.simibubi.create.content.redstone.link.controller.LinkedControllerScreen;
-import com.simibubi.create.content.trains.schedule.ScheduleScreen;
-import com.simibubi.create.foundation.gui.menu.AbstractSimiContainerScreen;
 import com.simibubi.create.foundation.item.ItemHelper;
 
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
-import mezz.jei.api.constants.RecipeTypes;
-import mezz.jei.api.helpers.IPlatformFluidHelper;
-import mezz.jei.api.neoforge.NeoForgeTypes;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import mezz.jei.api.registration.*;
 import mezz.jei.api.runtime.IIngredientManager;
 import mezz.jei.api.runtime.IJeiRuntime;
 import net.minecraft.client.Minecraft;
-import net.minecraft.core.Holder;
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.alchemy.Potion;
-import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeInput;
 import net.minecraft.world.item.crafting.RecipeType;
-import net.neoforged.neoforge.fluids.FluidStack;
 
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -160,6 +142,12 @@ public class TFMGJei implements IModPlugin {
         allCategories.forEach(c -> c.registerCatalysts(registration));
     }
 
+    @Override
+    public void registerIngredientAliases(IIngredientAliasRegistration registration) {
+        TFMGJeiConstants.engineCylinders().forEach(stack -> registration.addAlias(stack, "piston"));
+        TFMGJeiConstants.engineTurbines().forEach(stack -> registration.addAlias(stack, "turbine"));
+    }
+
     private class CategoryBuilder<T extends Recipe<?>> extends CreateRecipeCategory.Builder<T> {
         public CategoryBuilder(Class<? extends T> recipeClass) {
             super(recipeClass);
@@ -220,7 +208,10 @@ public class TFMGJei implements IModPlugin {
     }
 
     public static boolean doOutputsMatch(Recipe<?> recipe1, Recipe<?> recipe2) {
-        RegistryAccess registryAccess = Minecraft.getInstance().level.registryAccess();
+        RegistryAccess registryAccess = TFMGJeiConstants.registryAccess();
+        if (registryAccess == null) {
+            return false;
+        }
         return ItemHelper.sameItem(recipe1.getResultItem(registryAccess), recipe2.getResultItem(registryAccess));
     }
 

@@ -1,4 +1,4 @@
-package com.drmangotea.tfmg.recipes.jei.machines;
+package com.drmangotea.tfmg.integration.jei.render;
 
 
 import com.drmangotea.tfmg.registry.TFMGBlocks;

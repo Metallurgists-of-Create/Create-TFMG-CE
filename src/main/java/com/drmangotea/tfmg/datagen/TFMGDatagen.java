@@ -1,7 +1,6 @@
 package com.drmangotea.tfmg.datagen;
 
 import com.drmangotea.tfmg.TFMG;
-import com.drmangotea.tfmg.base.TFMGRegistrateTags;
 import com.drmangotea.tfmg.datagen.recipes.TFMGRecipeProvider;
 import com.drmangotea.tfmg.datagen.recipes.values.TFMGStandardRecipeGen;
 import com.drmangotea.tfmg.datagen.recipes.values.create.TFMGMechanicalCraftingRecipeGen;

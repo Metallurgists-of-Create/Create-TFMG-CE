@@ -1,8 +1,9 @@
-package com.drmangotea.tfmg.recipes.jei;
+package com.drmangotea.tfmg.integration.jei.category;
 
 import com.drmangotea.tfmg.content.machinery.misc.winding_machine.SpoolItem;
+import com.drmangotea.tfmg.integration.jei.TFMGJeiConstants;
 import com.drmangotea.tfmg.recipes.WindingRecipe;
-import com.drmangotea.tfmg.recipes.jei.machines.WindingMachine;
+import com.drmangotea.tfmg.integration.jei.render.WindingMachine;
 import com.drmangotea.tfmg.registry.TFMGDataComponents;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.compat.jei.category.CreateRecipeCategory;
@@ -16,6 +17,7 @@ import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.world.item.ItemStack;
 
 public class WindingCategory extends CreateRecipeCategory<WindingRecipe> {
@@ -32,11 +34,10 @@ public class WindingCategory extends CreateRecipeCategory<WindingRecipe> {
         coil.set(TFMGDataComponents.SPOOL_AMOUNT,recipe.getProcessingDuration());
 
         builder.addSlot(RecipeIngredientRole.INPUT, 15, 30).setBackground(getRenderedSlot(), -1, -1).addItemStack(coil);
-        builder.addSlot(RecipeIngredientRole.OUTPUT, 140, 28).setBackground(getRenderedSlot(), -1, -1).addItemStack(recipe.getResultItem(Minecraft.getInstance().level.registryAccess()));
+        builder.addSlot(RecipeIngredientRole.OUTPUT, 140, 28).setBackground(getRenderedSlot(), -1, -1).addItemStack(TFMGJeiConstants.getSingleResult(recipe));
     }
 
     public void draw(WindingRecipe recipe, IRecipeSlotsView iRecipeSlotsView, GuiGraphics graphics, double mouseX, double mouseY) {
-
         AllGuiTextures.JEI_ARROW.render(graphics, 85, 32);
         AllGuiTextures.JEI_DOWN_ARROW.render(graphics, 43, 4);
 

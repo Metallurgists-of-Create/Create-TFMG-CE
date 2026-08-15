@@ -1,0 +1,84 @@
+package com.drmangotea.tfmg.integration.jei;
+
+import com.drmangotea.tfmg.registry.TFMGTags;
+import com.simibubi.create.content.processing.recipe.ProcessingRecipe;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.multiplayer.ClientPacketListener;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.world.flag.FeatureFlagSet;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+public class TFMGJeiConstants {
+
+    @Nullable
+    public static RegistryAccess registryAccess() {
+        if (Minecraft.getInstance().level == null) {
+            return null;
+        }
+        return Minecraft.getInstance().level.registryAccess();
+    }
+
+    public static ItemStack getSingleResult(ProcessingRecipe<?, ?> recipe) {
+        RegistryAccess registryAccess = TFMGJeiConstants.registryAccess();
+        ItemStack result = recipe.getRollableResultsAsItemStacks().getFirst();
+        if (registryAccess != null)
+            result = recipe.getResultItem(registryAccess);
+        return result;
+    }
+
+    public static List<ItemStack> engineCylinders() {
+        final List<ItemStack> engineCylinders = new ArrayList<>();
+
+        Minecraft minecraft = Minecraft.getInstance();
+        FeatureFlagSet features = Optional.ofNullable(minecraft.player)
+                .map(p -> p.connection)
+                .map(ClientPacketListener::enabledFeatures)
+                .orElse(FeatureFlagSet.of());
+
+        ClientLevel level = minecraft.level;
+        if (level == null) {
+            throw new NullPointerException("[TFMG Engine Cylinder Fetcher] minecraft.level must be set before JEI fetches ingredients");
+        }
+
+        for (Item item : BuiltInRegistries.ITEM) {
+            if (item.isEnabled(features)) {
+                if (!item.getDefaultInstance().is(TFMGTags.TFMGItemTags.ENGINE_CYLINDER.tag)) continue;
+                engineCylinders.add(item.getDefaultInstance());
+            }
+        }
+
+        return engineCylinders;
+    }
+
+    public static List<ItemStack> engineTurbines() {
+        final List<ItemStack> engineTurbines = new ArrayList<>();
+
+        Minecraft minecraft = Minecraft.getInstance();
+        FeatureFlagSet features = Optional.ofNullable(minecraft.player)
+                .map(p -> p.connection)
+                .map(ClientPacketListener::enabledFeatures)
+                .orElse(FeatureFlagSet.of());
+
+        ClientLevel level = minecraft.level;
+        if (level == null) {
+            throw new NullPointerException("[TFMG Engine Turbine Fetcher] minecraft.level must be set before JEI fetches ingredients");
+        }
+
+        for (Item item : BuiltInRegistries.ITEM) {
+            if (item.isEnabled(features)) {
+                if (!item.getDefaultInstance().is(TFMGTags.TFMGItemTags.ENGINE_TURBINE.tag)) continue;
+                engineTurbines.add(item.getDefaultInstance());
+            }
+        }
+
+        return engineTurbines;
+    }
+}

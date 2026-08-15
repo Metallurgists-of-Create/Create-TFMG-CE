@@ -1,6 +1,7 @@
-package com.drmangotea.tfmg.content.machinery.oil_processing.surface_scanner;
+package com.drmangotea.tfmg.integration.sable;
 
 import com.drmangotea.tfmg.config.TFMGConfigs;
+import com.drmangotea.tfmg.content.machinery.oil_processing.surface_scanner.SurfaceScannerBlockEntity;
 import dev.ryanhcode.sable.companion.SableCompanion;
 import dev.ryanhcode.sable.companion.SubLevelAccess;
 import net.minecraft.core.BlockPos;

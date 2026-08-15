@@ -1,4 +1,4 @@
-package com.drmangotea.tfmg.recipes.jei;
+package com.drmangotea.tfmg.integration.jei.category;
 
 import com.drmangotea.tfmg.base.lang.TFMGLang;
 import com.drmangotea.tfmg.recipes.VatMachineRecipe;

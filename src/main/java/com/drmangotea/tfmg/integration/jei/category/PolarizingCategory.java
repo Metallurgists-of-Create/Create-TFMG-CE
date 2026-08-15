@@ -1,7 +1,8 @@
-package com.drmangotea.tfmg.recipes.jei;
+package com.drmangotea.tfmg.integration.jei.category;
 
+import com.drmangotea.tfmg.integration.jei.TFMGJeiConstants;
 import com.drmangotea.tfmg.recipes.PolarizingRecipe;
-import com.drmangotea.tfmg.recipes.jei.machines.Polarizer;
+import com.drmangotea.tfmg.integration.jei.render.Polarizer;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.compat.jei.category.CreateRecipeCategory;
 import com.simibubi.create.compat.jei.category.sequencedAssembly.SequencedAssemblySubCategory;
@@ -24,7 +25,7 @@ public class PolarizingCategory extends CreateRecipeCategory<PolarizingRecipe> {
 
     public void setRecipe(IRecipeLayoutBuilder builder, PolarizingRecipe recipe, IFocusGroup focuses) {
         builder.addSlot(RecipeIngredientRole.INPUT, 15, 9).setBackground(getRenderedSlot(), -1, -1).addIngredients(recipe.getIngredients().get(0));
-        builder.addSlot(RecipeIngredientRole.OUTPUT, 140, 28).setBackground(getRenderedSlot(), -1, -1).addItemStack(recipe.getResultItem(Minecraft.getInstance().level.registryAccess()));
+        builder.addSlot(RecipeIngredientRole.OUTPUT, 140, 28).setBackground(getRenderedSlot(), -1, -1).addItemStack(TFMGJeiConstants.getSingleResult(recipe));
     }
 
     public void draw(PolarizingRecipe recipe, IRecipeSlotsView iRecipeSlotsView, GuiGraphics graphics, double mouseX, double mouseY) {

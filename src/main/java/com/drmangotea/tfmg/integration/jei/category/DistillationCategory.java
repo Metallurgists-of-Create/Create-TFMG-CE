@@ -1,4 +1,4 @@
-package com.drmangotea.tfmg.recipes.jei;
+package com.drmangotea.tfmg.integration.jei.category;
 
 import com.drmangotea.tfmg.recipes.DistillationRecipe;
 import com.drmangotea.tfmg.registry.TFMGGuiTextures;
@@ -21,41 +21,33 @@ public class DistillationCategory extends CreateRecipeCategory<DistillationRecip
 
 	@Override
 	public void setRecipe(IRecipeLayoutBuilder builder, DistillationRecipe recipe, IFocusGroup focuses) {
-		SizedFluidIngredient fluidIngredient=recipe.getInputFluid();
-
 		int outputCount = recipe.getOutputCount(recipe);
-		int yModifier = 60 -(outputCount*10);
-		int y = 147-yModifier;
+		int yModifier = 60 - (outputCount * 10);
+		int y = 147 - yModifier;
+		addFluidSlot(builder, 18, 130 - yModifier, recipe.getInputFluid());
 
-		addFluidSlot(builder,18,130-yModifier,recipe.getInputFluid());
-
-
-		for(int i = 0; i<outputCount;i++) {
+		for(int i = 0; i < outputCount; i++) {
 			y -= 24;
-
-			addFluidSlot(builder,105,y,recipe.getFluidResults().get(i));
+			addFluidSlot(builder, 105, y, recipe.getFluidResults().get(i));
 		}
-
 	}
 
 	@Override
 	public void draw(DistillationRecipe recipe, IRecipeSlotsView iRecipeSlotsView, GuiGraphics graphics, double mouseX, double mouseY) {
 		int outputCount = recipe.getOutputCount(recipe);
-		int yModifier = 60 -(outputCount*10);
-		int y = 126-yModifier;
+		int yModifier = 60 - (outputCount * 10);
+		int y = 126 - yModifier;
 
-
-		TFMGGuiTextures.DISTILLATION_TOWER_BOTTOM.render(graphics,10,y);
-	//	TFMGGuiTextures.DISTILLATION_TOWER_FIRE.render(matrixStack,10,y+24);
+		TFMGGuiTextures.DISTILLATION_TOWER_BOTTOM.render(graphics, 10, y);
 		AllGuiTextures.JEI_ARROW.render(graphics, 56, y);
 
-		for(int i = 0; i<(outputCount-1);i++){
+		for(int i = 0; i < (outputCount - 1); i++){
 			y -= 24;
-			TFMGGuiTextures.DISTILLATION_TOWER_MIDDLE.render(graphics,10,y);
+			TFMGGuiTextures.DISTILLATION_TOWER_MIDDLE.render(graphics, 10, y);
 			AllGuiTextures.JEI_ARROW.render(graphics, 56, y);
 		}
 		y -= 12;
-		TFMGGuiTextures.DISTILLATION_TOWER_TOP.render(graphics,10,y);
+		TFMGGuiTextures.DISTILLATION_TOWER_TOP.render(graphics, 10, y);
 
 	}
 }

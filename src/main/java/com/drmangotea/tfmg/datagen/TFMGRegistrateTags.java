@@ -1,6 +1,8 @@
-package com.drmangotea.tfmg.base;
+package com.drmangotea.tfmg.datagen;
 
 import com.drmangotea.tfmg.TFMG;
+import com.drmangotea.tfmg.base.TFMGRegistrate;
+import com.drmangotea.tfmg.registry.TFMGItems;
 import com.drmangotea.tfmg.registry.TFMGTags;
 import com.simibubi.create.foundation.data.TagGen;
 import com.tterrag.registrate.providers.ProviderType;
@@ -25,6 +27,12 @@ public class TFMGRegistrateTags {
 
         prov.tag(Tags.Items.RODS)
                 .add(Items.STICK);
+
+        prov.tag(TFMGTags.TFMGItemTags.ENGINE_CYLINDER.tag)
+                .add(TFMGItems.DIESEL_ENGINE_CYLINDER.get(), TFMGItems.SIMPLE_ENGINE_CYLINDER.get(), TFMGItems.ENGINE_CYLINDER.get(), TFMGItems.AUTOGAS_ENGINE_CYLINDER.get());
+
+        prov.tag(TFMGTags.TFMGItemTags.ENGINE_TURBINE.tag)
+                .add(TFMGItems.TURBINE_BLADE.get());
     }
     private static void genBlockTags(RegistrateTagsProvider<Block> provIn) {
         TagGen.CreateTagsProvider<Block> prov = new TagGen.CreateTagsProvider<>(provIn, Block::builtInRegistryHolder);

@@ -3,6 +3,7 @@ package com.drmangotea.tfmg.content.machinery.oil_processing.surface_scanner;
 import com.drmangotea.tfmg.base.lang.TFMGTexts;
 import com.drmangotea.tfmg.config.TFMGConfigs;
 import com.drmangotea.tfmg.content.machinery.misc.machine_input.MachineInputBlockEntity;
+import com.drmangotea.tfmg.integration.sable.SurfaceScannerSable;
 import com.drmangotea.tfmg.registry.TFMGTags;
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;

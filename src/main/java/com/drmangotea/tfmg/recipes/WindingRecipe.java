@@ -1,7 +1,7 @@
 package com.drmangotea.tfmg.recipes;
 
 import com.drmangotea.tfmg.base.lang.TFMGLang;
-import com.drmangotea.tfmg.recipes.jei.WindingCategory;
+import com.drmangotea.tfmg.integration.jei.category.WindingCategory;
 import com.drmangotea.tfmg.registry.TFMGBlocks;
 import com.drmangotea.tfmg.registry.TFMGRecipeTypes;
 import com.simibubi.create.compat.jei.category.sequencedAssembly.SequencedAssemblySubCategory;
