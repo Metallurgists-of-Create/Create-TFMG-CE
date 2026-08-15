@@ -4,10 +4,10 @@
 	"render_type": "minecraft:cutout",
 	"texture_size": [32, 32],
 	"textures": {
-		"0": "tfmg:block/large_aluminum_coghweel",
+		"0": "tfmg:block/large_aluminum_cogwheel",
 		"1": "create:block/axis_top",
 		"2": "create:block/axis",
-		"particle": "tfmg:block/large_aluminum_coghweel"
+		"particle": "tfmg:block/large_aluminum_cogwheel"
 	},
 	"elements": [
 		{

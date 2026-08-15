@@ -31,6 +31,12 @@ public class TFMGRemapper {
         reMapBlock.put("copper_encased_cast_iron_pipe", TFMG.asResource("encased_cast_iron_pipe"));
         reMapBlock.put("copper_encased_plastic_pipe", TFMG.asResource("encased_plastic_pipe"));
 
+        reMapBlock.put("heavy_casing_encased_shaft", TFMG.asResource("heavy_encased_shaft"));
+        reMapBlock.put("heavy_casing_encased_steel_cogwheel", TFMG.asResource("heavy_encased_steel_cogwheel"));
+        reMapBlock.put("heavy_casing_encased_large_steel_cogwheel", TFMG.asResource("heavy_encased_large_steel_cogwheel"));
+        reMapBlock.put("heavy_casing_encased_aluminum_cogwheel", TFMG.asResource("heavy_encased_aluminum_cogwheel"));
+        reMapBlock.put("heavy_casing_encased_large_aluminum_cogwheel", TFMG.asResource("heavy_encased_large_aluminum_cogwheel"));
+
         //Items
         reMapItem.put("lit_lithium_blade", TFMG.asResource("lithium_blade"));
     }

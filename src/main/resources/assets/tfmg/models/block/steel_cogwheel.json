@@ -3,10 +3,10 @@
 	"parent": "create:block/large_wheels",
 	"texture_size": [32, 32],
 	"textures": {
-		"0": "tfmg:block/steel_coghweel",
+		"0": "tfmg:block/steel_cogwheel",
 		"1": "create:block/axis_top",
 		"2": "create:block/axis",
-		"particle": "tfmg:block/steel_coghweel"
+		"particle": "tfmg:block/steel_cogwheel"
 	},
 	"elements": [
 		{

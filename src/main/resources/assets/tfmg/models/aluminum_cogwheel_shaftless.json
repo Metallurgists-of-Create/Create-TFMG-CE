@@ -3,7 +3,7 @@
 	"parent": "create:block/large_wheels",
 	"texture_size": [32, 32],
 	"textures": {
-		"0": "tfmg:block/aluminum_coghweel"
+		"0": "tfmg:block/aluminum_cogwheel"
 	},
 	"elements": [
 		{

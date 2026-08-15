@@ -16,7 +16,14 @@ public class TFMGSpriteShifts {
     public static final CTSpriteShiftEntry STEEL_SCAFFOLD = horizontal("scaffold/steel_scaffold"), ALUMINUM_SCAFFOLD = horizontal("scaffold/aluminum_scaffold");
     public static final CTSpriteShiftEntry ALUMINUM_SCAFFOLD_TOP = omni("aluminum_casing");
     public static final CTSpriteShiftEntry STEEL_SCAFFOLD_INSIDE = horizontal("scaffold/steel_scaffold_inside"), ALUMINUM_SCAFFOLD_INSIDE = horizontal("scaffold/aluminum_scaffold_inside");
-    public static final CTSpriteShiftEntry STEEL_ENCASED_COGWHEEL_SIDE = vertical("steel_encased_cogwheel_side"), STEEL_ENCASED_COGWHEEL_OTHERSIDE = horizontal("steel_encased_cogwheel_side"), HEAVY_CASING_ENCASED_COGWHEEL_SIDE = vertical("heavy_machinery_encased_cogwheel_side"), HEAVY_CASING_ENCASED_COGWHEEL_OTHERSIDE = horizontal("heavy_machinery_encased_cogwheel_side");
+
+    public static final CTSpriteShiftEntry
+            STEEL_ENCASED_COGWHEEL_SIDE = vertical("steel_encased_cogwheel_side"),
+            STEEL_ENCASED_COGWHEEL_OTHERSIDE = horizontal("steel_encased_cogwheel_side"),
+            HEAVY_CASING_ENCASED_COGWHEEL_SIDE = vertical("heavy_machinery_encased_cogwheel_side"),
+            HEAVY_CASING_ENCASED_COGWHEEL_OTHERSIDE = horizontal("heavy_machinery_encased_cogwheel_side"),
+            INDUSTRIAL_CASING_ENCASED_COGWHEEL_SIDE = vertical("industrial_encased_cogwheel_side"),
+            INDUSTRIAL_CASING_ENCASED_COGWHEEL_OTHERSIDE = horizontal("industrial_encased_cogwheel_side");
     public static final CTSpriteShiftEntry COKE_OVEN_TOP = getCT(AllCTTypes.RECTANGLE, "coke_oven/top"), COKE_OVEN_BOTTOM = getCT(AllCTTypes.RECTANGLE, "coke_oven/bottom"), COKE_OVEN_BACK = getCT(AllCTTypes.RECTANGLE, "coke_oven/side"), COKE_OVEN_SIDE = getCT(AllCTTypes.RECTANGLE, "coke_oven/side");
 
     // Fluid Encasing

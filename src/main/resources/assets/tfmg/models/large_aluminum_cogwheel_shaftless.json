@@ -2,8 +2,8 @@
 	"credit": "Made with Blockbench",
 	"texture_size": [32, 32],
 	"textures": {
-		"0": "tfmg:block/large_aluminum_coghweel",
-		"particle": "tfmg:block/large_aluminum_coghweel"
+		"0": "tfmg:block/large_aluminum_cogwheel",
+		"particle": "tfmg:block/large_aluminum_cogwheel"
 	},
 	"elements": [
 		{

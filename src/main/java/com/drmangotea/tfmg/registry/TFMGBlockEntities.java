@@ -128,6 +128,8 @@ import com.simibubi.create.content.kinetics.gearbox.GearboxRenderer;
 import com.simibubi.create.content.kinetics.gearbox.GearboxVisual;
 import com.simibubi.create.content.kinetics.simpleRelays.BracketedKineticBlockEntity;
 import com.simibubi.create.content.kinetics.simpleRelays.SimpleKineticBlockEntity;
+import com.simibubi.create.content.kinetics.simpleRelays.encased.EncasedCogRenderer;
+import com.simibubi.create.content.kinetics.simpleRelays.encased.EncasedCogVisual;
 import com.simibubi.create.foundation.blockEntity.renderer.SmartBlockEntityRenderer;
 import com.tterrag.registrate.util.entry.BlockEntityEntry;
 
@@ -445,7 +447,8 @@ public class TFMGBlockEntities {
             .visual(() -> TFMGEncasedCogVisual::steelSmall, false)
             .validBlocks(
                     TFMGEncasedBlocks.STEEL_ENCASED_STEEL_COGWHEEL,
-                    TFMGEncasedBlocks.HEAVY_CASING_ENCASED_STEEL_COGWHEEL
+                    TFMGEncasedBlocks.HEAVY_ENCASED_STEEL_COGWHEEL,
+                    TFMGEncasedBlocks.INDUSTRIAL_ENCASED_STEEL_COGWHEEL
             )
             .renderer(() -> TFMGEncasedCogRenderer::steelSmall)
             .register();
@@ -455,7 +458,8 @@ public class TFMGBlockEntities {
             .visual(() -> TFMGEncasedCogVisual::steelLarge, false)
             .validBlocks(
                     TFMGEncasedBlocks.STEEL_ENCASED_LARGE_STEEL_COGWHEEL,
-                    TFMGEncasedBlocks.HEAVY_CASING_ENCASED_LARGE_STEEL_COGWHEEL
+                    TFMGEncasedBlocks.HEAVY_ENCASED_LARGE_STEEL_COGWHEEL,
+                    TFMGEncasedBlocks.INDUSTRIAL_ENCASED_LARGE_STEEL_COGWHEEL
             )
             .renderer(() -> TFMGEncasedCogRenderer::steellarge)
             .register();
@@ -464,7 +468,8 @@ public class TFMGBlockEntities {
             .visual(() -> TFMGEncasedCogVisual::aluminumSmall, false)
             .validBlocks(
                     TFMGEncasedBlocks.STEEL_ENCASED_ALUMINUM_COGWHEEL,
-                    TFMGEncasedBlocks.HEAVY_CASING_ENCASED_ALUMINUM_COGWHEEL
+                    TFMGEncasedBlocks.HEAVY_ENCASED_ALUMINUM_COGWHEEL,
+                    TFMGEncasedBlocks.INDUSTRIAL_ENCASED_ALUMINUM_COGWHEEL
 
             )
             .renderer(() -> TFMGEncasedCogRenderer::aluminumSmall)
@@ -475,7 +480,8 @@ public class TFMGBlockEntities {
             .visual(() -> TFMGEncasedCogVisual::aluminumLarge, false)
             .validBlocks(
                     TFMGEncasedBlocks.STEEL_ENCASED_LARGE_ALUMINUM_COGWHEEL,
-                    TFMGEncasedBlocks.HEAVY_CASING_ENCASED_LARGE_ALUMINUM_COGWHEEL
+                    TFMGEncasedBlocks.HEAVY_ENCASED_LARGE_ALUMINUM_COGWHEEL,
+                    TFMGEncasedBlocks.INDUSTRIAL_ENCASED_LARGE_ALUMINUM_COGWHEEL
             )
             .renderer(() -> TFMGEncasedCogRenderer::aluminumlarge)
             .register();
@@ -483,8 +489,34 @@ public class TFMGBlockEntities {
     public static final BlockEntityEntry<KineticBlockEntity> TFMG_ENCASED_SHAFT = REGISTRATE
             .blockEntity("tfmg_encased_shaft", KineticBlockEntity::new)
             .visual(() -> SingleAxisRotatingVisual::shaft, false)
-            .validBlocks(TFMGEncasedBlocks.STEEL_ENCASED_SHAFT, TFMGEncasedBlocks.HEAVY_CASING_ENCASED_SHAFT)
+            .validBlocks(
+                    TFMGEncasedBlocks.STEEL_ENCASED_SHAFT,
+                    TFMGEncasedBlocks.HEAVY_ENCASED_SHAFT,
+                    TFMGEncasedBlocks.INDUSTRIAL_ENCASED_SHAFT
+            )
             .renderer(() -> ShaftRenderer::new)
+            .register();
+
+    public static final BlockEntityEntry<SimpleKineticBlockEntity> TFMG_ENCASED_COGWHEEL = REGISTRATE
+            .blockEntity("tfmg_encased_cogwheel", SimpleKineticBlockEntity::new)
+            .visual(() -> EncasedCogVisual::small, false)
+            .validBlocks(
+                    TFMGEncasedBlocks.STEEL_ENCASED_COGWHEEL,
+                    TFMGEncasedBlocks.HEAVY_ENCASED_COGWHEEL,
+                    TFMGEncasedBlocks.INDUSTRIAL_ENCASED_COGWHEEL
+            )
+            .renderer(() -> EncasedCogRenderer::small)
+            .register();
+
+    public static final BlockEntityEntry<SimpleKineticBlockEntity> TFMG_ENCASED_LARGE_COGWHEEL = REGISTRATE
+            .blockEntity("tfmg_encased_large_cogwheel", SimpleKineticBlockEntity::new)
+            .visual(() -> EncasedCogVisual::large, false)
+            .validBlocks(
+                    TFMGEncasedBlocks.STEEL_ENCASED_LARGE_COGWHEEL,
+                    TFMGEncasedBlocks.HEAVY_ENCASED_LARGE_COGWHEEL,
+                    TFMGEncasedBlocks.INDUSTRIAL_ENCASED_LARGE_COGWHEEL
+            )
+            .renderer(() -> EncasedCogRenderer::large)
             .register();
 
     public static final BlockEntityEntry<GearboxBlockEntity> STEEL_GEARBOX = REGISTRATE

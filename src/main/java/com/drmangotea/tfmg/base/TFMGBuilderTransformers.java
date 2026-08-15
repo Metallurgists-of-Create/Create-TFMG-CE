@@ -133,26 +133,20 @@ public class TFMGBuilderTransformers {
                 .build();
     }
 
-    public static <B extends TFMGEncasedCogwheelBlock, P> NonNullUnaryOperator<BlockBuilder<B, P>> encasedCogwheel(
-            String casing, Supplier<CTSpriteShiftEntry> casingShift) {
-        return b -> encasedCogwheelBase(b, casing, casingShift, AllBlocks.COGWHEEL::get, false);
+    public static <B extends TFMGEncasedCogwheelBlock, P> NonNullUnaryOperator<BlockBuilder<B, P>> encasedCogwheel(String casing, String cogMat, Supplier<CTSpriteShiftEntry> casingShift, Supplier<ItemLike> drop) {
+        return b -> encasedCogwheelBase(b, casing, cogMat, casingShift, drop, false);
     }
 
-    public static <B extends TFMGEncasedCogwheelBlock, P> NonNullUnaryOperator<BlockBuilder<B, P>> encasedLargeCogwheel(
-            String casing, Supplier<CTSpriteShiftEntry> casingShift) {
-        return b -> encasedCogwheelBase(b, casing, casingShift, AllBlocks.LARGE_COGWHEEL::get, true)
-                .onRegister(CreateRegistrate.connectedTextures(() -> new EncasedCogCTBehaviour(casingShift.get())));
+    public static <B extends TFMGEncasedCogwheelBlock, P> NonNullUnaryOperator<BlockBuilder<B, P>> encasedLargeCogwheel(String casing, String cogMat, Supplier<CTSpriteShiftEntry> casingShift, Supplier<ItemLike> drop) {
+        return b -> encasedCogwheelBase(b, casing, cogMat, casingShift, drop, true).onRegister(CreateRegistrate.connectedTextures(() -> new EncasedCogCTBehaviour(casingShift.get())));
     }
 
-    private static <B extends TFMGEncasedCogwheelBlock, P> BlockBuilder<B, P> encasedCogwheelBase(BlockBuilder<B, P> b,
-                                                                                                  String casing, Supplier<CTSpriteShiftEntry> casingShift, Supplier<ItemLike> drop, boolean large) {
-        String encasedSuffix;
-        if (!large) {
-            encasedSuffix = "_encased_cogwheel_side" + (large ? "_connected" : "");
-        } else encasedSuffix = "_encased_cogwheel_side_large";
+    private static <B extends TFMGEncasedCogwheelBlock, P> BlockBuilder<B, P> encasedCogwheelBase(BlockBuilder<B, P> b, String casing, String cogMat, Supplier<CTSpriteShiftEntry> casingShift, Supplier<ItemLike> drop, boolean large) {
+        String encasedSuffix = "_encased_cogwheel_side" + (large ? "_large" : "");
         String blockFolder = large ? "encased_large_cogwheel" : "encased_cogwheel";
-        String wood = casing.equals("steel") ? "steel_casing" : "heavy_machinery_casing";
-        String gearbox = casing.equals("steel") ? "steel_gearbox" : "heavy_gearbox";
+        String wood = casing.equals("industrial") ? "industrial_aluminum_casing" : casing.equals("heavy_casing") ? "heavy_machinery_casing" : casing + "_casing";
+        String gearbox = casing.equals("heavy_casing") ? "heavy_gearbox" : casing + "_gearbox";
+        String itemSubType = cogMat.equals("wood") ? "" : "_" + cogMat;
 
         String casing1 = casing.equals("heavy_casing") ? "heavy_machinery" : casing;
         return encasedBase(b, drop).addLayer(() -> RenderType::cutoutMipped)
@@ -166,23 +160,22 @@ public class TFMGBuilderTransformers {
                     String modelName = c.getName() + suffix;
                     return p.models()
                             .withExistingParent(modelName, p.modLoc("block/" + blockFolder + "/block" + suffix))
-                            .texture("casing", TFMG.asResource("block/" + casing1 + "_casing"))
-                            .texture("particle", TFMG.asResource("block/" + casing1 + "_casing"))
+                            .texture("casing", TFMG.asResource("block/" + wood))
+                            .texture("particle", TFMG.asResource("block/" + wood))
                             .texture("4", TFMG.asResource("block/" + gearbox))
                             .texture("1", TFMG.asResource("block/" + wood))
                             .texture("side", TFMG.asResource("block/" + casing1 + encasedSuffix));
                 }, false))
                 .item()
-                .model((c, p) -> p.withExistingParent(c.getName(), p.modLoc("block/" + blockFolder + "/item"))
-                        .texture("casing", TFMG.asResource("block/" + casing1 + "_casing"))
-                        .texture("particle", TFMG.asResource("block/" + casing1 + "_casing"))
+                .model((c, p) -> p.withExistingParent(c.getName(), p.modLoc("block/" + blockFolder + "/item" + itemSubType))
+                        .texture("casing", TFMG.asResource("block/" + wood))
+                        .texture("particle", TFMG.asResource("block/" + wood))
                         .texture("1", TFMG.asResource("block/" + wood))
                         .texture("side", TFMG.asResource("block/" + casing1 + encasedSuffix)))
                 .build();
     }
 
-    private static <B extends RotatedPillarKineticBlock, P> BlockBuilder<B, P> encasedBase(BlockBuilder<B, P> b,
-                                                                                           Supplier<ItemLike> drop) {
+    private static <B extends RotatedPillarKineticBlock, P> BlockBuilder<B, P> encasedBase(BlockBuilder<B, P> b, Supplier<ItemLike> drop) {
         return b.initialProperties(SharedProperties::stone)
                 .properties(BlockBehaviour.Properties::noOcclusion)
                 .transform(TFMGStress.setNoImpact())
