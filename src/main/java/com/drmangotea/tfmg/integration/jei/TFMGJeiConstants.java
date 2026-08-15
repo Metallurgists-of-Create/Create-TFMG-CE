@@ -50,7 +50,7 @@ public class TFMGJeiConstants {
 
         for (Item item : BuiltInRegistries.ITEM) {
             if (item.isEnabled(features)) {
-                if (!item.getDefaultInstance().is(TFMGTags.TFMGItemTags.ENGINE_CYLINDER.tag)) continue;
+                if (!item.getDefaultInstance().is(TFMGTags.Items.ENGINE_CYLINDER.tag)) continue;
                 engineCylinders.add(item.getDefaultInstance());
             }
         }
@@ -74,7 +74,7 @@ public class TFMGJeiConstants {
 
         for (Item item : BuiltInRegistries.ITEM) {
             if (item.isEnabled(features)) {
-                if (!item.getDefaultInstance().is(TFMGTags.TFMGItemTags.ENGINE_TURBINE.tag)) continue;
+                if (!item.getDefaultInstance().is(TFMGTags.Items.ENGINE_TURBINE.tag)) continue;
                 engineTurbines.add(item.getDefaultInstance());
             }
         }

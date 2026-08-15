@@ -4,6 +4,7 @@ import com.drmangotea.tfmg.content.engines.types.AbstractSmallEngineBlockEntity;
 import com.drmangotea.tfmg.content.engines.types.regular_engine.RegularEngineBlockEntity;
 import com.drmangotea.tfmg.registry.TFMGItems;
 import com.drmangotea.tfmg.registry.TFMGPartialModels;
+import com.drmangotea.tfmg.registry.TFMGTags;
 import com.mojang.blaze3d.vertex.PoseStack;
 import dev.engine_room.flywheel.lib.model.baked.PartialModel;
 import net.createmod.catnip.animation.LerpedFloat;
@@ -40,12 +41,9 @@ public class TurboUpgradeData extends EngineUpgrade {
 
     @Override
     public void render(AbstractSmallEngineBlockEntity be, float partialTicks, PoseStack ms, MultiBufferSource buffer, int light) {
-
         if(!Minecraft.getInstance().isPaused()) {
-
             speed.chase(be.rpm / 100, 1 / 32f, LerpedFloat.Chaser.EXP);
             speed.tickChaser();
-           // angle += speed.getValue(partialTicks) * 3 / 10f;
             angle+=be.rpm/100;
             angle %= 360;
         }
@@ -54,7 +52,7 @@ public class TurboUpgradeData extends EngineUpgrade {
         boolean side = false;
         ms.pushPose();
         if (be instanceof RegularEngineBlockEntity blockEntity) {
-            side = blockEntity.type.upgradesOnSide;
+            side = blockEntity.type.is(TFMGTags.Engines.UPGRADES_ON_SIDE.tag);
         }
 
         CachedBuffers.partial(getModel(), state)

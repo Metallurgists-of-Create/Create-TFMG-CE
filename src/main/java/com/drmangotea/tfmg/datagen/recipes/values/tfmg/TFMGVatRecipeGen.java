@@ -37,7 +37,7 @@ public class TFMGVatRecipeGen extends VatRecipeGen {
     ),
             ARC_FURNACE_STEEL = create("arc_furnace_steel", b -> ((VatMachineRecipe.Builder<VatMachineRecipe>) b)
                     .require(crushedRawIron())
-                    .require(TFMGTags.TFMGItemTags.FLUX.tag)
+                    .require(TFMGTags.Items.FLUX.tag)
                     .require(TFMGItems.COAL_COKE_DUST)
                     .output(0.9f, TFMGItems.COAL_COKE_DUST)
                     .output(TFMGFluids.MOLTEN_STEEL.get(), 144)

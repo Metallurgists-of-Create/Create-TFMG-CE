@@ -222,7 +222,7 @@ public class PumpjackBlockEntity extends GeneratingKineticBlockEntity implements
         boolean foundConnector = false;
         BlockPos headLocalPos = headPosition.subtract(getBlockPos().above());
         for (StructureTemplate.StructureBlockInfo block : contraption.getBlocks().values()) {
-            if (block.state().is(TFMGTags.TFMGBlockTags.PUMPJACK_HEAD.tag)) {
+            if (block.state().is(TFMGTags.Blocks.PUMPJACK_HEAD.tag)) {
                 foundHead = true;
                 if (block.pos().getX() != headLocalPos.getX() ||
                         block.pos().getY() != q * headLocalPos.getY() ||
@@ -233,7 +233,7 @@ public class PumpjackBlockEntity extends GeneratingKineticBlockEntity implements
         }
         BlockPos connectorLocalPos = connectorPosition.subtract(getBlockPos().above());
         for (StructureTemplate.StructureBlockInfo block : contraption.getBlocks().values()) {
-            if (block.state().is(TFMGTags.TFMGBlockTags.PUMPJACK_CONNECTOR.tag)) {
+            if (block.state().is(TFMGTags.Blocks.PUMPJACK_CONNECTOR.tag)) {
                 foundConnector = true;
                 if (block.pos().getX() != connectorLocalPos.getX() ||
                         block.pos().getY() != q * connectorLocalPos.getY() ||
@@ -261,15 +261,15 @@ public class PumpjackBlockEntity extends GeneratingKineticBlockEntity implements
     }
 
     public boolean isHead(BlockPos pos) {
-        return level.getBlockState(pos).is(TFMGTags.TFMGBlockTags.PUMPJACK_HEAD.tag);
+        return level.getBlockState(pos).is(TFMGTags.Blocks.PUMPJACK_HEAD.tag);
     }
 
     public boolean isPart(BlockPos pos) {
-        return level.getBlockState(pos).is(TFMGTags.TFMGBlockTags.PUMPJACK_PART.tag);
+        return level.getBlockState(pos).is(TFMGTags.Blocks.PUMPJACK_PART.tag);
     }
 
     public boolean isConnector(BlockPos pos) {
-        return level.getBlockState(pos).is(TFMGTags.TFMGBlockTags.PUMPJACK_CONNECTOR.tag);
+        return level.getBlockState(pos).is(TFMGTags.Blocks.PUMPJACK_CONNECTOR.tag);
     }
 
     private boolean findHeadAndConnector() {
@@ -458,10 +458,10 @@ public class PumpjackBlockEntity extends GeneratingKineticBlockEntity implements
             return;
 
 
-        if (!level.getBlockState(getBlockPos().above()).is(TFMGTags.TFMGBlockTags.PUMPJACK_SMALL_PART.tag) && !getBlockState().getValue(WIDE))
+        if (!level.getBlockState(getBlockPos().above()).is(TFMGTags.Blocks.PUMPJACK_SMALL_PART.tag) && !getBlockState().getValue(WIDE))
             level.setBlock(getBlockPos(), getBlockState().setValue(WIDE, true), 2);
 
-        if (level.getBlockState(getBlockPos().above()).is(TFMGTags.TFMGBlockTags.PUMPJACK_SMALL_PART.tag) && getBlockState().getValue(WIDE))
+        if (level.getBlockState(getBlockPos().above()).is(TFMGTags.Blocks.PUMPJACK_SMALL_PART.tag) && getBlockState().getValue(WIDE))
             level.setBlock(getBlockPos(), getBlockState().setValue(WIDE, false), 2);
     }
 

@@ -1,7 +1,9 @@
 package com.drmangotea.tfmg.content.engines.types.radial_engine;
 
 import com.drmangotea.tfmg.content.engines.types.AbstractSmallEngineBlockEntity;
+import com.drmangotea.tfmg.content.engines.types.EngineType;
 import com.drmangotea.tfmg.content.engines.types.regular_engine.RegularEngineBlockEntity;
+import com.drmangotea.tfmg.registry.TFMGEngineTypes;
 import com.simibubi.create.foundation.item.ItemHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -35,7 +37,7 @@ public class RadialEngineBlockEntity extends RegularEngineBlockEntity {
 
     @Override
     public EngineType getDefaultEngineType() {
-        return EngineType.RADIAL;
+        return TFMGEngineTypes.RADIAL.get();
     }
 
     public void setBlockStates(AbstractSmallEngineBlockEntity be, BlockPos last) {

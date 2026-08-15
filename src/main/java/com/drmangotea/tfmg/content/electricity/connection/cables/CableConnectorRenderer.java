@@ -36,7 +36,7 @@ public class CableConnectorRenderer extends SafeBlockEntityRenderer<CableConnect
         if (be.player == null)
             return;
         Player player = be.player;
-        if (player.getInventory().contains(TFMGTags.TFMGItemTags.SPOOLS.tag)) {
+        if (player.getInventory().contains(TFMGTags.Items.SPOOLS.tag)) {
             ItemStack stack = player.getMainHandItem();
             if (stack.has(TFMGDataComponents.POSITION)) {
                 BlockPos pos = stack.get(TFMGDataComponents.POSITION);

@@ -213,7 +213,7 @@ public class DistillationControllerBlockEntity extends SmartBlockEntity implemen
                     outputs.add(be);
                 } else break;
             } else {
-                if (!(level.getBlockState(checkedPos).is(TFMGTags.TFMGBlockTags.INDUSTRIAL_PIPE.tag)))
+                if (!(level.getBlockState(checkedPos).is(TFMGTags.Blocks.INDUSTRIAL_PIPE.tag)))
                     break;
             }
             checkedPos = checkedPos.above();

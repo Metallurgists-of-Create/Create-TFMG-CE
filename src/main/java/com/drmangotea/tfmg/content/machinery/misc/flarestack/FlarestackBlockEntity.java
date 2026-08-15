@@ -41,8 +41,8 @@ public class FlarestackBlockEntity extends SmartBlockEntity implements IHaveGogg
         return new SmartFluidTank(2500, this::onFluidStackChanged) {
             @Override
             public boolean isFluidValid(FluidStack stack) {
-                return stack.getFluid().is(TFMGTags.TFMGFluidTags.FLAMMABLE.tag)||
-                        stack.getFluid().is(TFMGTags.TFMGFluidTags.FUEL.tag);
+                return stack.getFluid().is(TFMGTags.Fluids.FLAMMABLE.tag)||
+                        stack.getFluid().is(TFMGTags.Fluids.FUEL.tag);
             }
         };
     }

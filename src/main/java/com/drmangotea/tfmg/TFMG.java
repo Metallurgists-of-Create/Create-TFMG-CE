@@ -60,6 +60,7 @@ public class TFMG {
         TFMGSoundEvents.prepare();
         TFMGElectrodes.init();
         TFMGCableTypes.init();
+        TFMGEngineTypes.init();
         TFMGDisplaySources.init();
         TFMGCreativeTabs.register(modEventBus);
         TFMGBlocks.init();

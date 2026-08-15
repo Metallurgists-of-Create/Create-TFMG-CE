@@ -100,6 +100,7 @@ public class TFMGCommonEvents {
         public static void newRegistry(NewRegistryEvent event) {
             event.register(TFMGRegistries.CABLE_TYPE_REGISTRY);
             event.register(TFMGRegistries.ELECTRODE_REGISTRY);
+            event.register(TFMGRegistries.ENGINE_TYPE_REGISTRY);
         }
 
     }

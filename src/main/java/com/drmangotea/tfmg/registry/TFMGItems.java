@@ -29,7 +29,7 @@ import com.drmangotea.tfmg.content.items.weapons.lithium_blade.LithiumBladeItem;
 import com.drmangotea.tfmg.content.items.weapons.quad_potato_cannon.QuadPotatoCannonItem;
 import com.drmangotea.tfmg.content.machinery.misc.winding_machine.SpoolItem;
 import com.drmangotea.tfmg.content.machinery.oil_processing.OilHammerItem;
-import com.drmangotea.tfmg.registry.TFMGTags.TFMGItemTags;
+import com.drmangotea.tfmg.registry.TFMGTags.Items;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllTags;
 import com.simibubi.create.content.processing.sequenced.SequencedAssemblyItem;
@@ -67,54 +67,54 @@ public class TFMGItems {
 
     public static final ItemEntry<Item>
             STEEL_INGOT = taggedIngredient("steel_ingot", CommonMetal.STEEL.ingots, Tags.Items.INGOTS, CREATE_INGOTS.tag),
-            CAST_IRON_INGOT = taggedIngredient("cast_iron_ingot", TFMGItemTags.INGOTS_CAST_IRON.tag, Tags.Items.INGOTS, CREATE_INGOTS.tag),
+            CAST_IRON_INGOT = taggedIngredient("cast_iron_ingot", Items.INGOTS_CAST_IRON.tag, Tags.Items.INGOTS, CREATE_INGOTS.tag),
             ALUMINUM_INGOT = taggedIngredient("aluminum_ingot", CommonMetal.ALUMINUM.ingots, Tags.Items.INGOTS, CREATE_INGOTS.tag),
-            PLASTIC_SHEET = taggedIngredient("plastic_sheet", TFMGItemTags.INGOTS_PLASTIC.tag, Tags.Items.INGOTS, CREATE_INGOTS.tag),
+            PLASTIC_SHEET = taggedIngredient("plastic_sheet", Items.INGOTS_PLASTIC.tag, Tags.Items.INGOTS, CREATE_INGOTS.tag),
             HEAVY_PLATE = taggedIngredient("heavy_plate", CommonMetal.STEEL.plates, PLATES.tag),
             ALUMINUM_SHEET = taggedIngredient("aluminum_sheet", CommonMetal.ALUMINUM.plates, PLATES.tag),
             NICKEL_SHEET = taggedIngredient("nickel_sheet", CommonMetal.NICKEL.plates, PLATES.tag),
-            CAST_IRON_SHEET = taggedIngredient("cast_iron_sheet", TFMGItemTags.PLATES_CAST_IRON.tag, PLATES.tag),
+            CAST_IRON_SHEET = taggedIngredient("cast_iron_sheet", Items.PLATES_CAST_IRON.tag, PLATES.tag),
             LEAD_SHEET = taggedIngredient("lead_sheet", CommonMetal.LEAD.plates, PLATES.tag),
             LEAD_INGOT = taggedIngredient("lead_ingot", CommonMetal.LEAD.ingots, Tags.Items.INGOTS, CREATE_INGOTS.tag),
             NICKEL_INGOT = taggedIngredient("nickel_ingot", CommonMetal.NICKEL.ingots, Tags.Items.INGOTS, CREATE_INGOTS.tag),
             CONSTANTAN_INGOT = taggedIngredient("constantan_ingot", CommonMetal.CONSTANTAN.ingots, Tags.Items.INGOTS, CREATE_INGOTS.tag),
-            LITHIUM_INGOT = taggedIngredient("lithium_ingot", TFMGItemTags.INGOTS_LITHIUM.tag, Tags.Items.INGOTS, CREATE_INGOTS.tag),
+            LITHIUM_INGOT = taggedIngredient("lithium_ingot", Items.INGOTS_LITHIUM.tag, Tags.Items.INGOTS, CREATE_INGOTS.tag),
             ALUMINUM_NUGGET = taggedIngredient("aluminum_nugget", CommonMetal.ALUMINUM.nuggets, Tags.Items.NUGGETS),
             STEEL_NUGGET = taggedIngredient("steel_nugget", CommonMetal.STEEL.nuggets, Tags.Items.NUGGETS),
-            CAST_IRON_NUGGET = taggedIngredient("cast_iron_nugget", TFMGItemTags.NUGGETS_CAST_IRON.tag, Tags.Items.NUGGETS),
+            CAST_IRON_NUGGET = taggedIngredient("cast_iron_nugget", Items.NUGGETS_CAST_IRON.tag, Tags.Items.NUGGETS),
             CONSTANTAN_NUGGET = taggedIngredient("constantan_nugget", CommonMetal.CONSTANTAN.nuggets, Tags.Items.NUGGETS),
             LEAD_NUGGET = taggedIngredient("lead_nugget", CommonMetal.LEAD.nuggets, Tags.Items.NUGGETS),
             NICKEL_NUGGET = taggedIngredient("nickel_nugget", CommonMetal.NICKEL.nuggets, Tags.Items.NUGGETS),
-            LITHIUM_NUGGET = taggedIngredient("lithium_nugget", TFMGItemTags.NUGGETS_LITHIUM.tag, Tags.Items.NUGGETS),
+            LITHIUM_NUGGET = taggedIngredient("lithium_nugget", Items.NUGGETS_LITHIUM.tag, Tags.Items.NUGGETS),
             RAW_LEAD = taggedIngredient("raw_lead", CommonMetal.LEAD.rawOres, Tags.Items.RAW_MATERIALS),
             RAW_NICKEL = taggedIngredient("raw_nickel", CommonMetal.NICKEL.rawOres, Tags.Items.RAW_MATERIALS),
-            RAW_LITHIUM = taggedIngredient("raw_lithium", TFMGItemTags.RAW_LITHIUM.tag, Tags.Items.RAW_MATERIALS),
+            RAW_LITHIUM = taggedIngredient("raw_lithium", Items.RAW_LITHIUM.tag, Tags.Items.RAW_MATERIALS),
             SYNTHETIC_LEATHER = taggedIngredient("synthetic_leather", Tags.Items.LEATHERS),
-            LIMESAND = taggedIngredient("limesand", TFMGItemTags.FLUX.tag),
-            SULFUR_DUST = taggedIngredient("sulfur_dust", TFMGItemTags.DUSTS_SULFUR.tag, Tags.Items.DUSTS),
-            NITRATE_DUST = taggedIngredient("nitrate_dust", TFMGItemTags.DUSTS_SALTPETER.tag, Tags.Items.DUSTS),
-            RUBBER_SHEET = taggedIngredient("rubber_sheet", TFMGItemTags.INGOTS_RUBBER.tag, PLATES.tag),
-            SILICON_INGOT = taggedIngredient("silicon_ingot", TFMGItemTags.INGOTS_SILICON.tag, CREATE_INGOTS.tag),
+            LIMESAND = taggedIngredient("limesand", Items.FLUX.tag),
+            SULFUR_DUST = taggedIngredient("sulfur_dust", Items.DUSTS_SULFUR.tag, Tags.Items.DUSTS),
+            NITRATE_DUST = taggedIngredient("nitrate_dust", Items.DUSTS_SALTPETER.tag, Tags.Items.DUSTS),
+            RUBBER_SHEET = taggedIngredient("rubber_sheet", Items.INGOTS_RUBBER.tag, PLATES.tag),
+            SILICON_INGOT = taggedIngredient("silicon_ingot", Items.INGOTS_SILICON.tag, CREATE_INGOTS.tag),
             CRUSHED_LITHIUM = taggedIngredient("crushed_raw_lithium", AllTags.AllItemTags.CRUSHED_RAW_MATERIALS.tag)
             ;
 
 
     public static final ItemEntry<Item>
             REBAR = REGISTRATE.item("rebar", Item::new)
-                    .tag(TFMGItemTags.RODS_STEEL.tag, Tags.Items.RODS)
+                    .tag(Items.RODS_STEEL.tag, Tags.Items.RODS)
                     .recipe((c, p) -> p.stonecutting(DataIngredient.tag(CommonMetal.STEEL.ingots), RecipeCategory.BUILDING_BLOCKS, c, 4))
                     .register(),
             SYNTHETIC_STRING = REGISTRATE.item("synthetic_string", Item::new)
                     .tag(Tags.Items.STRINGS)
-                    .recipe((c, p) -> p.stonecutting(DataIngredient.tag(TFMGItemTags.INGOTS_RUBBER.tag), RecipeCategory.MISC, c, 4))
+                    .recipe((c, p) -> p.stonecutting(DataIngredient.tag(Items.INGOTS_RUBBER.tag), RecipeCategory.MISC, c, 4))
                     .register();
 
     public static final ItemEntry<Item>
-            COPPER_WIRE = REGISTRATE.item("copper_wire", Item::new).tag(TFMGItemTags.WIRES_COPPER.tag, TFMGItemTags.WIRES.tag)
+            COPPER_WIRE = REGISTRATE.item("copper_wire", Item::new).tag(Items.WIRES_COPPER.tag, Items.WIRES.tag)
                     .recipe((c, p) -> p.stonecutting(DataIngredient.tag(CommonMetal.COPPER.ingots), RecipeCategory.BUILDING_BLOCKS, c, 2)).register(),
-            ALUMINUM_WIRE = REGISTRATE.item("aluminum_wire", Item::new).tag(TFMGItemTags.WIRES_ALUMINUM.tag, TFMGItemTags.WIRES.tag)
+            ALUMINUM_WIRE = REGISTRATE.item("aluminum_wire", Item::new).tag(Items.WIRES_ALUMINUM.tag, Items.WIRES.tag)
                     .recipe((c, p) -> p.stonecutting(DataIngredient.tag(CommonMetal.ALUMINUM.ingots), RecipeCategory.BUILDING_BLOCKS, c, 2)).register(),
-            CONSTANTAN_WIRE = REGISTRATE.item("constantan_wire", Item::new).tag(TFMGItemTags.WIRES_CONSTANTAN.tag, TFMGItemTags.WIRES.tag)
+            CONSTANTAN_WIRE = REGISTRATE.item("constantan_wire", Item::new).tag(Items.WIRES_CONSTANTAN.tag, Items.WIRES.tag)
                     .recipe((c, p) -> p.stonecutting(DataIngredient.tag(CommonMetal.CONSTANTAN.ingots), RecipeCategory.BUILDING_BLOCKS, c, 2)).register();
 
     public static final ItemEntry<Item>
@@ -169,7 +169,7 @@ public class TFMGItems {
                     .model((c, p) -> p.withExistingParent(c.getName(), TFMG.asResource("item/zinc_electrode_model"))).register(),
             GRAPHITE_ELECTRODE = REGISTRATE.item("graphite_electrode", Item::new)
                     .properties(p -> p.stacksTo(1))
-                    .recipe((c, p) -> p.stonecutting(DataIngredient.tag(TFMGItemTags.STORAGE_BLOCKS_COAL_COKE.tag), RecipeCategory.BUILDING_BLOCKS, c, 1))
+                    .recipe((c, p) -> p.stonecutting(DataIngredient.tag(Items.STORAGE_BLOCKS_COAL_COKE.tag), RecipeCategory.BUILDING_BLOCKS, c, 1))
                     .model((c, p) -> p.withExistingParent(c.getName(), TFMG.asResource("item/graphite_electrode_model"))).register(),
             UNFIRED_INSULATOR = REGISTRATE.item("unfired_insulator", Item::new)
                     .model((c, p) -> p.withExistingParent(c.getName(), TFMG.asResource("item/unfired_insulator_model")))
@@ -205,7 +205,7 @@ public class TFMGItems {
     //        .properties(p -> p.stacksTo(1))
     //        .register();
     public static final ItemEntry<Item> COAL_COKE_DUST = REGISTRATE.item("coal_coke_dust", Item::new)
-            .tag(TFMGItemTags.DUSTS_COAL_COKE.tag, TFMGItemTags.BLAST_FURNACE_FUEL.tag, Tags.Items.DUSTS)
+            .tag(Items.DUSTS_COAL_COKE.tag, Items.BLAST_FURNACE_FUEL.tag, Tags.Items.DUSTS)
             .register();
 
     public static final ItemEntry<OilHammerItem> OIL_HAMMER = REGISTRATE.item("oil_hammer", OilHammerItem::new)
@@ -304,7 +304,7 @@ public class TFMGItems {
                 ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ctx.get())
                         .pattern(" F ").pattern("P P").pattern("P P")
                         .define('P', CommonMetal.IRON.plates)
-                        .define('F', Items.FLINT_AND_STEEL)
+                        .define('F', net.minecraft.world.item.Items.FLINT_AND_STEEL)
                         .unlockedBy("has_plate", DataIngredient.tag(CommonMetal.IRON.plates).getCriterion(prov))
                         .save(prov, ctx.getId().withPrefix("crafting/")), TFMGEngineFuelTypes.CREOSOTE, TFMGEngineFuelTypes.FURNACE_GAS),
 		ENGINE_CYLINDER = cylinder("engine_cylinder", (ctx, prov) ->
@@ -502,7 +502,7 @@ public class TFMGItems {
 
     public static ItemBuilder<SpoolItem, CreateRegistrate> spoolItem(String name, int barColor) {
         return REGISTRATE.item(name + "_spool", p -> new SpoolItem(p, barColor, TFMG.asResource(name)))
-                .tag(TFMGItemTags.SPOOLS.tag)
+                .tag(Items.SPOOLS.tag)
                 .properties(p -> p.stacksTo(1));
     }
 	

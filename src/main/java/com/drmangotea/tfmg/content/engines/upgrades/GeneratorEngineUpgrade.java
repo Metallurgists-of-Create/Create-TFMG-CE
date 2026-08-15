@@ -4,6 +4,7 @@ import com.drmangotea.tfmg.content.engines.types.AbstractSmallEngineBlockEntity;
 import com.drmangotea.tfmg.content.engines.types.regular_engine.RegularEngineBlockEntity;
 import com.drmangotea.tfmg.registry.TFMGBlocks;
 import com.drmangotea.tfmg.registry.TFMGPartialModels;
+import com.drmangotea.tfmg.registry.TFMGTags;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.createmod.catnip.render.CachedBuffers;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -29,7 +30,7 @@ public class GeneratorEngineUpgrade extends EngineUpgrade {
         boolean side = false;
         ms.pushPose();
         if (be instanceof RegularEngineBlockEntity blockEntity) {
-            side = blockEntity.type.upgradesOnSide;
+            side = blockEntity.type.is(TFMGTags.Engines.UPGRADES_ON_SIDE.tag);
         }
 
         CachedBuffers.partial(TFMGPartialModels.ENGINE_GENERATOR, state)

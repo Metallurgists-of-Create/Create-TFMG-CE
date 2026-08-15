@@ -112,7 +112,7 @@ public class PumpjackBaseBlockEntity extends SmartBlockEntity implements IHaveGo
                 deposit = checkedPos;
                 return;
             }
-            if (!(level.getBlockState(new BlockPos(checkedPos)).is(TFMGTags.TFMGBlockTags.INDUSTRIAL_PIPE.tag))) {
+            if (!(level.getBlockState(new BlockPos(checkedPos)).is(TFMGTags.Blocks.INDUSTRIAL_PIPE.tag))) {
                 deposit = null;
                 return;
             }

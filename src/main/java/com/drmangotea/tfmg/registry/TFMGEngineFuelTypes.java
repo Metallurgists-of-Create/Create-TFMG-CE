@@ -28,43 +28,43 @@ public class TFMGEngineFuelTypes {
                 .torque(1)
                 .build());
 
-        register(ctx, GASOLINE, new EngineFuelType.Builder(TFMGTags.TFMGFluidTags.GASOLINE.tag)
+        register(ctx, GASOLINE, new EngineFuelType.Builder(TFMGTags.Fluids.GASOLINE.tag)
                 .speed(1)
                 .efficiency(1)
                 .torque(1)
                 .build());
 
-        register(ctx, DIESEL, new EngineFuelType.Builder(TFMGTags.TFMGFluidTags.DIESEL.tag)
+        register(ctx, DIESEL, new EngineFuelType.Builder(TFMGTags.Fluids.DIESEL.tag)
                 .speed(0.8f)
                 .efficiency(0.8f)
                 .torque(1.4f)
                 .build());
 
-        register(ctx, LPG, new EngineFuelType.Builder(TFMGTags.TFMGFluidTags.LPG.tag)
+        register(ctx, LPG, new EngineFuelType.Builder(TFMGTags.Fluids.LPG.tag)
                 .speed(1.2f)
                 .efficiency(0.7f)
                 .torque(0.7f)
                 .build());
 
-        register(ctx, KEROSENE, new EngineFuelType.Builder(TFMGTags.TFMGFluidTags.KEROSENE.tag)
+        register(ctx, KEROSENE, new EngineFuelType.Builder(TFMGTags.Fluids.KEROSENE.tag)
                 .speed(0.7f)
                 .efficiency(1f)
                 .torque(1.4f)
                 .build());
 
-        register(ctx, NAPHTHA, new EngineFuelType.Builder(TFMGTags.TFMGFluidTags.NAPHTHA.tag)
+        register(ctx, NAPHTHA, new EngineFuelType.Builder(TFMGTags.Fluids.NAPHTHA.tag)
                 .speed(1f)
                 .efficiency(0.7f)
                 .torque(1.3f)
                 .build());
 
-        register(ctx, CREOSOTE, new EngineFuelType.Builder(TFMGTags.TFMGFluidTags.CREOSOTE.tag)
+        register(ctx, CREOSOTE, new EngineFuelType.Builder(TFMGTags.Fluids.CREOSOTE.tag)
                 .speed(0.7f)
                 .efficiency(0.4f)
                 .torque(0.5f)
                 .build());
 
-        register(ctx, FURNACE_GAS, new EngineFuelType.Builder(TFMGTags.TFMGFluidTags.FURNACE_GAS.tag)
+        register(ctx, FURNACE_GAS, new EngineFuelType.Builder(TFMGTags.Fluids.FURNACE_GAS.tag)
                 .speed(0.5f)
                 .efficiency(0.3f)
                 .torque(0.3f)

@@ -159,8 +159,8 @@ import java.util.Map;
 import static com.drmangotea.tfmg.TFMG.REGISTRATE;
 import static com.drmangotea.tfmg.base.TFMGBuilderTransformers.*;
 import static com.drmangotea.tfmg.content.electricity.lights.LightBulbBlock.LIGHT;
-import static com.drmangotea.tfmg.registry.TFMGTags.TFMGBlockTags;
-import static com.drmangotea.tfmg.registry.TFMGTags.TFMGItemTags;
+import static com.drmangotea.tfmg.registry.TFMGTags.Blocks;
+import static com.drmangotea.tfmg.registry.TFMGTags.Items;
 import static com.simibubi.create.api.behaviour.display.DisplaySource.displaySource;
 import static com.simibubi.create.api.behaviour.movement.MovementBehaviour.movementBehaviour;
 import static com.simibubi.create.api.contraption.storage.fluid.MountedFluidStorageType.mountedFluidStorage;
@@ -319,7 +319,7 @@ public class TFMGBlocks {
             .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
             .properties(p -> p.sound(SoundType.STONE))
             .transform(pickaxeOnly())
-            .tag(TFMGBlockTags.INDUSTRIAL_PIPE.tag)
+            .tag(Blocks.INDUSTRIAL_PIPE.tag)
             .recipe((c, p) -> p.stonecutting(DataIngredient.tag(CommonMetal.STEEL.ingots), RecipeCategory.BUILDING_BLOCKS, c, 8))
             .blockstate((ctx, prov) -> prov.simpleBlock(ctx.getEntry(), AssetLookup.partialBaseModel(ctx, prov)))
             .simpleItem()
@@ -330,7 +330,7 @@ public class TFMGBlocks {
             .properties(p -> p.sound(SoundType.NETHERITE_BLOCK))
             .transform(pickaxeOnly())
             .loot((lt, block) -> lt.dropOther(block, TFMGBlocks.INDUSTRIAL_PIPE.get().asItem()))
-            .tag(TFMGBlockTags.INDUSTRIAL_PIPE.tag)
+            .tag(Blocks.INDUSTRIAL_PIPE.tag)
             .blockstate((ctx, prov) -> prov.simpleBlock(ctx.getEntry(), AssetLookup.partialBaseModel(ctx, prov)))
             .register();
 
@@ -365,7 +365,7 @@ public class TFMGBlocks {
             .transform(pickaxeOnly())
             .properties(BlockBehaviour.Properties::noOcclusion)
             .blockstate(BlockStateGen.horizontalBlockProvider(false))
-            .tag(TFMGBlockTags.PUMPJACK_SMALL_PART.tag)
+            .tag(Blocks.PUMPJACK_SMALL_PART.tag)
             .recipe((c, p) -> p.stonecutting(DataIngredient.tag(CommonMetal.STEEL.storageBlocks.items()),
                     RecipeCategory.DECORATIONS, c, 2))
             .simpleItem()
@@ -375,7 +375,7 @@ public class TFMGBlocks {
             .transform(pickaxeOnly())
             .properties(BlockBehaviour.Properties::noOcclusion)
             .blockstate(BlockStateGen.horizontalBlockProvider(false))
-            .tag(TFMGBlockTags.PUMPJACK_HEAD.tag)
+            .tag(Blocks.PUMPJACK_HEAD.tag)
             .simpleItem()
             .register();
 
@@ -384,14 +384,14 @@ public class TFMGBlocks {
             .transform(pickaxeOnly())
             .properties(BlockBehaviour.Properties::noOcclusion)
             .blockstate(BlockStateGen.horizontalBlockProvider(false))
-            .tag(TFMGBlockTags.PUMPJACK_CONNECTOR.tag)
+            .tag(Blocks.PUMPJACK_CONNECTOR.tag)
             .simpleItem()
             .register();
     public static final BlockEntry<LargePumpjackHammerPartBlock> LARGE_PUMPJACK_HAMMER_PART = REGISTRATE.block("large_pumpjack_hammer_part", LargePumpjackHammerPartBlock::new)
             .initialProperties(SharedProperties::softMetal)
             .transform(pickaxeOnly())
             .blockstate(BlockStateGen.horizontalBlockProvider(false))
-            .tag(TFMGBlockTags.PUMPJACK_PART.tag)
+            .tag(Blocks.PUMPJACK_PART.tag)
             .recipe((c, p) -> p.stonecutting(DataIngredient.tag(CommonMetal.STEEL.storageBlocks.items()),
                     RecipeCategory.DECORATIONS, c, 2))
             .simpleItem()
@@ -401,14 +401,14 @@ public class TFMGBlocks {
             .initialProperties(SharedProperties::softMetal)
             .transform(pickaxeOnly())
             .blockstate(BlockStateGen.horizontalBlockProvider(false))
-            .tag(TFMGBlockTags.PUMPJACK_HEAD.tag)
+            .tag(Blocks.PUMPJACK_HEAD.tag)
             .simpleItem()
             .register();
     public static final BlockEntry<LargePumpjackHammerConnectorBlock> LARGE_PUMPJACK_HAMMER_CONNECTOR = REGISTRATE.block("large_pumpjack_hammer_connector", LargePumpjackHammerConnectorBlock::new)
             .initialProperties(SharedProperties::softMetal)
             .transform(pickaxeOnly())
             .blockstate(BlockStateGen.horizontalBlockProvider(false))
-            .tag(TFMGBlockTags.PUMPJACK_CONNECTOR.tag)
+            .tag(Blocks.PUMPJACK_CONNECTOR.tag)
             .simpleItem()
             .register();
     public static final BlockEntry<PumpjackBaseBlock> PUMPJACK_BASE = REGISTRATE.block("pumpjack_base", PumpjackBaseBlock::new)
@@ -419,10 +419,10 @@ public class TFMGBlocks {
             .simpleItem()
             .register();
     public static final BlockEntry<Block> OIL_DEPOSIT = REGISTRATE.block("oil_deposit", Block::new)
-            .initialProperties(() -> Blocks.BEDROCK)
+            .initialProperties(() -> net.minecraft.world.level.block.Blocks.BEDROCK)
             .properties(p -> p)
             .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
-            .tag(TFMGBlockTags.SURFACE_SCANNER_FINDABLE.tag)
+            .tag(Blocks.SURFACE_SCANNER_FINDABLE.tag)
             .tag(BlockTags.WITHER_IMMUNE, BlockTags.DRAGON_IMMUNE)
             .tag(BlockTags.INFINIBURN_OVERWORLD, BlockTags.BLOCKS_WIND_CHARGE_EXPLOSIONS)
             .tag(BlockTags.FEATURES_CANNOT_REPLACE, BlockTags.GEODE_INVALID_BLOCKS)
@@ -511,7 +511,7 @@ public class TFMGBlocks {
 
     //------------------ORES------------------//
     public static final BlockEntry<Block> LEAD_ORE = REGISTRATE.block("lead_ore", Block::new)
-            .initialProperties(() -> Blocks.GOLD_ORE)
+            .initialProperties(() -> net.minecraft.world.level.block.Blocks.GOLD_ORE)
             .properties(p -> p
                     .requiresCorrectToolForDrops()
                     .sound(SoundType.STONE))
@@ -533,7 +533,7 @@ public class TFMGBlocks {
             .register();
 
     public static final BlockEntry<Block> DEEPSLATE_LEAD_ORE = REGISTRATE.block("deepslate_lead_ore", Block::new)
-            .initialProperties(() -> Blocks.DEEPSLATE_GOLD_ORE)
+            .initialProperties(() -> net.minecraft.world.level.block.Blocks.DEEPSLATE_GOLD_ORE)
             .properties(p -> p
                     .requiresCorrectToolForDrops()
                     .sound(SoundType.DEEPSLATE))
@@ -556,7 +556,7 @@ public class TFMGBlocks {
             .register();
 
     public static final BlockEntry<Block> NICKEL_ORE = REGISTRATE.block("nickel_ore", Block::new)
-            .initialProperties(() -> Blocks.GOLD_ORE)
+            .initialProperties(() -> net.minecraft.world.level.block.Blocks.GOLD_ORE)
             .properties(p -> p
                     .requiresCorrectToolForDrops()
                     .sound(SoundType.STONE))
@@ -579,7 +579,7 @@ public class TFMGBlocks {
             .register();
 
     public static final BlockEntry<Block> DEEPSLATE_NICKEL_ORE = REGISTRATE.block("deepslate_nickel_ore", Block::new)
-            .initialProperties(() -> Blocks.DEEPSLATE_GOLD_ORE)
+            .initialProperties(() -> net.minecraft.world.level.block.Blocks.DEEPSLATE_GOLD_ORE)
             .properties(p -> p
                     .requiresCorrectToolForDrops()
                     .sound(SoundType.DEEPSLATE))
@@ -602,7 +602,7 @@ public class TFMGBlocks {
             .register();
 
     public static final BlockEntry<Block> LITHIUM_ORE = REGISTRATE.block("lithium_ore", Block::new)
-            .initialProperties(() -> Blocks.GOLD_ORE)
+            .initialProperties(() -> net.minecraft.world.level.block.Blocks.GOLD_ORE)
             .properties(p -> p
                     .requiresCorrectToolForDrops()
                     .sound(SoundType.STONE))
@@ -618,14 +618,14 @@ public class TFMGBlocks {
             .tag(BlockTags.NEEDS_STONE_TOOL)
             .transform(tagBlockAndItem(Map.of(
                     Tags.Blocks.ORES, Tags.Items.ORES,
-                    TFMGBlockTags.ORES_LITHIUM.tag, TFMGItemTags.ORES_LITHIUM.tag,
+                    Blocks.ORES_LITHIUM.tag, Items.ORES_LITHIUM.tag,
                     Tags.Blocks.ORES_IN_GROUND_STONE, Tags.Items.ORES_IN_GROUND_STONE
             )))
             .build()
             .register();
 
     public static final BlockEntry<Block> DEEPSLATE_LITHIUM_ORE = REGISTRATE.block("deepslate_lithium_ore", Block::new)
-            .initialProperties(() -> Blocks.DEEPSLATE_GOLD_ORE)
+            .initialProperties(() -> net.minecraft.world.level.block.Blocks.DEEPSLATE_GOLD_ORE)
             .properties(p -> p
                     .requiresCorrectToolForDrops()
                     .sound(SoundType.DEEPSLATE))
@@ -641,23 +641,23 @@ public class TFMGBlocks {
             .tag(BlockTags.NEEDS_STONE_TOOL)
             .transform(tagBlockAndItem(Map.of(
                     Tags.Blocks.ORES, Tags.Items.ORES,
-                    TFMGBlockTags.ORES_LITHIUM.tag, TFMGItemTags.ORES_LITHIUM.tag,
+                    Blocks.ORES_LITHIUM.tag, Items.ORES_LITHIUM.tag,
                     Tags.Blocks.ORES_IN_GROUND_DEEPSLATE, Tags.Items.ORES_IN_GROUND_DEEPSLATE
             )))
             .build()
             .register();
     public static final BlockEntry<Block> SULFUR = REGISTRATE.block("sulfur", Block::new)
-            .initialProperties(() -> Blocks.CALCITE)
+            .initialProperties(() -> net.minecraft.world.level.block.Blocks.CALCITE)
             .transform(pickaxeOnly())
             .simpleItem()
             .register();
     public static final BlockEntry<Block> LIGNITE = REGISTRATE.block("lignite", Block::new)
-            .initialProperties(() -> Blocks.CALCITE)
+            .initialProperties(() -> net.minecraft.world.level.block.Blocks.CALCITE)
             .transform(pickaxeOnly())
             .simpleItem()
             .register();
     public static final BlockEntry<Block> FIRECLAY = REGISTRATE.block("fireclay", Block::new)
-            .initialProperties(() -> Blocks.CLAY)
+            .initialProperties(() -> net.minecraft.world.level.block.Blocks.CLAY)
             .tag(BlockTags.MINEABLE_WITH_SHOVEL)
             .loot((p, b) -> p
                     .add(b, p.createSingleItemTable(TFMGItems.FIRECLAY_BALL.get())))
@@ -665,7 +665,7 @@ public class TFMGBlocks {
             .register();
     //------------------MISC------------------//
     public static final BlockEntry<Block> FOSSILSTONE = REGISTRATE.block("fossilstone", Block::new)
-            .initialProperties(() -> Blocks.OBSIDIAN)
+            .initialProperties(() -> net.minecraft.world.level.block.Blocks.OBSIDIAN)
             .properties(p -> p.strength(100f, 1200f))
             .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
             .transform(pickaxeOnly())
@@ -682,7 +682,7 @@ public class TFMGBlocks {
                     .lang("Block of Slag")
                     .register();
     public static final BlockEntry<Block> RAW_NICKEL_BLOCK = REGISTRATE.block("raw_nickel_block", Block::new)
-            .initialProperties(() -> Blocks.RAW_GOLD_BLOCK)
+            .initialProperties(() -> net.minecraft.world.level.block.Blocks.RAW_GOLD_BLOCK)
             .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
             .transform(pickaxeOnly())
             .lang("Block of Raw Nickel")
@@ -694,7 +694,7 @@ public class TFMGBlocks {
             .build()
             .register();
     public static final BlockEntry<Block> RAW_LEAD_BLOCK = REGISTRATE.block("raw_lead_block", Block::new)
-            .initialProperties(() -> Blocks.RAW_GOLD_BLOCK)
+            .initialProperties(() -> net.minecraft.world.level.block.Blocks.RAW_GOLD_BLOCK)
             .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
             .transform(pickaxeOnly())
             .lang("Block of Raw Lead")
@@ -706,14 +706,14 @@ public class TFMGBlocks {
             .build()
             .register();
     public static final BlockEntry<Block> RAW_LITHIUM_BLOCK = REGISTRATE.block("raw_lithium_block", Block::new)
-            .initialProperties(() -> Blocks.RAW_GOLD_BLOCK)
+            .initialProperties(() -> net.minecraft.world.level.block.Blocks.RAW_GOLD_BLOCK)
             .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
             .transform(pickaxeOnly())
             .lang("Block of Raw Lithium")
             .tag(BlockTags.NEEDS_IRON_TOOL)
             .transform(tagBlockAndItem(Map.of(
                     Tags.Blocks.STORAGE_BLOCKS, Tags.Items.STORAGE_BLOCKS,
-                    TFMGBlockTags.STORAGE_BLOCKS_RAW_LITHIUM.tag, TFMGItemTags.STORAGE_BLOCKS_RAW_LITHIUM.tag
+                    Blocks.STORAGE_BLOCKS_RAW_LITHIUM.tag, Items.STORAGE_BLOCKS_RAW_LITHIUM.tag
             )))
             .build()
             .register();
@@ -783,7 +783,7 @@ public class TFMGBlocks {
 
     //------------------METALLURGY------------------//
     public static final BlockEntry<BlastFurnaceOutputBlock> BLAST_FURNACE_OUTPUT = REGISTRATE.block("blast_furnace_output", BlastFurnaceOutputBlock::new)
-            .initialProperties(() -> Blocks.NETHER_BRICKS)
+            .initialProperties(() -> net.minecraft.world.level.block.Blocks.NETHER_BRICKS)
             .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
             .transform(pickaxeOnly())
             .blockstate(BlockStateGen.horizontalBlockProvider(true))
@@ -793,28 +793,28 @@ public class TFMGBlocks {
             .register();
 
     public static final BlockEntry<BlastFurnaceHatchBlock> BLAST_FURNACE_HATCH = REGISTRATE.block("blast_furnace_hatch", BlastFurnaceHatchBlock::new)
-            .initialProperties(() -> Blocks.NETHER_BRICKS)
+            .initialProperties(() -> net.minecraft.world.level.block.Blocks.NETHER_BRICKS)
             .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
             .transform(pickaxeOnly())
-            .tag(TFMGBlockTags.BLAST_FURNACE_WALL.tag)
-            .tag(TFMGBlockTags.REINFORCED_BLAST_FURNACE_WALL.tag)
+            .tag(Blocks.BLAST_FURNACE_WALL.tag)
+            .tag(Blocks.REINFORCED_BLAST_FURNACE_WALL.tag)
             .tag(BlockTags.NEEDS_STONE_TOOL)
             .simpleItem()
             .register();
     public static final BlockEntry<Block> FIREPROOF_BRICKS = REGISTRATE.block("fireproof_bricks", Block::new)
-            .initialProperties(() -> Blocks.NETHER_BRICKS)
+            .initialProperties(() -> net.minecraft.world.level.block.Blocks.NETHER_BRICKS)
             .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
             .transform(pickaxeOnly())
-            .tag(TFMGBlockTags.BLAST_FURNACE_WALL.tag)
+            .tag(Blocks.BLAST_FURNACE_WALL.tag)
             .tag(BlockTags.NEEDS_STONE_TOOL)
             .simpleItem()
             .register();
 
     public static final BlockEntry<Block> REINFORCED_FIREPROOF_BRICKS = REGISTRATE.block("reinforced_fireproof_bricks", Block::new)
-            .initialProperties(() -> Blocks.NETHER_BRICKS)
+            .initialProperties(() -> net.minecraft.world.level.block.Blocks.NETHER_BRICKS)
             .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
             .transform(pickaxeOnly())
-            .tag(TFMGBlockTags.REINFORCED_BLAST_FURNACE_WALL.tag)
+            .tag(Blocks.REINFORCED_BLAST_FURNACE_WALL.tag)
             .tag(BlockTags.NEEDS_STONE_TOOL)
             .blockstate(simpleCubeAll("fireproof_bricks"))
             .loot((lt, block) -> lt.dropOther(block, TFMGBlocks.FIREPROOF_BRICKS.get().asItem()))
@@ -825,7 +825,7 @@ public class TFMGBlocks {
             .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
             .transform(pickaxeOnly())
             .onRegister(connectedTextures(() -> new HorizontalCTBehaviour(TFMGSpriteShifts.BLAST_FURNACE_REINFORCEMENT)))
-            .tag(TFMGBlockTags.REINFORCED_BLAST_FURNACE_SUPPORT.tag)
+            .tag(Blocks.REINFORCED_BLAST_FURNACE_SUPPORT.tag)
             .tag(BlockTags.NEEDS_STONE_TOOL)
             .item(BlastFurnaceReinforcementBlockItem::new)
             .build()
@@ -837,7 +837,7 @@ public class TFMGBlocks {
             .transform(pickaxeOnly())
             .properties(BlockBehaviour.Properties::noOcclusion)
             .onRegister(connectedTextures(() -> new HorizontalCTBehaviour(TFMGSpriteShifts.BLAST_FURNACE_REINFORCEMENT)))
-            .tag(BlockTags.NEEDS_STONE_TOOL, TFMGBlockTags.NON_DIAGONAL_WALLS.tag)
+            .tag(BlockTags.NEEDS_STONE_TOOL, Blocks.NON_DIAGONAL_WALLS.tag)
             .blockstate(BlockStateGen.horizontalBlockProvider(false))
             .loot((lt, block) -> lt.dropOther(block, TFMGBlocks.BLAST_FURNACE_REINFORCEMENT.get().asItem()))
             .register();
@@ -847,7 +847,7 @@ public class TFMGBlocks {
             .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
             .transform(pickaxeOnly())
             .onRegister(connectedTextures(() -> new HorizontalCTBehaviour(TFMGSpriteShifts.RUSTED_BLAST_FURNACE_REINFORCEMENT)))
-            .tag(TFMGBlockTags.REINFORCED_BLAST_FURNACE_SUPPORT.tag)
+            .tag(Blocks.REINFORCED_BLAST_FURNACE_SUPPORT.tag)
             .tag(BlockTags.NEEDS_STONE_TOOL)
             .item(BlastFurnaceReinforcementBlockItem::new)
             .build()
@@ -866,11 +866,11 @@ public class TFMGBlocks {
 
 
     public static final BlockEntry<WallBlock> FIREPROOF_BRICK_REINFORCEMENT = REGISTRATE.block("fireproof_brick_reinforcement", WallBlock::new)
-            .initialProperties(() -> Blocks.NETHER_BRICKS)
+            .initialProperties(() -> net.minecraft.world.level.block.Blocks.NETHER_BRICKS)
             .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
             .transform(pickaxeOnly())
             .tag(BlockTags.WALLS)
-            .tag(TFMGBlockTags.BLAST_FURNACE_SUPPORT.tag)
+            .tag(Blocks.BLAST_FURNACE_SUPPORT.tag)
             .blockstate((c, p) -> TFMGVanillaBlockStates.generateWallBlockState(c, p, "fireproof_brick_reinforcement"))
             .item()
             .transform(b -> TFMGVanillaBlockStates.transformWallItem(b, "fireproof_brick_reinforcement"))
@@ -878,7 +878,7 @@ public class TFMGBlocks {
             .register();
 
     public static final BlockEntry<CokeOvenBlock> COKE_OVEN = REGISTRATE.block("coke_oven", CokeOvenBlock::new)
-            .initialProperties(() -> Blocks.BRICKS)
+            .initialProperties(() -> net.minecraft.world.level.block.Blocks.BRICKS)
             .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
             .blockstate(new CokeOvenGenerator()::generate)
             .transform(pickaxeOnly())
@@ -934,7 +934,7 @@ public class TFMGBlocks {
 
     public static final BlockEntry<CableConnectorBlock> CABLE_CONNECTOR =
             REGISTRATE.block("cable_connector", CableConnectorBlock::new)
-                    .initialProperties(() -> Blocks.TERRACOTTA)
+                    .initialProperties(() -> net.minecraft.world.level.block.Blocks.TERRACOTTA)
                     .transform(pickaxeOnly())
                     .addLayer(() -> RenderType::cutoutMipped)
                     .properties(BlockBehaviour.Properties::noOcclusion)
@@ -946,7 +946,7 @@ public class TFMGBlocks {
 
     public static final BlockEntry<CableConnectorBlock> GLASS_CABLE_CONNECTOR =
             REGISTRATE.block("glass_cable_insulator", CableConnectorBlock::new)
-                    .initialProperties(() -> Blocks.TERRACOTTA)
+                    .initialProperties(() -> net.minecraft.world.level.block.Blocks.TERRACOTTA)
                     .transform(pickaxeOnly())
                     .properties(BlockBehaviour.Properties::noOcclusion)
                     .addLayer(() -> RenderType::translucent)
@@ -991,7 +991,7 @@ public class TFMGBlocks {
                     .register();
     public static final BlockEntry<CableHubBlock> COPPER_CABLE_HUB =
             REGISTRATE.block("copper_cable_hub", p -> new CableHubBlock(p, 16))
-                    .initialProperties(() -> Blocks.COPPER_BLOCK)
+                    .initialProperties(() -> net.minecraft.world.level.block.Blocks.COPPER_BLOCK)
                     .properties(p -> p.sound(SoundType.COPPER))
                     .transform(pickaxeOnly())
                     .item()
@@ -1038,7 +1038,7 @@ public class TFMGBlocks {
 
     public static final BlockEntry<CableTubeBlock> CONCRETE_ENCASED_CABLE_TUBE =
             REGISTRATE.block("concrete_encased_cable_tube", p -> new CableTubeBlock(p, true))
-                    .initialProperties(() -> Blocks.STONE)
+                    .initialProperties(() -> net.minecraft.world.level.block.Blocks.STONE)
                     .blockstate(BlockStateGen.axisBlockProvider(false))
                     .transform(pickaxeOnly())
                     .loot((lt, block) -> lt.dropOther(block, TFMGBlocks.CABLE_TUBE.get().asItem()))
@@ -1055,7 +1055,7 @@ public class TFMGBlocks {
 
     public static final BlockEntry<CableTubeBlock> CONCRETE_ENCASED_ELECTRIC_POST =
             REGISTRATE.block("concrete_encased_electric_post", p -> new CableTubeBlock(p, true))
-                    .initialProperties(() -> Blocks.STONE)
+                    .initialProperties(() -> net.minecraft.world.level.block.Blocks.STONE)
                     .blockstate(BlockStateGen.axisBlockProvider(false))
                     .transform(pickaxeOnly())
                     .loot((lt, block) -> lt.dropOther(block, TFMGBlocks.ELECTRIC_POST.get().asItem()))
@@ -1163,7 +1163,7 @@ public class TFMGBlocks {
 
     public static final BlockEntry<NeonTubeBlock> NEON_TUBE =
             REGISTRATE.block("neon_tube", NeonTubeBlock::new)
-                    .initialProperties(() -> Blocks.GLASS)
+                    .initialProperties(() -> net.minecraft.world.level.block.Blocks.GLASS)
                     .properties(p -> p.lightLevel(s -> s.getValue(LIGHT)))
                     .transform(pickaxeOnly())
                     .addLayer(() -> RenderType::cutoutMipped)
@@ -1372,7 +1372,7 @@ public class TFMGBlocks {
 
     //------------------EXHAUST/WASTE_REMOVAL------------------//
     public static final BlockEntry<SmokestackBlock> BRICK_SMOKESTACK = REGISTRATE.block("brick_smokestack", SmokestackBlock::new)
-            .initialProperties(() -> Blocks.BRICKS)
+            .initialProperties(() -> net.minecraft.world.level.block.Blocks.BRICKS)
             .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
             .transform(pickaxeOnly())
             .blockstate(new SmokestackGenerator()::generate)
@@ -1390,7 +1390,7 @@ public class TFMGBlocks {
             .register();
 
     public static final BlockEntry<SmokestackBlock> CONCRETE_SMOKESTACK = REGISTRATE.block("concrete_smokestack", SmokestackBlock::new)
-            .initialProperties(() -> Blocks.STONE)
+            .initialProperties(() -> net.minecraft.world.level.block.Blocks.STONE)
             .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
             .transform(pickaxeOnly())
             .blockstate(new SmokestackGenerator()::generate)
@@ -1497,7 +1497,7 @@ public class TFMGBlocks {
             .transform(BuilderTransformers.casing(() -> TFMGSpriteShifts.STEEL_CASING))
             .register();
     public static final BlockEntry<CasingBlock> HEAVY_MACHINERY_CASING = REGISTRATE.block("heavy_machinery_casing", CasingBlock::new)
-            .tag(TFMGBlockTags.SURFACE_SCANNER_FINDABLE.tag)
+            .tag(Blocks.SURFACE_SCANNER_FINDABLE.tag)
             .transform(BuilderTransformers.casing(() -> TFMGSpriteShifts.HEAVY_MACHINERY_CASING))
             .properties(p -> p.sound(SoundType.NETHERITE_BLOCK))
             .register();
@@ -1516,8 +1516,8 @@ public class TFMGBlocks {
             .transform(pickaxeOnly())
             .blockstate(simpleCubeAll("steel_block"))
             .tag(BlockTags.NEEDS_IRON_TOOL)
-            .tag(TFMGBlockTags.REINFORCED_BLAST_FURNACE_WALL.tag)
-            .tag(TFMGBlockTags.REINFORCED_BLAST_FURNACE_SUPPORT.tag)
+            .tag(Blocks.REINFORCED_BLAST_FURNACE_WALL.tag)
+            .tag(Blocks.REINFORCED_BLAST_FURNACE_SUPPORT.tag)
             .tag(BlockTags.BEACON_BASE_BLOCKS)
             .transform(tagBlockAndItem(Map.of(
                     Tags.Blocks.STORAGE_BLOCKS, Tags.Items.STORAGE_BLOCKS,
@@ -1538,7 +1538,7 @@ public class TFMGBlocks {
             .tag(BlockTags.BEACON_BASE_BLOCKS)
             .transform(tagBlockAndItem(Map.of(
                     Tags.Blocks.STORAGE_BLOCKS, Tags.Items.STORAGE_BLOCKS,
-                    TFMGBlockTags.STORAGE_BLOCKS_CAST_IRON.tag, TFMGItemTags.STORAGE_BLOCKS_CAST_IRON.tag
+                    Blocks.STORAGE_BLOCKS_CAST_IRON.tag, Items.STORAGE_BLOCKS_CAST_IRON.tag
             )))
             .build()
             .lang("Block of Cast Iron")
@@ -1562,7 +1562,7 @@ public class TFMGBlocks {
             .lang("Block of Aluminum")
             .register();
     public static final BlockEntry<Block> PLASTIC_BLOCK = REGISTRATE.block("plastic_block", Block::new)
-            .initialProperties(() -> Blocks.QUARTZ_BLOCK)
+            .initialProperties(() -> net.minecraft.world.level.block.Blocks.QUARTZ_BLOCK)
 
             .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
             .transform(pickaxeOnly())
@@ -1570,7 +1570,7 @@ public class TFMGBlocks {
             .tag(BlockTags.NEEDS_STONE_TOOL)
             .transform(tagBlockAndItem(Map.of(
                     Tags.Blocks.STORAGE_BLOCKS, Tags.Items.STORAGE_BLOCKS,
-                    TFMGBlockTags.STORAGE_BLOCKS_PLASTIC.tag, TFMGItemTags.STORAGE_BLOCKS_PLASTIC.tag
+                    Blocks.STORAGE_BLOCKS_PLASTIC.tag, Items.STORAGE_BLOCKS_PLASTIC.tag
             )))
             .build()
             .lang("Block of Plastic")
@@ -1631,7 +1631,7 @@ public class TFMGBlocks {
             .tag(BlockTags.BEACON_BASE_BLOCKS)
             .transform(tagBlockAndItem(Map.of(
                     Tags.Blocks.STORAGE_BLOCKS, Tags.Items.STORAGE_BLOCKS,
-                    TFMGBlockTags.STORAGE_BLOCKS_LITHIUM.tag, TFMGItemTags.STORAGE_BLOCKS_LITHIUM.tag
+                    Blocks.STORAGE_BLOCKS_LITHIUM.tag, Items.STORAGE_BLOCKS_LITHIUM.tag
             )))
             .build()
             .lang("Block of Lithium")
@@ -1645,10 +1645,10 @@ public class TFMGBlocks {
             .blockstate(simpleCubeAll("coal_coke_block"))
             .tag(BlockTags.NEEDS_STONE_TOOL)
             .tag(Tags.Blocks.STORAGE_BLOCKS)
-            .tag(TFMGBlockTags.STORAGE_BLOCKS_COAL_COKE.tag)
+            .tag(Blocks.STORAGE_BLOCKS_COAL_COKE.tag)
             .item()
             .tag(Tags.Items.STORAGE_BLOCKS)
-            .tag(TFMGItemTags.STORAGE_BLOCKS_COAL_COKE.tag)
+            .tag(Items.STORAGE_BLOCKS_COAL_COKE.tag)
             .build()
             .lang("Block of Coal Coke")
             .register();
@@ -1665,7 +1665,7 @@ public class TFMGBlocks {
             .register();
 
     public static final BlockEntry<ColoredFallingBlock> CEMENT = REGISTRATE.block("cement", p -> new ColoredFallingBlock(new ColorRGBA(-8356741), p))
-            .initialProperties(() -> Blocks.CLAY)
+            .initialProperties(() -> net.minecraft.world.level.block.Blocks.CLAY)
             .tag(BlockTags.MINEABLE_WITH_SHOVEL)
             .simpleItem()
             .register();
@@ -1727,7 +1727,7 @@ public class TFMGBlocks {
             () -> DataIngredient.tag(CommonMetal.ALUMINUM.ingots), MapColor.TERRACOTTA_WHITE);
 
     public static final BlockEntry<IronBarsBlock> CAST_IRON_BARS = TFMGMetalBarsGen.createBars("cast_iron", true,
-            () -> DataIngredient.tag(TFMGItemTags.INGOTS_CAST_IRON.tag), MapColor.COLOR_BLACK);
+            () -> DataIngredient.tag(Items.INGOTS_CAST_IRON.tag), MapColor.COLOR_BLACK);
 
     public static final BlockEntry<IronBarsBlock> LEAD_BARS = TFMGMetalBarsGen.createBars("lead", true,
             () -> DataIngredient.tag(CommonMetal.LEAD.ingots), MapColor.TERRACOTTA_BLUE);
@@ -1750,7 +1750,7 @@ public class TFMGBlocks {
     public static final BlockEntry<MetalLadderBlock> CAST_IRON_LADDER =
             REGISTRATE.block("cast_iron_ladder", MetalLadderBlock::new)
                     .transform(BuilderTransformers.ladder("cast_iron",
-                            () -> DataIngredient.tag(TFMGItemTags.INGOTS_CAST_IRON.tag), MapColor.TERRACOTTA_WHITE))
+                            () -> DataIngredient.tag(Items.INGOTS_CAST_IRON.tag), MapColor.TERRACOTTA_WHITE))
                     .register();
 
     public static final BlockEntry<MetalLadderBlock> LEAD_LADDER =
@@ -1830,7 +1830,7 @@ public class TFMGBlocks {
     //public static final MaterialSet SLAG_BRICKS_SET = makeVariants(SLAG_BRICKS, true);
     public static final BlockEntry<LithiumTorchBlock> LITHIUM_TORCH =
             REGISTRATE.block("lithium_torch", LithiumTorchBlock::new)
-                    .initialProperties(() -> Blocks.TORCH)
+                    .initialProperties(() -> net.minecraft.world.level.block.Blocks.TORCH)
                     .properties(p -> p.lightLevel(s -> 14).instabreak().noOcclusion())
                     .addLayer(() -> RenderType::cutoutMipped)
                     .blockstate(new LithiumTorchGenerator()::generate)
@@ -1854,7 +1854,7 @@ public class TFMGBlocks {
 
     public static final BlockEntry<Block> HARDENED_PLANKS =
             REGISTRATE.block("hardened_planks", Block::new)
-                    .initialProperties(() -> Blocks.OAK_PLANKS)
+                    .initialProperties(() -> net.minecraft.world.level.block.Blocks.OAK_PLANKS)
                     .properties(p -> p
                             .strength(2.0F)
                             .sound(SoundType.CHERRY_WOOD))
@@ -1982,7 +1982,7 @@ public class TFMGBlocks {
 
 
     public static final BlockEntry<Block> ASPHALT = REGISTRATE.block("asphalt", Block::new)
-            .initialProperties(() -> Blocks.STONE)
+            .initialProperties(() -> net.minecraft.world.level.block.Blocks.STONE)
             .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
             .transform(pickaxeOnly())
             .tag(BlockTags.NEEDS_STONE_TOOL)

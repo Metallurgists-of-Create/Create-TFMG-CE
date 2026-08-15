@@ -4,6 +4,8 @@ import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.base.fluid.GasFluidType;
 import com.drmangotea.tfmg.content.electricity.connection.cable_type.CableType;
 import com.drmangotea.tfmg.content.electricity.connection.cable_type.CableTypeBuilder;
+import com.drmangotea.tfmg.content.engines.types.EngineType;
+import com.drmangotea.tfmg.content.engines.types.EngineTypeBuilder;
 import com.drmangotea.tfmg.content.machinery.vat.electrode_holder.electrode.Electrode;
 import com.drmangotea.tfmg.content.machinery.vat.electrode_holder.electrode.ElectrodeBuilder;
 import com.simibubi.create.content.fluids.VirtualFluid;
@@ -97,6 +99,22 @@ public class TFMGRegistrate extends CreateRegistrate {
 
     public <T extends Electrode, P> ElectrodeBuilder<T, P> electrode(P parent, String name, NonNullFunction<Electrode.Properties, T> factory) {
         return entry(name, callback -> ElectrodeBuilder.create(this, parent, name, callback, factory));
+    }
+
+    public <T extends EngineType> EngineTypeBuilder<T, TFMGRegistrate> engineType(NonNullFunction<EngineType.Properties, T> factory) {
+        return engineType((TFMGRegistrate) self(), factory);
+    }
+
+    public <T extends EngineType> EngineTypeBuilder<T, TFMGRegistrate> engineType(String name, NonNullFunction<EngineType.Properties, T> factory) {
+        return engineType((TFMGRegistrate) self(), name, factory);
+    }
+
+    public <T extends EngineType, P> EngineTypeBuilder<T, P> engineType(P parent, NonNullFunction<EngineType.Properties, T> factory) {
+        return engineType(parent, currentName(), factory);
+    }
+
+    public <T extends EngineType, P> EngineTypeBuilder<T, P> engineType(P parent, String name, NonNullFunction<EngineType.Properties, T> factory) {
+        return entry(name, callback -> EngineTypeBuilder.create(this, parent, name, callback, factory));
     }
 
 }

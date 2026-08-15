@@ -7,6 +7,8 @@ import com.drmangotea.tfmg.config.TFMGConfigs;
 import com.drmangotea.tfmg.content.engines.base.AbstractEngineBlockEntity;
 import com.drmangotea.tfmg.content.engines.base.EngineComponentsInventory;
 import com.drmangotea.tfmg.content.engines.base.EngineProperties;
+import com.drmangotea.tfmg.content.engines.types.regular_engine.RegularEngineBlock;
+import com.drmangotea.tfmg.content.engines.types.regular_engine.RegularEngineBlockEntity;
 import com.drmangotea.tfmg.content.engines.upgrades.EnginePipingUpgrade;
 import com.drmangotea.tfmg.content.engines.upgrades.EngineUpgrade;
 import com.drmangotea.tfmg.registry.TFMGBlocks;
@@ -68,14 +70,11 @@ public abstract class AbstractSmallEngineBlockEntity extends AbstractEngineBlock
     }
 
     public int getFuelConsumption() {
-
         if (rpm == 0)
             return 0;
 
         float oilModifier = oil > 0 ? 0.7f : 1f;
-
         float coolingFluidModifier = coolingFluid > 0 ? 0.7f : 1f;
-
 
         return (int) ((12.5f * (1 / efficiencyModifier()) * getSpeedEfficiency() * highestSignal / 15 * oilModifier * coolingFluidModifier) * (engineLength() )+ 1);
     }
@@ -157,7 +156,6 @@ public abstract class AbstractSmallEngineBlockEntity extends AbstractEngineBlock
     public void neighbourChanged() {
         if (controller == null)
             return;
-
         super.neighbourChanged();
     }
 
@@ -515,15 +513,22 @@ public abstract class AbstractSmallEngineBlockEntity extends AbstractEngineBlock
         super.tick();
     }
 
+    public boolean canConnect(AbstractSmallEngineBlockEntity candidate) {
+        return candidate.getBlockState().getBlock() == this.getBlockState().getBlock();
+    }
+
     public void connect() {
         if (level == null) return;
         try {
             Direction facing = getBlockState().getValue(HORIZONTAL_FACING);
             Direction updateDirection = facing.getOpposite();
 
-            if (level.getBlockEntity(getBlockPos().relative(facing)) instanceof AbstractSmallEngineBlockEntity be && be.getBlockState().getBlock() == this.getBlockState().getBlock()) {
-                be.connect();
-                return;
+            BlockEntity candidate = level.getBlockEntity(getBlockPos().relative(facing));
+            if (candidate instanceof AbstractSmallEngineBlockEntity smallEngine) {
+                if (canConnect(smallEngine)) {
+                    smallEngine.connect();
+                    return;
+                }
             }
 
             engines = new ArrayList<>();

@@ -28,19 +28,19 @@ public class TFMGRegistrateTags {
         prov.tag(Tags.Items.RODS)
                 .add(Items.STICK);
 
-        prov.tag(TFMGTags.TFMGItemTags.ENGINE_CYLINDER.tag)
+        prov.tag(TFMGTags.Items.ENGINE_CYLINDER.tag)
                 .add(TFMGItems.DIESEL_ENGINE_CYLINDER.get(), TFMGItems.SIMPLE_ENGINE_CYLINDER.get(), TFMGItems.ENGINE_CYLINDER.get(), TFMGItems.AUTOGAS_ENGINE_CYLINDER.get());
 
-        prov.tag(TFMGTags.TFMGItemTags.ENGINE_TURBINE.tag)
+        prov.tag(TFMGTags.Items.ENGINE_TURBINE.tag)
                 .add(TFMGItems.TURBINE_BLADE.get());
     }
     private static void genBlockTags(RegistrateTagsProvider<Block> provIn) {
         TagGen.CreateTagsProvider<Block> prov = new TagGen.CreateTagsProvider<>(provIn, Block::builtInRegistryHolder);
 
-        prov.tag(TFMGTags.TFMGBlockTags.PUMPJACK_HEAD.tag)
+        prov.tag(TFMGTags.Blocks.PUMPJACK_HEAD.tag)
                 .add(Blocks.IRON_BLOCK);
 
-        prov.tag(TFMGTags.TFMGBlockTags.PUMPJACK_PART.tag)
-                .addTag(TFMGTags.TFMGBlockTags.PUMPJACK_SMALL_PART.tag);
+        prov.tag(TFMGTags.Blocks.PUMPJACK_PART.tag)
+                .addTag(TFMGTags.Blocks.PUMPJACK_SMALL_PART.tag);
     }
 }

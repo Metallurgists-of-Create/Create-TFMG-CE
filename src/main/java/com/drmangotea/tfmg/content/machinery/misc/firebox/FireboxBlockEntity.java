@@ -120,7 +120,7 @@ public class FireboxBlockEntity extends SmartBlockEntity implements IHaveGoggleI
         if(exhuastTank == null)
             return false;
 
-        return controller.exhuastTank.getSpace() > 0 && controller.tankInventory.getFluidAmount() >= TFMGConfigs.common().machines.fireboxFuelConsumption.get() && controller.tankInventory.getFluid().getFluid().is(TFMGTags.TFMGFluidTags.FIREBOX_FUEL.tag);
+        return controller.exhuastTank.getSpace() > 0 && controller.tankInventory.getFluidAmount() >= TFMGConfigs.common().machines.fireboxFuelConsumption.get() && controller.tankInventory.getFluid().getFluid().is(TFMGTags.Fluids.FIREBOX_FUEL.tag);
     }
 
     @Override

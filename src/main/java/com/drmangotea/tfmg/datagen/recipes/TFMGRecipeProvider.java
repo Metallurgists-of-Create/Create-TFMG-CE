@@ -140,16 +140,16 @@ public class TFMGRecipeProvider extends RecipeProvider {
         public static TagKey<Item> aluminumBlock() { return CommonMetal.ALUMINUM.storageBlocks.items(); }
         public static TagKey<Item> aluminumSheet() { return CommonMetal.ALUMINUM.plates; }
         public static TagKey<Item> castIronIngot() {
-            return TFMGTags.TFMGItemTags.INGOTS_CAST_IRON.tag;
+            return TFMGTags.Items.INGOTS_CAST_IRON.tag;
         }
         public static TagKey<Item> castIronNugget() {
-            return TFMGTags.TFMGItemTags.NUGGETS_CAST_IRON.tag;
+            return TFMGTags.Items.NUGGETS_CAST_IRON.tag;
         }
         public static TagKey<Item> castIronBlock() {
-            return TFMGTags.TFMGItemTags.STORAGE_BLOCKS_CAST_IRON.tag;
+            return TFMGTags.Items.STORAGE_BLOCKS_CAST_IRON.tag;
         }
         public static TagKey<Item> castIronSheet() {
-            return TFMGTags.TFMGItemTags.PLATES_CAST_IRON.tag;
+            return TFMGTags.Items.PLATES_CAST_IRON.tag;
         }
         public static TagKey<Item> leadIngot() {
             return CommonMetal.LEAD.ingots;
@@ -176,13 +176,13 @@ public class TFMGRecipeProvider extends RecipeProvider {
             return CommonMetal.NICKEL.plates;
         }
         public static TagKey<Item> lithiumIngot() {
-            return TFMGTags.TFMGItemTags.INGOTS_LITHIUM.tag;
+            return TFMGTags.Items.INGOTS_LITHIUM.tag;
         }
         public static TagKey<Item> lithiumNugget() {
-            return TFMGTags.TFMGItemTags.NUGGETS_LITHIUM.tag;
+            return TFMGTags.Items.NUGGETS_LITHIUM.tag;
         }
         public static TagKey<Item> lithiumBlock() {
-            return TFMGTags.TFMGItemTags.STORAGE_BLOCKS_LITHIUM.tag;
+            return TFMGTags.Items.STORAGE_BLOCKS_LITHIUM.tag;
         }
         public static TagKey<Item> constantanIngot() {
             return CommonMetal.CONSTANTAN.ingots;
@@ -194,20 +194,14 @@ public class TFMGRecipeProvider extends RecipeProvider {
             return CommonMetal.CONSTANTAN.storageBlocks.items();
         }
         public static TagKey<Item> copperWire() {
-            return TFMGTags.TFMGItemTags.WIRES_COPPER.tag;
+            return TFMGTags.Items.WIRES_COPPER.tag;
         }
         public static TagKey<Item> constantanWire() {
-            return TFMGTags.TFMGItemTags.WIRES_CONSTANTAN.tag;
+            return TFMGTags.Items.WIRES_CONSTANTAN.tag;
         }
         public static TagKey<Item> aluminumWire() {
-            return TFMGTags.TFMGItemTags.WIRES_ALUMINUM.tag;
+            return TFMGTags.Items.WIRES_ALUMINUM.tag;
         }
-
-        //
-
-
-
-        //
 
         public static ItemLike bitumen() {
             return TFMGItems.BITUMEN.get();
@@ -490,7 +484,7 @@ public class TFMGRecipeProvider extends RecipeProvider {
         }
 
         public static TagKey<Item> ironDust() {
-            return TFMGTags.TFMGItemTags.DUSTS_IRON.tag;
+            return TFMGTags.Items.DUSTS_IRON.tag;
         }
 
         public static TagKey<Item> zincIngot() {
@@ -547,22 +541,6 @@ public class TFMGRecipeProvider extends RecipeProvider {
             stack.set(TFMGDataComponents.COIL_TURNS,100);
             return stack;
         }
-
-        //public static ItemStack turbineBlade(){
-        //    ItemStack stack = TFMGItems.TURBINE_BLADE.asStack();
-//
-        //    CompoundTag keroseneTag = new CompoundTag();
-        //    keroseneTag.putString("kerosene", "forge:kerosene");
-        //    CompoundTag keroseneTagName = new CompoundTag();
-        //    keroseneTagName.putString("kerosene", "Kerosene");
-//
-        //    stack.set(TFMGDataComponents.FUEL_TAGS, keroseneTag);
-        //    stack.set(TFMGDataComponents.FUELS, keroseneTagName);
-//
-        //    return stack;
-        //}
-
-
     }
 
     public static class F {

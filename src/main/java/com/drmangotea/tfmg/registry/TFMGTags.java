@@ -1,7 +1,9 @@
 package com.drmangotea.tfmg.registry;
 
 import com.drmangotea.tfmg.TFMG;
+import com.drmangotea.tfmg.TFMGRegistries;
 import com.drmangotea.tfmg.base.lang.TFMGLang;
+import com.drmangotea.tfmg.content.engines.types.EngineType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.FluidTags;
@@ -27,7 +29,7 @@ public class TFMGTags {
         }
     }
 
-    public enum TFMGBlockTags {
+    public enum Blocks {
         BLAST_FURNACE_SUPPORT,
         BLAST_FURNACE_WALL,
 		NON_DIAGONAL_WALLS("diagonalwalls","non_diagonal_walls"),
@@ -50,21 +52,22 @@ public class TFMGTags {
 
         public final TagKey<Block> tag;
 
-        TFMGBlockTags() {
+        Blocks() {
             this(MOD);
         }
-        TFMGBlockTags(NameSpace namespace) {
+        Blocks(NameSpace namespace) {
             this(namespace, null);
         }
-		TFMGBlockTags(NameSpace namespace, String path) {
+		Blocks(NameSpace namespace, String path) {
 			ResourceLocation id = ResourceLocation.fromNamespaceAndPath(namespace.id, path == null ? TFMGLang.asId(name()) : path);
 			this.tag = BlockTags.create(id);
 		}
-		TFMGBlockTags(String namespace, String path) {
+		Blocks(String namespace, String path) {
 			this.tag = BlockTags.create(ResourceLocation.fromNamespaceAndPath(namespace, path));
 		}
     }
-    public enum TFMGItemTags {
+
+    public enum Items {
         BLAST_FURNACE_FUEL,
         DUSTS_COAL_COKE(COMMON, "dusts/coal_coke"),
         DUSTS_IRON(COMMON, "dusts/iron"),
@@ -98,18 +101,19 @@ public class TFMGTags {
 
         public final TagKey<Item> tag;
 
-        TFMGItemTags() {
+        Items() {
             this(NameSpace.MOD);
         }
-        TFMGItemTags(NameSpace namespace) {
+        Items(NameSpace namespace) {
             this(namespace, null);
         }
-        TFMGItemTags(NameSpace namespace, String path) {
+        Items(NameSpace namespace, String path) {
             ResourceLocation id = ResourceLocation.fromNamespaceAndPath(namespace.id, path == null ? TFMGLang.asId(name()) : path);
             this.tag = ItemTags.create(id);
         }
     }
-    public enum TFMGFluidTags {
+
+    public enum Fluids {
         GAS,
 
         FLAMMABLE,
@@ -137,15 +141,34 @@ public class TFMGTags {
 
         public final TagKey<Fluid> tag;
 
-        TFMGFluidTags() {
+        Fluids() {
             this(NameSpace.MOD);
         }
-        TFMGFluidTags(NameSpace namespace) {
+        Fluids(NameSpace namespace) {
             this(namespace, null);
         }
-        TFMGFluidTags(NameSpace namespace, String path) {
+        Fluids(NameSpace namespace, String path) {
             ResourceLocation id = ResourceLocation.fromNamespaceAndPath(namespace.id, path == null ? TFMGLang.asId(name()) : path);
             this.tag = FluidTags.create(id);
+        }
+    }
+
+    public enum Engines {
+        SCHEMATIC_CYCLE_BLACKLIST,
+        UPGRADES_ON_SIDE
+        ;
+
+        public final TagKey<EngineType> tag;
+
+        Engines() {
+            this(NameSpace.MOD);
+        }
+        Engines(NameSpace namespace) {
+            this(namespace, null);
+        }
+        Engines(NameSpace namespace, String path) {
+            ResourceLocation id = ResourceLocation.fromNamespaceAndPath(namespace.id, path == null ? TFMGLang.asId(name()) : path);
+            this.tag = TagKey.create(TFMGRegistries.ENGINE_TYPE, id);
         }
     }
 }

@@ -1,6 +1,7 @@
 package com.drmangotea.tfmg.base.lang;
 
 import com.drmangotea.tfmg.base.TFMGUtils;
+import com.drmangotea.tfmg.content.engines.types.EngineType;
 import com.simibubi.create.content.processing.recipe.HeatCondition;
 import net.createmod.catnip.lang.LangBuilder;
 import net.createmod.catnip.theme.Color;
@@ -198,8 +199,8 @@ public class TFMGTexts {
         public static LangBuilder signal(int signal) {
             return TFMGLang.translate("goggles.engine.signal", TFMGLang.number(signal)).color(0xfcad03);
         }
-        public static LangBuilder type(String langKey) {
-            return TFMGLang.translate("goggles.engine.type", TFMGLang.translate(langKey)).color(0xfcad03);
+        public static LangBuilder type(EngineType engineType) {
+            return TFMGLang.translate("goggles.engine.type", engineType.getDisplayName()).color(0xfcad03);
         }
         public static LangBuilder oil(int oil) {
             return TFMGLang.translate("goggles.engine.oil", TFMGLang.number(oil)).color(0xf5dd42);

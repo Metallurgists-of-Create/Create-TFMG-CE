@@ -57,7 +57,7 @@ public abstract class AbstractEngineBlockEntity extends KineticElectricBlockEnti
     public AbstractEngineBlockEntity(BlockEntityType<?> typeIn, BlockPos pos, BlockState state) {
         super(typeIn, pos, state);
         setLazyTickRate(10);
-        fuelTank = new EngineFluidTank(8000, false, true, f -> tankUpdated(f, true), TFMGTags.TFMGFluidTags.AIR.tag);
+        fuelTank = new EngineFluidTank(8000, false, true, f -> tankUpdated(f, true), TFMGTags.Fluids.AIR.tag);
         exhaustTank = new EngineFluidTank(8000, true, false, f -> tankUpdated(f, false));
         fluidCapability = new CombinedTankWrapper(fuelTank, exhaustTank);
 

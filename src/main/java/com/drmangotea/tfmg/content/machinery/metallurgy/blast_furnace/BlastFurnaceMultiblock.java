@@ -173,17 +173,17 @@ public class BlastFurnaceMultiblock {
         }
 
         public static BlockType forWall(BlockState state) {
-            if (state.is(TFMGTags.TFMGBlockTags.REINFORCED_BLAST_FURNACE_WALL.tag))
+            if (state.is(TFMGTags.Blocks.REINFORCED_BLAST_FURNACE_WALL.tag))
                 return REINFORCED;
-            if (state.is(TFMGTags.TFMGBlockTags.BLAST_FURNACE_WALL.tag))
+            if (state.is(TFMGTags.Blocks.BLAST_FURNACE_WALL.tag))
                 return VALID;
             return INVALID;
         }
 
         public static BlockType forSupport(BlockState state) {
-            if (state.is(TFMGTags.TFMGBlockTags.REINFORCED_BLAST_FURNACE_SUPPORT.tag))
+            if (state.is(TFMGTags.Blocks.REINFORCED_BLAST_FURNACE_SUPPORT.tag))
                 return REINFORCED;
-            if (state.is(TFMGTags.TFMGBlockTags.BLAST_FURNACE_SUPPORT.tag))
+            if (state.is(TFMGTags.Blocks.BLAST_FURNACE_SUPPORT.tag))
                 return VALID;
             return INVALID;
         }

@@ -4,6 +4,7 @@ import com.drmangotea.tfmg.content.engines.types.AbstractSmallEngineBlockEntity;
 import com.drmangotea.tfmg.content.engines.types.regular_engine.RegularEngineBlockEntity;
 import com.drmangotea.tfmg.registry.TFMGItems;
 import com.drmangotea.tfmg.registry.TFMGPartialModels;
+import com.drmangotea.tfmg.registry.TFMGTags;
 import com.mojang.blaze3d.vertex.PoseStack;
 import dev.engine_room.flywheel.lib.model.baked.PartialModel;
 import net.createmod.catnip.animation.LerpedFloat;
@@ -56,7 +57,7 @@ public class GoldenTurboUpgradeData extends EngineUpgrade {
         boolean side = false;
         ms.pushPose();
         if (be instanceof RegularEngineBlockEntity blockEntity) {
-            side = blockEntity.type.upgradesOnSide;
+            side = blockEntity.type.is(TFMGTags.Engines.UPGRADES_ON_SIDE.tag);
         }
         CachedBuffers.partial(getModel(), state)
                 .center()

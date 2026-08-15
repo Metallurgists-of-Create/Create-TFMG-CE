@@ -118,7 +118,7 @@ public class SurfaceScannerBlockEntity extends SmartBlockEntity implements IHave
         AABB checkedArea = new AABB(chunk.getPos().getMiddleBlockPosition(TFMGConfigs.common().machines.surfaceScannerScanDepth.get()).north().west());
         checkedArea = checkedArea.inflate(7,0,7);
         for(BlockState state : chunk.getBlockStates(checkedArea).toList()){
-            if(state.is(TFMGTags.TFMGBlockTags.SURFACE_SCANNER_FINDABLE.tag))
+            if(state.is(TFMGTags.Blocks.SURFACE_SCANNER_FINDABLE.tag))
                 return true;
         }
         return false;

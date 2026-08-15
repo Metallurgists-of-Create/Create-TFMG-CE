@@ -36,8 +36,8 @@ public class GasLampBlockEntity extends SmartBlockEntity implements IHaveGoggleI
         return new SmartFluidTank(4000, this::onFluidStackChanged) {
             @Override
             public boolean isFluidValid(FluidStack stack) {
-                return stack.getFluid().is(TFMGTags.TFMGFluidTags.FLAMMABLE.tag)||
-                        stack.getFluid().is(TFMGTags.TFMGFluidTags.FUEL.tag);
+                return stack.getFluid().is(TFMGTags.Fluids.FLAMMABLE.tag)||
+                        stack.getFluid().is(TFMGTags.Fluids.FUEL.tag);
             }
         };
     }

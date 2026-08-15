@@ -299,12 +299,12 @@ public class BlastFurnaceOutputBlockEntity extends SmartBlockEntity implements I
         for (int i = 0; i < 64; i++) {
             if (itemStack.isEmpty())
                 return;
-            if (itemStack.is(TFMGTags.TFMGItemTags.BLAST_FURNACE_FUEL.tag) && fuel < STORAGE_SPACE) {
+            if (itemStack.is(TFMGTags.Items.BLAST_FURNACE_FUEL.tag) && fuel < STORAGE_SPACE) {
                 fuel++;
                 itemStack.shrink(1);
                 continue;
             }
-            if (itemStack.is(TFMGTags.TFMGItemTags.FLUX.tag) && fluxInventory.getItem(0).getCount() < itemStack.getMaxStackSize()) {
+            if (itemStack.is(TFMGTags.Items.FLUX.tag) && fluxInventory.getItem(0).getCount() < itemStack.getMaxStackSize()) {
                 if (fluxInventory.isEmpty() || fluxInventory.getItem(0).is(itemStack.getItem())) {
                     fluxInventory.setItem(0, new ItemStack(itemStack.getItem(), fluxInventory.getItem(0).getCount() + 1));
                     itemStack.shrink(1);

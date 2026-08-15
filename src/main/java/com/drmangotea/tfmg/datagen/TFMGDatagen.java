@@ -1,6 +1,8 @@
 package com.drmangotea.tfmg.datagen;
 
 import com.drmangotea.tfmg.TFMG;
+import com.drmangotea.tfmg.TFMGRegistries;
+import com.drmangotea.tfmg.content.engines.types.EngineType;
 import com.drmangotea.tfmg.datagen.recipes.TFMGRecipeProvider;
 import com.drmangotea.tfmg.datagen.recipes.values.TFMGStandardRecipeGen;
 import com.drmangotea.tfmg.datagen.recipes.values.create.TFMGMechanicalCraftingRecipeGen;
@@ -10,6 +12,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.simibubi.create.foundation.utility.FilesHelper;
 import com.tterrag.registrate.providers.ProviderType;
+import com.tterrag.registrate.providers.RegistrateTagsProvider;
 import net.createmod.ponder.foundation.PonderIndex;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
@@ -23,6 +26,8 @@ import java.util.function.BiConsumer;
 import static com.drmangotea.tfmg.TFMG.REGISTRATE;
 
 public class TFMGDatagen {
+    public static final ProviderType<RegistrateTagsProvider.IntrinsicImpl<EngineType>> ENGINE_TAGS = ProviderType.registerIntrinsicTag("tags/engine_type", "engine_type", TFMGRegistries.ENGINE_TYPE, engineType -> engineType.builtInRegistryHolder().getKey());
+
     public static void gatherDataHighPriority(GatherDataEvent event) {
         if (event.getMods().contains(TFMG.MOD_ID))
             addExtraRegistrateData();
