@@ -40,6 +40,14 @@ public class RadialEngineBlockEntity extends RegularEngineBlockEntity {
         return TFMGEngineTypes.RADIAL.get();
     }
 
+    @Override
+    public boolean canConnect(AbstractSmallEngineBlockEntity candidate) {
+        if (candidate instanceof RadialEngineBlockEntity radialEngine) {
+            return radialEngine.type == this.type;
+        }
+        return false;
+    }
+
     public void setBlockStates(AbstractSmallEngineBlockEntity be, BlockPos last) {
 
         Direction facing = getBlockState().getValue(SHAFT_FACING).getOpposite();

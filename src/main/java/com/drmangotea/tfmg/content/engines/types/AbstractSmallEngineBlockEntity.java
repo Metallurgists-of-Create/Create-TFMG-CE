@@ -536,6 +536,8 @@ public abstract class AbstractSmallEngineBlockEntity extends AbstractEngineBlock
             for (int i = 0; i < getMaxLength(); i++) {
                 BlockPos pos = getBlockPos().relative(updateDirection, i);
                 if (level.getBlockEntity(pos) instanceof AbstractSmallEngineBlockEntity be) {
+                    if(!canConnect(be))
+                        return;
                     if (be.getBlockState().getValue(HORIZONTAL_FACING) != facing) {
                         return;
                     }

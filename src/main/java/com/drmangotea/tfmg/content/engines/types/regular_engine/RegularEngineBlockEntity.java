@@ -359,6 +359,7 @@ public class RegularEngineBlockEntity extends AbstractSmallEngineBlockEntity {
         return type.torqueModifier * fuelTypeTorque.get() * getUpgradeTorqueModifier();
     }
 
+    @Override
     public boolean canConnect(AbstractSmallEngineBlockEntity candidate) {
         if (candidate instanceof RegularEngineBlockEntity regularEngine) {
             return regularEngine.type == this.type;

@@ -7,7 +7,6 @@ import com.drmangotea.tfmg.content.engines.types.EngineType;
 import com.drmangotea.tfmg.content.engines.types.regular_engine.RegularEngineBlockEntity;
 import com.drmangotea.tfmg.registry.TFMGDataComponents;
 import com.drmangotea.tfmg.registry.TFMGEngineTypes;
-import com.drmangotea.tfmg.registry.TFMGItems;
 import com.drmangotea.tfmg.registry.TFMGTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -44,6 +43,14 @@ public class TurbineEngineBlockEntity extends RegularEngineBlockEntity {
 
     @Override
     public boolean hasTwoShafts() {
+        return false;
+    }
+
+    @Override
+    public boolean canConnect(AbstractSmallEngineBlockEntity candidate) {
+        if (candidate instanceof TurbineEngineBlockEntity turbineEngine) {
+            return turbineEngine.type == this.type;
+        }
         return false;
     }
 
