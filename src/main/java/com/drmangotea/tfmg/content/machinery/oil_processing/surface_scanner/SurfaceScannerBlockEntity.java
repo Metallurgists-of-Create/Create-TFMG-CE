@@ -18,11 +18,13 @@ import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.phys.AABB;
 
 import java.util.List;
+import org.joml.Quaterniond;
 
 public class SurfaceScannerBlockEntity extends SmartBlockEntity implements IHaveGoggleInformation {
 
     private long lastScanTick = Long.MIN_VALUE;
     private BlockPos lastScanPos = null;
+    private Quaterniond lastScanRot = new Quaterniond();
 
     public Boolean[][] grid = new Boolean[5][5];
     private final boolean[][] serverGrid = new boolean[5][5];
@@ -35,13 +37,13 @@ public class SurfaceScannerBlockEntity extends SmartBlockEntity implements IHave
     @Override
     public void addBehaviours(List<BlockEntityBehaviour> behaviours) {}
 
-    public void findDeposits(BlockPos actualPosition) {
-        if(level == null) return;
-        if(!level.isClientSide) return;
+    public void findDeposits() {
+        if (level == null) return;
+        if (!level.isClientSide) return;
 
-        for(int x = 0; x < 5; x++) {
-            for(int z = 0; z < 5; z++) {
-                grid[x][z] = hasOil(new BlockPos(actualPosition.getX() + (x - 2) * 16, TFMGConfigs.common().machines.surfaceScannerScanDepth.get(), actualPosition.getZ() + (z - 2) * 16));
+        for (int x = 0; x < 5; x++) {
+            for (int z = 0; z < 5; z++) {
+                grid[x][z] = hasOil(SurfaceScannerSable.evaluateOilPos(this, x, z));
             }
         }
     }
@@ -75,35 +77,35 @@ public class SurfaceScannerBlockEntity extends SmartBlockEntity implements IHave
         super.lazyTick();
         if (level == null) return;
         BlockPos actualPosition = SurfaceScannerSable.getActualPosition(this);
-        if(level.getBlockEntity(getBlockPos().below()) instanceof MachineInputBlockEntity input && Math.abs(input.getSpeed()) >= TFMGConfigs.common().machines.surfaceScannerMinimumRPM.get()) {
+        if (level.getBlockEntity(getBlockPos().below()) instanceof MachineInputBlockEntity input && Math.abs(input.getSpeed()) >= TFMGConfigs.common().machines.surfaceScannerMinimumRPM.get()) {
             boolean moved = lastScanPos == null || !lastScanPos.equals(actualPosition);
-
+            Quaterniond currentRot = SurfaceScannerSable.getSublevelRot(this);
+            boolean rotChanged = currentRot != lastScanRot;
             int intervalTicks = 2400;
             long currentTick = level != null ? level.getGameTime() : Long.MIN_VALUE;
             boolean intervalElapsed = lastScanTick == Long.MIN_VALUE || (currentTick - lastScanTick) >= intervalTicks;
 
-            if (!moved && !intervalElapsed) {
+            if (!moved && !rotChanged && !intervalElapsed) {
                 return;
             }
 
-            findDeposits(actualPosition);
+            findDeposits();
             if (level != null && !level.isClientSide) {
-                updateServerGrid(actualPosition);
+                updateServerGrid();
             }
             lastScanPos = actualPosition;
             lastScanTick = currentTick;
+            lastScanRot = currentRot;
         } else {
             grid = new Boolean[5][5];
         }
     }
 
-    private void updateServerGrid(BlockPos actualPosition) {
+    private void updateServerGrid() {
         if (level == null) return;
-        int scanDepth = TFMGConfigs.common().machines.surfaceScannerScanDepth.get();
         for (int x = 0; x < 5; x++) {
             for (int z = 0; z < 5; z++) {
-                BlockPos checkPos = new BlockPos(actualPosition.getX() + (x - 2) * 16, scanDepth, actualPosition.getZ() + (z - 2) * 16);
-                serverGrid[x][z] = hasOil(checkPos);
+                serverGrid[x][z] = hasOil(SurfaceScannerSable.evaluateOilPos(this, x, z));
             }
         }
         level.updateNeighborsAt(getBlockPos(), getBlockState().getBlock());
