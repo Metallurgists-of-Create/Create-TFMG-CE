@@ -52,11 +52,7 @@ public class TFMG {
 
     public TFMG(IEventBus modEventBus, ModContainer modContainer) {
         ModLoadingContext modLoadingContext = ModLoadingContext.get();
-
         REGISTRATE.registerEventListeners(modEventBus);
-
-
-
         TFMGSoundEvents.prepare();
         TFMGElectrodes.init();
         TFMGCableTypes.init();
@@ -74,14 +70,11 @@ public class TFMG {
         TFMGEncasedBlocks.init();
         TFMGPaletteBlocks.init();
 
-
-
         TFMGParticleTypes.register(modEventBus);
 
         TFMGDataComponents.register(modEventBus);
         TFMGMobEffects.register(modEventBus);
         TFMGRecipeTypes.register(modEventBus);
-       // TFMGArmorMaterials.register(modEventBus);
         TFMGColoredFires.register(modEventBus);
         TFMGFeatures.register(modEventBus);
         TFMGMountedStorageTypes.register();
@@ -94,23 +87,21 @@ public class TFMG {
         modEventBus.addListener(TFMGSoundEvents::register);
         modEventBus.addListener(TFMG::commonSetup);
         modEventBus.addListener(this::clientSetup);
-      //  NeoForge.EVENT_BUS.register(this);
-       // DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> TFMGClient::new);
         modEventBus.addListener(TFMGCreativeTabs::addCreative);
-
     }
+
     @SuppressWarnings("deprecation")
     private void clientSetup(final FMLClientSetupEvent event) {
         ItemBlockRenderTypes.setRenderLayer(TFMGColoredFires.GREEN_FIRE.get(), RenderType.cutout());
         ItemBlockRenderTypes.setRenderLayer(TFMGColoredFires.BLUE_FIRE.get(), RenderType.cutout());
     }
 
+    //This Javadoc here pissed off the compiler. I'm giving it a gold star!
     /**
-     * fluid interaction & firebox heating
+     * fluid interaction and firebox heating
      */
     public static void commonSetup(final FMLCommonSetupEvent event) {
         TFMGFluidInteractions.registerFluidInteractions();
-
         event.enqueueWork(() -> {
             TFMGBoilerHeaters.registerDefaults();
         });

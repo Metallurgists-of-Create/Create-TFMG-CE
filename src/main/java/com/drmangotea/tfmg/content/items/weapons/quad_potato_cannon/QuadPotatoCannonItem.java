@@ -297,6 +297,7 @@ public class QuadPotatoCannonItem extends ProjectileWeaponItem implements Custom
         return null;
     }
 
+    @SuppressWarnings("removal")
     @Override
     @OnlyIn(Dist.CLIENT)
     public void initializeClient(Consumer<IClientItemExtensions> consumer) {
