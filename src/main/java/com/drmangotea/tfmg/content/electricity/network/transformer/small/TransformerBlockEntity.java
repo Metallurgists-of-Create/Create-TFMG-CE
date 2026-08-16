@@ -109,8 +109,8 @@ public class TransformerBlockEntity extends VoltageAlteringBlockEntity {
             updateInFront();
             return;
         }
-        int primaryTurns = primaryCoil.get(TFMGDataComponents.COIL_TURNS);
-        int secondaryTurns = secondaryCoil.get(TFMGDataComponents.COIL_TURNS);
+        int primaryTurns = primaryCoil.getOrDefault(TFMGDataComponents.COIL_TURNS, 0);
+        int secondaryTurns = secondaryCoil.getOrDefault(TFMGDataComponents.COIL_TURNS, 0);
 
         if(primaryCoil.isEmpty()||secondaryCoil.isEmpty()||primaryTurns<50||secondaryTurns<50){
 

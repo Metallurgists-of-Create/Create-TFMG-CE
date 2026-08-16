@@ -16,7 +16,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 public class CopycatCableBlockEntity extends CopycatBlockEntity implements IElectric, IHaveHoveringInformation {
 
-    public ElectricBlockValues data = new ElectricBlockValues(getPos());
+    public ElectricBlockValues data = new ElectricBlockValues(BlockPos.of(getPos()));
 
     public CopycatCableBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
@@ -54,8 +54,8 @@ public class CopycatCableBlockEntity extends CopycatBlockEntity implements IElec
 
 
     @Override
-    public BlockPos getPos() {
-        return getBlockPos();
+    public long getPos() {
+        return getBlockPos().asLong();
     }
 
     @Override
