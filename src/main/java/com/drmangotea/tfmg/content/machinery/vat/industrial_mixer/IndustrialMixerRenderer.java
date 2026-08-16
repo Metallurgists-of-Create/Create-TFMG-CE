@@ -23,65 +23,49 @@ public class IndustrialMixerRenderer extends KineticBlockEntityRenderer<Industri
     }
 
     @Override
-    protected void renderSafe(IndustrialMixerBlockEntity be, float partialTicks, PoseStack ms, MultiBufferSource buffer,
-                              int light, int overlay) {
-
+    protected void renderSafe(IndustrialMixerBlockEntity be, float partialTicks, PoseStack ms, MultiBufferSource buffer, int light, int overlay) {
         super.renderSafe(be, partialTicks, ms, buffer, light, overlay);
-        BlockState blockState = be.getBlockState();
-        int height = be.vatHeight;
-
-        if (be.mixerMode == IndustrialMixerBlockEntity.MixerMode.NONE)
+        if (!be.mixerMode.isValid())
             return;
         if (!Minecraft.getInstance().isPaused()) {
             be.angle += be.visualSpeed.getValue(partialTicks) * 3 / 10f;
             be.angle %= 360;
         }
 
-        for (int i = 0; i < height; i++) {
-            PartialModel model = i == height - 1 ? be.vatSize > 1 ? TFMGPartialModels.MIXER : TFMGPartialModels.SMALL_MIXER : TFMGPartialModels.MIXER_SHAFT;
-            if (be.mixerMode == IndustrialMixerBlockEntity.MixerMode.CENTRIFUGE) {
+        be.mixerMode.renderInVat(be, partialTicks, ms, buffer, light, overlay);
+    }
 
-                if(be.vatPos==null)
-                    return;
+    public static PartialModel getCentrifugeModel(int currentHeight, int totalHeight, IndustrialMixerBlockEntity be) {
+        if (be.vatSize == 1) {
+            if (totalHeight == 1)
+                return TFMGPartialModels.SMALL_CENTRIFUGE_ALONE;
+            if (currentHeight == 0)
+                return TFMGPartialModels.SMALL_CENTRIFUGE_TOP;
+            if (currentHeight == totalHeight)
+                return TFMGPartialModels.SMALL_CENTRIFUGE_BOTTOM;
+            return TFMGPartialModels.SMALL_CENTRIFUGE_MIDDLE;
+        } else {
+            if (totalHeight == 1)
+                return TFMGPartialModels.LARGE_CENTRIFUGE_ALONE;
 
-                model = getCentrifugeModel(i + 1, height, be);
-            }
-
-            float posX = be.vatSize == 2 ? (be.vatPos.getX() - be.getBlockPos().getX() + 0.5f) : 0f;
-            float posZ = be.vatSize == 2 ? (be.vatPos.getZ() - be.getBlockPos().getZ() + 0.5f) : 0f;
-            CachedBuffers.partial(model, blockState)
-                    .light(LevelRenderer.getLightColor(be.getLevel(), be.getBlockPos().below()))
-                    .center()
-                    .translate(posX, -i - 1, posZ)
-                    .rotateYDegrees(be.angle)
-                    .uncenter()
-                    .renderInto(ms, buffer.getBuffer(RenderType.cutoutMipped()));
+            if (currentHeight == 0)
+                return TFMGPartialModels.LARGE_CENTRIFUGE_TOP;
+            if (currentHeight == totalHeight)
+                return TFMGPartialModels.LARGE_CENTRIFUGE_BOTTOM;
+            return TFMGPartialModels.LARGE_CENTRIFUGE_MIDDLE;
         }
     }
 
-    public PartialModel getCentrifugeModel(int i, int height, IndustrialMixerBlockEntity be) {
-        if (be.vatSize == 1) {
-            if (height == 1)
-                return TFMGPartialModels.SMALL_CENTRIFUGE_ALONE;
-
-            if (i == 1)
-                return TFMGPartialModels.SMALL_CENTRIFUGE_TOP;
-            if (i == height)
-                return TFMGPartialModels.SMALL_CENTRIFUGE_BOTTOM;
-            return TFMGPartialModels.SMALL_CENTRIFUGE_MIDDLE;
-
+    public static PartialModel getMixerModel(int i, int height, IndustrialMixerBlockEntity be) {
+        if (i == height - 1) {
+            if (be.vatSize > 1) {
+                return TFMGPartialModels.MIXER;
+            } else {
+                return TFMGPartialModels.SMALL_MIXER;
+            }
         } else {
-            if (height == 1)
-                return TFMGPartialModels.LARGE_CENTRIFUGE_ALONE;
-
-            if (i == 1)
-                return TFMGPartialModels.LARGE_CENTRIFUGE_TOP;
-            if (i == height)
-                return TFMGPartialModels.LARGE_CENTRIFUGE_BOTTOM;
-            return TFMGPartialModels.LARGE_CENTRIFUGE_MIDDLE;
-
+            return TFMGPartialModels.MIXER_SHAFT;
         }
-
     }
 
     @Override

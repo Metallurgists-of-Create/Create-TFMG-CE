@@ -8,6 +8,8 @@ import com.drmangotea.tfmg.content.engines.types.EngineType;
 import com.drmangotea.tfmg.content.engines.types.EngineTypeBuilder;
 import com.drmangotea.tfmg.content.machinery.vat.electrode_holder.electrode.Electrode;
 import com.drmangotea.tfmg.content.machinery.vat.electrode_holder.electrode.ElectrodeBuilder;
+import com.drmangotea.tfmg.content.machinery.vat.industrial_mixer.mode.MixerMode;
+import com.drmangotea.tfmg.content.machinery.vat.industrial_mixer.mode.MixerModeBuilder;
 import com.simibubi.create.content.fluids.VirtualFluid;
 import com.simibubi.create.foundation.data.CreateRegistrate;
 import com.simibubi.create.foundation.data.VirtualFluidBuilder;
@@ -115,6 +117,22 @@ public class TFMGRegistrate extends CreateRegistrate {
 
     public <T extends EngineType, P> EngineTypeBuilder<T, P> engineType(P parent, String name, NonNullFunction<EngineType.Properties, T> factory) {
         return entry(name, callback -> EngineTypeBuilder.create(this, parent, name, callback, factory));
+    }
+
+    public <T extends MixerMode> MixerModeBuilder<T, TFMGRegistrate> mixerMode(NonNullFunction<MixerMode.Properties, T> factory) {
+        return mixerMode((TFMGRegistrate) self(), factory);
+    }
+
+    public <T extends MixerMode> MixerModeBuilder<T, TFMGRegistrate> mixerMode(String name, NonNullFunction<MixerMode.Properties, T> factory) {
+        return mixerMode((TFMGRegistrate) self(), name, factory);
+    }
+
+    public <T extends MixerMode, P> MixerModeBuilder<T, P> mixerMode(P parent, NonNullFunction<MixerMode.Properties, T> factory) {
+        return mixerMode(parent, currentName(), factory);
+    }
+
+    public <T extends MixerMode, P> MixerModeBuilder<T, P> mixerMode(P parent, String name, NonNullFunction<MixerMode.Properties, T> factory) {
+        return entry(name, callback -> MixerModeBuilder.create(this, parent, name, callback, factory));
     }
 
 }

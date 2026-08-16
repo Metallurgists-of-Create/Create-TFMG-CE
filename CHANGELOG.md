@@ -35,6 +35,7 @@ Please note that not all bugs are fixed and some new additions are subject to ch
 - Fixed typos in some cogwheel texture names.
 - Segmented Displays now safely decode their display contents.
 - Rolled back a change done to `IElectric` that made Power Grid incompatible.
+- Industrial Mixers should no-longer void the Mixer Blade/Centrifuge item.
 
 ### Changes:
 - Added some new configs:
@@ -57,6 +58,12 @@ Please note that not all bugs are fixed and some new additions are subject to ch
   - Vat types now use `ResourceLocation` in place of `String`
   - `VatRecipeGen` no longer uses generics
   - Vat pressure is limited to between `-9` and `9` (inclusive)
+  - Industrial Mixers now have an item handler.
+  - Added `tfmg:mixer_mode` registry.
+  - Added `tfmg:mixer_mode` data component.
+  - `IndustrialMixerBlock` now handles item insertion and extraction better.
+  - Mixer rendering is now handled through the registered mode.
+  - Industrial Mixers now also update the vat during a speed change or when their item handler is changed.
 - Electricity:
   - Modified the extraction calculation on Cable Insulators to improve the amount of FE being consumed.
 - Engines & Engine Adjacent:
@@ -92,6 +99,7 @@ Please note that not all bugs are fixed and some new additions are subject to ch
 - Added Decimal Formats to `TFMGTexts` for properly formatting numbers.
 - Re-introduced Micron unit just in case.
 - Added `returnItemToInventory` method in `TFMGUtils`. Currently only used in the Polarizer.
+- Removed `IndustrialMixerBlockEntity.MixerMode` enum.
 
 ### New Translations:
 People who wish to translate this mod should look out for changes here.
