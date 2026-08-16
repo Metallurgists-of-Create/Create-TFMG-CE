@@ -37,10 +37,10 @@ import static com.drmangotea.tfmg.content.machinery.misc.winding_machine.Winding
 import static com.simibubi.create.content.kinetics.base.HorizontalKineticBlock.HORIZONTAL_FACING;
 
 public class WindingMachineBlockEntity extends KineticBlockEntity implements IHaveGoggleInformation {
-
     LerpedFloat spoolSpeed = LerpedFloat.linear();
     float angle;
     public SmartInventory inventory;
+    public SmartInventory outputInventory;
     public ItemStack spool = ItemStack.EMPTY;
     public WindingRecipe recipe;
     public int amountWinded = 0;
@@ -53,8 +53,15 @@ public class WindingMachineBlockEntity extends KineticBlockEntity implements IHa
         setLazyTickRate(10);
         inventory = new SmartInventory(1, this)
                 .withMaxStackSize(1)
+                .forbidExtraction()
+                .allowInsertion()
                 .whenContentsChanged(i -> this.onContentsChanged());
 
+        outputInventory = new SmartInventory(1, this)
+                .withMaxStackSize(1)
+                .forbidInsertion()
+                .allowExtraction()
+                .whenContentsChanged(i -> this.onContentsChanged());
     }
 
 
@@ -63,6 +70,12 @@ public class WindingMachineBlockEntity extends KineticBlockEntity implements IHa
                 Capabilities.ItemHandler.BLOCK,
                 TFMGBlockEntities.WINDING_MACHINE.get(),
                 (be, context) -> be.inventory
+        );
+
+        event.registerBlockEntity(
+                Capabilities.ItemHandler.BLOCK,
+                TFMGBlockEntities.WINDING_MACHINE.get(),
+                (be, context) -> be.outputInventory
         );
     }
 
@@ -76,11 +89,9 @@ public class WindingMachineBlockEntity extends KineticBlockEntity implements IHa
         turnPercentage.between(1, max);
         turnPercentage.value = 20;
         behaviours.add(turnPercentage);
-
     }
 
     public void onContentsChanged() {
-
         findRecipe();
         if (inventory.isEmpty())
             amountWinded = 0;
@@ -103,7 +114,7 @@ public class WindingMachineBlockEntity extends KineticBlockEntity implements IHa
         }
         WindingRecipe windingRecipe = optional.get().value();
 
-        if (windingRecipe.getIngredient().test(inventory.getItem(0))) {
+        if (windingRecipe.getIngredient().test(inventory.getItem(0)) && outputInventory.isEmpty()) {
             recipe = windingRecipe;
         }
     }
@@ -154,6 +165,7 @@ public class WindingMachineBlockEntity extends KineticBlockEntity implements IHa
             return;
         }
         ItemHelper.dropContents(level, worldPosition, inventory);
+        ItemHelper.dropContents(level, worldPosition, outputInventory);
         Containers.dropItemStack(level, getBlockPos().getX(), getBlockPos().getY(), getBlockPos().getZ(), spool);
     }
 
@@ -182,9 +194,11 @@ public class WindingMachineBlockEntity extends KineticBlockEntity implements IHa
             return;
         }
 
-        if (getSpeed() == 0)
+        if (getSpeed() == 0 || !outputInventory.isEmpty())
             return;
-        if ((inventory.getItem(0).is(TFMGItems.ELECTROMAGNETIC_COIL.get())||inventory.getItem(0).is(TFMGBlocks.LARGE_COIL.get().asItem())) && spool.is(TFMGItems.COPPER_SPOOL.get()) && spool.getOrDefault(TFMGDataComponents.SPOOL_AMOUNT, defaultSpoolAmount) > 0 && inventory.getItem(0).getOrDefault(TFMGDataComponents.COIL_TURNS, defaultCoilTurns) < turnPercentage.getValue() * 10) {
+
+        //TODO: change whatever these two if statements are
+        if ((inventory.getItem(0).is(TFMGItems.ELECTROMAGNETIC_COIL.get()) || inventory.getItem(0).is(TFMGBlocks.LARGE_COIL.get().asItem())) && spool.is(TFMGItems.COPPER_SPOOL.get()) && spool.getOrDefault(TFMGDataComponents.SPOOL_AMOUNT, defaultSpoolAmount) > 0 && inventory.getItem(0).getOrDefault(TFMGDataComponents.COIL_TURNS, defaultCoilTurns) < turnPercentage.getValue() * 10) {
             if(inventory.getItem(0).getOrDefault(TFMGDataComponents.COIL_TURNS, defaultCoilTurns) < turnPercentage.getValue() * 10){
                 spool.set(TFMGDataComponents.SPOOL_AMOUNT, spool.getOrDefault(TFMGDataComponents.SPOOL_AMOUNT, defaultSpoolAmount) - 1);
                 inventory.getItem(0).set(TFMGDataComponents.COIL_TURNS, inventory.getItem(0).getOrDefault(TFMGDataComponents.COIL_TURNS, defaultCoilTurns) + 1);
@@ -208,16 +222,16 @@ public class WindingMachineBlockEntity extends KineticBlockEntity implements IHa
             return;
         }
 
-
-
         if (amountWinded >= recipe.getProcessingDuration()) {
-            inventory.setStackInSlot(0, recipe.rollResults(level.random).getFirst());
+            ItemStack result = recipe.rollResults(level.random).getFirst();
+
+            inventory.setStackInSlot(0, ItemStack.EMPTY);
+            outputInventory.setStackInSlot(0, result);
             recipe = null;
             amountWinded = 0;
 
             sendData();
             setChanged();
-
         } else {
             if (spool.isEmpty() || spool.is(TFMGItems.EMPTY_SPOOL.get())) {
                 return;
@@ -228,7 +242,12 @@ public class WindingMachineBlockEntity extends KineticBlockEntity implements IHa
                     amountWinded++;
                 }
             } else {
-                inventory.setStackInSlot(0, recipe.rollResults(level.random).getFirst());
+                ItemStack result = recipe.rollResults(level.random).getFirst();
+
+                inventory.setStackInSlot(0, ItemStack.EMPTY);
+                outputInventory.setStackInSlot(0, result);
+                recipe = null;
+                amountWinded = 0;
                 sendData();
                 setChanged();
             }
@@ -247,6 +266,7 @@ public class WindingMachineBlockEntity extends KineticBlockEntity implements IHa
     protected void write(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {
         super.write(compound,registries , clientPacket);
         compound.put("Inventory", inventory.serializeNBT(registries));
+        compound.put("OutputInventory", outputInventory.serializeNBT(registries));
         compound.put("Spool", spool.saveOptional(registries));
         compound.putInt("AmountWinded", amountWinded);
     }
@@ -254,7 +274,8 @@ public class WindingMachineBlockEntity extends KineticBlockEntity implements IHa
     @Override
     protected void read(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {
         super.read(compound,registries , clientPacket);
-        inventory.deserializeNBT(registries,compound.getCompound("Inventory"));
+        inventory.deserializeNBT(registries, compound.getCompound("Inventory"));
+        outputInventory.deserializeNBT(registries, compound.getCompound("OutputInventory"));
   
         if (compound.contains("Spool")) {
             ItemStack.parse(registries, compound.getCompound("Spool")).ifPresent(i -> spool = i);
@@ -275,6 +296,4 @@ public class WindingMachineBlockEntity extends KineticBlockEntity implements IHa
             return direction == state.getValue(HORIZONTAL_FACING);
         }
     }
-
-
 }
