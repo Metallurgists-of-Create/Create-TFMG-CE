@@ -31,7 +31,7 @@ Please note that not all bugs are fixed and some new additions are subject to ch
 - Engine Cylinders and Turbine Blades have recipes again.
 - Engines of different types no longer connect.
 - Encased cogwheel item models now show the correct cogwheel type.
-- Steel, Aluminium & Heavy Casings can now encase blocks properly.
+- Steel, Aluminum & Heavy Casings can now encase blocks properly.
 - Fixed typos in some cogwheel texture names.
 
 ### Changes:
@@ -50,6 +50,11 @@ Please note that not all bugs are fixed and some new additions are subject to ch
 - Vat:
   - Vat Machines now display personal goggle/multimeter info if they are operational or not.
   - Vats can now be multi-placed.
+  - Vat pressure and heat level do not display floats anymore
+  - Vat recipe `allowed_vat_types` now use a list of `ResourceLocation`s
+  - Vat types now use `ResourceLocation` in replacement of `String`
+  - `VatRecipeGen` no longer uses generics
+  - Vat pressure is limited to between `-9` and `9` (inclusive)
 - Electricity:
   - Modified the extraction calculation on Cable Insulators to improve the amount of FE being consumed.
 - Engines & Engine Adjacent:
@@ -65,10 +70,10 @@ Please note that not all bugs are fixed and some new additions are subject to ch
   - Surface Scanners now update their detection if they have been moved (if they are on a Sub-Level)
   - Surface Scanners now produce a redstone signal based on the distance from a detected oil chunk.
 - Added TFMG Encased wooden cogwheels.
-- Added Industrial Aluminium encased blocks.
+- Added Industrial Aluminum encased blocks.
 - Cleaned up Neon Tube.
 - Marked "The Factory Must WORK" as incompatible with Community Edition due to conflicting bug fixes. This may be revoked at a later date.
-- Added credits to the mods.toml
+- Added credits to `neoforge.mods.toml`
 
 ### API Changes:
 - Added Sable Companion as an embedded api.
@@ -78,12 +83,12 @@ Please note that not all bugs are fixed and some new additions are subject to ch
 - Engine Upgrades now use the `tfmg:upgrades_on_side` engine tag for rendering.
 - Removed `RegularEngineBlockEntity.EngineType` enum.
 - Internal tag enums in `TFMGTags` have been renamed (`TFMGTags.TFMGItemTags` → `TFMGTags.Items`).
-- Added `formatFluid` in TFMGUtils for fluid units.
-- Added `fluidProduction` in TFMGTexts for fluid production.
+- Added `formatFluid` in `TFMGUtils` for fluid units.
+- Added `fluidProduction` in `TFMGTexts` for fluid production.
 - Renamed & remapped Heavy casing encased blocks to Heavy encased.
-- Added Decimal Formats to TFMGTexts for properly formatting numbers.
+- Added Decimal Formats to `TFMGTexts` for properly formatting numbers.
 - Re-introduced Micron unit just in case.
-- Added `returnItemToInventory` method in TFMGUtils. Currently only used in the Polarizer.
+- Added `returnItemToInventory` method in `TFMGUtils`. Currently only used in the Polarizer.
 
 ### New Translations:
 People who wish to translate this mod should look out for changes here.
