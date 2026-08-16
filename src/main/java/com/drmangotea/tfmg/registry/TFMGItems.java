@@ -193,9 +193,9 @@ public class TFMGItems {
 		EMPTY_SPOOL = spoolItem("empty", 0x000000)
             .recipe((c, p) -> p.stonecutting(DataIngredient.items(TFMGBlocks.HARDENED_PLANKS.asItem()), RecipeCategory.BUILDING_BLOCKS, c, 1))
             .register(),
-		COPPER_SPOOL = fullSpoolItem("copper", 0xD8735A),
-		ALUMINUM_SPOOL = fullSpoolItem("aluminum", 0xEDEFEF),
-		CONSTANTAN_SPOOL = fullSpoolItem("constantan", 0xCFC2A8);
+		COPPER_SPOOL = fullSpoolItem("copper", 0xD8735A, Items.WIRES_COPPER.tag),
+		ALUMINUM_SPOOL = fullSpoolItem("aluminum", 0xEDEFEF, Items.WIRES_ALUMINUM.tag),
+		CONSTANTAN_SPOOL = fullSpoolItem("constantan", 0xCFC2A8, Items.WIRES_CONSTANTAN.tag);
 
     public static final ItemEntry<ElectromagneticCoilItem> ELECTROMAGNETIC_COIL =
             REGISTRATE.item("electromagnetic_coil", ElectromagneticCoilItem::new)
@@ -506,13 +506,17 @@ public class TFMGItems {
                 .properties(p -> p.stacksTo(1));
     }
 	
-	public static ItemEntry<SpoolItem> fullSpoolItem(String name, int barColor) {
+	public static ItemEntry<SpoolItem> fullSpoolItem(String name, int barColor, TagKey<Item> wire) {
 		return spoolItem(name, barColor)
-			.tab(TFMGCreativeTabs.TFMG_MAIN.getKey(), (c,m) -> {
-				ItemStack spool = c.getEntry().getDefaultInstance();
-				spool.set(TFMGDataComponents.SPOOL_AMOUNT, 1000);
-				m.accept(spool, CreativeModeTab.TabVisibility.PARENT_AND_SEARCH_TABS);
-			}).register();
+            .properties(p -> p.component(TFMGDataComponents.SPOOL_AMOUNT, 1000))
+            .recipe((ctx, prov) ->
+                    ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ctx.get())
+                            .pattern("WWW").pattern("WSW").pattern("WWW")
+                            .define('W', wire)
+                            .define('S', EMPTY_SPOOL)
+                            .unlockedBy("has_wire", DataIngredient.tag(wire).getCriterion(prov))
+                            .save(prov, ctx.getId().withPrefix("crafting/")))
+			.register();
 	}
 	
 	@SafeVarargs

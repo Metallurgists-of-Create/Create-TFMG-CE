@@ -2,6 +2,7 @@ package com.drmangotea.tfmg.content.machinery.metallurgy.casting_basin;
 
 import com.drmangotea.tfmg.base.TFMGUtils;
 import com.drmangotea.tfmg.recipes.CastingRecipe;
+import com.drmangotea.tfmg.recipes.input.CastingRecipeInput;
 import com.drmangotea.tfmg.registry.TFMGBlockEntities;
 import com.drmangotea.tfmg.registry.TFMGRecipeTypes;
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
@@ -66,6 +67,7 @@ public class CastingBasinBlockEntity extends SmartBlockEntity implements IHaveGo
     @Override
     public void tick() {
         super.tick();
+        if (level == null) return;
         if (tank.getSpace() == 0) {
             if (recipe == null)
                 findRecipe();
@@ -73,7 +75,7 @@ public class CastingBasinBlockEntity extends SmartBlockEntity implements IHaveGo
                 if(recipe.getIngrenient().test(tank.getFluid())) {
                     if (timer >= recipe.getProcessingDuration()) {
                         tank.setFluid(FluidStack.EMPTY);
-                        inventory.setStackInSlot(0, recipe.getRollableResults().get(0).rollOutput(level.random));
+                        inventory.setStackInSlot(0, recipe.getRollableResults().getFirst().rollOutput(level.random));
                         recipe = null;
                         timer = 0;
                     } else timer++;
@@ -82,10 +84,8 @@ public class CastingBasinBlockEntity extends SmartBlockEntity implements IHaveGo
         }
 
         if(level.isClientSide){
-
             if(flowTimer>0)
                 flowTimer--;
-
             fluidLevel.chase(tank.getFluidAmount(), 0.3f, LerpedFloat.Chaser.EXP);
             fluidLevel.tickChaser();
         }
@@ -93,12 +93,15 @@ public class CastingBasinBlockEntity extends SmartBlockEntity implements IHaveGo
 
     public void findRecipe() {
         recipe = null;
-        List<RecipeHolder<? extends Recipe<?>>> list = RecipeFinder.get(getRecipeCacheKey(), level, RecipeConditions.isOfType(TFMGRecipeTypes.CASTING.getType()));
-        for (RecipeHolder<? extends Recipe<?>> recipe1 : list) {
-            CastingRecipe testedRecipe = (CastingRecipe) recipe1.value();
-            if (testedRecipe.getIngrenient().test(tank.getFluid()) && inventory.isEmpty()) {
-                recipe = testedRecipe;
-                return;
+        if (level == null) return;
+        List<RecipeHolder<? extends Recipe<?>>> recipes = RecipeFinder.get(getRecipeCacheKey(), level, RecipeConditions.isOfType(TFMGRecipeTypes.CASTING.getType()));
+        if (inventory.isEmpty()) {
+            for (RecipeHolder<? extends Recipe<?>> r : recipes) {
+                CastingRecipe testedRecipe = (CastingRecipe) r.value();
+                if (testedRecipe.matches(new CastingRecipeInput(tank.getFluid()), level)) {
+                    recipe = testedRecipe;
+                    return;
+                }
             }
         }
     }
@@ -122,8 +125,6 @@ public class CastingBasinBlockEntity extends SmartBlockEntity implements IHaveGo
         ItemHelper.dropContents(level, worldPosition, inventory);
     }
 
-
-
     @Override
     public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
         TFMGUtils.createFluidTooltip(this, tooltip);
@@ -136,7 +137,7 @@ public class CastingBasinBlockEntity extends SmartBlockEntity implements IHaveGo
         super.write(compound,registries , clientPacket);
         compound.put("Inventory", inventory.serializeNBT(registries));
         compound.put("Tank", tank.writeToNBT(registries,new CompoundTag()));
-        compound.putInt("Timer",timer);
+        compound.putInt("Timer", timer);
     }
 
     @Override

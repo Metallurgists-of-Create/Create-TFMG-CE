@@ -14,7 +14,7 @@ import java.util.List;
 
 public class ElectricBlockEntity extends SmartBlockEntity implements IElectric, IHaveHoveringInformation {
 
-    public ElectricBlockValues data = new ElectricBlockValues(getPos());
+    public ElectricBlockValues data = new ElectricBlockValues(BlockPos.of(getPos()));
 
 
     public ElectricBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
@@ -53,8 +53,8 @@ public class ElectricBlockEntity extends SmartBlockEntity implements IElectric, 
 
 
     @Override
-    public BlockPos getPos() {
-        return getBlockPos();
+    public long getPos() {
+        return getBlockPos().asLong();
     }
 
     @Override
