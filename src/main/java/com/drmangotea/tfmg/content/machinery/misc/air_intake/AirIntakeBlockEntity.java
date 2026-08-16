@@ -19,7 +19,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.context.UseOnContext;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
@@ -33,6 +32,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static com.drmangotea.tfmg.content.machinery.misc.air_intake.AirIntakeBlock.INVISIBLE;
 import static com.simibubi.create.content.kinetics.base.DirectionalKineticBlock.FACING;
@@ -46,19 +46,26 @@ public class AirIntakeBlockEntity extends KineticBlockEntity implements IWrencha
     public BlockPos controller;
     public List<AirIntakeBlockEntity> blockEntities = new ArrayList<>();
     public float maxShaftSpeed = 0;
+
     public float angle = 0;
     public LerpedFloat visual_angle = LerpedFloat.angular();
 
     protected FluidTank tankInventory;
     protected IFluidHandler fluidCapability;
 
+    private BlockPos capabilityController;
+    private boolean capabilityResolved = false;
+    private int syncedDiameter = -1;
+
+    private int syncTimer = 0;
+    private static final int SYNC_INTERVAL = 10;
+    private static final int TANK_SYNC_STEP = 50;
+    private int lastSyncedAmount = -1;
 
     public AirIntakeBlockEntity(BlockEntityType<?> typeIn, BlockPos pos, BlockState state) {
         super(typeIn, pos, state);
         tankInventory = createInventory();
         fluidCapability = tankInventory;
-
-
     }
 
     public static void registerCapabilities(RegisterCapabilitiesEvent event) {
@@ -70,14 +77,10 @@ public class AirIntakeBlockEntity extends KineticBlockEntity implements IWrencha
     }
 
     public int getProduction() {
-        int production = ((int) maxShaftSpeed * ((diameter * diameter))) / 40;
-        if (controller == null) {
-            return Math.min(production, tankInventory.getSpace());
+        if (controller != null && level != null && level.getBlockEntity(controller) instanceof AirIntakeBlockEntity intake) {
+            return ((int) intake.maxShaftSpeed * (intake.diameter * intake.diameter)) / 40;
         }
-        if (level != null && level.getBlockEntity(controller) instanceof AirIntakeBlockEntity intake) {
-            production = ((int) intake.maxShaftSpeed * (intake.diameter * intake.diameter)) / 40;
-        }
-        return Math.min(production, tankInventory.getSpace());
+        return ((int) maxShaftSpeed * ((diameter * diameter))) / 40;
     }
 
     public int getMinimumSpeed() {
@@ -93,34 +96,55 @@ public class AirIntakeBlockEntity extends KineticBlockEntity implements IWrencha
 
     public void tick(){
         super.tick();
-        if (level == null) return;
-        if (tankInventory.getFluidAmount() + getProduction() <= tankInventory.getCapacity()) {
-            tankInventory.fill(new FluidStack(FluidHelper.convertToStill(TFMGFluids.AIR.get()), getProduction()), IFluidHandler.FluidAction.EXECUTE);
+        if (level != null && !level.isClientSide) {
+            if (tankInventory.getFluidAmount() + Math.min(getProduction(), tankInventory.getSpace()) <= tankInventory.getCapacity()) {
+                tankInventory.fill(new FluidStack(FluidHelper.convertToStill(TFMGFluids.AIR.get()), getProduction()), IFluidHandler.FluidAction.EXECUTE);
+            }
         }
+
         if(isUsedByController) {
-            refreshCapability();
-            sendData();
-            setChanged();
+            boolean structureChanged = !capabilityResolved || !Objects.equals(capabilityController, controller) || syncedDiameter != diameter;
+            if (structureChanged) {
+                capabilityResolved = true;
+                capabilityController = controller;
+                syncedDiameter = diameter;
+                refreshCapability();
+                syncTimer = 0;
+                sendData();
+                setChanged();
+            } else if (++syncTimer >= SYNC_INTERVAL) {
+                syncTimer = 0;
+                sendData();
+                setChanged();
+            }
         }
+
         if(diameter == 3){
             visual_angle.chase(angle, 0.1f, LerpedFloat.Chaser.EXP);
             visual_angle.tickChaser();
         }
-        angle+=maxShaftSpeed/2;
+
+        angle += maxShaftSpeed / 2;
         angle %= 360;
+
         if(isUsedByController)
             blockEntities.clear();
-        if(!this.getBlockState().getValue(INVISIBLE)){
-            if(isController||isUsedByController){
-                level.setBlock(this.getBlockPos(),this.getBlockState().setValue(INVISIBLE,true),2);
+
+        if (level != null) {
+            if(!this.getBlockState().getValue(INVISIBLE)){
+                if(isController||isUsedByController){
+                    level.setBlock(this.getBlockPos(),this.getBlockState().setValue(INVISIBLE,true),2);
+                }
             }
+            if(!isController && !isUsedByController && this.getBlockState().getValue(INVISIBLE))
+                level.setBlock(this.getBlockPos(),this.getBlockState().setValue(INVISIBLE,false),2);
         }
-        if(!isController&&!isUsedByController)
-            level.setBlock(this.getBlockPos(),this.getBlockState().setValue(INVISIBLE,false),2);
         if(controller == null)
             controller = this.getBlockPos();
-        diameter = getPossibleDiameter();
-        if(controller == this.getBlockPos()) {
+
+        diameter =getPossibleDiameter();
+
+        if (controller != null && controller.equals(this.getBlockPos())) {
             isUsedByController = false;
         } else {
             isUsedByController = true;
@@ -129,52 +153,55 @@ public class AirIntakeBlockEntity extends KineticBlockEntity implements IWrencha
         if(diameter ==1) {
             isController = false;
         }
-        BlockEntity controllerEntity = controller != null ? level.getBlockEntity(controller) : null;
-        if (controllerEntity instanceof AirIntakeBlockEntity controllerIntake) {
-            if (!controllerIntake.isController) {
-                isUsedByController = false;
-            }
-            if (controllerIntake.diameter == 2) {
-                int x = Math.abs(this.getBlockPos().getX() - controller.getX());
-                int y = Math.abs(this.getBlockPos().getY() - controller.getY());
-                int z = Math.abs(this.getBlockPos().getZ() - controller.getZ());
 
-                if (x > 1 || y > 1 || z > 1) {
+        if (level != null) {
+            if (controller != null) {
+                if (!(level.getBlockEntity(controller) instanceof AirIntakeBlockEntity intakeController)) {
                     isUsedByController = false;
                     controller = this.getBlockPos();
+                } else {
+                    if (!intakeController.isController)
+                        isUsedByController = false;
                 }
+
+                if (level.getBlockEntity(controller) instanceof AirIntakeBlockEntity intakeController)
+                    if (intakeController.diameter == 2) {
+                        int x = Math.abs(this.getBlockPos().getX() - controller.getX());
+                        int y = Math.abs(this.getBlockPos().getY() - controller.getY());
+                        int z = Math.abs(this.getBlockPos().getZ() - controller.getZ());
+                        if (x > 1 || y > 1 || z > 1) {
+                            isUsedByController = false;
+                            controller = this.getBlockPos();
+                        }
+                    }
+                if (level.getBlockEntity(controller) instanceof AirIntakeBlockEntity intakeController)
+                    if (intakeController.diameter == 1) {
+                        isUsedByController = false;
+                        controller = this.getBlockPos();
+                    }
             }
-            if(controllerIntake.diameter==1) {
-                isUsedByController = false;
-                controller = this.getBlockPos();
-            }
-        } else {
-            isUsedByController = false;
-            controller = this.getBlockPos();
         }
-        if(diameter == 1){
+        if (diameter == 1) {
             maxShaftSpeed = Math.abs(getSpeed());
-        }else {
+        } else {
             maxShaftSpeed = Math.abs(getSpeed());
             List<Float> speeds = new ArrayList<>();
-
             for (AirIntakeBlockEntity be : blockEntities) {
                 speeds.add(Math.abs(be.getSpeed()));
             }
-
             for(float testedSpeed : speeds){
                 if(testedSpeed> maxShaftSpeed)
                     maxShaftSpeed = testedSpeed;
             }
         }
-        if(isUsedByController)
+        if (isUsedByController)
             return;
-        if(diameter ==2){
-            if(blockEntities.toArray().length != 4)
+        if (diameter == 2){
+            if(blockEntities.size() != 4)
                 return;
         }
-        if(diameter == 3){
-            if(blockEntities.toArray().length != 9)
+        if (diameter == 3){
+            if(blockEntities.size() != 9)
                 return;
         }
     }
@@ -326,7 +353,11 @@ public class AirIntakeBlockEntity extends KineticBlockEntity implements IWrencha
 
     @Override
     public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
-        if (getProduction() == 0) {
+        float currentSpeed = maxShaftSpeed;
+        if (controller != null && level != null && level.getBlockEntity(controller) instanceof AirIntakeBlockEntity intake) {
+            currentSpeed = intake.maxShaftSpeed;
+        }
+        if (getProduction() == 0 && currentSpeed < getMinimumSpeed()) {
             TFMGTexts.CommonMachines.minRPM(getMinimumSpeed()).style(ChatFormatting.RED).forGoggles(tooltip);
         }
         TFMGTexts.fluidProduction(getProduction()).style(getProduction() > 0 ? ChatFormatting.AQUA : ChatFormatting.RED).forGoggles(tooltip);
@@ -344,8 +375,13 @@ public class AirIntakeBlockEntity extends KineticBlockEntity implements IWrencha
     }
 
     protected void onFluidStackChanged(FluidStack newFluidStack) {
-            setChanged();
-            sendData();
+        int amount = newFluidStack.getAmount();
+        boolean emptinessFlipped = (amount == 0) != (lastSyncedAmount == 0);
+        if (amount != 8000 && !emptinessFlipped && lastSyncedAmount >= 0 && Math.abs(amount - lastSyncedAmount) < TANK_SYNC_STEP)
+            return;
+
+        lastSyncedAmount = amount;
+        sendData();
     }
 
 
