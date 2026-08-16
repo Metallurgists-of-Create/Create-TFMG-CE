@@ -29,13 +29,12 @@ public class ElectricalNetwork {
     //adds a new block to the network if it's not in it already
     public void add(IElectric be) {
         long id = be.getData().getId();
-
-        int counter = 0;
-        for(int i = this.members.size(); counter < i; ++counter) {
-            if (this.members.get(counter).getData().getId() == id) {
-                return;
-            }
-        }
+		
+		for (IElectric member : this.members) {
+			if (member.getData().getId() == id) {
+				return;
+			}
+		}
         members.add(be);
     }
 
@@ -51,7 +50,7 @@ public class ElectricalNetwork {
         int powerGeneration = 0;
 
 
-        /**
+        /*
          *  Phase I:
          *  1) gives each blocks the networks id
          *  2) finds the highest voltage generated
@@ -65,7 +64,7 @@ public class ElectricalNetwork {
             maxVoltage = Math.max(member.voltageGeneration(), maxVoltage);
             powerGeneration = (int) (powerGeneration + member.powerGeneration());
         }
-        /**
+        /*
          *  Phase II:
          * 1) informs blocks about voltage and power change
          * 2) sets network's resistance
@@ -87,7 +86,7 @@ public class ElectricalNetwork {
             }
         }
 
-        /**
+        /*
          * Phase III:
          * 1) sets the current of wires
          * 2) informs subnetworks
@@ -107,7 +106,7 @@ public class ElectricalNetwork {
            //     member.setNetworkResistance(1f / resistance);
            // } else member.setNetworkResistance(0);
         }
-        /**
+        /*
          * Phase IV:
          * 1) stops the network from functioning if it consumes more power than it creates
          */
