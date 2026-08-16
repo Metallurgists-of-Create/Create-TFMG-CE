@@ -1,5 +1,6 @@
 package com.drmangotea.tfmg.content.machinery.vat.base;
 
+import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.base.TFMGUtils;
 import com.drmangotea.tfmg.base.lang.TFMGTexts;
 import com.drmangotea.tfmg.content.machinery.vat.compressor.CompressorBlockEntity;
@@ -60,6 +61,7 @@ import net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.IItemHandlerModifiable;
 import net.neoforged.neoforge.items.wrapper.CombinedInvWrapper;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -77,7 +79,7 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
     //fluid inventory
     public SmartFluidTankBehaviour inputTank;
     public SmartFluidTankBehaviour outputTank;
-    private Couple<SmartFluidTankBehaviour> tanks;
+    private final Couple<SmartFluidTankBehaviour> tanks;
     //capabilities
     protected IFluidHandler fluidCapability;
     protected IItemHandlerModifiable itemCapability;
@@ -110,9 +112,6 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
     int pressure = 0;
     HeatCondition heatCondition = HeatCondition.NONE;
     private static final Object vatRecipeKey = new Object();
-    // display
-    private int minValue = 0;
-    private int maxValue = 0;
 
     public VatBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
@@ -131,8 +130,6 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
         height = 1;
         width = 1;
         refreshCapability();
-
-
     }
 
     public Couple<SmartFluidTankBehaviour> getTanks() {
@@ -179,27 +176,23 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
 
     protected void updateConnectivity() {
         updateConnectivity = false;
-        if (level.isClientSide)
-            return;
-        if (!isController())
+        if (level == null || level.isClientSide || !isController())
             return;
         ConnectivityHandler.formMulti(this);
-
-
     }
 
     //goggle stuff
-    public MutableComponent getHeatComponent(boolean forGoggles, boolean useBlocksAsBars, ChatFormatting... styles) {
-        return componentHelper("heat", 10 + heatLevel, forGoggles, useBlocksAsBars, styles);
+    public MutableComponent getHeatComponent(boolean forGoggles) {
+        return componentHelper("heat", heatLevel, forGoggles);
     }
 
-    public MutableComponent getPressureComponent(boolean forGoggles, boolean useBlocksAsBars, ChatFormatting... styles) {
-        return componentHelper("pressure", 10 + pressure, forGoggles, useBlocksAsBars, styles);
+    public MutableComponent getPressureComponent(boolean forGoggles) {
+        return componentHelper("pressure", pressure, forGoggles);
     }
 
-    private MutableComponent componentHelper(String label, int level, boolean forGoggles, boolean useBlocksAsBars,
+    private MutableComponent componentHelper(String label, int level, boolean forGoggles,
                                              ChatFormatting... styles) {
-        MutableComponent base = useBlocksAsBars ? blockComponent(level) : barComponent(level);
+        MutableComponent base = barComponent(level);
 
         if (!forGoggles)
             return base;
@@ -212,80 +205,40 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
                 .append(CreateLang.translateDirect("vat." + label + "_dots")
                         .withStyle(style2))
                 .append(base)
-                .append("(" + level / 10f + ")");
-    }
-
-    private MutableComponent blockComponent(int level) {
-        return Component.literal("" + "\u2588".repeat(minValue) + "\u2592".repeat(level - minValue) + "\u2591".repeat(maxValue - level));
+                .append("(" + level + ")");
     }
 
     private MutableComponent barComponent(int level) {
-        ChatFormatting color = level - minValue > 19 ? ChatFormatting.DARK_RED : ChatFormatting.DARK_GREEN;
-        switch (level - minValue) {
-            case 1:
-                color = ChatFormatting.BLUE;
-                break;
-            case 2:
-                color = ChatFormatting.DARK_AQUA;
-                break;
-            case 3:
-                color = ChatFormatting.DARK_AQUA;
-                break;
-            case 4:
-                color = ChatFormatting.AQUA;
-                break;
-            case 5:
-                color = ChatFormatting.AQUA;
-                break;
-            case 6:
-                color = ChatFormatting.AQUA;
-                break;
-            case 7:
-                color = ChatFormatting.AQUA;
-                break;
-            case 8:
-                color = ChatFormatting.AQUA;
-                break;
-            case 11:
-                color = ChatFormatting.YELLOW;
-                break;
-            case 12:
-                color = ChatFormatting.YELLOW;
-                break;
-            case 13:
-                color = ChatFormatting.YELLOW;
-                break;
-            case 14:
-                color = ChatFormatting.YELLOW;
-                break;
-            case 15:
-                color = ChatFormatting.YELLOW;
-                break;
-            case 16:
-                color = ChatFormatting.GOLD;
-                break;
-            case 17:
-                color = ChatFormatting.RED;
-                break;
-            case 18:
-                color = ChatFormatting.RED;
-                break;
-            case 19:
-                color = ChatFormatting.DARK_RED;
-                break;
-
-        }
+        // display
+        int minValue = 0;
+        ChatFormatting color = getColor(level, minValue);
 
 
+        int maxValue = 0;
         return Component.empty()
-                .append(bars(Math.max(0, minValue - 1), ChatFormatting.RED))
-                .append(bars(minValue > 0 ? 1 : 0, ChatFormatting.GOLD))
+                .append(bars(0, ChatFormatting.RED))
+                .append(bars(0, ChatFormatting.GOLD))
                 .append(bars(Math.max(0, level - minValue), color))
                 .append(bars(Math.max(0, maxValue - level), ChatFormatting.BLUE))
-                .append(bars(Math.max(0, Math.min(18 - maxValue, ((maxValue / 5 + 1) * 5) - maxValue)),
+                .append(bars(Math.min(18 - maxValue, 5 - maxValue),
                         ChatFormatting.DARK_GRAY));
 
 
+    }
+
+    private static @NotNull ChatFormatting getColor(int level, int minValue) {
+        ChatFormatting color = level - minValue > 19 ? ChatFormatting.DARK_RED : ChatFormatting.DARK_GREEN;
+        color = switch (level - minValue) {
+            case 1 -> ChatFormatting.BLUE;
+            case 2, 3 -> ChatFormatting.DARK_AQUA;
+            case 4, 5, 6, 8, 7 -> ChatFormatting.AQUA;
+            case 11, 12, 13, 14, 15 -> ChatFormatting.YELLOW;
+            case 16 -> ChatFormatting.GOLD;
+            case 17, 18 -> ChatFormatting.RED;
+            case 19 -> ChatFormatting.DARK_RED;
+            default -> color;
+        };
+        return color;
     }
 
     private MutableComponent bars(int level, ChatFormatting format) {
@@ -539,7 +492,7 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
 
         if (lastKnownPos == null)
             lastKnownPos = getBlockPos();
-        else if (!lastKnownPos.equals(worldPosition) && worldPosition != null) {
+        else if (!lastKnownPos.equals(worldPosition)) {
             onPositionChanged();
             return;
         }
@@ -897,7 +850,7 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
         if (be == null)
             return;
 
-        if (((VatBlock) getBlockState().getBlock()).vatType == "tfmg:firebrick_lined_vat")
+        if (Objects.equals(((VatBlock) getBlockState().getBlock()).vatType, TFMG.asResource("firebrick_lined_vat")))
             return;
 
         be.setWindows(!be.window);
@@ -931,19 +884,7 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
                     if (!VatBlock.isVat(blockState))
                         continue;
 
-                    VatBlock.Shape shape = VatBlock.Shape.PLAIN;
-                    if (window) {
-                        // SIZE 1: Every tank has a window
-                        if (width == 1)
-                            shape = VatBlock.Shape.WINDOW;
-                        // SIZE 2: Every tank has a corner window
-                        if (width == 2)
-                            shape = xOffset == 0 ? zOffset == 0 ? VatBlock.Shape.WINDOW_NW : VatBlock.Shape.WINDOW_SW
-                                    : zOffset == 0 ? VatBlock.Shape.WINDOW_NE : VatBlock.Shape.WINDOW_SE;
-                        // SIZE 3: Tanks in the center have a window
-                        if (width == 3 && abs(abs(xOffset) - abs(zOffset)) == 1)
-                            shape = VatBlock.Shape.WINDOW;
-                    }
+                    VatBlock.Shape shape = getShape(window, xOffset, zOffset);
 
                     level.setBlock(pos, blockState.setValue(VatBlock.SHAPE, shape), 22);
                     level.getChunkSource()
@@ -952,6 +893,23 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
                 }
             }
         }
+    }
+
+    private VatBlock.@NotNull Shape getShape(boolean window, int xOffset, int zOffset) {
+        VatBlock.Shape shape = VatBlock.Shape.PLAIN;
+        if (window) {
+            // SIZE 1: Every tank has a window
+            if (width == 1)
+                shape = VatBlock.Shape.WINDOW;
+            // SIZE 2: Every tank has a corner window
+            if (width == 2)
+                shape = xOffset == 0 ? zOffset == 0 ? VatBlock.Shape.WINDOW_NW : VatBlock.Shape.WINDOW_SW
+                        : zOffset == 0 ? VatBlock.Shape.WINDOW_NE : VatBlock.Shape.WINDOW_SE;
+            // SIZE 3: Tanks in the center have a window
+            if (width == 3 && abs(abs(xOffset) - abs(zOffset)) == 1)
+                shape = VatBlock.Shape.WINDOW;
+        }
+        return shape;
     }
 
     public void updateState() {
@@ -1052,8 +1010,8 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
         TFMGTexts.header("vat").style(ChatFormatting.GRAY)
                 .forGoggles(tooltip);
 
-        CreateLang.builder().add(getPressureComponent(true, false)).forGoggles(tooltip, 1);
-        CreateLang.builder().add(getHeatComponent(true, false)).forGoggles(tooltip, 1);
+        CreateLang.builder().add(getPressureComponent(true)).forGoggles(tooltip, 1);
+        CreateLang.builder().add(getHeatComponent(true)).forGoggles(tooltip, 1);
 
         TFMGTexts.Vat.attachments()
                 .style(ChatFormatting.GRAY)

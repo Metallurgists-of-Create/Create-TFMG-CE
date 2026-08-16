@@ -3,12 +3,12 @@ package com.drmangotea.tfmg.datagen.recipes.values.tfmg;
 
 import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.datagen.recipes.builder.VatRecipeGen;
-import com.drmangotea.tfmg.recipes.VatMachineRecipe;
 import com.drmangotea.tfmg.registry.TFMGFluids;
 import com.drmangotea.tfmg.registry.TFMGItems;
 import com.drmangotea.tfmg.registry.TFMGTags;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.material.Fluids;
 import net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient;
@@ -27,7 +27,7 @@ public class TFMGVatRecipeGen extends VatRecipeGen {
 
 
     GeneratedRecipe
-            CONCRETE = create("concrete", b -> ((VatMachineRecipe.Builder<VatMachineRecipe>) b)
+            CONCRETE = create("concrete", b -> b
             .require(Blocks.SAND.asItem())
             .require(Blocks.GRAVEL.asItem())
             .require(TFMGItems.LIMESAND)
@@ -35,7 +35,7 @@ public class TFMGVatRecipeGen extends VatRecipeGen {
             .output(TFMGFluids.LIQUID_CONCRETE.get(), 32000)
             .values(mixing(true))
     ),
-            ARC_FURNACE_STEEL = create("arc_furnace_steel", b -> ((VatMachineRecipe.Builder<VatMachineRecipe>) b)
+            ARC_FURNACE_STEEL = create("arc_furnace_steel", b -> b
                     .require(crushedRawIron())
                     .require(TFMGTags.Items.FLUX.tag)
                     .require(TFMGItems.COAL_COKE_DUST)
@@ -44,12 +44,12 @@ public class TFMGVatRecipeGen extends VatRecipeGen {
                     .output(TFMGFluids.MOLTEN_SLAG.get(), 288)
                     .duration(20)
                     .values(arcBlasting())),
-            NEON = create("neon", b -> ((VatMachineRecipe.Builder<VatMachineRecipe>) b)
+            NEON = create("neon", b -> b
                     .require(TFMGFluids.AIR.get(), 1000)
                     .output(TFMGFluids.NEON.get(), 1)
                     .duration(10)
                     .values(centrifuge())),
-            SULFURIC_ACID = create("sulfuric_acid", b -> ((VatMachineRecipe.Builder<VatMachineRecipe>) b)
+            SULFURIC_ACID = create("sulfuric_acid", b -> b
                     .require(SizedFluidIngredient.of(water(), 1000))
                     .require(sulfurDust())
                     .require(sulfurDust())
@@ -58,34 +58,34 @@ public class TFMGVatRecipeGen extends VatRecipeGen {
                     .output(sulfuricAcid(), 500)
                     .values(mixing(true))),
 
-    RUBBER = create("rubber", b -> ((VatMachineRecipe.Builder<VatMachineRecipe>) b)
+    RUBBER = create("rubber", b -> b
             .require(SizedFluidIngredient.of(heavyOil(), 250))
             .require(sulfurDust())
             .output(rubber())
             .values(heatedmixing(true))),
 
-    NAPHTHA = create("naphtha", b -> ((VatMachineRecipe.Builder<VatMachineRecipe>) b)
+    NAPHTHA = create("naphtha", b -> b
             .require(SizedFluidIngredient.of(naphtha(), 500))
             .output(ethylene(), 250)
             .output(propylene(), 250)
             .values(heatedmixing(true))),
 
-    PLASTIC_FROM_ETHYLENE = create("plastic_from_ethylene", b -> ((VatMachineRecipe.Builder<VatMachineRecipe>) b)
+    PLASTIC_FROM_ETHYLENE = create("plastic_from_ethylene", b -> b
             .require(SizedFluidIngredient.of(ethylene(), 500))
             .output(liquidPlastic(), 500)
             .values(heatedmixing(true))),
 
-            PLASTIC_FROM_PROPYLENE = create("plastic_from_propylene", b -> ((VatMachineRecipe.Builder<VatMachineRecipe>) b)
+            PLASTIC_FROM_PROPYLENE = create("plastic_from_propylene", b -> b
                     .require(SizedFluidIngredient.of(propylene(), 500))
                     .output(liquidPlastic(), 500)
                     .values(heatedmixing(true))),
-            ETCHED_CIRCUIT_BOARD = create("etched_circuit_board", b -> ((VatMachineRecipe.Builder<VatMachineRecipe>) b)
+            ETCHED_CIRCUIT_BOARD = create("etched_circuit_board", b -> b
                     .require(TFMGItems.COATED_CIRCUIT_BOARD)
                     .require(TFMGFluids.SULFURIC_ACID.getSource(), 250)
                     .output(TFMGItems.ETCHED_CIRCUIT_BOARD)
                     .duration(100)
                     .values(noMachines())),
-            ALUMINUM = create("aluminum", b -> ((VatMachineRecipe.Builder<VatMachineRecipe>) b)
+            ALUMINUM = create("aluminum", b -> b
                     .require(TFMGItems.BAUXITE_POWDER)
                     .require(TFMGItems.BAUXITE_POWDER)
                     .require(TFMGItems.BAUXITE_POWDER)
@@ -124,8 +124,8 @@ public class TFMGVatRecipeGen extends VatRecipeGen {
         params.machines.add("tfmg:electrode");
         params.machines.add("tfmg:electrode");
         params.allowedVatTypes = new ArrayList<>();
-        params.allowedVatTypes.add("tfmg:steel_vat");
-        params.allowedVatTypes.add("tfmg:firebrick_lined_vat");
+        params.allowedVatTypes.add(TFMG.asResource("steel_vat"));
+        params.allowedVatTypes.add(TFMG.asResource("firebrick_lined_vat"));
         params.heat = 2;
         return params;
     }
@@ -139,9 +139,9 @@ public class TFMGVatRecipeGen extends VatRecipeGen {
         params.machines.add("tfmg:mixing");
         params.allowedVatTypes = new ArrayList<>();
         if (allowsCastIronVat)
-            params.allowedVatTypes.add("tfmg:cast_iron_vat");
-        params.allowedVatTypes.add("tfmg:steel_vat");
-        params.allowedVatTypes.add("tfmg:firebrick_lined_vat");
+            params.allowedVatTypes.add(TFMG.asResource("cast_iron_vat"));
+        params.allowedVatTypes.add(TFMG.asResource("steel_vat"));
+        params.allowedVatTypes.add(TFMG.asResource("firebrick_lined_vat"));
         return params;
     }
 
@@ -150,9 +150,9 @@ public class TFMGVatRecipeGen extends VatRecipeGen {
         params.machines.add("tfmg:mixing");
         params.allowedVatTypes = new ArrayList<>();
         if (allowsCastIronVat)
-            params.allowedVatTypes.add("tfmg:cast_iron_vat");
-        params.allowedVatTypes.add("tfmg:steel_vat");
-        params.allowedVatTypes.add("tfmg:firebrick_lined_vat");
+            params.allowedVatTypes.add(TFMG.asResource("cast_iron_vat"));
+        params.allowedVatTypes.add(TFMG.asResource("steel_vat"));
+        params.allowedVatTypes.add(TFMG.asResource("firebrick_lined_vat"));
         params.heat = 2;
         return params;
     }
@@ -166,9 +166,9 @@ public class TFMGVatRecipeGen extends VatRecipeGen {
     public VatRecipeValues noMachines() {
         VatRecipeValues params = new VatRecipeValues();
         params.allowedVatTypes = new ArrayList<>();
-        params.allowedVatTypes.add("tfmg:steel_vat");
-        params.allowedVatTypes.add("tfmg:cast_iron_vat");
-        params.allowedVatTypes.add("tfmg:firebrick_lined_vat");
+        params.allowedVatTypes.add(TFMG.asResource("steel_vat"));
+        params.allowedVatTypes.add(TFMG.asResource("cast_iron_vat"));
+        params.allowedVatTypes.add(TFMG.asResource("firebrick_lined_vat"));
         params.minSize = 1;
         return params;
     }
@@ -177,9 +177,9 @@ public class TFMGVatRecipeGen extends VatRecipeGen {
         VatRecipeValues params = new VatRecipeValues();
 
         params.allowedVatTypes = new ArrayList<>();
-        params.allowedVatTypes.add("tfmg:cast_iron_vat");
-        params.allowedVatTypes.add("tfmg:steel_vat");
-        params.allowedVatTypes.add("tfmg:firebrick_lined_vat");
+        params.allowedVatTypes.add(TFMG.asResource("cast_iron_vat"));
+        params.allowedVatTypes.add(TFMG.asResource("steel_vat"));
+        params.allowedVatTypes.add(TFMG.asResource("firebrick_lined_vat"));
         params.heat = 5;
         return params;
     }
@@ -199,7 +199,7 @@ public class TFMGVatRecipeGen extends VatRecipeGen {
         params.machines.add("tfmg:graphite_electrode");
         params.minSize = 9;
         params.allowedVatTypes = new ArrayList<>();
-        params.allowedVatTypes.add("tfmg:firebrick_lined_vat");
+        params.allowedVatTypes.add(TFMG.asResource("firebrick_lined_vat"));
         return params;
     }
 
@@ -209,7 +209,7 @@ public class TFMGVatRecipeGen extends VatRecipeGen {
         public int minSize;
         public int heat;
         public int pressure;
-        public List<String> allowedVatTypes;
+        public List<ResourceLocation> allowedVatTypes;
 
 
         public VatRecipeValues() {
@@ -218,9 +218,9 @@ public class TFMGVatRecipeGen extends VatRecipeGen {
             heat = 0;
             pressure = 0;
             allowedVatTypes = new ArrayList<>();
-            allowedVatTypes.add("tfmg:steel_vat");
-            allowedVatTypes.add("tfmg:cast_iron_vat");
-            allowedVatTypes.add("tfmg:firebrick_lined_vat");
+            allowedVatTypes.add(TFMG.asResource("steel_vat"));
+            allowedVatTypes.add(TFMG.asResource("cast_iron_vat"));
+            allowedVatTypes.add(TFMG.asResource("firebrick_lined_vat"));
 
         }
 

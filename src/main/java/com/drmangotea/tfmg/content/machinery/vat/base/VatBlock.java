@@ -1,5 +1,6 @@
 package com.drmangotea.tfmg.content.machinery.vat.base;
 
+import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.base.lang.TFMGLang;
 import com.drmangotea.tfmg.registry.TFMGBlockEntities;
 import com.simibubi.create.api.connectivity.ConnectivityHandler;
@@ -7,6 +8,7 @@ import com.simibubi.create.content.equipment.wrench.IWrenchable;
 import com.simibubi.create.foundation.block.IBE;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.InteractionResult;
@@ -31,8 +33,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.neoforge.common.util.DeferredSoundType;
 
 public class VatBlock extends Block implements IWrenchable, IBE<VatBlockEntity> {
-
-    public final String vatType;
+    public final ResourceLocation vatType;
 
     public static final BooleanProperty TOP = BooleanProperty.create("top");
     public static final BooleanProperty BOTTOM = BooleanProperty.create("bottom");
@@ -41,16 +42,16 @@ public class VatBlock extends Block implements IWrenchable, IBE<VatBlockEntity> 
 
 
     public static VatBlock steel(Properties properties){
-        return new VatBlock(properties,"tfmg:steel_vat");
+        return new VatBlock(properties, TFMG.asResource("steel_vat"));
     }
     public static VatBlock cast_iron(Properties properties){
-        return new VatBlock(properties,"tfmg:cast_iron_vat");
+        return new VatBlock(properties, TFMG.asResource("cast_iron_vat"));
     }
     public static VatBlock fireproof(Properties properties){
-        return new VatBlock(properties,"tfmg:firebrick_lined_vat");
+        return new VatBlock(properties, TFMG.asResource("firebrick_lined_vat"));
     }
 
-    public VatBlock(Properties properties, String vatType) {
+    public VatBlock(Properties properties, ResourceLocation vatType) {
         super(properties);
         registerDefaultState(defaultBlockState().setValue(TOP, true)
                 .setValue(BOTTOM, true)
@@ -121,9 +122,8 @@ public class VatBlock extends Block implements IWrenchable, IBE<VatBlockEntity> 
     public void onRemove(BlockState state, Level world, BlockPos pos, BlockState newState, boolean isMoving) {
         if (state.hasBlockEntity() && (state.getBlock() != newState.getBlock() || !newState.hasBlockEntity())) {
             BlockEntity be = world.getBlockEntity(pos);
-            if (!(be instanceof VatBlockEntity))
+            if (!(be instanceof VatBlockEntity tankBE))
                 return;
-            VatBlockEntity tankBE = (VatBlockEntity) be;
             world.removeBlockEntity(pos);
             ConnectivityHandler.splitMulti(tankBE);
         }
@@ -143,18 +143,13 @@ public class VatBlock extends Block implements IWrenchable, IBE<VatBlockEntity> 
         if (mirror == Mirror.NONE)
             return state;
         boolean x = mirror == Mirror.FRONT_BACK;
-        switch (state.getValue(SHAPE)) {
-            case WINDOW_NE:
-                return state.setValue(SHAPE, x ? Shape.WINDOW_NW : Shape.WINDOW_SE);
-            case WINDOW_NW:
-                return state.setValue(SHAPE, x ? Shape.WINDOW_NE : Shape.WINDOW_SW);
-            case WINDOW_SE:
-                return state.setValue(SHAPE, x ? Shape.WINDOW_SW : Shape.WINDOW_NE);
-            case WINDOW_SW:
-                return state.setValue(SHAPE, x ? Shape.WINDOW_SE : Shape.WINDOW_NW);
-            default:
-                return state;
-        }
+        return switch (state.getValue(SHAPE)) {
+            case WINDOW_NE -> state.setValue(SHAPE, x ? Shape.WINDOW_NW : Shape.WINDOW_SE);
+            case WINDOW_NW -> state.setValue(SHAPE, x ? Shape.WINDOW_NE : Shape.WINDOW_SW);
+            case WINDOW_SE -> state.setValue(SHAPE, x ? Shape.WINDOW_SW : Shape.WINDOW_NE);
+            case WINDOW_SW -> state.setValue(SHAPE, x ? Shape.WINDOW_SE : Shape.WINDOW_NW);
+            default -> state;
+        };
     }
 
     @Override
@@ -165,18 +160,13 @@ public class VatBlock extends Block implements IWrenchable, IBE<VatBlockEntity> 
     }
 
     private BlockState rotateOnce(BlockState state) {
-        switch (state.getValue(SHAPE)) {
-            case WINDOW_NE:
-                return state.setValue(SHAPE, Shape.WINDOW_SE);
-            case WINDOW_NW:
-                return state.setValue(SHAPE, Shape.WINDOW_NE);
-            case WINDOW_SE:
-                return state.setValue(SHAPE, Shape.WINDOW_SW);
-            case WINDOW_SW:
-                return state.setValue(SHAPE, Shape.WINDOW_NW);
-            default:
-                return state;
-        }
+        return switch (state.getValue(SHAPE)) {
+            case WINDOW_NE -> state.setValue(SHAPE, Shape.WINDOW_SE);
+            case WINDOW_NW -> state.setValue(SHAPE, Shape.WINDOW_NE);
+            case WINDOW_SE -> state.setValue(SHAPE, Shape.WINDOW_SW);
+            case WINDOW_SW -> state.setValue(SHAPE, Shape.WINDOW_NW);
+            default -> state;
+        };
     }
 
     public enum Shape implements StringRepresentable {

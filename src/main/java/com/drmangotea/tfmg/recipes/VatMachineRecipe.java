@@ -18,7 +18,7 @@ import java.util.List;
 public class VatMachineRecipe extends ProcessingRecipe<RecipeInput, VatRecipeParams> {
 
     public List<String> machines;
-    public List<String> allowedVatTypes;
+    public List<ResourceLocation> allowedVatTypes;
     public int minSize;
     public int heatLevel= 0;
 

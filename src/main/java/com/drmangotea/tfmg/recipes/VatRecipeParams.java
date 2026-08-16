@@ -1,5 +1,6 @@
 package com.drmangotea.tfmg.recipes;
 
+import com.drmangotea.tfmg.TFMG;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -8,6 +9,7 @@ import net.createmod.catnip.codecs.stream.CatnipStreamCodecBuilders;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.resources.ResourceLocation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,24 +17,24 @@ import java.util.function.Function;
 
 public class VatRecipeParams extends ProcessingRecipeParams {
 
-    public static List<String> types = new ArrayList<>();
+    public static List<ResourceLocation> types = new ArrayList<>();
 
     static {
-        types.add("tfmg:steel_vat");
-        types.add("tfmg:cast_iron_vat");
-        types.add("tfmg:firebrick_lined_vat");
+        types.add(TFMG.asResource("steel_vat"));
+        types.add(TFMG.asResource("tcast_iron_vat"));
+        types.add(TFMG.asResource("firebrick_lined_vat"));
     }
 
     public static MapCodec<VatRecipeParams> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             codec(VatRecipeParams::new).forGetter(Function.identity()),
-            Codec.INT.optionalFieldOf("min_size", 0)
+            Codec.intRange(0, Integer.MAX_VALUE).optionalFieldOf("min_size", 0)
                     .forGetter(VatRecipeParams::getMinSize),
             Codec.INT.optionalFieldOf("heat_level", 0)
                     .forGetter(VatRecipeParams::getHeatLevel),
-            Codec.INT.optionalFieldOf("pressure", 0)
+            Codec.intRange(-9, 9).optionalFieldOf("pressure", 0)
                     .forGetter(VatRecipeParams::getPressure),
             Codec.STRING.listOf().optionalFieldOf("machines", new ArrayList<>()).forGetter(VatRecipeParams::getMachines),
-            Codec.STRING.listOf().optionalFieldOf("allowed_vat_types", types).forGetter(VatRecipeParams::getAllowedVatTypes)
+            ResourceLocation.CODEC.listOf().optionalFieldOf("allowed_vat_types", types).forGetter(VatRecipeParams::getAllowedVatTypes)
     ).apply(instance, (params, min_size, heat_level,pressure, machines, allowed_vat_types) -> {
         params.machines = machines;
         params.min_size = min_size;
@@ -50,7 +52,7 @@ public class VatRecipeParams extends ProcessingRecipeParams {
     public int pressure;
 
     public List<String> machines;
-    public List<String> allowedVatTypes;
+    public List<ResourceLocation> allowedVatTypes;
 
     protected final int getHeatLevel() {
         return heat_level;
@@ -69,7 +71,7 @@ public class VatRecipeParams extends ProcessingRecipeParams {
         return machines;
     }
 
-    protected final List<String> getAllowedVatTypes() {
+    protected final List<ResourceLocation> getAllowedVatTypes() {
         return allowedVatTypes;
     }
 
@@ -82,7 +84,7 @@ public class VatRecipeParams extends ProcessingRecipeParams {
 
 
         CatnipStreamCodecBuilders.list(ByteBufCodecs.STRING_UTF8).encode(buffer, machines);
-        CatnipStreamCodecBuilders.list(ByteBufCodecs.STRING_UTF8).encode(buffer, allowedVatTypes);
+        CatnipStreamCodecBuilders.list(ResourceLocation.STREAM_CODEC).encode(buffer, allowedVatTypes);
 
     }
 
@@ -94,7 +96,6 @@ public class VatRecipeParams extends ProcessingRecipeParams {
         pressure = ByteBufCodecs.INT.decode(buffer);
 
         machines = CatnipStreamCodecBuilders.list(ByteBufCodecs.STRING_UTF8).decode(buffer);
-        allowedVatTypes = CatnipStreamCodecBuilders.list(ByteBufCodecs.STRING_UTF8).decode(buffer);
-
+        allowedVatTypes = CatnipStreamCodecBuilders.list(ResourceLocation.STREAM_CODEC).decode(buffer);
     }
 }
