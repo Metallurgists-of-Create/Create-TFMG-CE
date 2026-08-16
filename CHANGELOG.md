@@ -51,8 +51,8 @@ Please note that not all bugs are fixed and some new additions are subject to ch
   - Vat Machines now display personal goggle/multimeter info if they are operational or not.
   - Vats can now be multi-placed.
   - Vat pressure and heat level do not display floats anymore
-  - Vat recipe `allowed_vat_types` now use a list of `ResourceLocation`s
-  - Vat types now use `ResourceLocation` in replacement of `String`
+  - Vat recipe `allowed_vat_types` now uses a list of `ResourceLocation`s
+  - Vat types now use `ResourceLocation` in place of `String`
   - `VatRecipeGen` no longer uses generics
   - Vat pressure is limited to between `-9` and `9` (inclusive)
 - Electricity:
