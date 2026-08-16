@@ -40,7 +40,6 @@ public class ElectricMotorBlockEntity extends KineticElectricBlockEntity {
         for(IElectric member : getOrCreateElectricNetwork().members){
             if(member instanceof ElectricMotorBlockEntity be)
                 be.delayedUpdate = true;
-
         }
     }
 
@@ -50,13 +49,10 @@ public class ElectricMotorBlockEntity extends KineticElectricBlockEntity {
     public void tick() {
         super.tick();
 
-
-
         if(delayedUpdate){
             updateGeneratedRotation();
             delayedUpdate = false;
         }
-
     }
 
     @Override
@@ -64,7 +60,6 @@ public class ElectricMotorBlockEntity extends KineticElectricBlockEntity {
         super.addBehaviours(behaviours);
         movementDirection = new ScrollOptionBehaviour<>(WindmillBearingBlockEntity.RotationDirection.class,
                 CreateLang.translateDirect("contraptions.windmill.rotation_direction"), this, new MotorValueBox());
-
         movementDirection.withCallback($ -> onDirectionChanged());
         behaviours.add(movementDirection);
     }
@@ -73,11 +68,8 @@ public class ElectricMotorBlockEntity extends KineticElectricBlockEntity {
         updateNextTick();
     }
 
-
-
     @Override
     public boolean hasElectricitySlot(Direction direction) {
-
         if(getBlockState().is(TFMGBlocks.HEAVY_ELECTRIC_MOTOR))
             return direction != getBlockState().getValue(FACING);
         return direction == getBlockState().getValue(FACING).getOpposite() || (direction.getAxis().isHorizontal() && direction == Direction.DOWN);
@@ -88,11 +80,11 @@ public class ElectricMotorBlockEntity extends KineticElectricBlockEntity {
 
     @Override
     public void onNetworkChanged(int oldVoltage, float oldPower) {
-        //if (oldPower != getPowerUsage() || oldVoltage != data.voltage) {
-        delayedUpdate = true;
-     //   updateNextTick();
-        notifyUpdate();
-        // }
+        if (oldPower != getPowerUsage() || oldVoltage != data.voltage) {
+            delayedUpdate = true;
+            updateNextTick();
+            notifyUpdate();
+        }
     }
 
     @Override

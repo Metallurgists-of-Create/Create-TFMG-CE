@@ -28,20 +28,24 @@ public class ElectricalNetwork {
 
     //adds a new block to the network if it's not in it already
     public void add(IElectric be) {
-        List<Long> posList = new ArrayList<>();
+        long id = be.getData().getId();
 
-        members.forEach(member -> posList.add(member.getData().getId()));
-        if (posList.contains(be.getData().getId()))
-            return;
+        int counter = 0;
+        for(int i = this.members.size(); counter < i; ++counter) {
+            if (this.members.get(counter).getData().getId() == id) {
+                return;
+            }
+        }
         members.add(be);
     }
 
+    private float current;
     /**
      * Called when a block is removed or added to the network or when loading chunks the network is in
      * Sets up blocks in the network
      */
     public void updateNetwork() {
-
+        boolean currentValid = false;
         int maxVoltage = 0;
         float resistance = 0;
         int powerGeneration = 0;
@@ -56,13 +60,9 @@ public class ElectricalNetwork {
          */
         for (IElectric member : members) {
             member.getData().notEnoughPower = false;
-
             member.getData().highestCurrent = 0;
-
             //    member.getLevelAccessor().setBlock(member.getBlockPos().above(2), Blocks.GOLD_BLOCK.defaultBlockState(),2);
-
             maxVoltage = Math.max(member.voltageGeneration(), maxVoltage);
-
             powerGeneration = (int) (powerGeneration + member.powerGeneration());
         }
         /**
@@ -75,31 +75,30 @@ public class ElectricalNetwork {
         if (!members.isEmpty()) {
 
             for (IElectric member : list) {
-
                 int oldVoltage = member.getData().getVoltage();
                 float oldPower = member.getPowerUsage();
                 member.getData().voltageSupply = maxVoltage;
                 member.setVoltage(maxVoltage);
                 member.getData().setVoltageNextTick = true;
-
                 member.getData().networkPowerGeneration = powerGeneration;
-
                 member.onNetworkChanged(oldVoltage, oldPower);
                 //if (member.resistance() != 0)
                 //    resistance += 1f / member.resistance();
-
             }
         }
+
         /**
          * Phase III:
          * 1) sets the current of wires
          * 2) informs subnetworks
          */
         for (IElectric member : members) {
-
             if (member.resistance() == 0) {
-
-                member.getData().highestCurrent = getCableCurrent(member);
+                if (!currentValid) {
+                    this.current = ElectricalNetwork.getCableCurrent(member);
+                    currentValid = true;
+                }
+                member.getData().highestCurrent = this.current;
             }
             if (member instanceof VoltageAlteringBlockEntity be) {
                 be.updateInFront();
@@ -107,7 +106,6 @@ public class ElectricalNetwork {
            // if (resistance != 0) {
            //     member.setNetworkResistance(1f / resistance);
            // } else member.setNetworkResistance(0);
-
         }
         /**
          * Phase IV:
@@ -116,7 +114,6 @@ public class ElectricalNetwork {
         if (!members.isEmpty())
             members.getFirst().doActionNextTick(i-> members.getFirst().recalculateNetworkResistance());
         handleInsufficientPower();
-
     }
 
 

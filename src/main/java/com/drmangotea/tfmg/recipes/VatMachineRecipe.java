@@ -21,7 +21,6 @@ public class VatMachineRecipe extends ProcessingRecipe<RecipeInput, VatRecipePar
     public List<ResourceLocation> allowedVatTypes;
     public int minSize;
     public int heatLevel= 0;
-
     public int pressure= 0;
 
     public VatMachineRecipe(VatRecipeParams params) {
@@ -60,14 +59,17 @@ public class VatMachineRecipe extends ProcessingRecipe<RecipeInput, VatRecipePar
     protected boolean canSpecifyDuration() {
         return true;
     }
+
     @Override
     protected boolean canRequireHeat() {
         return true;
     }
+
     @FunctionalInterface
     public interface Factory<R extends VatMachineRecipe> extends ProcessingRecipe.Factory<VatRecipeParams, R> {
         R create(VatRecipeParams params);
     }
+
     public static class Builder<R extends VatMachineRecipe> extends ProcessingRecipeBuilder<VatRecipeParams, R, VatMachineRecipe.Builder<R>> {
         public Builder(VatMachineRecipe.Factory<R> factory, ResourceLocation recipeId) {
             super(factory, recipeId);
@@ -91,8 +93,6 @@ public class VatMachineRecipe extends ProcessingRecipe<RecipeInput, VatRecipePar
             params.min_size = value.minSize;
             return this;
         }
-
-
     }
 
     public static class Serializer<R extends VatMachineRecipe> implements RecipeSerializer<R> {
