@@ -34,6 +34,7 @@ Please note that not all bugs are fixed and some new additions are subject to ch
 - Steel, Aluminium & Heavy Casings can now encase blocks properly.
 - Fixed typos in some cogwheel texture names.
 - Segmented Displays now safely decode their display contents.
+- Rolled back a change done to `IElectric` that made Power Grid incompatible.
 
 ### Changes:
 - Added some new configs:
@@ -74,7 +75,8 @@ Please note that not all bugs are fixed and some new additions are subject to ch
 - Added Industrial Aluminium encased blocks.
 - Cleaned up Neon Tube.
 - Marked "The Factory Must WORK" as incompatible with Community Edition due to conflicting bug fixes. This may be revoked at a later date.
-- Added credits to `neoforge.mods.toml`
+- Added credits to `neoforge.mods.toml`.
+- Coke Oven progress is now displayed as a percentage.
 
 ### API Changes:
 - Added Sable Companion as an embedded api.
