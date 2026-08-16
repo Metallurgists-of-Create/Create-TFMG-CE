@@ -31,8 +31,9 @@ Please note that not all bugs are fixed and some new additions are subject to ch
 - Engine Cylinders and Turbine Blades have recipes again.
 - Engines of different types no longer connect.
 - Encased cogwheel item models now show the correct cogwheel type.
-- Steel, Aluminum & Heavy Casings can now encase blocks properly.
+- Steel, Aluminium & Heavy Casings can now encase blocks properly.
 - Fixed typos in some cogwheel texture names.
+- Segmented Displays now safely decode their display contents.
 
 ### Changes:
 - Added some new configs:
@@ -70,7 +71,7 @@ Please note that not all bugs are fixed and some new additions are subject to ch
   - Surface Scanners now update their detection if they have been moved (if they are on a Sub-Level)
   - Surface Scanners now produce a redstone signal based on the distance from a detected oil chunk.
 - Added TFMG Encased wooden cogwheels.
-- Added Industrial Aluminum encased blocks.
+- Added Industrial Aluminium encased blocks.
 - Cleaned up Neon Tube.
 - Marked "The Factory Must WORK" as incompatible with Community Edition due to conflicting bug fixes. This may be revoked at a later date.
 - Added credits to `neoforge.mods.toml`

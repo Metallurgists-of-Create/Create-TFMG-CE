@@ -21,6 +21,7 @@ import java.util.Optional;
 
 import static net.minecraft.world.level.block.HorizontalDirectionalBlock.FACING;
 
+@SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 public class SegmentedDisplayBlockEntity extends ElectricBlockEntity {
     private static final Couple<String> EMPTY = Couple.create("", "");
 
@@ -41,11 +42,8 @@ public class SegmentedDisplayBlockEntity extends ElectricBlockEntity {
     }
 
     public void setColor(DyeColor color) {
-
-
         if(color==DyeColor.BLACK||color == DyeColor.LIGHT_GRAY|| color == DyeColor.GRAY)
             return;
-
         this.color = color;
         notifyUpdate();
     }
@@ -73,8 +71,6 @@ public class SegmentedDisplayBlockEntity extends ElectricBlockEntity {
     public List<Integer> getSegments(){
         List<Integer> segments = SegmentedDisplaySegments.SYMBOLS_TO_SEGMENTS.get(getDisplayedStrings().get(true).toLowerCase());
 
-
-
         List<Integer> segments2 = SegmentedDisplaySegments.SYMBOLS_TO_SEGMENTS.get(getDisplayedStrings().get(false).toLowerCase());
 
         if(segments2 == null)
@@ -88,9 +84,6 @@ public class SegmentedDisplayBlockEntity extends ElectricBlockEntity {
         }
 
         segmentsToRender2 = segments3;
-
-
-       // segments.addAll(segments3);
 
         return segments;
     }
@@ -132,11 +125,13 @@ public class SegmentedDisplayBlockEntity extends ElectricBlockEntity {
     }
 
     public void updateDisplayedStrings() {
-
         customText.map(DynamicComponent::resolve)
                 .ifPresentOrElse(
                         fullText -> displayedStrings =
-                                Couple.create(charOrEmpty(fullText, partIndex * 2), charOrEmpty(fullText, partIndex * 2 + 1)),
+                                Couple.create(
+                                        charOrEmpty(fullText, partIndex * 2),
+                                        charOrEmpty(fullText, partIndex * 2 + 1)
+                                ),
                         () -> displayedStrings =
                                 Couple.create("0","0"));
     }
@@ -152,7 +147,7 @@ public class SegmentedDisplayBlockEntity extends ElectricBlockEntity {
         color = NBTHelper.readEnum(compound,"color",DyeColor.class);
         if (compound.contains("CustomText")) {
             DynamicComponent component = customText.orElseGet(DynamicComponent::new);
-            component.read( worldPosition, compound,registries);
+            component.read(worldPosition, compound, registries);
 
             if (component.isValid()) {
                 customText = Optional.of(component);
@@ -161,6 +156,9 @@ public class SegmentedDisplayBlockEntity extends ElectricBlockEntity {
                 customText = Optional.empty();
                 partIndex = 0;
             }
+        } else {
+            customText = Optional.empty();
+            partIndex = 0;
         }
 
         if (clientPacket)
@@ -172,13 +170,11 @@ public class SegmentedDisplayBlockEntity extends ElectricBlockEntity {
     @Override
     public void write(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {
         super.write(compound,registries , clientPacket);
-
         NBTHelper.writeEnum(compound,"color",color);
-
         if (customText.isPresent()) {
             compound.putInt("CustomTextIndex", partIndex);
             customText.get()
-                    .write(compound,registries);
+                    .write(compound, registries);
         }
     }
 
