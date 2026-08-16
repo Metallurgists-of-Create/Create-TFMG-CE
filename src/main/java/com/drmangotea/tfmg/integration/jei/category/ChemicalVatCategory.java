@@ -1,5 +1,6 @@
 package com.drmangotea.tfmg.integration.jei.category;
 
+import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.base.lang.TFMGLang;
 import com.drmangotea.tfmg.recipes.VatMachineRecipe;
 import com.drmangotea.tfmg.registry.TFMGGuiTextures;
@@ -15,6 +16,7 @@ import net.createmod.ponder.api.PonderPalette;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import org.apache.commons.lang3.mutable.MutableInt;
@@ -89,7 +91,7 @@ public class ChemicalVatCategory extends CreateRecipeCategory<VatMachineRecipe> 
 
     public void draw(VatMachineRecipe recipe, IRecipeSlotsView iRecipeSlotsView, GuiGraphics graphics, double mouseX, double mouseY) {
         List<String> machines = recipe.machines;
-        List<String> allowedVatTypes = recipe.allowedVatTypes;
+        List<ResourceLocation> allowedVatTypes = recipe.allowedVatTypes;
         TFMGGuiTextures.VAT.render(graphics, 0, 24);
         drawVatTypes(allowedVatTypes, graphics);
         drawSprites(machines, graphics);
@@ -117,12 +119,6 @@ public class ChemicalVatCategory extends CreateRecipeCategory<VatMachineRecipe> 
     @NotNull
     public List<Component> getTooltipStrings(VatMachineRecipe recipe, IRecipeSlotsView recipeSlotsView, double mouseX, double mouseY) {
         List<Component> tooltip = new ArrayList<>();
-        int xOffset = -7;
-        int minX = 150 + xOffset;
-        int maxX = minX + 18;
-        int minY = 90;
-        int maxY = minY + 18;
-
         int pressure = recipe.pressure;
 
         if (mouseY > -3 && mouseY < 43 && mouseX > 127 && mouseX < 170) {
@@ -222,11 +218,11 @@ public class ChemicalVatCategory extends CreateRecipeCategory<VatMachineRecipe> 
         }
     }
 
-    private void drawVatTypes(List<String> allowedVatTypes, GuiGraphics graphics) {
-        if (allowedVatTypes.contains("tfmg:firebrick_lined_vat") && allowedVatTypes.size() == 1) {
+    private void drawVatTypes(List<ResourceLocation> allowedVatTypes, GuiGraphics graphics) {
+        if (allowedVatTypes.contains(TFMG.asResource("firebrick_lined_vat")) && allowedVatTypes.size() == 1) {
             TFMGGuiTextures.FIREPROOF_BRICK_OVERLAY.render(graphics, 55 - 48, 32);
         }
-        if (allowedVatTypes.contains("tfmg:cast_iron_vat") && allowedVatTypes.size() == 1) {
+        if (allowedVatTypes.contains(TFMG.asResource("cast_iron_vat")) && allowedVatTypes.size() == 1) {
             TFMGGuiTextures.CAST_IRON_VAT_OVERLAY.render(graphics, 0, 24);
         }
     }
