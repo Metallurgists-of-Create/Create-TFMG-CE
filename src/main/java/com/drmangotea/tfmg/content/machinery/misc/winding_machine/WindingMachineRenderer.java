@@ -77,11 +77,10 @@ public class WindingMachineRenderer extends KineticBlockEntityRenderer<WindingMa
                                 .renderInto(ms, vb);
                     }
                 }
-
             }
         }
-        if (!be.inventory.isEmpty()) {
-            ItemStack item = be.inventory.getItem(0);
+        if (!be.inventory.isEmpty() || !be.outputInventory.isEmpty()) {
+            ItemStack item = be.inventory.getItem(0) != ItemStack.EMPTY ? be.inventory.getItem(0) : be.outputInventory.getItem(0);
             BakedModel bakedModel = itemRenderer.getModel(item, null, null, 0);
             boolean blockItem = bakedModel.isGui3d();
 
@@ -91,7 +90,7 @@ public class WindingMachineRenderer extends KineticBlockEntityRenderer<WindingMa
                     .rotateYDegrees(blockState.getValue(HORIZONTAL_FACING).getAxis() == Direction.Axis.Z ? Math.abs(blockState.getValue(FACING).toYRot() - 180) : blockState.getValue(FACING).toYRot())
                     .translateZ(0.4f)
                     .translateY(0.33f)
-                    .rotateXDegrees(be.angle)
+                    .rotateXDegrees(be.inventory.isEmpty() ? 0 : be.angle)
                     .rotateZDegrees(item.is(Tags.Items.RODS) ? 45 : 0)
                     .rotateZDegrees(blockItem ? 90 : 0)
                     .scale(blockItem ? .5f : .375f);
@@ -107,6 +106,4 @@ public class WindingMachineRenderer extends KineticBlockEntityRenderer<WindingMa
         return CachedBuffers.partialFacing(AllPartialModels.SHAFT_HALF, state, state
                 .getValue(FACING).getCounterClockWise());
     }
-
-
 }
