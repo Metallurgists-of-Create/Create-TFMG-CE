@@ -269,9 +269,8 @@ public class WindingMachineBlockEntity extends KineticBlockEntity implements IHa
         super.read(compound,registries , clientPacket);
         inventory.deserializeNBT(registries, compound.getCompound("Inventory"));
         outputInventory.deserializeNBT(registries, compound.getCompound("OutputInventory"));
-  
         if (compound.contains("Spool")) {
-            ItemStack.parse(registries, compound.getCompound("Spool")).ifPresent(i -> spool = i);
+            ItemStack.parseOptional(registries, compound.getCompound("Spool"));
         }
         amountWinded = compound.getInt("AmountWinded");
         if (clientPacket)
