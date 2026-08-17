@@ -40,7 +40,6 @@ import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
@@ -58,14 +57,12 @@ import net.neoforged.neoforge.fluids.IFluidTank;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
 import net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient;
-import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.IItemHandlerModifiable;
 import net.neoforged.neoforge.items.wrapper.CombinedInvWrapper;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import static java.lang.Math.abs;
 
@@ -160,7 +157,8 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
     @Override
     public void addBehaviours(List<BlockEntityBehaviour> behaviours) {
         inputTank = new SmartFluidTankBehaviour(SmartFluidTankBehaviour.INPUT, this, 4, 4000, true)
-                .whenFluidUpdates(this::onInventoryChanged);
+                .whenFluidUpdates(this::onInventoryChanged)
+                .forbidExtraction();
         outputTank = new SmartFluidTankBehaviour(SmartFluidTankBehaviour.OUTPUT, this, 4, 4000, true)
                 .whenFluidUpdates(this::onInventoryChanged)
                 .forbidInsertion();
@@ -190,20 +188,16 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
         return componentHelper("pressure", pressure, forGoggles);
     }
 
-    private MutableComponent componentHelper(String label, int level, boolean forGoggles,
-                                             ChatFormatting... styles) {
+    private MutableComponent componentHelper(String label, int level, boolean forGoggles, ChatFormatting... styles) {
         MutableComponent base = barComponent(level);
-
         if (!forGoggles)
             return base;
-
         ChatFormatting style1 = styles.length >= 1 ? styles[0] : ChatFormatting.GRAY;
         ChatFormatting style2 = styles.length >= 2 ? styles[1] : ChatFormatting.DARK_GRAY;
 
         return CreateLang.translateDirect("vat." + label)
                 .withStyle(style1)
-                .append(CreateLang.translateDirect("vat." + label + "_dots")
-                        .withStyle(style2))
+                .append(CreateLang.translateDirect("vat." + label + "_dots").withStyle(style2))
                 .append(base)
                 .append("(" + level + ")");
     }
@@ -213,17 +207,13 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
         int minValue = 0;
         ChatFormatting color = getColor(level, minValue);
 
-
         int maxValue = 0;
         return Component.empty()
                 .append(bars(0, ChatFormatting.RED))
                 .append(bars(0, ChatFormatting.GOLD))
                 .append(bars(Math.max(0, level - minValue), color))
                 .append(bars(Math.max(0, maxValue - level), ChatFormatting.BLUE))
-                .append(bars(Math.min(18 - maxValue, 5 - maxValue),
-                        ChatFormatting.DARK_GRAY));
-
-
+                .append(bars(Math.min(18 - maxValue, 5 - maxValue), ChatFormatting.DARK_GRAY));
     }
 
     private static @NotNull ChatFormatting getColor(int level, int minValue) {
@@ -242,8 +232,7 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
     }
 
     private MutableComponent bars(int level, ChatFormatting format) {
-        return Component.literal(Strings.repeat('|', level))
-                .withStyle(format);
+        return Component.literal(Strings.repeat('|', level)).withStyle(format);
     }
 
     /// //////
@@ -251,13 +240,15 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
     @Override
     public void lazyTick() {
         super.lazyTick();
-
         if (recipe == null && isController()) {
             recipe = getMatchingRecipe();
         }
+        if (isController())
+            evaluateNextTick = true;
 
+        revalidateMachines();
         updateTemperature();
-        if (level.isClientSide && !(level instanceof PonderLevel)) {
+        if (level != null && level.isClientSide && !(level instanceof PonderLevel)) {
             int tankNumber = 0;
             for (int i = 0; i < 8; i++) {
                 IFluidHandler fluidHandler = fluidCapability;
@@ -284,23 +275,34 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
         for (int xOffset = 0; xOffset < be.width; xOffset++) {
             for (int zOffset = 0; zOffset < be.width; zOffset++) {
                 BlockPos pos = pos1.offset(xOffset, -1, zOffset);
-                BlockState blockState = level.getBlockState(pos);
-                float heat = BoilerHeater.findHeat(level, pos, blockState);
+                if (level != null) {
+                    BlockState blockState = level.getBlockState(pos);
+                    float heat = BoilerHeater.findHeat(level, pos, blockState);
 
-                if (heat > 0) {
-                    heatLevel += (int) heat;
-                }
-                if (level.getBlockEntity(pos) instanceof FreezerBlockEntity freezer && freezer.isOperational()) {
-                    heatLevel--;
-                }
-                if (level.getBlockEntity(pos) instanceof CompressorBlockEntity compressor && compressor.getState() != CompressorBlockEntity.CompressorState.NOT_OPERATIONAL) {
-                    if (compressor.getState() == CompressorBlockEntity.CompressorState.PRESSURIZING)
-                        pressure++;
-                    if (compressor.getState() == CompressorBlockEntity.CompressorState.DEPRESSURIZING)
-                        pressure--;
+                    if (heat > 0) {
+                        heatLevel += (int) heat;
+                    }
                 }
             }
         }
+
+        for (BlockPos machinePos : machineMap.keySet()) {
+            if (!operationalMachinesMap.getOrDefault(machinePos, true))
+                continue;
+            if (level == null)
+                continue;
+            BlockEntity machineBe = level.getBlockEntity(machinePos);
+            if (machineBe instanceof FreezerBlockEntity freezer && freezer.isOperational()) {
+                heatLevel--;
+            }
+            if (machineBe instanceof CompressorBlockEntity compressor && compressor.getState() != CompressorBlockEntity.CompressorState.NOT_OPERATIONAL) {
+                if (compressor.getState() == CompressorBlockEntity.CompressorState.PRESSURIZING)
+                    pressure++;
+                if (compressor.getState() == CompressorBlockEntity.CompressorState.DEPRESSURIZING)
+                    pressure--;
+            }
+        }
+
         if (heatLevel >= 2) {
             heatCondition = HeatCondition.HEATED;
         }
@@ -309,6 +311,39 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
         }
         if (heatLevel != prevHeat)
             notifyUpdate();
+    }
+
+    private void revalidateMachines() {
+        if (!isController())
+            return;
+        for (BlockPos machinePos : machineMap.keySet()) {
+            if (level == null || !level.isLoaded(machinePos))
+                continue;
+            BlockEntity blockEntity = level.getBlockEntity(machinePos);
+            if (blockEntity instanceof IVatMachine vatMachine) {
+                String operationId = vatMachine.getOperationId();
+                if (operationId.isEmpty()) {
+                    operationalMachinesMap.remove(machinePos);
+                    continue;
+                }
+                if (!operationId.equals(machineMap.get(machinePos))) {
+                    machineMap.put(machinePos, operationId);
+                    recipe = null;
+                    notifyUpdate();
+                }
+                operationalMachinesMap.put(machinePos, vatMachine.canOperate(this));
+            } else {
+                operationalMachinesMap.remove(machinePos);
+            }
+            boolean allValid = true;
+            for (boolean op : operationalMachinesMap.values()) {
+                if (!op) {
+                    allValid = false;
+                    break;
+                }
+            }
+            areMachinesValid = allValid;
+        }
     }
 
     /**
@@ -323,7 +358,15 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
                 continue;
             boolean doesntMatch = false;
 
-            if (!Objects.equals(testedRecipe.machines, machineMap.values().stream().toList())) {
+            List<String> activeMachines = new ArrayList<>(machineMap.values());
+            boolean machinesOk = true;
+            for (String requiredMachine : testedRecipe.machines) {
+                if (!activeMachines.remove(requiredMachine)) {
+                    machinesOk = false;
+                    break;
+                }
+            }
+            if (!machinesOk) {
                 continue;
             }
 
@@ -335,8 +378,7 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
                 continue;
             }
 
-            IFluidHandler fluidHandler = fluidCapability;
-            IItemHandler itemHandler = itemCapability;
+            IFluidHandler fluidHandler = inputTank.getCapability();
 
             //checks if vat contains needed fluids
             Map<Integer, Integer> isFluidFound = new HashMap<>();
@@ -361,19 +403,15 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
             }
 
             //same but with items
-            SmartInventory testInventory = new SmartInventory(8, this);
-
+            SmartInventory testInventory = new SmartInventory(4, this);
             for (int i = 0; i < 4; i++) {
                 testInventory.setStackInSlot(i, inputInventory.getStackInSlot(i).copy());
-            }
-            for (int i = 0; i < 4; i++) {
-                testInventory.setStackInSlot(i + 4, outputInventory.getStackInSlot(i).copy());
             }
 
             for (int i = 0; i < testedRecipe.getIngredients().size(); i++) {
                 Ingredient ingredient = testedRecipe.getIngredients().get(i);
                 boolean found = false;
-                for (int y = 0; y < 8; y++) {
+                for (int y = 0; y < 4; y++) {
                     ItemStack stack = testInventory.getStackInSlot(y).copy();
                     if (ingredient.test(stack)) {
                         found = true;
@@ -391,52 +429,8 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
             //////////////////////////////////////////
             if (doesntMatch)
                 continue;
-            //checks if there's enough space for a recipe to happen
-            Map<net.minecraft.world.level.material.Fluid, Integer> fluids = new HashMap<>();
 
-            List<FluidStack> totalFluidStacks = new ArrayList<>();
-
-            for (int i = 0; i < outputTank.getPrimaryHandler().getTanks(); i++) {
-                totalFluidStacks.add(outputTank.getPrimaryHandler().getFluidInTank(i));
-            }
-            totalFluidStacks.addAll(testedRecipe.getFluidResults());
-
-            for (FluidStack stack : totalFluidStacks) {
-                if (stack.isEmpty())
-                    continue;
-                if (fluids.containsKey(stack.getFluid())) {
-                    fluids.replace(stack.getFluid(), fluids.get(stack.getFluid()) + stack.getAmount());
-                } else fluids.put(stack.getFluid(), stack.getAmount());
-
-            }
-            AtomicBoolean cantOutput = new AtomicBoolean(false);
-            fluids.forEach((f, a) -> {
-                if (a > 4000)
-                    cantOutput.set(true);
-            });
-            //
-            Map<Item, Integer> items = new HashMap<>();
-
-            List<ItemStack> totalItemStacks = new ArrayList<>();
-
-            for (int i = 0; i < outputInventory.getSlots(); i++) {
-                totalItemStacks.add(outputInventory.getStackInSlot(i));
-            }
-            totalItemStacks.addAll(testedRecipe.getRollableResultsAsItemStacks());
-
-            for (ItemStack stack : totalItemStacks) {
-                if (stack.isEmpty())
-                    continue;
-                if (items.containsKey(stack.getItem())) {
-                    items.replace(stack.getItem(), items.get(stack.getItem()) + stack.getCount());
-                } else items.put(stack.getItem(), stack.getCount());
-//
-            }
-            items.forEach((f, a) -> {
-                if (a > 64)
-                    cantOutput.set(true);
-            });
-            if (cantOutput.get())
+            if (!canFitAllOutputs(testedRecipe))
                 continue;
             ///////////////////////////////////////
 
@@ -453,7 +447,7 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
 
         handleRecipe();
 
-        if (isController()) {
+        if (isController() && level != null) {
             Iterator<BlockPos> iter = machineMap.keySet().iterator();
             while (iter.hasNext()) {
                 BlockPos machinePos = iter.next();
@@ -513,58 +507,73 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
      * ticks the processing timer
      */
     public void handleRecipe() {
-
+        if (level == null || (level.isClientSide && !isVirtual()))
+            return;
         if (recipe == null)
             return;
         if (!isController())
             return;
-        if (heatLevel < recipe.heatLevel)
+        if (recipe.heatLevel > 0 && heatLevel < recipe.heatLevel)
+            return;
+        if (recipe.heatLevel < 0 && heatLevel > recipe.heatLevel)
             return;
         if (recipe.getRequiredHeat() == HeatCondition.HEATED && heatCondition == HeatCondition.NONE)
             return;
         if (recipe.getRequiredHeat() == HeatCondition.SUPERHEATED && heatCondition != HeatCondition.SUPERHEATED)
             return;
+        if (recipe.pressure > 0 && pressure < recipe.pressure)
+            return;
+        if (recipe.pressure < 0 && pressure > recipe.pressure)
+            return;
 
         if (timer >= recipe.getProcessingDuration()) {
 
+            if (!canFitAllOutputs(recipe)) {
+                return;
+            }
 
-            SmartFluidTank outputFluidHandler = outputTank.getPrimaryHandler();
-            IFluidHandler fluidHandler = fluidCapability;
-            IItemHandler itemHandler = itemCapability;
+            VatMachineRecipe activeRecipe = recipe;
 
-
-            //fluid input
-            for (SizedFluidIngredient ingredient : recipe.getFluidIngredients()) {
-                for (int i = 0; i < fluidHandler.getTanks(); i++) {
-                    FluidStack fluidInTank = fluidHandler.getFluidInTank(i);
-                    if (ingredient.test(new FluidStack(fluidInTank.getFluidHolder(), 4000))) {
-                        fluidHandler.getFluidInTank(i).setAmount(fluidInTank.getAmount() - ingredient.amount());
+            SmartFluidTankBehaviour.TankSegment[] inputs = inputTank.getTanks();
+            for (SizedFluidIngredient ingredient : activeRecipe.getFluidIngredients()) {
+                int remaining = ingredient.amount();
+                for (SmartFluidTankBehaviour.TankSegment segment : inputs) {
+                    if (remaining <= 0)
                         break;
-                    }
+                    SmartFluidTank tank = ((TankSegmentAccessor) segment).tfmg$tank();
+                    FluidStack fluidInTank = tank.getFluid();
+                    if (fluidInTank.isEmpty())
+                        continue;
+                    if (!ingredient.test(fluidInTank))
+                        continue;
+                    FluidStack drained = tank.drain(new FluidStack(fluidInTank.getFluidHolder(), remaining), IFluidHandler.FluidAction.EXECUTE);
+                    remaining -= drained.getAmount();
                 }
             }
+
             //item output
-
-            for (ProcessingOutput output : recipe.getRollableResults()) {
-
+            List<ItemStack> recovered = new ArrayList<>();
+            for (ProcessingOutput output : activeRecipe.getRollableResults()) {
                 ItemStack itemStack = output.rollOutput(level.random);
 
+                if (isItemAlsoAnIngredient(activeRecipe, itemStack)) {
+                    recovered.add(itemStack);
+                    continue;
+                }
 
                 boolean handled = false;
                 for (int i = 0; i < outputInventory.getSlots(); i++) {
                     ItemStack stackInSlot = outputInventory.getStackInSlot(i);
                     if (stackInSlot.isEmpty())
                         continue;
-
-                    if (stackInSlot.is(itemStack.getItem())) {
-                        outputInventory.getStackInSlot(i).setCount(stackInSlot.getCount() + (itemStack.getCount()));
-
+                    if (ItemStack.isSameItemSameComponents(stackInSlot, itemStack) && stackInSlot.getCount() + itemStack.getCount() <= stackInSlot.getMaxStackSize()) {
+                        stackInSlot.setCount(stackInSlot.getCount() + itemStack.getCount());
                         handled = true;
                         break;
                     }
                 }
                 if (handled)
-                    break;
+                    continue;
                 for (int i = 0; i < outputInventory.getSlots(); i++) {
                     ItemStack itemInSlot = outputInventory.getStackInSlot(i);
                     if (itemInSlot.isEmpty()) {
@@ -573,40 +582,69 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
                     }
                 }
             }
+
             //item input
-            if (recipe != null)
-                for (Ingredient ingredient : recipe.getIngredients()) {
-                    for (int i = 0; i < fluidHandler.getTanks(); i++) {
-                        ItemStack stackInInv = itemHandler.getStackInSlot(i);
-                        if (ingredient.test(new ItemStack(stackInInv.getItem(), 64))) {
-                            stackInInv.setCount(stackInInv.getCount() - ingredient.getItems()[0].getCount());
-                            break;
-                        }
+            for (Ingredient ingredient : activeRecipe.getIngredients()) {
+                int needed = ingredient.getItems().length > 0 ? ingredient.getItems()[0].getCount() : 1;
+                for (int i = 0; i < inputInventory.getSlots(); i++) {
+                    ItemStack stackInInv = inputInventory.getStackInSlot(i);
+                    if (stackInInv.isEmpty())
+                        continue;
+                    if (ingredient.test(stackInInv) && stackInInv.getCount() >= needed) {
+                        inputInventory.extractItem(i, needed, false);
+                        break;
                     }
                 }
+            }
+
+            for (ItemStack back : recovered) {
+                if (returnToInput(back))
+                    continue;
+                for (int i = 0; i < outputInventory.getSlots(); i++) {
+                    ItemStack inSlot = outputInventory.getStackInSlot(i);
+                    if (!inSlot.isEmpty() && inSlot.is(back.getItem())
+                            && inSlot.getCount() + back.getCount() <= inSlot.getMaxStackSize()) {
+                        inSlot.setCount(inSlot.getCount() + back.getCount());
+                        back = ItemStack.EMPTY;
+                        break;
+                    }
+                }
+                if (back.isEmpty())
+                    continue;
+                for (int i = 0; i < outputInventory.getSlots(); i++) {
+                    if (outputInventory.getStackInSlot(i).isEmpty()) {
+                        outputInventory.setStackInSlot(i, back);
+                        break;
+                    }
+                }
+            }
+
             //fluid output
-
-
-            List<FluidStack> handledFluidStacks = new ArrayList<>();
-            List<SmartFluidTankBehaviour.TankSegment> tankSegments = List.of(outputTank.getTanks());
-            if (recipe != null)
-                for (FluidStack fluidStack : recipe.getFluidResults()) {
-                    for (SmartFluidTankBehaviour.TankSegment tankSegment : tankSegments) {
-                        SmartFluidTank tank = ((TankSegmentAccessor) tankSegment).tfmg$tank();
-                        FluidStack fluidInTank = tank.getFluid();
-                        if (handledFluidStacks.contains(fluidStack)) break;
-
-                        if (fluidInTank.getFluid().isSame(fluidStack.getFluid())) {
-                            tank.fill(new FluidStack(fluidStack.getFluid(), fluidStack.getAmount()), IFluidHandler.FluidAction.EXECUTE);
-                            handledFluidStacks.add(fluidStack);
-                            break;
-                        }
-                        if (!handledFluidStacks.contains(fluidStack) && fluidInTank.isEmpty()) {
-                            tank.fill(new FluidStack(fluidStack.getFluid(), fluidStack.getAmount()), IFluidHandler.FluidAction.EXECUTE);
-                            break;
-                        }
-                    }
+            SmartFluidTankBehaviour.TankSegment[] outputs = outputTank.getTanks();
+            for (FluidStack fluidStack : activeRecipe.getFluidResults()) {
+                if (fluidStack.isEmpty())
+                    continue;
+                int remaining = fluidStack.getAmount();
+                for (SmartFluidTankBehaviour.TankSegment segment : outputs) {
+                    if (remaining <= 0)
+                        break;
+                    SmartFluidTank tank = ((TankSegmentAccessor) segment).tfmg$tank();
+                    FluidStack fluidInTank = tank.getFluid();
+                    if (fluidInTank.isEmpty() || !fluidInTank.getFluid().isSame(fluidStack.getFluid()))
+                        continue;
+                    int filled = tank.fill(new FluidStack(fluidStack.getFluid(), remaining), IFluidHandler.FluidAction.EXECUTE);
+                    remaining -= filled;
                 }
+                for (SmartFluidTankBehaviour.TankSegment segment : outputs) {
+                    if (remaining <= 0)
+                        break;
+                    SmartFluidTank tank = ((TankSegmentAccessor) segment).tfmg$tank();
+                    if (!tank.getFluid().isEmpty())
+                        continue;
+                    int filled = tank.fill(new FluidStack(fluidStack.getFluid(), remaining), IFluidHandler.FluidAction.EXECUTE);
+                    remaining -= filled;
+                }
+            }
             recipe = null;
             timer = 0;
         } else {
@@ -614,6 +652,115 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
         }
     }
 
+    private static boolean isItemAlsoAnIngredient(VatMachineRecipe recipe, ItemStack resultStack) {
+        if (resultStack.isEmpty())
+            return false;
+        for (Ingredient ingredient : recipe.getIngredients())
+            if (ingredient.test(resultStack))
+                return true;
+        return false;
+    }
+
+    private boolean returnToInput(ItemStack stack) {
+        for (int i = 0; i < inputInventory.getSlots(); i++) {
+            ItemStack inSlot = inputInventory.getStackInSlot(i);
+            if (inSlot.isEmpty())
+                continue;
+            if (!ItemStack.isSameItemSameComponents(inSlot, stack))
+                continue;
+            if (inSlot.getCount() + stack.getCount() > inSlot.getMaxStackSize())
+                continue;
+            inSlot.setCount(inSlot.getCount() + stack.getCount());
+            return true;
+        }
+        for (int i = 0; i < inputInventory.getSlots(); i++) {
+            if (inputInventory.getStackInSlot(i).isEmpty()) {
+                inputInventory.setStackInSlot(i, stack);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
+    private boolean canFitAllOutputs(VatMachineRecipe recipe) {
+        int slots = outputInventory.getSlots();
+        int[] simCount = new int[slots];
+        ItemStack[] simStack = new ItemStack[slots];
+        for (int i = 0; i < slots; i++) {
+            ItemStack s = outputInventory.getStackInSlot(i);
+            simStack[i] = s.copy();
+            simCount[i] = s.getCount();
+        }
+        for (ProcessingOutput out : recipe.getRollableResults()) {
+            ItemStack stack = out.getStack();
+            if (stack.isEmpty())
+                continue;
+            int needed = stack.getCount();
+            int placed = -1;
+            for (int i = 0; i < slots; i++) {
+                if (simCount[i] == 0)
+                    continue;
+                if (!ItemStack.isSameItemSameComponents(simStack[i], stack))
+                    continue;
+                int max = simStack[i].getMaxStackSize();
+                if (simCount[i] + needed > max)
+                    continue;
+                simCount[i] += needed;
+                placed = i;
+                break;
+            }
+            if (placed >= 0)
+                continue;
+            for (int i = 0; i < slots; i++) {
+                if (simCount[i] == 0) {
+                    simStack[i] = stack.copy();
+                    simCount[i] = needed;
+                    placed = i;
+                    break;
+                }
+            }
+            if (placed < 0)
+                return false;
+        }
+        SmartFluidTankBehaviour.TankSegment[] outputTanks = outputTank.getTanks();
+        FluidStack[] simFluid = new FluidStack[outputTanks.length];
+        int[] simFluidCap = new int[outputTanks.length];
+        for (int i = 0; i < outputTanks.length; i++) {
+            SmartFluidTank output = ((TankSegmentAccessor) outputTanks[i]).tfmg$tank();
+            simFluid[i] = output.getFluid().copy();
+            simFluidCap[i] = output.getCapacity() - output.getFluidAmount();
+        }
+        for (FluidStack fluidResult : recipe.getFluidResults()) {
+            if (fluidResult.isEmpty())
+                continue;
+            int remaining = fluidResult.getAmount();
+            for (int i = 0; i < outputTanks.length && remaining > 0; i++) {
+                if (simFluid[i].isEmpty())
+                    continue;
+                if (!simFluid[i].getFluid().isSame(fluidResult.getFluid()))
+                    continue;
+                int take = Math.min(simFluidCap[i], remaining);
+                if (take <= 0)
+                    continue;
+                simFluidCap[i] -= take;
+                remaining -= take;
+            }
+            for (int i = 0; i < outputTanks.length && remaining > 0; i++) {
+                if (!simFluid[i].isEmpty())
+                    continue;
+                int take = Math.min(simFluidCap[i], remaining);
+                if (take <= 0)
+                    continue;
+                simFluid[i] = new FluidStack(fluidResult.getFluid(), take);
+                simFluidCap[i] -= take;
+                remaining -= take;
+            }
+            if (remaining > 0)
+                return false;
+        }
+        return true;
+    }
 
     @Override
     public BlockPos getLastKnownPos() {
@@ -630,8 +777,12 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
     public void initialize() {
         super.initialize();
         sendData();
+        if (level == null)
+            return;
         if (level.isClientSide)
             invalidateRenderBoundingBox();
+        if (!level.isClientSide)
+            evaluateNextTick = true;
     }
 
     private void onPositionChanged() {
@@ -640,9 +791,7 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
     }
 
     protected void onInventoryChanged() {
-
-
-        if (!hasLevel())
+        if (level == null)
             return;
 
         recipe = getMatchingRecipe();
@@ -679,7 +828,7 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
     }
 
     protected void setLuminosity(int luminosity) {
-        if (level.isClientSide)
+        if (level == null || level.isClientSide)
             return;
         if (this.luminosity == luminosity)
             return;
@@ -690,6 +839,8 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
     @SuppressWarnings("unchecked")
     @Override
     public VatBlockEntity getControllerBE() {
+        if (level == null)
+            return this;
         if (isController())
             return this;
         BlockEntity blockEntity = level.getBlockEntity(controller);
@@ -706,12 +857,12 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
             getControllerBE().evaluate();
             return;
         }
+        if (level == null)
+            return;
 
         Map<BlockPos, String> oldMachineMap = machineMap;
         machineMap = new HashMap<>();
-        heatLevel = 0;
-        heatCondition = HeatCondition.NONE;
-        float speed = 1;
+        efficiency = 1;
 
         for (int xOffset = 0; xOffset < width; xOffset++) {
             for (int zOffset = 0; zOffset < width; zOffset++) {
@@ -736,7 +887,6 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
                 }
             }
         }
-        efficiency = speed;
         if (oldMachineMap != machineMap)
             recipe = null;
 
@@ -819,6 +969,8 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
     }
 
     public void removeController(boolean keepFluids) {
+        if (level == null)
+            return;
         if (level.isClientSide)
             return;
         updateConnectivity = true;
@@ -834,7 +986,7 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
             state = state.setValue(VatBlock.BOTTOM, true);
             state = state.setValue(VatBlock.TOP, true);
             state = state.setValue(VatBlock.SHAPE, window ? VatBlock.Shape.WINDOW : VatBlock.Shape.PLAIN);
-            getLevel().setBlock(worldPosition, state, 22);
+            level.setBlock(worldPosition, state, 22);
         }
 
         evaluateNextTick = true;
@@ -855,6 +1007,7 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
         be.setWindows(!be.window);
     }
 
+    @SuppressWarnings("unused")
     public void sendDataImmediately() {
         syncCooldown = 0;
         queuedSync = false;
@@ -873,6 +1026,8 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
     }
 
     public void setWindows(boolean window) {
+        if (level == null)
+            return;
         this.window = window;
         for (int yOffset = 0; yOffset < height; yOffset++) {
             for (int xOffset = 0; xOffset < width; xOffset++) {
@@ -904,14 +1059,17 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
             if (width == 2)
                 shape = xOffset == 0 ? zOffset == 0 ? VatBlock.Shape.WINDOW_NW : VatBlock.Shape.WINDOW_SW
                         : zOffset == 0 ? VatBlock.Shape.WINDOW_NE : VatBlock.Shape.WINDOW_SE;
-            // SIZE 3: Tanks in the center have a window
+            // SIZE 3: Tanks in the centre have a window
             if (width == 3 && abs(abs(xOffset) - abs(zOffset)) == 1)
                 shape = VatBlock.Shape.WINDOW;
         }
         return shape;
     }
 
+    @SuppressWarnings("unused")
     public void updateState() {
+        if (level == null)
+            return;
         if (!isController())
             return;
         for (int yOffset = 0; yOffset < height; yOffset++)
@@ -924,7 +1082,7 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
 
     @Override
     public void setController(BlockPos controller) {
-        if (level.isClientSide && !isVirtual())
+        if (level == null || (level.isClientSide && !isVirtual()))
             return;
         if (controller.equals(this.controller))
             return;
@@ -1000,12 +1158,11 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
 
     @Override
     public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
-
         if (getControllerBE() == null)
             return false;
-
         if (!isController())
             return getControllerBE().addToGoggleTooltip(tooltip, isPlayerSneaking);
+
         TFMGTexts.header("vat").style(ChatFormatting.GRAY)
                 .forGoggles(tooltip);
 
@@ -1027,6 +1184,7 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
     @Override
     protected void read(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {
         super.read(compound, registries, clientPacket);
+
         BlockPos controllerBefore = controller;
         int prevSize = width;
         int prevHeight = height;
@@ -1060,8 +1218,10 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
             });
             inputInventory.deserializeNBT(registries, compound.getCompound("InputItems"));
             outputInventory.deserializeNBT(registries, compound.getCompound("OutputItems"));
+            timer = compound.getInt("Timer");
+            heatLevel = compound.getInt("HeatLevel");
+            pressure = compound.getInt("Pressure");
         }
-
 
         updateCapability = true;
 
@@ -1070,7 +1230,7 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
 
         boolean changeOfController = !Objects.equals(controllerBefore, controller);
         if (changeOfController || prevSize != width || prevHeight != height) {
-            if (hasLevel())
+            if (level != null)
                 level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 16);
             if (isController()) {
                 inputTank.forEach(s -> ((TankSegmentAccessor) s).tfmg$tank().setCapacity(getCapacityMultiplier() * getTotalTankSize()));
@@ -1078,7 +1238,7 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
             }
             invalidateRenderBoundingBox();
         }
-        if (luminosity != prevLum && hasLevel())
+        if (luminosity != prevLum && level != null)
             level.getChunkSource()
                     .getLightEngine()
                     .checkBlock(worldPosition);
@@ -1109,18 +1269,12 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
             compound.putInt("Height", height);
             compound.put("InputItems", inputInventory.serializeNBT(registries));
             compound.put("OutputItems", outputInventory.serializeNBT(registries));
-
+            compound.putInt("Timer", timer);
+            compound.putInt("HeatLevel", heatLevel);
+            compound.putInt("Pressure", pressure);
         }
         compound.putInt("Luminosity", luminosity);
         super.write(compound, registries, clientPacket);
-
-        if (!clientPacket)
-            return;
-        if (forceFluidLevelUpdate)
-            compound.putBoolean("ForceFluidLevel", true);
-        if (queuedSync)
-            compound.putBoolean("LazySync", true);
-        forceFluidLevelUpdate = false;
     }
 
     public int getTotalTankSize() {
@@ -1152,11 +1306,12 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
         if (VatBlock.isVat(state)) {
             state = state.setValue(VatBlock.BOTTOM, getController().getY() == getBlockPos().getY());
             state = state.setValue(VatBlock.TOP, getController().getY() + height - 1 == getBlockPos().getY());
-            level.setBlock(getBlockPos(), state, 6);
+            if (level != null) {
+                level.setBlock(getBlockPos(), state, 6);
+            }
         }
         if (isController()) {
             setWindows(window);
-
         }
         evaluateNextTick = true;
         onInventoryChanged();
@@ -1238,7 +1393,6 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
 
     @Override
     public IFluidTank getTank(int tank) {
-
         return new FluidTank(1);
     }
 
