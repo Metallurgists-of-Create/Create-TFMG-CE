@@ -29,8 +29,7 @@ public class TFMGGeneratedEntriesProvider extends DatapackBuiltinEntriesProvider
 
 
     public TFMGGeneratedEntriesProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {
-        super(output, registries, BUILDER, Set.of(TFMG.MOD_ID));
-
+        super(output, registries, BUILDER, Set.of(TFMG.MOD_ID, "chemica"));
     }
 
     @Override

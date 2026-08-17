@@ -13,10 +13,10 @@ import com.drmangotea.tfmg.content.electricity.measurement.MultimeterItem;
 import com.drmangotea.tfmg.content.electricity.network.transformer.small.ElectromagneticCoilItem;
 import com.drmangotea.tfmg.content.electricity.utilities.polarizer.MagnetItem;
 import com.drmangotea.tfmg.content.electricity.utilities.resistor.ResistorItem;
+import com.drmangotea.tfmg.content.engines.CylinderItem;
 import com.drmangotea.tfmg.content.engines.FluidContainingItem;
-import com.drmangotea.tfmg.content.engines.fuel.EngineFuelType;
+import com.drmangotea.tfmg.content.engines.fuels.EngineFuelType;
 import com.drmangotea.tfmg.content.items.ScrewdriverItem;
-import com.drmangotea.tfmg.content.items.parts.EngineCylinderItem;
 import com.drmangotea.tfmg.content.items.weapons.LeadAxeItem;
 import com.drmangotea.tfmg.content.items.weapons.LeadSwordItem;
 import com.drmangotea.tfmg.content.items.weapons.advanced_potato_cannon.AdvancedPotatoCannonItem;
@@ -295,7 +295,7 @@ public class TFMGItems {
             PIPE_BOMB = REGISTRATE.item("pipe_bomb", PipeBombItem::new)
             .register();
 
-    public static final ItemEntry<EngineCylinderItem>
+    public static final ItemEntry<CylinderItem>
 		DIESEL_ENGINE_CYLINDER = cylinder("diesel_engine_cylinder", (ctx, prov) ->
             ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ctx.get())
                     .pattern("   ").pattern("P P").pattern("P P")
@@ -522,8 +522,8 @@ public class TFMGItems {
 	}
 	
 	@SafeVarargs
-    public static ItemEntry<EngineCylinderItem> cylinder(String name, NonNullBiConsumer<DataGenContext<Item, EngineCylinderItem>, RegistrateRecipeProvider> recipe, ResourceKey<EngineFuelType>... fuelTypes) {
-		return REGISTRATE.item(name, EngineCylinderItem::new)
+    public static ItemEntry<CylinderItem> cylinder(String name, NonNullBiConsumer<DataGenContext<Item, CylinderItem>, RegistrateRecipeProvider> recipe, ResourceKey<EngineFuelType>... fuelTypes) {
+		return REGISTRATE.item(name, CylinderItem::new)
                 .properties(p -> p.component(TFMGDataComponents.ENGINE_CYLINDER, new CylinderFuels(Arrays.asList(fuelTypes))))
                 .recipe(recipe)
                 .register();

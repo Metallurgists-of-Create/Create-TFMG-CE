@@ -136,7 +136,14 @@ public class TFMGTags {
         NAPHTHA(COMMON),
         CRUDE_OIL(COMMON),
         MOLTEN_STEEL(COMMON),
-        FUEL(COMMON)
+        FUEL(COMMON),
+
+        //Chemica fix
+        BIODIESEL(COMMON),
+        ETHANOL(COMMON),
+        HIGH_CETANE_DIESEL(COMMON),
+        HIGH_OCTANE_GASOLINE(COMMON),
+        HYDROGEN_FUEL(COMMON)
 
         ;
 

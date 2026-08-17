@@ -1,7 +1,7 @@
 package com.drmangotea.tfmg.base.events;
 
 import com.drmangotea.tfmg.TFMGRegistries;
-import com.drmangotea.tfmg.content.engines.fuel.EngineFuelType;
+import com.drmangotea.tfmg.content.engines.fuels.EngineFuelType;
 import com.drmangotea.tfmg.content.items.weapons.flamethrover.FlamethrowerFuelType;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;

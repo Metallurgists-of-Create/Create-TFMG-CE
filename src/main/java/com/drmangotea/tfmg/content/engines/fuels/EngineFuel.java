@@ -1,4 +1,4 @@
-package com.drmangotea.tfmg.content.engines.fuel;
+package com.drmangotea.tfmg.content.engines.fuels;
 
 import com.drmangotea.tfmg.TFMGRegistries;
 import com.drmangotea.tfmg.registry.TFMGEngineFuelTypes;

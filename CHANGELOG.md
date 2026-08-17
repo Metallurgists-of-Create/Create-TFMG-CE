@@ -37,6 +37,7 @@ Please note that not all bugs are fixed and some new additions are subject to ch
 - Rolled back a change done to `IElectric` that made Power Grid incompatible.
 - Industrial Mixers should no-longer void the Mixer Blade/Centrifuge item.
 - Electrode Holders should no-longer void the Electrode item.
+- Chemica is now functional with this fork.
 
 ### Changes:
 - Added some new configs:

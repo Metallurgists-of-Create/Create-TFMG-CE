@@ -3,6 +3,22 @@
     "tfmg:diesel_engine_cylinder",
     "tfmg:simple_engine_cylinder",
     "tfmg:engine_cylinder",
-    "tfmg:autogas_engine_cylinder"
+    "tfmg:autogas_engine_cylinder",
+    {
+      "id": "chemica:biodiesel_engine_cylinder",
+      "required": false
+    },
+    {
+      "id": "chemica:ethanol_engine_cylinder",
+      "required": false
+    },
+    {
+      "id": "chemica:high_cetane_engine_cylinder",
+      "required": false
+    },
+    {
+      "id": "chemica:high_octane_engine_cylinder",
+      "required": false
+    }
   ]
 }

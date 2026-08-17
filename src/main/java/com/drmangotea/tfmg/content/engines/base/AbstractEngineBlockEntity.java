@@ -2,7 +2,7 @@ package com.drmangotea.tfmg.content.engines.base;
 
 import com.drmangotea.tfmg.config.TFMGConfigs;
 import com.drmangotea.tfmg.content.electricity.base.KineticElectricBlockEntity;
-import com.drmangotea.tfmg.content.engines.fuel.EngineFuel;
+import com.drmangotea.tfmg.content.engines.fuels.EngineFuel;
 import com.drmangotea.tfmg.registry.TFMGBlockEntities;
 import com.drmangotea.tfmg.registry.TFMGFluids;
 import com.drmangotea.tfmg.registry.TFMGTags;

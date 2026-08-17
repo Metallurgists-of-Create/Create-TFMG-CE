@@ -2,7 +2,7 @@ package com.drmangotea.tfmg.base.data_storage;
 
 import com.drmangotea.tfmg.TFMGRegistries;
 import com.drmangotea.tfmg.base.lang.TFMGLang;
-import com.drmangotea.tfmg.content.engines.fuel.EngineFuelType;
+import com.drmangotea.tfmg.content.engines.fuels.EngineFuelType;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.netty.buffer.ByteBuf;

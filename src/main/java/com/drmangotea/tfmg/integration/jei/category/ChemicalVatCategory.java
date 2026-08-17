@@ -180,7 +180,14 @@ public class ChemicalVatCategory extends CreateRecipeCategory<VatMachineRecipe> 
                         .withColor(PonderPalette.INPUT.getColor()));
             }
         }
-
+        //Chemica fix
+        if (machines.contains("chemica:electrode")) {
+            boolean xCheck = mouseX > 11 && mouseX < 35 || mouseX > 75 && mouseX < 99;
+            if (mouseY > -3 && mouseY < 60 && xCheck) {
+                tooltip.add(Component.translatable("chemica.recipe.vat.platinum_electrode")
+                        .withColor(PonderPalette.INPUT.getColor()));
+            }
+        }
         return tooltip;
     }
 
@@ -250,7 +257,13 @@ public class ChemicalVatCategory extends CreateRecipeCategory<VatMachineRecipe> 
             TFMGGuiTextures.GRAPHITE_ELECTRODE.render(graphics, 55 - 4 + 32, 32);
             TFMGGuiTextures.GRAPHITE_ELECTRODE.render(graphics, 55 - 4, 32);
         }
-
+        //Chemica fix
+        if (machines.contains("chemica:electrode")) {
+            TFMGGuiTextures.VAT_MACHINE.render(graphics, 11, 0);
+            TFMGGuiTextures.VAT_MACHINE.render(graphics, 75, 0);
+            TFMGGuiTextures.PLATINUM_ELECTRODE.render(graphics, 19, 32);
+            TFMGGuiTextures.PLATINUM_ELECTRODE.render(graphics, 83, 32);
+        }
     }
 
 }

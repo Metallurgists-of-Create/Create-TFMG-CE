@@ -29,11 +29,17 @@ public class TFMGRegistrateTags {
                 .add(Items.STICK);
 
         prov.tag(TFMGTags.Items.ENGINE_CYLINDER.tag)
-                .add(TFMGItems.DIESEL_ENGINE_CYLINDER.get(), TFMGItems.SIMPLE_ENGINE_CYLINDER.get(), TFMGItems.ENGINE_CYLINDER.get(), TFMGItems.AUTOGAS_ENGINE_CYLINDER.get());
+                .add(TFMGItems.DIESEL_ENGINE_CYLINDER.get(), TFMGItems.SIMPLE_ENGINE_CYLINDER.get(), TFMGItems.ENGINE_CYLINDER.get(), TFMGItems.AUTOGAS_ENGINE_CYLINDER.get())
+                .addOptional(TFMG.asResource("chemica:biodiesel_engine_cylinder"))
+                .addOptional(TFMG.asResource("chemica:ethanol_engine_cylinder"))
+                .addOptional(TFMG.asResource("chemica:high_cetane_engine_cylinder"))
+                .addOptional(TFMG.asResource("chemica:high_octane_engine_cylinder"));
 
         prov.tag(TFMGTags.Items.ENGINE_TURBINE.tag)
-                .add(TFMGItems.TURBINE_BLADE.get());
+                .add(TFMGItems.TURBINE_BLADE.get())
+                .addOptional(TFMG.asResource("chemica:hydrogen_turbine_blade"));
     }
+
     private static void genBlockTags(RegistrateTagsProvider<Block> provIn) {
         TagGen.CreateTagsProvider<Block> prov = new TagGen.CreateTagsProvider<>(provIn, Block::builtInRegistryHolder);
 

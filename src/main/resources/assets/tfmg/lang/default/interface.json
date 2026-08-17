@@ -156,6 +156,7 @@
   "tfmg.recipe.vat.centrifuge": "Requires Centrifuge",
   "tfmg.recipe.vat.electrode": "Requires Electrodes",
   "tfmg.recipe.vat.graphite_electrode": "Requires Graphite Electrodes",
+  "chemica.recipe.vat.platinum_electrode": "Requires Platinum Electrodes",
 
   "tfmg.keyinfo.custom_button": "Engine Controller Custom Button",
   "tfmg.keyinfo.engine_start": "Start Engine",
@@ -277,6 +278,12 @@
   "engine_fuel.tfmg.naphtha": "Naphtha",
   "engine_fuel.tfmg.creosote": "Creosote",
   "engine_fuel.tfmg.furnace_gas": "Furnace Gas",
+
+  "engine_fuel.chemica.biodiesel": "Biodiesel",
+  "engine_fuel.chemica.ethanol": "Ethanol",
+  "engine_fuel.chemica.high_cetane_diesel": "High Cetane Diesel",
+  "engine_fuel.chemica.high_octane_gasoline": "High Octane Gasoline",
+  "engine_fuel.chemica.hydrogen_fuel": "Hydrogen Fuel",
 
   "flamethrower_fuel.tfmg.fallback": "[Missing]",
   "flamethrower_fuel.tfmg.gasoline": "Gasoline",
