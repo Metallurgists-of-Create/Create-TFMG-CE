@@ -42,5 +42,8 @@ public class TFMGRegistrateTags {
 
         prov.tag(TFMGTags.Blocks.PUMPJACK_PART.tag)
                 .addTag(TFMGTags.Blocks.PUMPJACK_SMALL_PART.tag);
+
+        prov.tag(TFMGTags.Blocks.BLAST_FURNACE_MELTS.tag)
+                .add(Blocks.SNOW);
     }
 }

@@ -170,6 +170,11 @@ public class BlastFurnaceOutputBlockEntity extends SmartBlockEntity implements I
             coalCokeHeight.tickChaser();
         }
 
+        BlockPos behindPos = getBlockPos().above().relative(getBlockState().getValue(FACING).getOpposite());
+        if (level.getBlockState(behindPos).is(TFMGTags.Blocks.BLAST_FURNACE_MELTS.tag)) {
+            level.removeBlock(behindPos, false);
+        }
+
         if (inputInventory.isEmpty())
             return;
         if (multiblock.getSize() < 3)
