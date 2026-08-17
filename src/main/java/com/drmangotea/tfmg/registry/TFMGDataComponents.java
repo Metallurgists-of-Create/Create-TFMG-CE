@@ -3,6 +3,7 @@ package com.drmangotea.tfmg.registry;
 import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.base.data_storage.CylinderFuels;
 import com.drmangotea.tfmg.content.items.weapons.flamethrover.FlamethrowerFuel;
+import com.drmangotea.tfmg.content.machinery.vat.industrial_mixer.mode.MixerMode;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponentType;
@@ -32,6 +33,8 @@ public class TFMGDataComponents {
 	public static final DataComponentType<BlockPos> POSITION = register("position", BlockPos.CODEC, BlockPos.STREAM_CODEC);
 
 	public static final DataComponentType<CylinderFuels> ENGINE_CYLINDER = register("engine_cylinder", CylinderFuels.CODEC, CylinderFuels.STREAM_CODEC);
+
+	public static final DataComponentType<MixerMode.Stored> MIXER_MODE = register("mixer_mode", MixerMode.Stored.CODEC, MixerMode.Stored.STREAM_CODEC);
 
 	//Legacy components for remapping item data.
 	public static final DataComponentType<String> FLAMETHROWER_FUEL = register("flamethrower_fuel", Codec.STRING, ByteBufCodecs.STRING_UTF8);

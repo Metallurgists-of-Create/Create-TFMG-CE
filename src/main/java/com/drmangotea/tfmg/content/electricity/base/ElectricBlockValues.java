@@ -55,6 +55,15 @@ public class ElectricBlockValues {
 
     public ElectricBlockValues(BlockPos pos) {
         this.electricalNetworkId = pos.asLong();
+        this.scheduledActions = new OneShotActionQueue<>();
+    }
+
+    /**
+     * Power Grid needs this
+     */
+    @SuppressWarnings("unused")
+    public ElectricBlockValues(long pos) {
+        this(BlockPos.of(pos));
     }
 
     public long getId() {
@@ -71,5 +80,5 @@ public class ElectricBlockValues {
 
     public Map<Direction, IEnergyStorage> energyOutputs = new HashMap<>();
 
-    public List<Consumer<Integer>> scheduledActions = new ArrayList<>();
+    public List<Consumer<Integer>> scheduledActions;
 }

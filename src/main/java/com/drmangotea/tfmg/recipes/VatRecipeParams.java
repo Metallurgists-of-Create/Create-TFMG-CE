@@ -82,7 +82,6 @@ public class VatRecipeParams extends ProcessingRecipeParams {
         ByteBufCodecs.INT.encode(buffer, heat_level);
         ByteBufCodecs.INT.encode(buffer, pressure);
 
-
         CatnipStreamCodecBuilders.list(ByteBufCodecs.STRING_UTF8).encode(buffer, machines);
         CatnipStreamCodecBuilders.list(ResourceLocation.STREAM_CODEC).encode(buffer, allowedVatTypes);
 

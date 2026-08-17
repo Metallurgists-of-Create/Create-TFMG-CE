@@ -1,40 +1,76 @@
 package com.drmangotea.tfmg.content.machinery.vat.industrial_mixer;
 
+import com.drmangotea.tfmg.TFMGRegistries;
 import com.drmangotea.tfmg.base.lang.TFMGTexts;
 import com.drmangotea.tfmg.config.TFMGConfigs;
 import com.drmangotea.tfmg.content.machinery.vat.base.IVatMachine;
 import com.drmangotea.tfmg.content.machinery.vat.base.VatBlock;
 import com.drmangotea.tfmg.content.machinery.vat.base.VatBlockEntity;
+import com.drmangotea.tfmg.content.machinery.vat.industrial_mixer.mode.MixerMode;
+import com.drmangotea.tfmg.registry.TFMGBlockEntities;
+import com.drmangotea.tfmg.registry.TFMGDataComponents;
 import com.drmangotea.tfmg.registry.TFMGItems;
+import com.drmangotea.tfmg.registry.TFMGMixerModes;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
+import com.simibubi.create.foundation.item.ItemHelper;
+import com.simibubi.create.foundation.item.SmartInventory;
 import net.createmod.catnip.animation.LerpedFloat;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
+import net.neoforged.neoforge.items.IItemHandlerModifiable;
 
 import java.util.List;
-import java.util.Objects;
 
 
 public class IndustrialMixerBlockEntity extends KineticBlockEntity implements IVatMachine {
-    public MixerMode mixerMode = MixerMode.NONE;
+    public SmartInventory inventory = new SmartInventory(1, this, 1, false)
+            .whenContentsChanged(this::onInventoryChanged);
+    public IItemHandlerModifiable itemCapability;
+
+    public MixerMode mixerMode = TFMGMixerModes.none.get();
     public int vatSize = 1;
     public int vatHeight = 1;
     public BlockPos vatPos = null;
+    public boolean updateVat = false;
 
     LerpedFloat visualSpeed = LerpedFloat.linear();
-    float angle;
+    public float angle;
 
     public IndustrialMixerBlockEntity(BlockEntityType<?> typeIn, BlockPos pos, BlockState state) {
         super(typeIn, pos, state);
+        itemCapability = inventory;
+    }
+
+    public static void registerCapabilities(RegisterCapabilitiesEvent event) {
+        event.registerBlockEntity(
+                Capabilities.ItemHandler.BLOCK,
+                TFMGBlockEntities.INDUSTRIAL_MIXER.get(),
+                (be, context) -> be.itemCapability
+        );
+    }
+
+    public void onInventoryChanged(int slot) {
+        sendData();
+        setChanged();
+        if (inventory.isEmpty()) {
+            this.mixerMode = TFMGMixerModes.none.get();
+            this.updateVat = true;
+            return;
+        }
+        ItemStack itemStack = inventory.getItem(0);
+        this.mixerMode = itemStack.getOrDefault(TFMGDataComponents.MIXER_MODE, MixerMode.Stored.NONE).mode().value();
+        this.updateVat = true;
     }
 
     @Override
@@ -52,12 +88,23 @@ public class IndustrialMixerBlockEntity extends KineticBlockEntity implements IV
         float targetSpeed = getSpeed();
         visualSpeed.updateChaseTarget(targetSpeed);
         visualSpeed.tickChaser();
+        if (this.updateVat) {
+            VatBlock.updateVatState(getBlockState(), level, getBlockPos().relative(Direction.DOWN));
+            this.updateVat = false;
+        }
+    }
+
+    public void onSpeedChanged(float previous) {
+        super.onSpeedChanged(previous);
+        if (getSpeed() != previous) {
+            this.updateVat = true;
+        }
     }
 
     @Override
     public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
         boolean operational = Math.abs(getSpeed()) >= TFMGConfigs.common().machines.industrialMixerMinimumRPM.get();
-        boolean needsAttachment = mixerMode == MixerMode.NONE;
+        boolean needsAttachment = !mixerMode.isValid();
         String state = operational && !needsAttachment ? "goggles.operational" : "goggles.not_operational";
         TFMGTexts.CommonMachines.state(state).style(operational && !needsAttachment ? ChatFormatting.GREEN : ChatFormatting.RED).forGoggles(tooltip);
         if(!operational) {
@@ -69,31 +116,42 @@ public class IndustrialMixerBlockEntity extends KineticBlockEntity implements IV
 
     @Override
     public void write(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {
-        for (MixerMode mode : MixerMode.values()) {
-            if (mode == mixerMode) {
-                compound.putString("MixerMode", mode.name);
-            }
-        }
         super.write(compound, registries, clientPacket);
+        compound.put("Inventory", inventory.serializeNBT(registries));
+        TFMGRegistries.MIXER_MODE_REGISTRY.byNameCodec().encodeStart(NbtOps.INSTANCE, mixerMode).ifSuccess(nbt -> compound.put("Mode", nbt));
     }
 
     @Override
     protected void read(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {
-        setMixerMode(compound.getString("MixerMode"), false);
         if (clientPacket)
             visualSpeed.chase(getGeneratedSpeed(), (double) 1 / 32, LerpedFloat.Chaser.EXP);
         super.read(compound, registries, clientPacket);
+        inventory.deserializeNBT(registries,compound.getCompound("Inventory"));
+        remapMode(compound);
+        TFMGRegistries.MIXER_MODE_REGISTRY.byNameCodec().parse(NbtOps.INSTANCE, compound.get("Mode")).ifSuccess(mode -> mixerMode = mode);
     }
 
+    private void remapMode(CompoundTag compound) {
+        if (compound.contains("MixerMode")) {
+            ItemStack remapped = switch (compound.getString("MixerMode")) {
+                case "mixing" -> TFMGItems.MIXER_BLADE.asStack();
+                case "centrifuge" -> TFMGItems.CENTRIFUGE.asStack();
+                default -> ItemStack.EMPTY;
+            };
+            if (inventory.isEmpty() && !remapped.isEmpty()) {
+                inventory.insertItem(0, remapped, false);
+                sendData();
+            }
+            compound.remove("MixerMode");
+        }
+    }
 
     @Override
-    public void remove() {
-        if (level == null)
+    public void destroy() {
+        if (level == null || level.isClientSide) {
             return;
-        if (level.isClientSide || mixerMode == MixerMode.NONE)
-            return;
-        ItemEntity itemToDrop = new ItemEntity(level, getBlockPos().getX() + 0.5f, getBlockPos().getY() + 0.5f, getBlockPos().getZ() + 0.5f, mixerMode.item);
-        level.addFreshEntity(itemToDrop);
+        }
+        ItemHelper.dropContents(level, getBlockPos(), inventory);
     }
 
     @Override
@@ -103,48 +161,13 @@ public class IndustrialMixerBlockEntity extends KineticBlockEntity implements IV
 
     @Override
     public String getOperationId() {
-        return switch (mixerMode) {
-            case NONE -> "";
-            case MIXING -> "tfmg:mixing";
-            case CENTRIFUGE -> "tfmg:centrifuge";
-        };
+        if (!mixerMode.isValid()) return "";
+        return mixerMode.getOperationId().toString();
     }
 
     @Override
     public boolean canOperate(VatBlockEntity vat) {
         return Math.abs(getSpeed()) >= TFMGConfigs.common().machines.industrialMixerMinimumRPM.get();
-    }
-
-    public boolean setMixerMode(ItemStack modeItem, boolean simulate) {
-        if (level == null)
-            return false;
-        for (MixerMode mode : MixerMode.values()) {
-            if (mode.item.is(modeItem.getItem())) {
-                if (!simulate) {
-                    mixerMode = mode;
-                } else return true;
-            }
-        }
-        if (!simulate && hasLevel())
-            VatBlock.updateVatState(getBlockState(), level, getBlockPos().relative(Direction.DOWN));
-        sendData();
-        return false;
-    }
-
-    public void setMixerMode(String name, boolean simulate) {
-        if (level == null)
-            return;
-        for (MixerMode mode : MixerMode.values()) {
-            if (Objects.equals(mode.name, name)) {
-                if (!simulate) {
-                    mixerMode = mode;
-
-                } else return;
-            }
-        }
-        if (!simulate && hasLevel())
-            VatBlock.updateVatState(getBlockState(), level, getBlockPos().relative(Direction.DOWN));
-        sendData();
     }
 
     @Override
@@ -160,18 +183,5 @@ public class IndustrialMixerBlockEntity extends KineticBlockEntity implements IV
     @Override
     public String[] doesntWorkWith() {
         return new String[]{"tfmg:electrode", "tfmg:graphite_electrode"};
-    }
-
-    public enum MixerMode {
-        NONE("none", ItemStack.EMPTY),
-        MIXING("mixing", TFMGItems.MIXER_BLADE.asStack()),
-        CENTRIFUGE("centrifuge", TFMGItems.CENTRIFUGE.asStack());
-        public final String name;
-        public final ItemStack item;
-
-        MixerMode(String name, ItemStack stack) {
-            this.name = name;
-            this.item = stack;
-        }
     }
 }

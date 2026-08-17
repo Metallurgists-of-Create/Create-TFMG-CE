@@ -93,7 +93,7 @@ public class VatBlock extends Block implements IWrenchable, IBE<VatBlockEntity> 
         VatBlockEntity vatAt = ConnectivityHandler.partAt(getBlockEntityType(), world, pos);
         if (vatAt == null)
             return 0;
-        VatBlockEntity controllerTE = (VatBlockEntity) vatAt.getControllerBE();
+        VatBlockEntity controllerTE = vatAt.getControllerBE();
         if (controllerTE == null || !controllerTE.window)
             return 0;
         return vatAt.luminosity;

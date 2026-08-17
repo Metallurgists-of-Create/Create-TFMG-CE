@@ -271,7 +271,6 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
     }
 
     public void updateTemperature() {
-
         if (!isController())
             return;
 

@@ -54,9 +54,6 @@ public class TFMGCreativeTabs {
                     continue;
                 if (item.get() instanceof SequencedAssemblyItem)
                     continue;
-                if (item.get() instanceof SpoolItem && !item.is(TFMGItems.EMPTY_SPOOL.get())) {
-                    continue;
-                }
                 event.accept(item.get(), CreativeModeTab.TabVisibility.PARENT_TAB_ONLY);
             }
 
@@ -84,9 +81,6 @@ public class TFMGCreativeTabs {
 		
 		list.add(TFMGItems.GOLDEN_TURBO);
 		//add these to the blacklist so there aren't duplicate entries
-        list.add(TFMGItems.ALUMINUM_SPOOL);
-        list.add(TFMGItems.COPPER_SPOOL);
-        list.add(TFMGItems.CONSTANTAN_SPOOL);
 
         return list;
     }
