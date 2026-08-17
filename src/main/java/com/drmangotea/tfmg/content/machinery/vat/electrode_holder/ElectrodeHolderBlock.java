@@ -42,8 +42,8 @@ public class ElectrodeHolderBlock extends Block implements IBE<ElectrodeHolderBl
         }
         AtomicBoolean success = new AtomicBoolean(false);
         withBlockEntityDo(level, pos, (electrodeHolder) -> {
-            var mode = stack.getOrDefault(TFMGDataComponents.ELECTRODE, Electrode.Stored.NONE).electrode().value();
-            if (mode.isValid()) {
+            var electrode = stack.getOrDefault(TFMGDataComponents.ELECTRODE, Electrode.Stored.NONE).electrode().value();
+            if (electrode.isValid()) {
                 boolean doInsert = true;
                 if (!electrodeHolder.inventory.isEmpty()) {
                     if (ItemStack.isSameItemSameComponents(stack, electrodeHolder.inventory.getStackInSlot(0))) {

@@ -66,10 +66,6 @@ public class Electrode implements MultiUseAttachment<ElectrodeHolderBlockEntity>
 
     }
 
-    public boolean isValid() {
-        return getOperationId() != null;
-    }
-
     public String getOrCreateDescriptionId() {
         if (this.descriptionId == null) {
             this.descriptionId = Util.makeDescriptionId("electrode", getKey());
