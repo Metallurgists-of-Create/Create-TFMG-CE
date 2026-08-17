@@ -28,6 +28,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
+import net.neoforged.neoforge.items.wrapper.CombinedInvWrapper;
 import net.neoforged.neoforge.items.wrapper.RecipeWrapper;
 
 import java.util.List;
@@ -54,13 +55,11 @@ public class WindingMachineBlockEntity extends KineticBlockEntity implements IHa
         inventory = new SmartInventory(1, this)
                 .withMaxStackSize(1)
                 .forbidExtraction()
-                .allowInsertion()
                 .whenContentsChanged(i -> this.onContentsChanged());
 
         outputInventory = new SmartInventory(1, this)
                 .withMaxStackSize(1)
                 .forbidInsertion()
-                .allowExtraction()
                 .whenContentsChanged(i -> this.onContentsChanged());
     }
 
@@ -69,13 +68,7 @@ public class WindingMachineBlockEntity extends KineticBlockEntity implements IHa
         event.registerBlockEntity(
                 Capabilities.ItemHandler.BLOCK,
                 TFMGBlockEntities.WINDING_MACHINE.get(),
-                (be, context) -> be.inventory
-        );
-
-        event.registerBlockEntity(
-                Capabilities.ItemHandler.BLOCK,
-                TFMGBlockEntities.WINDING_MACHINE.get(),
-                (be, context) -> be.outputInventory
+                (be, context) -> new CombinedInvWrapper(be.inventory, be.outputInventory)
         );
     }
 
