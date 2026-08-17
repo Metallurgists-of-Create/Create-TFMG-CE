@@ -161,8 +161,7 @@ public class IndustrialMixerBlockEntity extends KineticBlockEntity implements IV
 
     @Override
     public String getOperationId() {
-        if (!mixerMode.isValid()) return "";
-        return mixerMode.getOperationId().toString();
+        return mixerMode.getOperationId();
     }
 
     @Override

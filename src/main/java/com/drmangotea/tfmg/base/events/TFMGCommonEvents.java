@@ -28,6 +28,7 @@ import com.drmangotea.tfmg.content.machinery.oil_processing.distillation_tower.c
 import com.drmangotea.tfmg.content.machinery.oil_processing.distillation_tower.output.DistillationOutputBlockEntity;
 import com.drmangotea.tfmg.content.machinery.oil_processing.pumpjack.base.PumpjackBaseBlockEntity;
 import com.drmangotea.tfmg.content.machinery.vat.base.VatBlockEntity;
+import com.drmangotea.tfmg.content.machinery.vat.electrode_holder.ElectrodeHolderBlockEntity;
 import com.drmangotea.tfmg.content.machinery.vat.industrial_mixer.IndustrialMixerBlockEntity;
 import com.drmangotea.tfmg.registry.TFMGMobEffects;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -96,6 +97,7 @@ public class TFMGCommonEvents {
             AirIntakeBlockEntity.registerCapabilities(event);
             WindingMachineBlockEntity.registerCapabilities(event);
             IndustrialMixerBlockEntity.registerCapabilities(event);
+            ElectrodeHolderBlockEntity.registerCapabilities(event);
         }
 
         @SubscribeEvent

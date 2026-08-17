@@ -1,5 +1,6 @@
 package com.drmangotea.tfmg.registry;
 
+import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.content.machinery.vat.electrode_holder.electrode.ArcElectrode;
 import com.drmangotea.tfmg.content.machinery.vat.electrode_holder.electrode.Electrode;
 import com.drmangotea.tfmg.content.machinery.vat.electrode_holder.electrode.ElectrodeEntry;
@@ -13,26 +14,15 @@ public class TFMGElectrodes {
             .register();
 
     public static final ElectrodeEntry<Electrode> copper = REGISTRATE.electrode("copper_electrode", Electrode::new)
-            .properties((p) -> p
-                    .resistance(10)
-                    .item(TFMGItems.COPPER_ELECTRODE)
-                    .operationId("tfmg:electrode")
-            )
+            .properties((p) -> p.resistance(10).operationId(TFMG.asResource("electrode")))
             .register();
 
     public static final ElectrodeEntry<Electrode> zinc = REGISTRATE.electrode("zinc_electrode", Electrode::new)
-            .properties((p) -> p
-                    .resistance(10)
-                    .item(TFMGItems.ZINC_ELECTRODE)
-                    .operationId("tfmg:electrode")
-            )
+            .properties((p) -> p.resistance(10).operationId(TFMG.asResource("electrode")))
             .register();
 
     public static final ElectrodeEntry<ArcElectrode> graphite = REGISTRATE.electrode("graphite_electrode", ArcElectrode::new)
-            .properties((p) -> p
-                    .resistance(300)
-                    .item(TFMGItems.GRAPHITE_ELECTRODE)
-            )
+            .properties((p) -> p.resistance(300))
             .register();
 
     public static void init() { }
