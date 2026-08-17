@@ -58,6 +58,14 @@ public class ElectricBlockValues {
         this.scheduledActions = new OneShotActionQueue<>();
     }
 
+    /**
+     * Power Grid needs this
+     */
+    @SuppressWarnings("unused")
+    public ElectricBlockValues(long pos) {
+        this(BlockPos.of(pos));
+    }
+
     public long getId() {
         return electricalNetworkId;
     }
