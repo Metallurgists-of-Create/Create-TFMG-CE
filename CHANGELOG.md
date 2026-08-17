@@ -36,6 +36,7 @@ Please note that not all bugs are fixed and some new additions are subject to ch
 - Segmented Displays now safely decode their display contents.
 - Rolled back a change done to `IElectric` that made Power Grid incompatible.
 - Industrial Mixers should no-longer void the Mixer Blade/Centrifuge item.
+- Electrode Holders should no-longer void the Electrode item.
 
 ### Changes:
 - Added some new configs:
@@ -98,12 +99,12 @@ Please note that not all bugs are fixed and some new additions are subject to ch
 - Renamed & remapped Heavy casing encased blocks to Heavy encased.
 - Added Decimal Formats to `TFMGTexts` for properly formatting numbers.
 - Re-introduced Micron unit just in case.
-- Added `returnItemToInventory` method in `TFMGUtils`. Currently only used in the Polarizer.
+- Added `returnItemToInventory` method in `TFMGUtils`.
 - Removed `IndustrialMixerBlockEntity.MixerMode` enum.
 
 ### New Translations:
 People who wish to translate this mod should look out for changes here.
-- For new and removed translations check the latest en_us.json in the src/generated folder.
+- For new and removed translations check the latest en_us.json in the `src/generated/assets/tfmg/lang` folder.
 - The following already exist but will need changing:
   - "tfmg.goggles.vat.tfmg.centrifuge" | "&nbsp;&nbsp;&nbsp;Centrifuge" → "Centrifuge"
   - "tfmg.goggles.vat.tfmg.electrode" | "&nbsp;&nbsp;&nbsp;Electrode" → "Electrode"

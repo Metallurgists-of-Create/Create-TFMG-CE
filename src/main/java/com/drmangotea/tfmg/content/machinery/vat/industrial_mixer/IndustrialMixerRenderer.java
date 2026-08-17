@@ -32,7 +32,7 @@ public class IndustrialMixerRenderer extends KineticBlockEntityRenderer<Industri
             be.angle %= 360;
         }
 
-        be.mixerMode.renderInVat(be, partialTicks, ms, buffer, light, overlay);
+        be.mixerMode.renderInVat(be, partialTicks, ms, buffer, light, overlay, null);
     }
 
     public static PartialModel getCentrifugeModel(int currentHeight, int totalHeight, IndustrialMixerBlockEntity be) {

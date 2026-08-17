@@ -1,6 +1,7 @@
 package com.drmangotea.tfmg.content.machinery.vat.industrial_mixer.mode;
 
 import com.drmangotea.tfmg.TFMGRegistries;
+import com.drmangotea.tfmg.content.machinery.vat.MultiUseAttachment;
 import com.drmangotea.tfmg.content.machinery.vat.base.VatBlockEntity;
 import com.drmangotea.tfmg.content.machinery.vat.industrial_mixer.IndustrialMixerBlockEntity;
 import com.drmangotea.tfmg.registry.TFMGMixerModes;
@@ -13,6 +14,7 @@ import net.minecraft.Util;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -23,7 +25,9 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 
-public class MixerMode {
+import javax.annotation.Nullable;
+
+public class MixerMode implements MultiUseAttachment<IndustrialMixerBlockEntity> {
     private String descriptionId;
     private final ResourceLocation id;
     private final ResourceLocation operation;
@@ -35,11 +39,12 @@ public class MixerMode {
         this.mixerPartial = properties.mixerPartial;
     }
 
-    public ResourceLocation getOperationId() {
+    public ResourceLocation getOperation() {
         return this.operation;
     }
 
-    public void renderInVat(IndustrialMixerBlockEntity be, float partialTicks, PoseStack ms, MultiBufferSource buffer, int light, int overlay) {
+    @Override
+    public void renderInVat(IndustrialMixerBlockEntity be, float partialTicks, PoseStack ms, MultiBufferSource buffer, int light, int overlay, @Nullable ItemRenderer itemRenderer) {
         if (this.mixerPartial != null) {
             BlockState blockState = be.getBlockState();
             int height = be.vatHeight;
@@ -58,12 +63,9 @@ public class MixerMode {
         }
     }
 
+    @Override
     public void tick(VatBlockEntity controllerVat, Level level, BlockPos pos, boolean active, boolean clientTick) {
 
-    }
-
-    public boolean isValid() {
-        return getOperationId() != null;
     }
 
     public String getOrCreateDescriptionId() {
@@ -87,7 +89,7 @@ public class MixerMode {
     }
 
     public static class Properties {
-        private ResourceLocation id;
+        private final ResourceLocation id;
 
         ResourceLocation operation = null;
         MixerPartial mixerPartial = null;
@@ -121,12 +123,4 @@ public class MixerMode {
         public static final MixerMode.Stored NONE = new Stored(TFMGMixerModes.none);
     }
 
-    public static class Mixer extends MixerMode {
-        public Mixer(Properties properties) {
-            super(properties);
-        }
-
-        public void renderInVat(IndustrialMixerBlockEntity be, float partialTicks, PoseStack ms, MultiBufferSource buffer, int light, int overlay) {
-        }
-    }
 }
