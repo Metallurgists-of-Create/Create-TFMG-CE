@@ -38,6 +38,7 @@ Please note that not all bugs are fixed and some new additions are subject to ch
 - Industrial Mixers should no-longer void the Mixer Blade/Centrifuge item.
 - Electrode Holders should no-longer void the Electrode item.
 - Added native support for Chemica.
+- Engines are now mineable.
 
 ### Changes:
 - Added some new configs:
@@ -98,6 +99,7 @@ Please note that not all bugs are fixed and some new additions are subject to ch
 - JEI integration has been moved to a new folder. (`recipes` → `inregration.jei`)
 - Engine types are now blacklisted from the schematic cycle via the `tfmg:schematic_cycle_blacklist` tag.
 - Engine Upgrades now use the `tfmg:upgrades_on_side` engine tag for rendering.
+- Large Engine fuels are now determined through the `tfmg:large_engine` engine fuel type tag.
 - Removed `RegularEngineBlockEntity.EngineType` enum.
 - Internal tag enums in `TFMGTags` have been renamed (`TFMGTags.TFMGItemTags` → `TFMGTags.Items`).
 - Added `formatFluid` in `TFMGUtils` for fluid units.
