@@ -80,7 +80,6 @@ public abstract class AbstractEngineBlockEntity extends KineticElectricBlockEnti
                 TFMGBlockEntities.RADIAL_ENGINE.get(),
                 (be, context) -> be.fluidCapability
         );
-
     }
 
 

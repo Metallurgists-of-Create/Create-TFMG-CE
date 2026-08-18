@@ -168,16 +168,11 @@ public class CableConnectorBlockEntity extends ElectricBlockEntity implements IH
     @Override
     protected void write(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {
         super.write(compound, registries, clientPacket);
-
         compound.putInt("ConnectionCount", connections.size());
-
-
         for (int i = 0; i < connections.size(); i++) {
             CableConnection connection = connections.get(i);
             compound.put("Connection" + i, connection.saveConnection());
-            //
         }
-
     }
 
     @Override

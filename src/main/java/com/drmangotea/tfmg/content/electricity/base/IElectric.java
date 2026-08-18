@@ -384,15 +384,13 @@ public interface IElectric {
         for (Direction direction : directions) {
 
             BlockPos pos = BlockPos.of(getPos()).relative(direction);
-            IEnergyStorage energyCapability = Capabilities.EnergyStorage.BLOCK.getCapability((Level) (getLevelAccessor()), pos, null, null, direction.getOpposite());
-
-            if (energyCapability != null) {
-                getData().energyOutputs.put(direction, energyCapability);
-
+            if (getLevelAccessor() instanceof Level level) {
+                IEnergyStorage energyCapability = level.getCapability(Capabilities.EnergyStorage.BLOCK, pos, level.getBlockState(pos), level.getBlockEntity(pos), direction.getOpposite());
+                if (energyCapability != null) {
+                    getData().energyOutputs.put(direction, energyCapability);
+                }
             }
         }
-
-
     }
 
 

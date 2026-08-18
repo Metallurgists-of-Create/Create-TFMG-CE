@@ -16,8 +16,6 @@ public class KineticElectricBlockEntity extends GeneratingKineticBlockEntity imp
     public KineticElectricBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
         data.connectNextTick = true;
-
-
     }
 
     @Override
@@ -43,10 +41,6 @@ public class KineticElectricBlockEntity extends GeneratingKineticBlockEntity imp
         sendData();
     }
 
-
-
-
-
     @Override
     public long getPos() {
         return getBlockPos().asLong();
@@ -63,8 +57,6 @@ public class KineticElectricBlockEntity extends GeneratingKineticBlockEntity imp
         super.tick();
         tickElectricity();
     }
-
-
 
     @Override
     protected void read(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {
