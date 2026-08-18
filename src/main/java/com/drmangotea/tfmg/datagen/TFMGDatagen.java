@@ -7,6 +7,8 @@ import com.drmangotea.tfmg.datagen.recipes.TFMGRecipeProvider;
 import com.drmangotea.tfmg.datagen.recipes.values.TFMGStandardRecipeGen;
 import com.drmangotea.tfmg.datagen.recipes.values.create.TFMGMechanicalCraftingRecipeGen;
 import com.drmangotea.tfmg.datagen.recipes.values.create.TFMGSequencedAssemblyRecipeGen;
+import com.drmangotea.tfmg.datagen.tags.TFMGEngineFuelTags;
+import com.drmangotea.tfmg.datagen.tags.TFMGRegistrateTags;
 import com.drmangotea.tfmg.ponder.TFMGPonderPlugin;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -28,10 +30,13 @@ import static com.drmangotea.tfmg.TFMG.REGISTRATE;
 public class TFMGDatagen {
     public static final ProviderType<RegistrateTagsProvider.IntrinsicImpl<EngineType>> ENGINE_TAGS = ProviderType.registerIntrinsicTag("tags/engine_type", "engine_type", TFMGRegistries.ENGINE_TYPE, engineType -> engineType.builtInRegistryHolder().getKey());
 
+    //public static final ProviderType<RegistrateTagsProvider.Impl<EngineFuelType>> ENGINE_FUEL_TAGS = ProviderType.registerDynamicTag("tags/engine_fuel_type", "tfmg/fuel_type/engine", TFMGRegistries.ENGINE_FUEL_TYPE);
+
     public static void gatherDataHighPriority(GatherDataEvent event) {
         if (event.getMods().contains(TFMG.MOD_ID))
             addExtraRegistrateData();
     }
+
     public static void gatherData(GatherDataEvent event) {
         DataGenerator generator = event.getGenerator();
         PackOutput output = generator.getPackOutput();
@@ -41,6 +46,7 @@ public class TFMGDatagen {
         lookupProvider = generatedEntriesProvider.getRegistryProvider();
         generator.addProvider(event.includeServer(), generatedEntriesProvider);
 
+        generator.addProvider(event.includeServer(), new TFMGEngineFuelTags(output, lookupProvider, event.getExistingFileHelper()));
 
         generator.addProvider(event.includeServer(),new TFMGDataMapProvider(output, lookupProvider));
         generator.addProvider(event.includeServer(),new TFMGStandardRecipeGen(output, lookupProvider));

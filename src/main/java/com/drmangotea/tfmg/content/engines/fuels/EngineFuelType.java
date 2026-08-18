@@ -4,10 +4,7 @@ import com.drmangotea.tfmg.TFMGRegistries;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.simibubi.create.foundation.fluid.FluidHelper;
-import net.minecraft.core.Holder;
-import net.minecraft.core.HolderSet;
-import net.minecraft.core.RegistryAccess;
-import net.minecraft.core.RegistryCodecs;
+import net.minecraft.core.*;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.tags.TagKey;
@@ -36,6 +33,12 @@ public record EngineFuelType(HolderSet<Fluid> fluids, float speed, float efficie
 
     public boolean test(FluidStack fluidStack) {
         return fluidStack.is(fluids);
+    }
+
+    public static boolean test(FluidStack fluidStack, TagKey<EngineFuelType> fuelTypeTag, RegistryAccess registryAccess) {
+        HolderGetter<EngineFuelType> lookup = registryAccess.asGetterLookup().lookupOrThrow(TFMGRegistries.ENGINE_FUEL_TYPE);
+        var tagged = lookup.getOrThrow(fuelTypeTag);
+        return tagged.stream().map(Holder::value).anyMatch(type -> type.test(fluidStack));
     }
 
     public static class Builder {

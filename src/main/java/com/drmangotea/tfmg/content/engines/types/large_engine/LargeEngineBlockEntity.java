@@ -69,7 +69,12 @@ public class LargeEngineBlockEntity extends AbstractEngineBlockEntity {
 
     @Override
     public Predicate<FluidStack> validFuels() {
-        return (fs -> fs.is(TFMGTags.Fluids.DIESEL.tag) || fs.is(TFMGTags.Fluids.KEROSENE.tag) || fs.is(TFMGTags.Fluids.NAPHTHA.tag) || fs.is(TFMGTags.Fluids.FURNACE_GAS.tag));
+        return fs -> {
+            if (level == null) { //Fallback to legacy check
+                return fs.is(TFMGTags.Fluids.DIESEL.tag) || fs.is(TFMGTags.Fluids.KEROSENE.tag) || fs.is(TFMGTags.Fluids.NAPHTHA.tag) || fs.is(TFMGTags.Fluids.FURNACE_GAS.tag);
+            }
+            return EngineFuelType.test(fs, TFMGTags.EngineFuel.LARGE_ENGINE.tag, level.registryAccess());
+        };
     }
 
     @Override
@@ -90,10 +95,7 @@ public class LargeEngineBlockEntity extends AbstractEngineBlockEntity {
     @Override
     public void manageFuelAndExhaust() {
         super.manageFuelAndExhaust();
-
-
-            airTank.forceDrain(50, IFluidHandler.FluidAction.EXECUTE);
-
+        airTank.forceDrain(50, IFluidHandler.FluidAction.EXECUTE);
     }
 
     @SuppressWarnings({"DuplicateCondition", "ConstantValue"})

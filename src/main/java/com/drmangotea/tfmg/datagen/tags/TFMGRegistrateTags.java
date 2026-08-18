@@ -1,7 +1,9 @@
-package com.drmangotea.tfmg.datagen;
+package com.drmangotea.tfmg.datagen.tags;
 
 import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.base.TFMGRegistrate;
+import com.drmangotea.tfmg.content.engines.fuels.EngineFuelType;
+import com.drmangotea.tfmg.registry.TFMGEngineFuelTypes;
 import com.drmangotea.tfmg.registry.TFMGItems;
 import com.drmangotea.tfmg.registry.TFMGTags;
 import com.simibubi.create.foundation.data.TagGen;
@@ -19,6 +21,7 @@ public class TFMGRegistrateTags {
     public static void addGenerators() {
         REGISTRATE.addDataGenerator(ProviderType.BLOCK_TAGS, TFMGRegistrateTags::genBlockTags);
         REGISTRATE.addDataGenerator(ProviderType.ITEM_TAGS, TFMGRegistrateTags::genItemTags);
+        //REGISTRATE.addDataGenerator(TFMGDatagen.ENGINE_FUEL_TAGS, TFMGRegistrateTags::genEngineFuelTags);
        // TFMG.REGISTRATE.addDataGenerator(ProviderType.FLUID_TAGS, TFMGRegistrateTags::genFluidTags);
        // TFMG.REGISTRATE.addDataGenerator(ProviderType.ENTITY_TAGS, TFMGRegistrateTags::genEntityTags);
     }
