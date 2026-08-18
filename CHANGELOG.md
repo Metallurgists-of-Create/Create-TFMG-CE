@@ -39,8 +39,8 @@ Please note that not all bugs are fixed and some new additions are subject to ch
 - Electrode Holders should no-longer void the Electrode item.
 - Added native support for Chemica.
 - Engines are now mineable.
-- Spools properly prevent duplicate connections
-- Cable Insulators deduplicate existing connections on-load
+- Spools properly prevent duplicate connections.
+- Cable Insulators deduplicate existing connections on-load.
 
 ### Changes:
 - Added some new configs:
@@ -54,15 +54,15 @@ Please note that not all bugs are fixed and some new additions are subject to ch
   - Multiblock logic has been separated into a new class.
   - Tuyere position and multiblock size are now saved to the block entity nbt.
   - Multiblock evaluation happens every lazyTick instead of once on placement.
-  - Added `lazyTick` to Blast Stoves to update connectivity
+  - Added `lazyTick` to Blast Stoves to update connectivity.
 - Vat:
   - Vat Machines now display personal goggle/multimeter info if they are operational or not.
   - Vats can now be multi-placed.
-  - Vat pressure and heat level do not display floats anymore
-  - Vat recipe `allowed_vat_types` now uses a list of `ResourceLocation`s
-  - Vat types now use `ResourceLocation` in place of `String`
-  - `VatRecipeGen` no longer uses generics
-  - Vat pressure is limited to between `-9` and `9` (inclusive)
+  - Vat pressure and heat level do not display floats any more.
+  - Vat recipe `allowed_vat_types` now uses a list of `ResourceLocation`s.
+  - Vat types now use `ResourceLocation` in place of `String`.
+  - `VatRecipeGen` no longer uses generics.
+  - Vat pressure is limited to between `-9` and `9` (inclusive).
   - Industrial Mixers now have an item handler.
   - Added `tfmg:mixer_mode` registry.
   - Added `tfmg:mixer_mode` data component.
@@ -76,7 +76,7 @@ Please note that not all bugs are fixed and some new additions are subject to ch
   - Compressors now notify the vat when their speed changes.
 - Electricity:
   - Modified the extraction calculation on Cable Insulators to improve the amount of FE being consumed.
-  - Nicer Cable Connector visuals
+  - Nicer Cable Connector visuals.
 - Engines & Engine Adjacent:
   - Improved Air Intake goggle tooltip.
   - Engine types are now a registry.
@@ -85,10 +85,7 @@ Please note that not all bugs are fixed and some new additions are subject to ch
     - Turbine Engine denies `tfmg:engine/cylinder`.
     - Both cases require the input to have the `tfmg:engine_cylinder` component to be valid.
   - Engine types are safely remapped from their legacy values when reading from engine nbt.
-  - Added JEI search aliases for Turbine Blades (`turbine`) & Engine Cylinders (`piston`)
-- Surface Scanners:
-  - Surface Scanners now update their detection if they have been moved (if they are on a Sub-Level)
-  - Surface Scanners now produce a redstone signal based on the distance from a detected oil chunk.
+  - Added JEI search aliases for Turbine Blades (`turbine`) & Engine Cylinders (`piston`).
 - Added TFMG Encased wooden cogwheels.
 - Added Industrial Aluminium encased blocks.
 - Cleaned up Neon Tube.
@@ -135,3 +132,10 @@ People who wish to translate this mod should look out for changes here.
   - "tfmg.multimeter.large_transformer.air_cooled" | "&nbsp;&nbsp;&nbsp;State: Air Cooled" → "Air Cooled"
   - "tfmg.multimeter.large_transformer.metal_cooled" | "&nbsp;&nbsp;&nbsp;State: Metal Heat Sink Cooled" → "Metal Heat Sink Cooled"
   - "tfmg.multimeter.large_transformer.oil_cooled" | "&nbsp;&nbsp;&nbsp;State: Oil + Heat Sink Cooled" → "Oil + Heat Sink Cooled"
+
+
+### Unmentioned:
+These don't go into the changelog yet.
+- Surface Scanners:
+  - Surface Scanners now update their detection if they have been moved (if they are on a Sub-Level)
+  - Surface Scanners now produce a redstone signal based on the distance from a detected oil chunk.
