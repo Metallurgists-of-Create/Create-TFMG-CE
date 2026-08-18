@@ -103,10 +103,12 @@ public class Electrode implements MultiUseAttachment<ElectrodeHolderBlockEntity>
             return this;
         }
 
-        // Chemica needs these
-        @Deprecated(since = "1.2.4")
+        /**
+         * These exist purely so Chemica can load as it references these when registering its electrode.
+         */
+        @Deprecated(since = "1.2.4", forRemoval = true)
         public Properties item(ItemEntry<?> item) {return this;}
-        @Deprecated(since = "1.2.4")
+        @Deprecated(since = "1.2.4", forRemoval = true)
         public Properties operationId(String operation) {
             this.operation = ResourceLocation.parse(operation);
             return this;

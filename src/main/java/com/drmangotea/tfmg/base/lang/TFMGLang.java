@@ -63,9 +63,4 @@ public class TFMGLang extends Lang {
     public static LangBuilder text(String text) {
         return builder().text(text);
     }
-
-    @Deprecated // Use while implementing and replace all references with Lang.translate
-    public static LangBuilder temporaryText(String text) {
-        return builder().text(text);
-    }
 }

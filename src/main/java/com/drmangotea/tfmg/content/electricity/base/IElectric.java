@@ -35,7 +35,15 @@ public interface IElectric {
     /**
      * block's world position as a long
      */
+    @Deprecated(since = "1.2.4", forRemoval = true)
     long getPos();
+
+    /**
+     * This will be renamed to getPos() once we have removed the deprecated method
+     */
+    default BlockPos position() {
+        return BlockPos.of(getPos());
+    }
 
     int FE_TRANSFER_RATE = 4048;
 
@@ -79,15 +87,15 @@ public interface IElectric {
      */
     default void onPlaced() {
         if (getLevelAccessor() instanceof ServerLevel serverLevel)
-            CatnipServices.NETWORK.sendToClientsTrackingChunk(serverLevel, new ChunkPos(getPos()), new ConnectNeighborsPacket(BlockPos.of(getPos())));
+            CatnipServices.NETWORK.sendToClientsTrackingChunk(serverLevel, new ChunkPos(position().asLong()), new ConnectNeighborsPacket(position()));
         ElectricalNetwork network = TFMG.NETWORK_MANAGER.getOrCreateNetworkFor(this);
-        setNetwork(getPos());
-        getData().electricalNetworkId = getPos();
+        setNetwork(position().asLong());
+        getData().electricalNetworkId = position().asLong();
         network.add(this);
 
 
         getData().checkForLoopsNextTick = true;
-        getOrCreateElectricNetwork().checkForLoops(BlockPos.of(getPos()));
+        getOrCreateElectricNetwork().checkForLoops(position());
         /// ////
 
 
@@ -105,18 +113,18 @@ public interface IElectric {
         this.getData().destroyed = true;
         for (Direction d : Direction.values()) {
             if (hasElectricitySlot(d))
-                if (getLevelAccessor().getBlockEntity(BlockPos.of(getPos()).relative(d)) instanceof IElectric be && be.hasElectricitySlot(d.getOpposite())) {
+                if (getLevelAccessor().getBlockEntity(position().relative(d)) instanceof IElectric be && be.hasElectricitySlot(d.getOpposite())) {
                     ElectricNetworkManager.networks.get(getLevelAccessor())
-						.remove(be.getPos());
-                    be.setNetwork(be.getPos());
+						.remove(be.position().asLong());
+                    be.setNetwork(be.position().asLong());
                     be.onPlaced();
                     be.updateNextTick();
                 }
         }
-        if (getData().electricalNetworkId != getPos())
+        if (getData().electricalNetworkId != position().asLong())
             getOrCreateElectricNetwork().getMembers().remove(this);
 //
-        if (getData().electricalNetworkId == getPos())
+        if (getData().electricalNetworkId == position().asLong())
             ElectricNetworkManager.networks.get(getLevelAccessor())
                     .remove(getData().getId());
     }
@@ -151,7 +159,7 @@ public interface IElectric {
         }
 
         if (getData().checkForLoopsNextTick) {
-            getOrCreateElectricNetwork().checkForLoops(BlockPos.of(getPos()));
+            getOrCreateElectricNetwork().checkForLoops(position());
             getData().checkForLoopsNextTick = false;
         }
         if (getData().connectNextTick) {
@@ -239,7 +247,7 @@ public interface IElectric {
 
             this.blockFail();
             if (getLevelAccessor() instanceof ServerLevel serverLevel)
-                CatnipServices.NETWORK.sendToClientsTrackingChunk(serverLevel, new ChunkPos(getPos()), new ElectricalBlockFailPacket(BlockPos.of(getPos())));
+                CatnipServices.NETWORK.sendToClientsTrackingChunk(serverLevel, new ChunkPos(position().asLong()), new ElectricalBlockFailPacket(position()));
             getData().failTimer = 0;
             sendStuff();
         } else if ((getData().voltage > getMaxVoltage() && getMaxVoltage() > 0) || (getCurrent() > getMaxCurrent() && getMaxCurrent() > 0) || ((getData().highestCurrent > getMaxCurrent() && getMaxCurrent() > 0) && isCable())) {
@@ -264,7 +272,7 @@ public interface IElectric {
     default void onConnected() {
 
 
-        BlockPos pos = BlockPos.of(getPos());
+        BlockPos pos = position();
         if (this instanceof CableConnectorBlockEntity be) {
             for (CableConnection connection : be.connections) {
                 if (getLevelAccessor().getBlockEntity(connection.pos1() == pos ? connection.pos2() : connection.pos1()) instanceof CableConnectorBlockEntity otherBe) {
@@ -310,12 +318,12 @@ public interface IElectric {
      * tells blocks when the network doesn't have enough power
      */
     default void updateUnpowered(List<Long> alreadyChecked) {
-        alreadyChecked.add(getPos());
+        alreadyChecked.add(position().asLong());
         updateNextTick();
 
         if (this instanceof CableConnectorBlockEntity connectorBE) {
             for (CableConnection connection : connectorBE.connections) {
-                if (getLevelAccessor().getBlockEntity(connection.pos1()) instanceof CableConnectorBlockEntity be2 && !alreadyChecked.contains(be2.getPos())
+                if (getLevelAccessor().getBlockEntity(connection.pos1()) instanceof CableConnectorBlockEntity be2 && !alreadyChecked.contains(be2.getBlockPos().asLong())
                 ) {
                     be2.updateUnpowered(alreadyChecked);
                 }
@@ -323,7 +331,7 @@ public interface IElectric {
         }
 
         for (Direction direction : Direction.values()) {
-            if (getLevelAccessor().getBlockEntity(BlockPos.of(getPos()).relative(direction)) instanceof IElectric be && !alreadyChecked.contains(be.getPos())) {
+            if (getLevelAccessor().getBlockEntity(position().relative(direction)) instanceof IElectric be && !alreadyChecked.contains(be.position().asLong())) {
                 be.updateUnpowered(alreadyChecked);
             }
         }
@@ -383,7 +391,7 @@ public interface IElectric {
         getData().energyOutputs = new HashMap<>();
         for (Direction direction : directions) {
 
-            BlockPos pos = BlockPos.of(getPos()).relative(direction);
+            BlockPos pos = position().relative(direction);
             if (getLevelAccessor() instanceof Level level) {
                 IEnergyStorage energyCapability = level.getCapability(Capabilities.EnergyStorage.BLOCK, pos, level.getBlockState(pos), level.getBlockEntity(pos), direction.getOpposite());
                 if (energyCapability != null) {
@@ -420,7 +428,7 @@ public interface IElectric {
     default int getNetworkPowerUsage(IElectric blocked) {
         float power = 0;
         for (IElectric member : getOrCreateElectricNetwork().members)
-            if (member.getPos() != blocked.getPos()) {
+            if (member.position().asLong() != blocked.position().asLong()) {
                 power += member.getPowerUsage();
             } else blocked.updateNextTick();
         return (int) power;
@@ -501,7 +509,7 @@ public interface IElectric {
         for (Direction direction : Direction.values()) {
             if (hasElectricitySlot(direction)) {
 
-                if (getLevelAccessor().getBlockEntity(BlockPos.of(getPos()).relative(direction)) instanceof VoltageAlteringBlockEntity be)
+                if (getLevelAccessor().getBlockEntity(position().relative(direction)) instanceof VoltageAlteringBlockEntity be)
                     if (be.getData().getId() != getData().getId())
                         if (be.getData().getVoltage() != 0)
                             if (be.hasElectricitySlot(direction)) {
@@ -540,7 +548,7 @@ public interface IElectric {
         for (Direction direction : Direction.values()) {
             if (hasElectricitySlot(direction)) {
 
-                if (getLevelAccessor().getBlockEntity(BlockPos.of(getPos()).relative(direction)) instanceof VoltageAlteringBlockEntity be && be.canWork()) {
+                if (getLevelAccessor().getBlockEntity(position().relative(direction)) instanceof VoltageAlteringBlockEntity be && be.canWork()) {
 
                     if (be.getData().getId() != getData().getId())
                         if (be.getData().getVoltage() != 0)
@@ -589,7 +597,7 @@ public interface IElectric {
         //TFMG.LOGGER.debug("ahoj");
         getOrCreateElectricNetwork().updateNetwork();
         if (getLevelAccessor() instanceof ServerLevel serverLevel)
-            CatnipServices.NETWORK.sendToClientsTrackingChunk(serverLevel, new ChunkPos(getPos()), new NetworkUpdatePacket(BlockPos.of(getPos())));
+            CatnipServices.NETWORK.sendToClientsTrackingChunk(serverLevel, new ChunkPos(position().asLong()), new NetworkUpdatePacket(position()));
         sendStuff();
     }
 
@@ -608,8 +616,8 @@ public interface IElectric {
 
     default void setNetwork(long network) {
         getData().electricalNetworkId = network;
-        if (network != getPos())
+        if (network != position().asLong())
             ElectricNetworkManager.networks.get(getLevelAccessor())
-                    .remove(getPos());
+                    .remove(position().asLong());
     }
 }

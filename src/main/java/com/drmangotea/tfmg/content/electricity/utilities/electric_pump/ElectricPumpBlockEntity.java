@@ -30,7 +30,7 @@ import java.util.*;
 import static com.simibubi.create.content.kinetics.base.DirectionalKineticBlock.FACING;
 
 public class ElectricPumpBlockEntity extends PumpBlockEntity implements IElectric {
-    public ElectricBlockValues data = new ElectricBlockValues(BlockPos.of(getPos()));
+    public ElectricBlockValues data = new ElectricBlockValues(position());
 
     public ElectricPumpBlockEntity(BlockEntityType<?> typeIn, BlockPos pos, BlockState state) {
         super(typeIn, pos, state);

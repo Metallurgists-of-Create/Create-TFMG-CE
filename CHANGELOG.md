@@ -37,7 +37,7 @@ Please note that not all bugs are fixed and some new additions are subject to ch
 - Rolled back a change done to `IElectric` that made Power Grid incompatible.
 - Industrial Mixers should no-longer void the Mixer Blade/Centrifuge item.
 - Electrode Holders should no-longer void the Electrode item.
-- Chemica is now functional with this fork.
+- Added native support for Chemica.
 
 ### Changes:
 - Added some new configs:
@@ -102,6 +102,15 @@ Please note that not all bugs are fixed and some new additions are subject to ch
 - Re-introduced Micron unit just in case.
 - Added `returnItemToInventory` method in `TFMGUtils`.
 - Removed `IndustrialMixerBlockEntity.MixerMode` enum.
+- Removed `TFMGLang.temporaryText`.
+- The following are deprecated for removal. If you are migrating your addon to depend on Community Edition I'd recommend fixing these:
+  - `IElectric.getPos()` (returns long). We are trying to move away from storing BlockPos as a long and you should use `IElectric.position()` instead.
+  - `Electrode.Properties.item(ItemEntry<?>)`. Electrodes are stored as a data component and this is now irrelevant. You should assign a default component to your electrode item instead.
+  - `Electrode.Properties.operationId(String)` The operationId in Electrodes is now a ResourceLocation. You should use the `operationId(ResourceLocation)` builder method instead.
+  - `FuelType` & `FuelType.Builder` are no-longer used to register custom engine fuels. Instead, use a datapack registry to create types.
+  - `TFMGDataComponents.FUEL_TAGS` is no-longer used for anything. Engine Cylinders are now created with the `TFMGDataComponents.ENGINE_CYLINDER` component.
+  - `TFMGDataComponents.FUELS` is only used for remapping and **will** be removed at a later date. Engine Cylinders are now created with the `TFMGDataComponents.ENGINE_CYLINDER` component.
+  - `TFMGDataComponents.FLAMETHROWER_FUEL` is only used for remapping and **will** be removed at a later date.
 
 ### New Translations:
 People who wish to translate this mod should look out for changes here.
