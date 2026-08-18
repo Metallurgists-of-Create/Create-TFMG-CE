@@ -3,7 +3,9 @@ package com.drmangotea.tfmg.content.machinery.vat.freezer;
 import com.drmangotea.tfmg.base.lang.TFMGTexts;
 import com.drmangotea.tfmg.config.TFMGConfigs;
 import com.drmangotea.tfmg.content.electricity.base.ElectricBlockEntity;
+import com.drmangotea.tfmg.content.machinery.vat.base.IVatMachine;
 import com.drmangotea.tfmg.content.machinery.vat.base.VatBlock;
+import com.drmangotea.tfmg.content.machinery.vat.base.VatBlockEntity;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -14,12 +16,22 @@ import net.minecraft.world.phys.AABB;
 
 import java.util.List;
 
-public class FreezerBlockEntity extends ElectricBlockEntity  {
+public class FreezerBlockEntity extends ElectricBlockEntity implements IVatMachine {
 
-
-
+    public boolean updateVat = false;
     public FreezerBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+        if (level == null)
+            return;
+        if (this.updateVat) {
+            VatBlock.updateVatState(getBlockState(), level, getBlockPos().relative(Direction.UP));
+            this.updateVat = false;
+        }
     }
 
     @Override
@@ -41,6 +53,20 @@ public class FreezerBlockEntity extends ElectricBlockEntity  {
         return getCurrent() >= TFMGConfigs.common().machines.freezerMinimumCurrent.get() && canWork();
     }
 
+    @Override
+    public String getOperationId() {
+        return "tfmg:freezer";
+    }
+
+    @Override
+    public boolean canOperate(VatBlockEntity vat) {
+        return isOperational();
+    }
+
+    @Override
+    public PositionRequirement getPositionRequirement() {
+        return PositionRequirement.BOTTOM;
+    }
 
     @Override
     public boolean makeMultimeterTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
@@ -52,30 +78,19 @@ public class FreezerBlockEntity extends ElectricBlockEntity  {
         return true;
     }
 
-
     @Override
     public float resistance() {
         return 75;
     }
 
-
-
     @Override
     public void onNetworkChanged(int oldVoltage, float oldPower) {
         super.onNetworkChanged(oldVoltage, oldPower);
-        VatBlock.updateVatState(getBlockState(), level, getBlockPos().relative(Direction.DOWN));
+        this.updateVat = true;
     }
-
-
-
 
     @Override
     public AABB getRenderBoundingBox() {
         return new AABB(getBlockPos()).setMinY(getBlockPos().getY() - 2);
     }
-
-
-
-
-
 }

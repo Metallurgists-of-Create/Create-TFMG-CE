@@ -66,6 +66,11 @@ Please note that not all bugs are fixed and some new additions are subject to ch
   - `IndustrialMixerBlock` now handles item insertion and extraction better.
   - Mixer rendering is now handled through the registered mode.
   - Industrial Mixers now also update the vat during a speed change or when their item handler is changed.
+  - The Vat's item inventory now notifies the vat when it is updated.
+  - Multiple vat attachments of the same type are now grouped in the tooltip.
+  - Compressors now have operation ids: `tfmg:compressor` and `tfmg:decompressor`.
+  - Freezers now have an operation id: `tfmg:freezer`.
+  - Compressors now notify the vat when their speed changes.
 - Electricity:
   - Modified the extraction calculation on Cable Insulators to improve the amount of FE being consumed.
 - Engines & Engine Adjacent:
@@ -97,18 +102,20 @@ Please note that not all bugs are fixed and some new additions are subject to ch
 - Internal tag enums in `TFMGTags` have been renamed (`TFMGTags.TFMGItemTags` → `TFMGTags.Items`).
 - Added `formatFluid` in `TFMGUtils` for fluid units.
 - Added `fluidProduction` in `TFMGTexts` for fluid production.
-- Renamed & remapped Heavy casing encased blocks to Heavy encased.
+- Added `count` in `TFMGTexts.Vat` for Vat Attachment counts.
+- Renamed & remapped `heavy_casing_encased_` blocks to `heavy_encased_`.
 - Added Decimal Formats to `TFMGTexts` for properly formatting numbers.
 - Re-introduced Micron unit just in case.
 - Added `returnItemToInventory` method in `TFMGUtils`.
 - Removed `IndustrialMixerBlockEntity.MixerMode` enum.
 - Removed `TFMGLang.temporaryText`.
+- Removed `IHaveCables`.
 - The following are deprecated for removal. If you are migrating your addon to depend on Community Edition I'd recommend fixing these:
   - `IElectric.getPos()` (returns long). We are trying to move away from storing BlockPos as a long and you should use `IElectric.position()` instead.
   - `Electrode.Properties.item(ItemEntry<?>)`. Electrodes are stored as a data component and this is now irrelevant. You should assign a default component to your electrode item instead.
   - `Electrode.Properties.operationId(String)` The operationId in Electrodes is now a ResourceLocation. You should use the `operationId(ResourceLocation)` builder method instead.
-  - `FuelType` & `FuelType.Builder` are no-longer used to register custom engine fuels. Instead, use a datapack registry to create types.
-  - `TFMGDataComponents.FUEL_TAGS` is no-longer used for anything. Engine Cylinders are now created with the `TFMGDataComponents.ENGINE_CYLINDER` component.
+  - `FuelType` & `FuelType.Builder` are no-longer used to register custom engine fuels. Instead, use a datapack registry with `TFMGRegistries.ENGINE_FUEL_TYPE` to create types.
+  - `TFMGDataComponents.FUEL_TAGS` is no-longer used for anything and **will** be removed at a later date. Engine Cylinders are now created with the `TFMGDataComponents.ENGINE_CYLINDER` component.
   - `TFMGDataComponents.FUELS` is only used for remapping and **will** be removed at a later date. Engine Cylinders are now created with the `TFMGDataComponents.ENGINE_CYLINDER` component.
   - `TFMGDataComponents.FLAMETHROWER_FUEL` is only used for remapping and **will** be removed at a later date.
 
@@ -123,4 +130,3 @@ People who wish to translate this mod should look out for changes here.
   - "tfmg.multimeter.large_transformer.air_cooled" | "&nbsp;&nbsp;&nbsp;State: Air Cooled" → "Air Cooled"
   - "tfmg.multimeter.large_transformer.metal_cooled" | "&nbsp;&nbsp;&nbsp;State: Metal Heat Sink Cooled" → "Metal Heat Sink Cooled"
   - "tfmg.multimeter.large_transformer.oil_cooled" | "&nbsp;&nbsp;&nbsp;State: Oil + Heat Sink Cooled" → "Oil + Heat Sink Cooled"
-

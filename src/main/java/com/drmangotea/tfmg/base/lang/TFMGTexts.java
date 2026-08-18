@@ -271,5 +271,9 @@ public class TFMGTexts {
         public static LangBuilder attachments() {
             return TFMGLang.translate("goggles.vat.attachments");
         }
+
+        public static LangBuilder count(int total, int operational) {
+            return TFMGLang.text("[%s/%s]".formatted(operational, total));
+        }
     }
 }
