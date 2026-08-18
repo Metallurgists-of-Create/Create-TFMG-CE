@@ -13,7 +13,7 @@ import net.minecraft.world.level.material.Fluid;
 
 import java.util.*;
 
-public record FlamethrowerFuelType(HolderSet<Fluid> fluids, int spread, float speed, int amount, boolean isCold, boolean hellfire, int color) {
+public record FlamethrowerFuelType(HolderSet<Fluid> fluids, int spread, float speed, int amount, int color) {
 
     public static final Map<Fluid, Optional<Holder.Reference<FlamethrowerFuelType>>> typeCache = new HashMap<>();
 
@@ -22,8 +22,6 @@ public record FlamethrowerFuelType(HolderSet<Fluid> fluids, int spread, float sp
             Codec.INT.optionalFieldOf("spread", 15).forGetter(FlamethrowerFuelType::spread),
             Codec.FLOAT.optionalFieldOf("speed", 1f).forGetter(FlamethrowerFuelType::speed),
             Codec.INT.optionalFieldOf("amount", 4).forGetter(FlamethrowerFuelType::amount),
-            Codec.BOOL.optionalFieldOf("is_cold", false).forGetter(FlamethrowerFuelType::isCold),
-            Codec.BOOL.optionalFieldOf("hellfire", false).forGetter(FlamethrowerFuelType::hellfire),
             Codec.INT.optionalFieldOf("color", 0xC4AA76). forGetter(FlamethrowerFuelType::color)
     ).apply(i, FlamethrowerFuelType::new));
 
@@ -39,8 +37,6 @@ public record FlamethrowerFuelType(HolderSet<Fluid> fluids, int spread, float sp
         private int spread = 15;
         private float speed = 1f;
         private int amount = 4;
-        private boolean isCold = false;
-        private boolean hellfire = false;
         private int color = 0xC4AA76;
 
         public Builder spread(int spread) {
@@ -58,16 +54,6 @@ public record FlamethrowerFuelType(HolderSet<Fluid> fluids, int spread, float sp
             return this;
         }
 
-        public Builder isCold(boolean isCold) {
-            this.isCold = isCold;
-            return this;
-        }
-
-        public Builder hellfire(boolean hellfire) {
-            this.hellfire = hellfire;
-            return this;
-        }
-
         public Builder color(int color) {
             this.color = color;
             return this;
@@ -80,7 +66,7 @@ public record FlamethrowerFuelType(HolderSet<Fluid> fluids, int spread, float sp
         }
 
         public FlamethrowerFuelType build() {
-            return new FlamethrowerFuelType(HolderSet.direct(fluids), spread, speed, amount, isCold, hellfire, color);
+            return new FlamethrowerFuelType(HolderSet.direct(fluids), spread, speed, amount, color);
         }
     }
 }

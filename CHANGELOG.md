@@ -112,6 +112,9 @@ Please note that not all bugs are fixed and some new additions are subject to ch
 - Removed `IndustrialMixerBlockEntity.MixerMode` enum.
 - Removed `TFMGLang.temporaryText`.
 - Removed `IHaveCables`.
+- Flamethrower Fuels now use the `tfmg:hellfire` tag instead of the `hellfire` boolean.
+- Flamethrower Fuels now use the `tfmg:cold` tag instead of the `is_cold` boolean.
+- Removed `"hellfire"` and `"is_cold"` from `FlamethrowerFuelType` in favour of tags.
 - The following are deprecated for removal. If you are migrating your addon to depend on Community Edition I'd recommend fixing these:
   - `IElectric.getPos()` (returns long). We are trying to move away from storing BlockPos as a long and you should use `IElectric.position()` instead.
   - `Electrode.Properties.item(ItemEntry<?>)`. Electrodes are stored as a data component and this is now irrelevant. You should assign a default component to your electrode item instead.

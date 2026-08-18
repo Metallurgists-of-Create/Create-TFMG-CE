@@ -8,6 +8,7 @@ import com.drmangotea.tfmg.datagen.recipes.values.TFMGStandardRecipeGen;
 import com.drmangotea.tfmg.datagen.recipes.values.create.TFMGMechanicalCraftingRecipeGen;
 import com.drmangotea.tfmg.datagen.recipes.values.create.TFMGSequencedAssemblyRecipeGen;
 import com.drmangotea.tfmg.datagen.tags.TFMGEngineFuelTags;
+import com.drmangotea.tfmg.datagen.tags.TFMGFlamethrowerFuelTags;
 import com.drmangotea.tfmg.datagen.tags.TFMGRegistrateTags;
 import com.drmangotea.tfmg.ponder.TFMGPonderPlugin;
 import com.google.gson.JsonElement;
@@ -47,6 +48,7 @@ public class TFMGDatagen {
         generator.addProvider(event.includeServer(), generatedEntriesProvider);
 
         generator.addProvider(event.includeServer(), new TFMGEngineFuelTags(output, lookupProvider, event.getExistingFileHelper()));
+        generator.addProvider(event.includeServer(), new TFMGFlamethrowerFuelTags(output, lookupProvider, event.getExistingFileHelper()));
 
         generator.addProvider(event.includeServer(),new TFMGDataMapProvider(output, lookupProvider));
         generator.addProvider(event.includeServer(),new TFMGStandardRecipeGen(output, lookupProvider));
