@@ -69,19 +69,13 @@ public class LargeEngineBlockEntity extends AbstractEngineBlockEntity {
 
     @Override
     public Predicate<FluidStack> validFuels() {
-        return fs -> {
-            if (level == null) { //Fallback to legacy check
-                return fs.is(TFMGTags.Fluids.DIESEL.tag) || fs.is(TFMGTags.Fluids.KEROSENE.tag) || fs.is(TFMGTags.Fluids.NAPHTHA.tag) || fs.is(TFMGTags.Fluids.FURNACE_GAS.tag);
-            }
-            return EngineFuelType.test(fs, TFMGTags.EngineFuel.LARGE_ENGINE.tag, level.registryAccess());
-        };
+        return fs -> level != null && EngineFuelType.test(fs, TFMGTags.EngineFuel.LARGE_ENGINE.tag, level.registryAccess());
     }
 
     @Override
     public void addBehaviours(List<BlockEntityBehaviour> behaviours) {
         behaviours.add(new DirectBeltInputBehaviour(this));
     }
-
 
     public boolean isSimpleEngine(){
         return TFMGBlocks.SIMPLE_LARGE_ENGINE.has(getBlockState());
