@@ -231,7 +231,8 @@ public class LargeEngineBlockEntity extends AbstractEngineBlockEntity {
 
     @Override
     public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
-        if(getShaft() == null)
+        boolean tanksEmpty = fuelTank.isEmpty() && airTank.isEmpty() && exhaustTank.isEmpty();
+        if(getShaft() == null || tanksEmpty)
             return false;
         TFMGTexts.header("large_engine").forGoggles(tooltip);
         TFMGUtils.createFluidTooltip(this, tooltip);

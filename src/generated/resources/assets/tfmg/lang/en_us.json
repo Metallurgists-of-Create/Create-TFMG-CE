@@ -1056,6 +1056,7 @@
   "tfmg.keyinfo.engine_start": "Start Engine",
   "tfmg.keyinfo.transmission_shift_down": "Transmission Shift Down",
   "tfmg.keyinfo.transmission_shift_up": "Transmission Shift Up",
+  "tfmg.large_engine.header": "Large Engine:",
   "tfmg.multimeter.additional_values": "Additional Values:",
   "tfmg.multimeter.approaching_overcurrent": "   Approaching Overcurrent ",
   "tfmg.multimeter.approaching_overvoltage": "   Approaching Overvoltage ",
