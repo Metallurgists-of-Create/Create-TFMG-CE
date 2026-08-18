@@ -27,7 +27,9 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 import java.util.Objects;
 
@@ -43,14 +45,13 @@ public class SpoolItem extends Item {
         this.cableTypeKey = cableTypeKey;
     }
 
-
-    @Override
-    public void onCraftedBy(ItemStack stack, Level p_41448_, Player p_41449_) {
+    @Override @ParametersAreNonnullByDefault
+    public void onCraftedBy(ItemStack stack, Level level, Player player) {
         stack.set(TFMGDataComponents.SPOOL_AMOUNT, 1000);
-        super.onCraftedBy(stack, p_41448_, p_41449_);
+        super.onCraftedBy(stack, level, player);
     }
 
-    @Override
+    @Override @NotNull @ParametersAreNonnullByDefault
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         BlockPos fallback = new BlockPos(0, level.getMaxBuildHeight() + 1, 0); // Impossible block position, better than 0,0,0
         ItemStack stack = player.getItemInHand(hand);
@@ -67,13 +68,11 @@ public class SpoolItem extends Item {
 					true
 				);
             return InteractionResultHolder.success(stack);
-
         }
-
         return super.use(level, player, hand);
     }
 
-    @Override
+    @Override @ParametersAreNonnullByDefault
     @OnlyIn(Dist.CLIENT)
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
         String text = TFMGLang.translateDirect("tooltip.coils").getString();
@@ -87,7 +86,7 @@ public class SpoolItem extends Item {
         super.appendHoverText(stack, context, tooltip, flag);
     }
 
-    @Override
+    @Override @NotNull
     public InteractionResult useOn(UseOnContext context) {
         Level level = context.getLevel();
         BlockPos pos = context.getClickedPos();
@@ -142,9 +141,7 @@ public class SpoolItem extends Item {
                 for (int i = 0; i < 64; i++) {
                     if (direction != null && level.getBlockEntity(posToConnect.relative(direction)) instanceof CableConnectorBlockEntity) {
                         posToConnect = posToConnect.relative(direction);
-
                     } else break;
-
                 }
                 if (level.getBlockEntity(posToConnect) instanceof CableConnectorBlockEntity otherBE) {
                     CableType cableType = TFMGUtils.getCableType(cableTypeKey);
@@ -155,9 +152,9 @@ public class SpoolItem extends Item {
                     double distance = otherBE.getBlockPos().distManhattan(be.getBlockPos());
                     int turnsLeft = stack.getOrDefault(TFMGDataComponents.SPOOL_AMOUNT, 0);
 					int amount = Math.round((float)(distance / 4)*80);
-                    if (turnsLeft - amount < 0) { return InteractionResult.PASS; }
-                    if (be.connections.contains(connection1) || otherBE.connections.contains(connection1)) {
-                        if (level.isClientSide)
+                    if (turnsLeft < amount) { return InteractionResult.PASS; }
+                    if (be.connections.contains(connection1) || otherBE.connections.contains(connection2)) {
+						if (level.isClientSide)
                             player.displayClientMessage(TFMGLang.translateDirect("wires.connection_already_created")
                                     .withStyle(ChatFormatting.YELLOW), true);
                         be.player = null;
@@ -180,9 +177,7 @@ public class SpoolItem extends Item {
                 //
                 be.player = null;
                 if (!level.isClientSide()) {
-
                     be.data.connectNextTick = true;
-
                 }
             } else {
                 stack.set(TFMGDataComponents.POSITION, be.getBlockPos());
@@ -199,10 +194,8 @@ public class SpoolItem extends Item {
     }
 
 
-    @Override
-    public void inventoryTick(ItemStack stack, Level level, Entity entity, int slot, boolean p_41408_) {
-
-
+    @Override @ParametersAreNonnullByDefault
+    public void inventoryTick(ItemStack stack, Level level, Entity entity, int slot, boolean isSelected) {
         if (stack.get(TFMGDataComponents.SPOOL_AMOUNT) == null)
             return;
 
@@ -211,23 +204,21 @@ public class SpoolItem extends Item {
         }
     }
 
-    @Override
+    @Override @ParametersAreNonnullByDefault
     public boolean isBarVisible(ItemStack stack) {
         return !Objects.equals(cableTypeKey, TFMG.asResource("empty")) && TFMGRegistries.CABLE_TYPE_REGISTRY.containsKey(cableTypeKey);
     }
 
-    @Override
+    @Override @ParametersAreNonnullByDefault
     public int getBarColor(ItemStack stack) {
         return barColor;
     }
 
     @Override
     public int getBarWidth(ItemStack stack) {
-
         if (stack.get(TFMGDataComponents.SPOOL_AMOUNT) == null)
             return 13;
 
         return (int) (13f * ((float) stack.get(TFMGDataComponents.SPOOL_AMOUNT) / 1000));
     }
-
 }

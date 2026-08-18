@@ -39,6 +39,8 @@ Please note that not all bugs are fixed and some new additions are subject to ch
 - Electrode Holders should no-longer void the Electrode item.
 - Added native support for Chemica.
 - Engines are now mineable.
+- Spools properly prevent duplicate connections
+- Cable Insulators deduplicate existing connections on-load
 
 ### Changes:
 - Added some new configs:
@@ -74,6 +76,7 @@ Please note that not all bugs are fixed and some new additions are subject to ch
   - Compressors now notify the vat when their speed changes.
 - Electricity:
   - Modified the extraction calculation on Cable Insulators to improve the amount of FE being consumed.
+  - Nicer Cable Connector visuals
 - Engines & Engine Adjacent:
   - Improved Air Intake goggle tooltip.
   - Engine types are now a registry.

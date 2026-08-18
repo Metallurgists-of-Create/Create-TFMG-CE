@@ -33,15 +33,20 @@ public class CableConnectorRenderer extends SafeBlockEntityRenderer<CableConnect
     }
 
     public void renderPlayerHeldCable(CableConnectorBlockEntity be, PoseStack ms, MultiBufferSource bufferSource, float partialTicks) {
-        if (be.player == null)
+        if (!(be.player instanceof Player player))
             return;
-        Player player = be.player;
         if (player.getInventory().contains(TFMGTags.Items.SPOOLS.tag)) {
             ItemStack stack = player.getMainHandItem();
             if (stack.has(TFMGDataComponents.POSITION)) {
                 BlockPos pos = stack.get(TFMGDataComponents.POSITION);
-				if (pos.equals(be.getBlockPos()))
-                     renderWire(be.getLevel(), ms, bufferSource, player.getRopeHoldPosition(partialTicks), Vec3.atCenterOf(pos), 0.0001f, be.color);
+				if (pos.equals(be.getBlockPos())) {
+					renderWire(
+						be.getLevel(), ms, bufferSource,
+						Vec3.atCenterOf(pos),
+						player.getRopeHoldPosition(partialTicks),
+						0.0001f, be.color
+					);
+				}
             }
         }
     }
@@ -57,9 +62,9 @@ public class CableConnectorRenderer extends SafeBlockEntityRenderer<CableConnect
 			Z = (float) pos2Local.z();
 		VertexConsumer vertexconsumer = pBuffer.getBuffer(RenderType.leash());
 		Matrix4f matrix4f = pMatrixStack.last().pose();
-		float f4 = Mth.invSqrt(X * X + Z * Z) * 0.0125F;
-		float dz = Z * f4;
-		float dx = X * f4;
+		float dist2d = Mth.invSqrt(X * X + Z * Z) * 0.0125F;
+		float dz = Z * dist2d;
+		float dx = X * dist2d;
 		
 		BlockPos bp1 = BlockPos.containing(pos1);
 		BlockPos bp2 = BlockPos.containing(pos2);
@@ -69,29 +74,28 @@ public class CableConnectorRenderer extends SafeBlockEntityRenderer<CableConnect
 		int blocklight2 = level.getBrightness(LightLayer.BLOCK, bp2);
 		
 		Color c = new Color(color);
-		float
-			r = c.getRed() / 255f,
-			b = c.getBlue() / 255f,
-			g = c.getGreen() / 255f;
+		int shadow = new Color((int) (c.getRed() * 0.7f), (int) (c.getGreen() * 0.7f), (int) (c.getBlue() * 0.7f)).getRGB();
 		
 		for (int i1 = 0; i1 <= 24; ++i1) {
-			addVertexPair(vertexconsumer, matrix4f, X, Y, Z, skylight1, skylight2, blocklight1, blocklight2, 0.030F, 0.030F, dz, dx, i1, false, curve, r, g, b);
+			addVertexPair(vertexconsumer, matrix4f, X, Y, Z, skylight1, skylight2, blocklight1, blocklight2, 0.030F, 0.030F, dz, dx, i1, curve, color, shadow);
 		}
 		for (int j1 = 24; j1 >= 0; --j1) {
-			addVertexPair(vertexconsumer, matrix4f, X, Y, Z, skylight1, skylight2, blocklight1, blocklight2, 0.030F, 0.00F, dz, dx, j1, true, curve, r, g, b);
+			addVertexPair(vertexconsumer, matrix4f, X, Y, Z, skylight1, skylight2, blocklight1, blocklight2, 0.030F, 0.000F, dz, dx, j1, curve, color, shadow);
 		}
 		pMatrixStack.popPose();
 	}
 	
-	private static void addVertexPair(VertexConsumer vertexConsumer, Matrix4f matrix4f, float px, float py, float pz, int skylight1, int skylight2, int blocklight1, int blocklight2, float thickness, float dy, float dx, float dz, int value, boolean reverse, float curve, float r, float g, float b) {
+	private static void addVertexPair (
+		VertexConsumer vertexConsumer, Matrix4f matrix4f,
+		float px, float py, float pz,
+		int skylight1, int skylight2, int blocklight1, int blocklight2,
+		float thickness, float dy, float dx, float dz, int value,
+		float curve, int color, int shadow
+	) {
 		float f = value / 24.0F;
 		int block = (int) Mth.lerp(f, (float) blocklight1, (float) blocklight2);
 		int sky = (int) Mth.lerp(f, (float) skylight1, (float) skylight2);
 		int light = LightTexture.pack(block, sky);
-		float brightness = value % 2 == (reverse ? 1 : 0) ? 0.7F : 1.0F;
-		r *= brightness;
-		g *= brightness;
-		b *= brightness;
 		
 		float x = px * f;
 		float y = py * f * (py > 0.0F ? f : (2F - f));
@@ -99,7 +103,9 @@ public class CableConnectorRenderer extends SafeBlockEntityRenderer<CableConnect
 		
 		float pain = value * curve * (value - 24);
 		
-		vertexConsumer.addVertex(matrix4f, x - dx, y + dy + pain, z + dz).setColor(r, g, b, 1.0F).setLight(light);
-		vertexConsumer.addVertex(matrix4f, x + dx, y + thickness - dy + pain, z - dz).setColor(r, g, b, 1.0F).setLight(light);
+		vertexConsumer.addVertex(matrix4f, x - dx, y + dy + pain, z + dz)
+			.setColor((value % 2 == 0) ? color : shadow).setLight(light);
+		vertexConsumer.addVertex(matrix4f, x + dx, y + thickness - dy + pain, z - dz)
+			.setColor((value % 2 == 0) ? shadow : color).setLight(light);
 	}
 }
