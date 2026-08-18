@@ -11,6 +11,7 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.fluids.FluidStack;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
@@ -39,6 +40,17 @@ public record EngineFuelType(HolderSet<Fluid> fluids, float speed, float efficie
         HolderGetter<EngineFuelType> lookup = registryAccess.asGetterLookup().lookupOrThrow(TFMGRegistries.ENGINE_FUEL_TYPE);
         var tagged = lookup.getOrThrow(fuelTypeTag);
         return tagged.stream().map(Holder::value).anyMatch(type -> type.test(fluidStack));
+    }
+
+    public static Optional<EngineFuelType> find(FluidStack fluidStack, RegistryAccess registryAccess, @Nullable TagKey<EngineFuelType> tagFilter) {
+        if (tagFilter != null) {
+            HolderGetter<EngineFuelType> lookup = registryAccess.asGetterLookup().lookupOrThrow(TFMGRegistries.ENGINE_FUEL_TYPE);
+            var tagged = lookup.getOrThrow(tagFilter);
+            return tagged.stream().map(Holder::value).filter(type -> type.test(fluidStack)).findFirst();
+        } else {
+            Registry<EngineFuelType> registry = registryAccess.registryOrThrow(TFMGRegistries.ENGINE_FUEL_TYPE);
+            return registry.holders().map(Holder::value).filter(type -> type.test(fluidStack)).findFirst();
+        }
     }
 
     public static class Builder {

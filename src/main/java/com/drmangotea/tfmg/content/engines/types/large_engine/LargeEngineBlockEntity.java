@@ -2,6 +2,7 @@ package com.drmangotea.tfmg.content.engines.types.large_engine;
 
 import com.drmangotea.tfmg.base.TFMGUtils;
 import com.drmangotea.tfmg.base.lang.TFMGLang;
+import com.drmangotea.tfmg.base.lang.TFMGTexts;
 import com.drmangotea.tfmg.config.TFMGConfigs;
 import com.drmangotea.tfmg.content.engines.base.AbstractEngineBlockEntity;
 import com.drmangotea.tfmg.content.engines.base.EngineFluidTank;
@@ -131,19 +132,33 @@ public class LargeEngineBlockEntity extends AbstractEngineBlockEntity {
 
     @Override
     public float efficiencyModifier() {
-        return 0.5f;
+        AtomicReference<Float> fuelTypeEfficiency = new AtomicReference<>(1.0f);
+        if (level != null) {
+            Optional<EngineFuelType> fuelType = EngineFuelType.find(fuelTank.getFluid(), level.registryAccess(), TFMGTags.EngineFuel.LARGE_ENGINE.tag);
+            fuelType.ifPresent(type -> fuelTypeEfficiency.set(type.efficiency()));
+        }
+        return fuelTypeEfficiency.get() * 0.5f;
     }
 
     @Override
     public float speedModifier() {
-        return 1;
+        AtomicReference<Float> fuelTypeSpeed = new AtomicReference<>(1.0f);
+        if (level != null) {
+            Optional<EngineFuelType> fuelType = EngineFuelType.find(fuelTank.getFluid(), level.registryAccess(), TFMGTags.EngineFuel.LARGE_ENGINE.tag);
+            fuelType.ifPresent(type -> fuelTypeSpeed.set(type.speed()));
+        }
+        return fuelTypeSpeed.get();
     }
 
     @Override
     public float torqueModifier() {
-        return 1;
+        AtomicReference<Float> fuelTypeTorque = new AtomicReference<>(1.0f);
+        if (level != null) {
+            Optional<EngineFuelType> fuelType = EngineFuelType.find(fuelTank.getFluid(), level.registryAccess(), TFMGTags.EngineFuel.LARGE_ENGINE.tag);
+            fuelType.ifPresent(type -> fuelTypeTorque.set(type.torque()));
+        }
+        return fuelTypeTorque.get();
     }
-
     
     @OnlyIn(Dist.CLIENT)
     private void makeSound() {
@@ -188,10 +203,8 @@ public class LargeEngineBlockEntity extends AbstractEngineBlockEntity {
 
     @Override
     public boolean canWork() {
-
         if (airTank.isEmpty())
             return false;
-
 
         return super.canWork();
     }
@@ -207,7 +220,7 @@ public class LargeEngineBlockEntity extends AbstractEngineBlockEntity {
         boolean isFuelValid = validFuels().test(fuelTank.getFluid());
         AtomicReference<Float> fuelTypeTorque = new AtomicReference<>(1.0f);
         if (level != null) {
-            Optional<EngineFuelType> fuelType = getFuelType().getFuelType(this.level.registryAccess());
+            Optional<EngineFuelType> fuelType = EngineFuelType.find(fuelTank.getFluid(), level.registryAccess(), TFMGTags.EngineFuel.LARGE_ENGINE.tag);
             fuelType.ifPresent(type -> fuelTypeTorque.set(type.torque()));
         }
 
@@ -218,13 +231,10 @@ public class LargeEngineBlockEntity extends AbstractEngineBlockEntity {
 
     @Override
     public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
-
         if(getShaft() == null)
             return false;
-
-        TFMGLang.text("").style(ChatFormatting.GRAY).forGoggles(tooltip);
-
-        TFMGUtils.createFluidTooltip(this,tooltip);
+        TFMGTexts.header("large_engine").forGoggles(tooltip);
+        TFMGUtils.createFluidTooltip(this, tooltip);
 
         return true;
     }
