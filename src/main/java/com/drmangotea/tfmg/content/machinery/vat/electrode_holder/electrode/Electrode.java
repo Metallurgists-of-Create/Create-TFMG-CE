@@ -9,6 +9,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.tterrag.registrate.util.entry.ItemEntry;
 import net.minecraft.Util;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -99,6 +100,15 @@ public class Electrode implements MultiUseAttachment<ElectrodeHolderBlockEntity>
 
         public Properties operationId(ResourceLocation operation) {
             this.operation = operation;
+            return this;
+        }
+
+        // Chemica needs these
+        @Deprecated(since = "1.2.4")
+        public Properties item(ItemEntry<?> item) {return this;}
+        @Deprecated(since = "1.2.4")
+        public Properties operationId(String operation) {
+            this.operation = ResourceLocation.parse(operation);
             return this;
         }
 

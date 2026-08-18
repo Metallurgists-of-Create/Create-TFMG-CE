@@ -41,6 +41,8 @@ public class TFMGDataComponents {
 	//Legacy components for remapping item data.
 	public static final DataComponentType<String> FLAMETHROWER_FUEL = register("flamethrower_fuel", Codec.STRING, ByteBufCodecs.STRING_UTF8);
 	public static final DataComponentType<CompoundTag> FUELS = register("fuels", CompoundTag.CODEC, ByteBufCodecs.COMPOUND_TAG);
+	@Deprecated(since = "1.2.4")
+	public static final DataComponentType<CompoundTag> FUEL_TAGS = register("fuel_tags", CompoundTag.CODEC, ByteBufCodecs.COMPOUND_TAG);
 
 	private static <T> DataComponentType<T> register(String name, Codec<T> persistent, StreamCodec<? super RegistryFriendlyByteBuf, T> network) {
 		DataComponentType<T> type = new DataComponentType.Builder<T>().persistent(persistent).networkSynchronized(network).build();

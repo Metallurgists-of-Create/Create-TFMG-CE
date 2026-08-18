@@ -3,11 +3,13 @@ package com.drmangotea.tfmg.base.events;
 
 import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.TFMGRegistries;
+import com.drmangotea.tfmg.base.TFMGUtils;
+import com.drmangotea.tfmg.base.data_storage.CylinderFuels;
 import com.drmangotea.tfmg.content.decoration.tanks.TFMGFluidTankBlockEntity;
 import com.drmangotea.tfmg.content.decoration.tanks.steel.SteelTankBlockEntity;
 import com.drmangotea.tfmg.content.electricity.storage.AccumulatorBlockEntity;
 import com.drmangotea.tfmg.content.electricity.utilities.polarizer.PolarizerBlockEntity;
-import com.drmangotea.tfmg.content.engines.fuel.EngineFuelType;
+import com.drmangotea.tfmg.content.engines.fuels.EngineFuelType;
 import com.drmangotea.tfmg.content.engines.types.AbstractSmallEngineBlockEntity;
 import com.drmangotea.tfmg.content.engines.types.large_engine.LargeEngineBlockEntity;
 import com.drmangotea.tfmg.content.items.weapons.flamethrover.FlamethrowerFuelType;
@@ -29,18 +31,29 @@ import com.drmangotea.tfmg.content.machinery.oil_processing.distillation_tower.o
 import com.drmangotea.tfmg.content.machinery.oil_processing.pumpjack.base.PumpjackBaseBlockEntity;
 import com.drmangotea.tfmg.content.machinery.vat.base.VatBlockEntity;
 import com.drmangotea.tfmg.content.machinery.vat.electrode_holder.ElectrodeHolderBlockEntity;
+import com.drmangotea.tfmg.content.machinery.vat.electrode_holder.electrode.Electrode;
 import com.drmangotea.tfmg.content.machinery.vat.industrial_mixer.IndustrialMixerBlockEntity;
+import com.drmangotea.tfmg.registry.TFMGDataComponents;
+import com.drmangotea.tfmg.registry.TFMGEngineFuelTypes;
 import com.drmangotea.tfmg.registry.TFMGMobEffects;
+import net.minecraft.core.Holder;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.level.LevelAccessor;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
+import net.neoforged.neoforge.event.ModifyDefaultComponentsEvent;
 import net.neoforged.neoforge.event.OnDatapackSyncEvent;
 import net.neoforged.neoforge.event.entity.living.MobEffectEvent;
 import net.neoforged.neoforge.event.level.LevelEvent;
 import net.neoforged.neoforge.registries.NewRegistryEvent;
+import org.checkerframework.checker.units.qual.C;
+
+import java.util.List;
+import java.util.Optional;
 
 
 @EventBusSubscriber
@@ -119,6 +132,30 @@ public class TFMGCommonEvents {
                 target.setRemainingFireTicks(instance.getDuration());
             } else if (target.getRemainingFireTicks() < instance.getDuration()) {
                 target.setRemainingFireTicks(instance.getDuration());
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public static void fixChemicaCylinders(ModifyDefaultComponentsEvent event) {
+        for (Item item : event.getAllItems().toList()) {
+            var key = BuiltInRegistries.ITEM.getKey(item);
+            if (key.getNamespace().equals("chemica")) {
+                CylinderFuels component = switch (key.getPath()) {
+                    case "biodiesel_engine_cylinder" -> new CylinderFuels(List.of(TFMGEngineFuelTypes.BIODIESEL));
+                    case "ethanol_engine_cylinder" -> new CylinderFuels(List.of(TFMGEngineFuelTypes.ETHANOL));
+                    case "high_cetane_engine_cylinder" -> new CylinderFuels(List.of(TFMGEngineFuelTypes.HIGH_CETANE_DIESEL));
+                    case "high_octane_engine_cylinder" -> new CylinderFuels(List.of(TFMGEngineFuelTypes.HIGH_OCTANE_GASOLINE));
+                    case "hydrogen_turbine_blade" -> new CylinderFuels(List.of(TFMGEngineFuelTypes.HYDROGEN_FUEL));
+                    default -> CylinderFuels.EMPTY;
+                };
+                if (!component.isEmpty()) {
+                    event.modify(item, (c) -> c.set(TFMGDataComponents.ENGINE_CYLINDER, component));
+                }
+                if (key.getPath().equals("platinum_electrode")) {
+                    Optional<Holder.Reference<Electrode>> electrodeHolder = TFMGRegistries.ELECTRODE_REGISTRY.getHolder(TFMG.asResource("chemica:electrode"));
+                    electrodeHolder.ifPresent(holder -> event.modify(item, (c) -> c.set(TFMGDataComponents.ELECTRODE, new Electrode.Stored(holder))));
+                }
             }
         }
     }

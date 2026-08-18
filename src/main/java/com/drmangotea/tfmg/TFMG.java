@@ -29,6 +29,7 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.registries.RegisterEvent;
+import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
 
 import java.util.Random;
@@ -112,8 +113,11 @@ public class TFMG {
         TFMGContraptions.prepare();
     }
 
-
+    @Contract("_ -> new")
     public static ResourceLocation asResource(String path) {
+        if (path.contains(":")) {
+            return ResourceLocation.tryParse(path);
+        }
         return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
     }
 

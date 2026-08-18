@@ -1,28 +1,27 @@
-package com.drmangotea.tfmg.content.items.parts;
+package com.drmangotea.tfmg.content.engines;
 
 import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.TFMGRegistries;
 import com.drmangotea.tfmg.base.data_storage.CylinderFuels;
-import com.drmangotea.tfmg.content.engines.fuel.EngineFuelType;
+import com.drmangotea.tfmg.content.engines.fuels.EngineFuelType;
 import com.drmangotea.tfmg.registry.TFMGDataComponents;
 import net.minecraft.core.Holder;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
-import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@ParametersAreNonnullByDefault
-public class EngineCylinderItem extends Item {
+public class CylinderItem extends Item {
 
-    public EngineCylinderItem(Properties properties) {
+    public CylinderItem(Properties properties) {
         super(properties);
     }
 
@@ -47,6 +46,7 @@ public class EngineCylinderItem extends Item {
             if (!validKeys.isEmpty()) {
                 stack.set(TFMGDataComponents.ENGINE_CYLINDER, new CylinderFuels(validKeys));
                 stack.remove(TFMGDataComponents.FUELS);
+                stack.remove(TFMGDataComponents.FUEL_TAGS);
                 return true;
             }
         }
@@ -55,6 +55,15 @@ public class EngineCylinderItem extends Item {
 
     private Optional<ResourceKey<EngineFuelType>> validateKey(String name, RegistryAccess registryAccess) {
         ResourceKey<EngineFuelType> key = ResourceKey.create(TFMGRegistries.ENGINE_FUEL_TYPE, TFMG.asResource(name));
+        Optional<Holder.Reference<EngineFuelType>> type = registryAccess.lookupOrThrow(TFMGRegistries.ENGINE_FUEL_TYPE).get(key);
+        if (type.isEmpty()) {
+            return validateChemica(name, registryAccess);
+        }
+        return type.flatMap(Holder.Reference::unwrapKey);
+    }
+
+    private Optional<ResourceKey<EngineFuelType>> validateChemica(String name, RegistryAccess registryAccess) {
+        ResourceKey<EngineFuelType> key = ResourceKey.create(TFMGRegistries.ENGINE_FUEL_TYPE, ResourceLocation.fromNamespaceAndPath("chemica", name));
         Optional<Holder.Reference<EngineFuelType>> type = registryAccess.lookupOrThrow(TFMGRegistries.ENGINE_FUEL_TYPE).get(key);
         return type.flatMap(Holder.Reference::unwrapKey);
     }
