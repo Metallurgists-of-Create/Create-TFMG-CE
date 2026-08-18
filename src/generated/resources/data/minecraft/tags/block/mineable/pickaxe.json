@@ -1,5 +1,11 @@
 {
   "values": [
+    "tfmg:turbine_engine",
+    "tfmg:regular_engine",
+    "tfmg:radial_engine",
+    "tfmg:large_engine",
+    "tfmg:simple_large_engine",
+    "tfmg:engine_gearbox",
     "tfmg:aluminum_fluid_tank",
     "tfmg:cast_iron_fluid_tank",
     "tfmg:steel_fluid_tank",
