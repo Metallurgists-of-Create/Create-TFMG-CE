@@ -163,6 +163,8 @@
   "tfmg.recipe.vat.graphite_electrode": "Requires Graphite Electrodes",
   "chemica.recipe.vat.platinum_electrode": "Requires Platinum Electrodes",
 
+  "tfmg.recipe.over_time": "Over %1$s",
+
   "tfmg.keyinfo.custom_button": "Engine Controller Custom Button",
   "tfmg.keyinfo.engine_start": "Start Engine",
   "tfmg.keyinfo.transmission_shift_up": "Transmission Shift Up",
