@@ -76,7 +76,7 @@ Please note that not all bugs are fixed and some new additions are subject to ch
   - Compressors now notify the vat when their speed changes.
 - Electricity:
   - Modified the extraction calculation on Cable Insulators to improve the amount of FE being consumed.
-  - Nicer Cable Connector visuals.
+  - Nicer Cable visuals.
 - Engines & Engine Adjacent:
   - Improved Air Intake goggle tooltip.
   - Engine types are now a registry.
@@ -86,6 +86,8 @@ Please note that not all bugs are fixed and some new additions are subject to ch
     - Both cases require the input to have the `tfmg:engine_cylinder` component to be valid.
   - Engine types are safely remapped from their legacy values when reading from engine nbt.
   - Added JEI search aliases for Turbine Blades (`turbine`) & Engine Cylinders (`piston`).
+- Surface Scanners:
+    - Surface Scanners now update their detection if they have been moved (if they are on a Sub-Level).
 - Added TFMG Encased wooden cogwheels.
 - Added Industrial Aluminium encased blocks.
 - Cleaned up Neon Tube.
@@ -108,13 +110,14 @@ Please note that not all bugs are fixed and some new additions are subject to ch
 - Renamed & remapped `heavy_casing_encased_` blocks to `heavy_encased_`.
 - Added Decimal Formats to `TFMGTexts` for properly formatting numbers.
 - Re-introduced Micron unit just in case.
-- Added `returnItemToInventory` method in `TFMGUtils`.
+- Added `returnItemToInventory` method to `TFMGUtils`.
 - Removed `IndustrialMixerBlockEntity.MixerMode` enum.
 - Removed `TFMGLang.temporaryText`.
 - Removed `IHaveCables`.
 - Flamethrower Fuels now use the `tfmg:hellfire` tag instead of the `hellfire` boolean.
 - Flamethrower Fuels now use the `tfmg:cold` tag instead of the `is_cold` boolean.
 - Removed `"hellfire"` and `"is_cold"` from `FlamethrowerFuelType` in favour of tags.
+- Added `rotateQuat` method to `TFMGUtils`.
 - The following are deprecated for removal. If you are migrating your addon to depend on Community Edition I'd recommend fixing these:
   - `IElectric.getPos()` (returns long). We are trying to move away from storing BlockPos as a long and you should use `IElectric.position()` instead.
   - `Electrode.Properties.item(ItemEntry<?>)`. Electrodes are stored as a data component and this is now irrelevant. You should assign a default component to your electrode item instead.
@@ -140,5 +143,4 @@ People who wish to translate this mod should look out for changes here.
 ### Unmentioned:
 These don't go into the changelog yet.
 - Surface Scanners:
-  - Surface Scanners now update their detection if they have been moved (if they are on a Sub-Level)
   - Surface Scanners now produce a redstone signal based on the distance from a detected oil chunk.
