@@ -13,15 +13,15 @@ public class TFMGElectrodes {
             .properties((p) -> p)
             .register();
 
-    public static final ElectrodeEntry<Electrode> copper = REGISTRATE.electrode("copper_electrode", Electrode::new)
+    public static final ElectrodeEntry<Electrode> copper = REGISTRATE.electrode("copper", Electrode::new)
             .properties((p) -> p.resistance(10).operationId(TFMG.asResource("electrode")))
             .register();
 
-    public static final ElectrodeEntry<Electrode> zinc = REGISTRATE.electrode("zinc_electrode", Electrode::new)
+    public static final ElectrodeEntry<Electrode> zinc = REGISTRATE.electrode("zinc", Electrode::new)
             .properties((p) -> p.resistance(10).operationId(TFMG.asResource("electrode")))
             .register();
 
-    public static final ElectrodeEntry<ArcElectrode> graphite = REGISTRATE.electrode("graphite_electrode", ArcElectrode::new)
+    public static final ElectrodeEntry<ArcElectrode> graphite = REGISTRATE.electrode("graphite", ArcElectrode::new)
             .properties((p) -> p.resistance(300))
             .register();
 
