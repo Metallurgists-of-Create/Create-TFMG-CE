@@ -1,6 +1,5 @@
 package com.drmangotea.tfmg.base;
 
-
 import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.TFMGRegistries;
 import com.drmangotea.tfmg.base.lang.TFMGLang;
@@ -40,6 +39,7 @@ import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.items.IItemHandler;
 import org.apache.commons.lang3.StringUtils;
+import org.joml.Quaterniond;
 
 import java.util.Arrays;
 import java.util.List;
@@ -47,15 +47,15 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public class TFMGUtils {
-
     public static float toYRot(Direction facing) {
-        return switch (facing){
+        return switch (facing) {
             case DOWN, UP, NORTH -> 0.0F;
             case SOUTH -> 180F;
             case WEST -> 90;
             case EAST -> 270F;
         };
     }
+	
     public static void createFireExplosion(Level level, Entity entity, BlockPos pos, int sparkAmount, float radius) {
 
         if (level.isClientSide && entity != null) level.broadcastEntityEvent(entity, (byte) 3);
@@ -75,6 +75,7 @@ public class TFMGUtils {
         }
         level.explode(null, pos.getX(), pos.getY(), pos.getZ(), radius, Level.ExplosionInteraction.BLOCK);
     }
+	
     public static void playSound(Level level, BlockPos pos, SoundEvent sound, SoundSource source){
         playSound(level,pos,sound,source,1,1,null);
     }
@@ -89,7 +90,6 @@ public class TFMGUtils {
     }
 
     public static void blowUpTank(FluidTankBlockEntity tank, int power) {
-
         if (tank == null || tank.getControllerBE() == null) return;
         FluidTankBlockEntity be = tank.getControllerBE();
 
@@ -118,14 +118,14 @@ public class TFMGUtils {
     }
 
     public static String fromId(String key) {
-        String s = key.replaceAll("_", " ");
+        String s = key.replace("_", " ");
         s = Arrays.stream(StringUtils.splitByCharacterTypeCamelCase(s)).map(StringUtils::capitalize).collect(Collectors.joining(" "));
         s = StringUtils.normalizeSpace(s);
         return s;
     }
 
     public static String toHumanReadable(String key) {
-        String s = key.replaceAll("_", " ");
+        String s = key.replace("_", " ");
         s = Arrays.stream(StringUtils.splitByCharacterTypeCamelCase(s)).map(StringUtils::capitalize).collect(Collectors.joining(" "));
         s = StringUtils.normalizeSpace(s);
         return s;
@@ -160,6 +160,16 @@ public class TFMGUtils {
 
         return (float) Math.sqrt(x * x + z * z + (_2D?0:y*y));
     }
+	
+	//for Sable stuff:
+	public static Vec3 rotateQuat(final Vec3 V, final Quaterniond Q) {
+		final Quaterniond q = new Quaterniond((float) V.x, (float) V.y, (float) V.z, 0.0f);
+		final Quaterniond Q2 = new Quaterniond(Q);
+		q.mul(Q2);
+		Q2.conjugate();
+		Q2.mul(q);
+		return new Vec3(Q2.x(), Q2.y(), Q2.z());
+	}
 
     public static void createStorageTooltip(BlockEntity be, List<Component> tooltip) {
         createFluidTooltip(be, tooltip);
