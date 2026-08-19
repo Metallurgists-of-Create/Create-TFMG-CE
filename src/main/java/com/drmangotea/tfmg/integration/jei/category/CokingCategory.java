@@ -41,6 +41,7 @@ public class CokingCategory extends CreateRecipeCategory<CokingRecipe> {
                 .addItemStack(recipe.getRollableResults().getFirst().getStack());
 
         //fluid
+        //TODO: Add a way to select Coke Oven size through the category as it influences recipe duration so the Over Time tooltip could be inaccurate.
         FluidStack primaryFluid = recipe.getFluidResults().get(0);
         FluidStack secondaryFluid = recipe.getFluidResults().get(1);
         if (recipe.getFluidResults().size() >= 2) {
