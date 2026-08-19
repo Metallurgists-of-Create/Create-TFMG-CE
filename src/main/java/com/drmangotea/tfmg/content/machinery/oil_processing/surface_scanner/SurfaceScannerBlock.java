@@ -1,6 +1,5 @@
 package com.drmangotea.tfmg.content.machinery.oil_processing.surface_scanner;
 
-import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.base.TFMGShapes;
 import com.drmangotea.tfmg.registry.TFMGBlockEntities;
 import com.simibubi.create.foundation.block.IBE;
@@ -17,7 +16,6 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class SurfaceScannerBlock extends Block implements IBE<SurfaceScannerBlockEntity> {
     public SurfaceScannerBlock(Properties p) {
@@ -39,21 +37,14 @@ public class SurfaceScannerBlock extends Block implements IBE<SurfaceScannerBloc
     public boolean isSignalSource(BlockState state) {
         return true;
     }
-	
-	@Override @ParametersAreNonnullByDefault
-    public int getSignal(BlockState blockState, BlockGetter level, BlockPos pos, Direction side) {
-		if (side.getAxis().isVertical()) {
+
+    @Override @ParametersAreNonnullByDefault
+    protected int getSignal(BlockState state, BlockGetter level, BlockPos pos, Direction side) {
+        final SurfaceScannerBlockEntity be = this.getBlockEntity(level, pos);
+        if (be == null || side.getAxis().isVertical())
             return 0;
-        }
-        AtomicInteger signal = new AtomicInteger(0);
-        withBlockEntityDo(level, pos, (be) -> signal.set(be.getDirectionalSignal(side)));
-		return signal.get();
+        return be.getDirectionalSignal(side);
     }
-	
-	@Override @ParametersAreNonnullByDefault
-	protected int getDirectSignal(BlockState state, BlockGetter level, BlockPos pos, Direction side) {
-		return getSignal(state, level, pos, side);
-	}
 	
 	@Override @ParametersAreNonnullByDefault
 	public boolean shouldCheckWeakPower(final BlockState state, final SignalGetter level, final BlockPos pos, final Direction side) {

@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@Deprecated(since = "1.2.4", forRemoval = true)
 public class CylinderItem extends Item {
 
     public CylinderItem(Properties properties) {

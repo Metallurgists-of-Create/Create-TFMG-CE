@@ -1,6 +1,5 @@
 package com.drmangotea.tfmg.content.machinery.oil_processing.surface_scanner;
 
-import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.base.TFMGUtils;
 import com.drmangotea.tfmg.base.lang.TFMGTexts;
 import com.drmangotea.tfmg.config.TFMGConfigs;
@@ -14,6 +13,8 @@ import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -43,31 +44,30 @@ public class SurfaceScannerBlockEntity extends SmartBlockEntity implements IHave
 
     public void findDeposits() {
         if (level == null) return;
-        if (!level.isClientSide) return;
-		
+
 		BlockPos actualPosition = SurfaceScannerSable.getActualPosition(this);
 		int scanDepth = TFMGConfigs.common().machines.surfaceScannerScanDepth.get();
 
-        for (int x = 0; x < 5; x++) { for (int z = 0; z < 5; z++) {
-			BlockPos pos = new BlockPos(
-				actualPosition.getX() + (x - 2) * 16,
-				scanDepth,
-				actualPosition.getZ() + (z - 2) * 16
-			);
-			boolean oil = hasOil(pos);
-			grid[x][z] = oil;
-			if (oil) {
-				if (nearestDeposit == null) {
-					nearestDeposit = pos;
-				} else {
-					float currentDistance = TFMGUtils.getDistance(actualPosition, nearestDeposit, true);
-					float newDistance = TFMGUtils.getDistance(actualPosition, pos, true);
-					if (newDistance < currentDistance) nearestDeposit = pos;
-				}
-			}
-		} }
-		
-		level.updateNeighborsAt(getBlockPos(), getBlockState().getBlock());
+        for (int x = 0; x < 5; x++) {
+            for (int z = 0; z < 5; z++) {
+                BlockPos pos = new BlockPos(
+                        actualPosition.getX() + (x - 2) * 16,
+                        scanDepth,
+                        actualPosition.getZ() + (z - 2) * 16
+                );
+                boolean oil = hasOil(pos);
+                grid[x][z] = oil;
+                if (oil) {
+                    if (nearestDeposit == null || !nearestDeposit.equals(pos)) {
+                        nearestDeposit = pos;
+                    } else {
+                        float currentDistance = TFMGUtils.getDistance(actualPosition, nearestDeposit, true);
+                        float newDistance = TFMGUtils.getDistance(actualPosition, pos, true);
+                        if (newDistance < currentDistance) nearestDeposit = pos;
+                    }
+                }
+            }
+        }
     }
 	
 	public boolean operational() {
@@ -83,9 +83,11 @@ public class SurfaceScannerBlockEntity extends SmartBlockEntity implements IHave
                 .forGoggles(tooltip);
         if (operational()) {
             int depositsFound = 0;
-            for (boolean[] row : grid) { for (boolean light : row) {
-				if (light) depositsFound++;
-			} }
+            for (boolean[] row : grid) {
+                for (boolean light : row) {
+                    if (light) depositsFound++;
+                }
+            }
             if (depositsFound > 0) {
                 TFMGTexts.SurfaceScanner.deposits(depositsFound).forGoggles(tooltip);
 				//add nearest deposit tooltip?
@@ -124,6 +126,7 @@ public class SurfaceScannerBlockEntity extends SmartBlockEntity implements IHave
             grid = new boolean[5][5];
 			nearestDeposit = null;
         }
+        setChanged();
     }
 
     public boolean hasOil(BlockPos pos) {
@@ -138,7 +141,17 @@ public class SurfaceScannerBlockEntity extends SmartBlockEntity implements IHave
         return false;
     }
 
-    public int getDirectionalSignal (Direction side) {
+    @Override
+    protected void write(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {
+        super.write(compound, registries, clientPacket);
+    }
+
+    @Override
+    protected void read(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {
+        super.read(compound, registries, clientPacket);
+    }
+
+    public int getDirectionalSignal(Direction side) {
 		if (nearestDeposit == null) return 0;
 		//normalized direction vector:
 		Vec3 direction = switch (side) {

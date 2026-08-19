@@ -1,6 +1,5 @@
-package com.drmangotea.tfmg.base;
+package com.drmangotea.tfmg;
 
-import com.drmangotea.tfmg.TFMG;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
