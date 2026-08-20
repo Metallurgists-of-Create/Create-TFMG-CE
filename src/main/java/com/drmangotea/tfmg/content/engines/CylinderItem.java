@@ -25,47 +25,4 @@ public class CylinderItem extends Item {
     public CylinderItem(Properties properties) {
         super(properties);
     }
-
-    @Override
-    public void inventoryTick(ItemStack stack, Level level, Entity entity, int slotId, boolean isSelected) {
-        super.inventoryTick(stack, level, entity, slotId, isSelected);
-        if (remapOldComponents(stack, level.registryAccess())) {
-            TFMG.LOGGER.info("[TFMG Remapper] Remapped old Engine Cylinder components");
-        }
-    }
-
-    private boolean remapOldComponents(ItemStack stack, RegistryAccess registryAccess) {
-        if (stack.has(TFMGDataComponents.FUELS)) {
-            CompoundTag fuels = stack.get(TFMGDataComponents.FUELS);
-            if(fuels == null || fuels.isEmpty())
-                return false;
-            List<ResourceKey<EngineFuelType>> validKeys = new ArrayList<>();
-            for(String fuel : fuels.getAllKeys()) {
-                Optional<ResourceKey<EngineFuelType>> key = validateKey(fuel, registryAccess);
-                key.ifPresent(validKeys::add);
-            }
-            if (!validKeys.isEmpty()) {
-                stack.set(TFMGDataComponents.ENGINE_CYLINDER, new CylinderFuels(validKeys));
-                stack.remove(TFMGDataComponents.FUELS);
-                stack.remove(TFMGDataComponents.FUEL_TAGS);
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private Optional<ResourceKey<EngineFuelType>> validateKey(String name, RegistryAccess registryAccess) {
-        ResourceKey<EngineFuelType> key = ResourceKey.create(TFMGRegistries.ENGINE_FUEL_TYPE, TFMG.asResource(name));
-        Optional<Holder.Reference<EngineFuelType>> type = registryAccess.lookupOrThrow(TFMGRegistries.ENGINE_FUEL_TYPE).get(key);
-        if (type.isEmpty()) {
-            return validateChemica(name, registryAccess);
-        }
-        return type.flatMap(Holder.Reference::unwrapKey);
-    }
-
-    private Optional<ResourceKey<EngineFuelType>> validateChemica(String name, RegistryAccess registryAccess) {
-        ResourceKey<EngineFuelType> key = ResourceKey.create(TFMGRegistries.ENGINE_FUEL_TYPE, ResourceLocation.fromNamespaceAndPath("chemica", name));
-        Optional<Holder.Reference<EngineFuelType>> type = registryAccess.lookupOrThrow(TFMGRegistries.ENGINE_FUEL_TYPE).get(key);
-        return type.flatMap(Holder.Reference::unwrapKey);
-    }
 }

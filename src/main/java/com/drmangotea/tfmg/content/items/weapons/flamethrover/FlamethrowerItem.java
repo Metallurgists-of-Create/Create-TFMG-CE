@@ -44,20 +44,8 @@ public class FlamethrowerItem extends Item implements CustomArmPoseItem {
 
     public static final int FUEL_CAPACITY = 4000;
 
-
     public FlamethrowerItem(Properties pProperties) {
         super(pProperties);
-    }
-
-    public void inventoryTick(ItemStack stack, Level level, Entity entity, int slotId, boolean isSelected) {
-        super.inventoryTick(stack, level, entity, slotId, isSelected);
-        if (remapOldComponents(stack, level.registryAccess())) {
-            TFMG.LOGGER.info("[TFMG Remapper] Remapped old Flamethrower components");
-        } else {
-            if(!stack.has(TFMGDataComponents.FLAMETHROWER)) {
-                stack.set(TFMGDataComponents.FLAMETHROWER, FlamethrowerFuel.EMPTY);
-            }
-        }
     }
 
     public void onUseTick(Level level, LivingEntity entity, ItemStack stack, int time) {
@@ -168,7 +156,6 @@ public class FlamethrowerItem extends Item implements CustomArmPoseItem {
 
         return InteractionResultHolder.pass(player.getItemInHand(hand));
     }
-
 
     @Override
     public int getUseDuration(ItemStack stack, LivingEntity entity) {

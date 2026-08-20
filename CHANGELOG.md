@@ -120,6 +120,8 @@ Please note that not all bugs are fixed and some new additions are subject to ch
 - Flamethrower Fuels now use the `tfmg:cold` tag instead of the `is_cold` boolean.
 - Removed `"hellfire"` and `"is_cold"` from `FlamethrowerFuelType` in favour of tags.
 - Added `rotateQuat` method to `TFMGUtils`.
+- Item component remapping is now handled via `ComponentRemapper` instead of the item class.
+- Moved TFMGRemapper from `base` → `remap`.
 - The following are deprecated for removal. If you are migrating your addon to depend on Community Edition I'd recommend fixing these:
   - `IElectric.getPos()` (returns long). We are trying to move away from storing BlockPos as a long and you should use `IElectric.position()` instead.
   - `Electrode.Properties.item(ItemEntry<?>)`. Electrodes are stored as a data component and this is now irrelevant. You should assign a default component to your electrode item instead.
@@ -129,7 +131,7 @@ Please note that not all bugs are fixed and some new additions are subject to ch
   - Engine Cylinders are now created with the `TFMGDataComponents.ENGINE_CYLINDER` component. Consequently, the following **will** be removed at a later date:
     - `TFMGDataComponents.FUEL_TAGS`, no longer used for anything.
     - `TFMGDataComponents.FUELS`, only used for remapping.
-    - `CylinderItem`, only used for remapping.
+    - `CylinderItem`, only exists for addons that still use it.
 
 ### New Translations:
 People who wish to translate this mod should look out for changes here.
