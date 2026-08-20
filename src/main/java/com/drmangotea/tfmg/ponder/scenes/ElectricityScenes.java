@@ -207,6 +207,7 @@ public class ElectricityScenes {
     public static void largeTransformer(SceneBuilder builder, SceneBuildingUtil util) {
         CreateSceneBuilder scene = new CreateSceneBuilder(builder);
         scene.title("large_transformer", "Large Transformer");
+        scene.scaleSceneView(.7f);
         scene.configureBasePlate(0, 0, 6);
         scene.showBasePlate();
 

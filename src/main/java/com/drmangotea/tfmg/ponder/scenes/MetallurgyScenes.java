@@ -1,25 +1,44 @@
 package com.drmangotea.tfmg.ponder.scenes;
 
+import com.drmangotea.tfmg.TFMG;
+import com.drmangotea.tfmg.content.decoration.tanks.steel.SteelTankBlockEntity;
+import com.drmangotea.tfmg.registry.TFMGBlocks;
+import com.drmangotea.tfmg.registry.TFMGFluids;
 import com.drmangotea.tfmg.registry.TFMGItems;
+import com.simibubi.create.AllFluids;
 import com.simibubi.create.AllItems;
+import com.simibubi.create.content.fluids.drain.ItemDrainBlockEntity;
+import com.simibubi.create.foundation.blockEntity.behaviour.fluid.SmartFluidTankBehaviour;
 import com.simibubi.create.foundation.ponder.CreateSceneBuilder;
+import com.simibubi.create.infrastructure.ponder.scenes.fluid.DrainScenes;
+import com.simibubi.create.infrastructure.ponder.scenes.fluid.FluidTankScenes;
+import net.createmod.ponder.api.ParticleEmitter;
+import net.createmod.ponder.api.PonderPalette;
 import net.createmod.ponder.api.element.ElementLink;
 import net.createmod.ponder.api.element.EntityElement;
 import net.createmod.ponder.api.element.WorldSectionElement;
 import net.createmod.ponder.api.scene.SceneBuilder;
 import net.createmod.ponder.api.scene.SceneBuildingUtil;
 import net.createmod.ponder.api.scene.Selection;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+
+import java.util.Random;
 
 public class MetallurgyScenes {
 
     public static void blastFurnace(SceneBuilder builder, SceneBuildingUtil util) {
         CreateSceneBuilder scene = new CreateSceneBuilder(builder);
-        scene.title("blast_furnace", "");
+        scene.title("blast_furnace", "Blast Furnace");
         scene.configureBasePlate(0, 0, 6);
         scene.scaleSceneView(.7f);
         scene.showBasePlate();
@@ -179,7 +198,7 @@ public class MetallurgyScenes {
 
     public static void cokeOven(SceneBuilder builder, SceneBuildingUtil util) {
         CreateSceneBuilder scene = new CreateSceneBuilder(builder);
-        scene.title("coke_oven", "");
+        scene.title("coke_oven", "Coke Oven");
         scene.configureBasePlate(0, 0, 6);
         scene.scaleSceneView(.7f);
 
@@ -265,5 +284,111 @@ public class MetallurgyScenes {
         for (int y = 0; y < 3; y++) {
             scene.world().createItemEntity(util.vector().centerOf(2 + y, 2, 1), util.vector().of(0, 0, 0), coalCoke);
         }
+    }
+
+    public static void blastStove(SceneBuilder builder, SceneBuildingUtil util) {
+        CreateSceneBuilder scene = new CreateSceneBuilder(builder);
+        scene.title("blast_stove", "Blast Stove");
+        scene.configureBasePlate(0, 0, 7);
+        scene.scaleSceneView(.7f);
+        scene.showBasePlate();
+
+        Selection blastStove = util.select().fromTo(4, 2, 4, 4, 4, 4);
+        Selection airIntake = util.select().fromTo(4, 2, 1, 6, 2, 3);
+        Selection creosotePipe = util.select().fromTo(4, 1, 4, 2, 1, 4);
+        Selection creosoteTank = util.select().fromTo(1, 1, 4, 1, 2, 4);
+        Selection creosote = creosotePipe.add(creosoteTank);
+        Selection steelCasing = util.select().fromTo(4, 1, 1, 6, 1, 6).substract(creosotePipe);
+
+        Selection outputPipe = util.select().fromTo(4, 5, 4, 1, 4, 4).substract(blastStove);
+        Selection outputTank = util.select().fromTo(1, 5, 4, 1, 6, 4);
+        Selection output = outputPipe.add(outputTank);
+        Selection smokestack = util.select().fromTo(6, 2, 4, 6, 4, 4);
+        Selection smokestackPipe = util.select().position(5, 2, 4);
+
+        Selection lonelyPipe = util.select().position(4, 1, 4);
+
+        var blastStoveElement = scene.world().showIndependentSection(blastStove, Direction.UP);
+        var steelCasingElement = scene.world().showIndependentSection(steelCasing, Direction.UP);
+        var lonelyPipeElement = scene.world().showIndependentSection(lonelyPipe, Direction.UP);
+        scene.world().setBlock(new BlockPos(4, 1, 4), TFMGBlocks.STEEL_CASING.getDefaultState(), false);
+
+        scene.overlay().showText(50)
+                .attachKeyFrame()
+                .pointAt(blastStove.getCenter())
+                .placeNearTarget()
+                .text("The Blast Stove is a simple but crucial machine for producing steel.");
+        scene.idle(60);
+        scene.overlay().showText(50)
+                .placeNearTarget()
+                .text("It takes in two inputs to produce Hot Air.");
+        scene.idle(60);
+        scene.addKeyframe();
+        scene.world().hideIndependentSection(lonelyPipeElement, Direction.DOWN);
+        scene.idle(20);
+        scene.world().restoreBlocks(lonelyPipe);
+        var creosoteElement = scene.world().showIndependentSection(creosote, Direction.DOWN);
+        scene.overlay().showOutlineWithText(lonelyPipe, 50)
+                .colored(PonderPalette.BLUE)
+                .attachKeyFrame()
+                .text("Fuel must be input through the bottom of the Blast Stove...")
+                .placeNearTarget();
+        FluidStack content = new FluidStack(TFMGFluids.CREOSOTE.get().getSource(), 8000);
+        scene.world().modifyBlockEntity(new BlockPos(1, 1, 4), SteelTankBlockEntity.class, be -> be.getTankInventory().fill(content, IFluidHandler.FluidAction.EXECUTE));
+        scene.idle(60);
+        var airIntakeElement = scene.world().showIndependentSection(airIntake, Direction.DOWN);
+        scene.overlay().showOutlineWithText(util.select().position(4, 2, 3), 50)
+                .colored(PonderPalette.BLUE)
+                .attachKeyFrame()
+                .text("And air is input from the side.")
+                .placeNearTarget();
+        scene.idle(20);
+        scene.world().setKineticSpeed(util.select().position(5, 2, 3), 32);
+        scene.world().setKineticSpeed(util.select().position(2, 1, 4), 32);
+        scene.world().setKineticSpeed(util.select().position(6, 2, 1), 32);
+        int creosoteInTank = 8000;
+        while (creosoteInTank > 0) {
+            scene.world().modifyBlockEntity(new BlockPos(1, 1, 4), SteelTankBlockEntity.class, be -> be.getTankInventory().drain(1000, IFluidHandler.FluidAction.EXECUTE));
+            creosoteInTank -= 1000;
+            scene.idle(5);
+        }
+        scene.idle(10);
+        scene.addKeyframe();
+        var outputElement = scene.world().showIndependentSection(output, Direction.DOWN);
+        scene.overlay().showOutlineWithText(util.select().position(4, 5, 4), 50)
+                .colored(PonderPalette.BLUE)
+                .text("Hot Air is then pumped out of the top of the Blast Stove.")
+                .placeNearTarget();
+        scene.idle(20);
+        scene.world().setKineticSpeed(util.select().position(3, 5, 4), 32);
+        scene.idle(20);
+        int airInOutput = 0;
+        FluidStack hotAir = new FluidStack(TFMGFluids.HOT_AIR.get().getSource(), 1000);
+        while (airInOutput < 8000) {
+            scene.world().modifyBlockEntity(new BlockPos(1, 4, 4), SteelTankBlockEntity.class, be -> be.getTankInventory().fill(hotAir, IFluidHandler.FluidAction.EXECUTE));
+            airInOutput += 1000;
+            scene.idle(5);
+        }
+        scene.overlay().showText(50)
+                .placeNearTarget()
+                .attachKeyFrame()
+                .text("Over time the Blast Stove will produce Carbon Dioxide that can stall the process...");
+        scene.idle(70);
+        var smokestackElement = scene.world().showIndependentSection(smokestack.add(smokestackPipe), Direction.DOWN);
+        scene.overlay().showOutlineWithText(smokestack, 50)
+                .colored(PonderPalette.BLUE)
+                .text("To avoid this, you should construct a Smokestack or Exhaust nearby")
+                .placeNearTarget();
+        scene.idle(20);
+        scene.world().setKineticSpeed(smokestackPipe, 32);
+        scene.idle(20);
+        Random random = TFMG.RANDOM;
+        scene.effects().emitParticles(new Vec3(6, 4, 4), (world, x, y, z) -> {
+            int shouldSpawnSmoke = random.nextInt(7);
+            if (shouldSpawnSmoke == 0) {
+                world.addParticle(ParticleTypes.CAMPFIRE_SIGNAL_SMOKE, x + random.nextFloat(1), y + 1, z + random.nextFloat(1), 0.0D, 0.08D, 0.0D);
+            }
+        }, 1, 120);
+        scene.idle(40);
     }
 }
