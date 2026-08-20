@@ -34,6 +34,7 @@ public interface IElectric {
 
     /**
      * block's world position as a long
+     * @deprecated Use {@link position()}
      */
     @Deprecated(since = "1.2.4", forRemoval = true)
     long getPos();

@@ -38,13 +38,19 @@ public class TFMGDataComponents {
 	public static final DataComponentType<MixerMode.Stored> MIXER_MODE = register("mixer_mode", MixerMode.Stored.CODEC, MixerMode.Stored.STREAM_CODEC);
 	public static final DataComponentType<Electrode.Stored> ELECTRODE = register("electrode", Electrode.Stored.CODEC, Electrode.Stored.STREAM_CODEC);
 
-	//Legacy components for remapping item data.
+	/**
+	 * @deprecated Use {@link com.drmangotea.tfmg.registry.TFMGDataComponents#FLAMETHROWER}.
+	 */
 	@Deprecated(since = "1.2.4", forRemoval = true)
 	public static final DataComponentType<String> FLAMETHROWER_FUEL = register("flamethrower_fuel", Codec.STRING, ByteBufCodecs.STRING_UTF8);
+	/**
+	 * @deprecated Use {@link com.drmangotea.tfmg.registry.TFMGDataComponents#ENGINE_CYLINDER}.
+	 */
 	@Deprecated(since = "1.2.4", forRemoval = true)
 	public static final DataComponentType<CompoundTag> FUELS = register("fuels", CompoundTag.CODEC, ByteBufCodecs.COMPOUND_TAG);
 	/**
 	 * This exists purely so Chemica can function as it applies this component to its engine cylinders when it builds the creative tab.
+	 * @deprecated Use {@link com.drmangotea.tfmg.registry.TFMGDataComponents#ENGINE_CYLINDER}.
 	 */
 	@Deprecated(since = "1.2.4", forRemoval = true)
 	public static final DataComponentType<CompoundTag> FUEL_TAGS = register("fuel_tags", CompoundTag.CODEC, ByteBufCodecs.COMPOUND_TAG);
