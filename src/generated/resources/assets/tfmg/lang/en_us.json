@@ -43,8 +43,6 @@
   "block.tfmg.blast_furnace_reinforcement": "Blast Furnace Reinforcement",
   "block.tfmg.blast_furnace_reinforcement_wall": "Blast Furnace Reinforcement Wall",
   "block.tfmg.blast_stove": "Blast Stove",
-  "block.tfmg.blast_stove.tooltip.behaviour1": "When 3 blast stoves are placed on top of each-other (or in a 3x2 shape) the smallest version of a blast stove is created, to add further internal storage you can add more stove blocks on top which is generally recommended. A Blast Stove requires 2 things to be pumped in. Air, from the side of the bottom block and Creosote or Furnace gas from the bottom. Carbon dioxide must be pumped out from the side of the bottom block and finally heated air must be pumped out from the machines top.",
-  "block.tfmg.blast_stove.tooltip.summary": "Heats Air",
   "block.tfmg.blue_caution_block": "Blue Caution Block",
   "block.tfmg.blue_concrete": "Blue Concrete",
   "block.tfmg.blue_concrete_slab": "Blue Concrete Slab",
