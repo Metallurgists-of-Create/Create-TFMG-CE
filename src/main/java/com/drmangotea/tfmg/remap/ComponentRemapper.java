@@ -41,10 +41,6 @@ public class ComponentRemapper {
     }
 
     public static boolean flamethrower(ItemStack stack, RegistryAccess registryAccess) {
-        if(!stack.has(TFMGDataComponents.FLAMETHROWER)) {
-            stack.set(TFMGDataComponents.FLAMETHROWER, FlamethrowerFuel.EMPTY);
-            return true;
-        }
         if (stack.has(TFMGDataComponents.FLAMETHROWER_FUEL) && stack.has(TFMGDataComponents.AMOUNT)) {
             int fuelAmount = stack.getOrDefault(TFMGDataComponents.AMOUNT, 0);
             String fuelType = stack.getOrDefault(TFMGDataComponents.FLAMETHROWER_FUEL, "fallback");
