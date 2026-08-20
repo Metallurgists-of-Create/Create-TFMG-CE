@@ -123,9 +123,11 @@ Please note that not all bugs are fixed and some new additions are subject to ch
   - `Electrode.Properties.item(ItemEntry<?>)`. Electrodes are stored as a data component and this is now irrelevant. You should assign a default component to your electrode item instead.
   - `Electrode.Properties.operationId(String)` The operationId in Electrodes is now a ResourceLocation. You should use the `operationId(ResourceLocation)` builder method instead.
   - `FuelType` & `FuelType.Builder` are no-longer used to register custom engine fuels. Instead, use a datapack registry with `TFMGRegistries.ENGINE_FUEL_TYPE` to create types.
-  - `TFMGDataComponents.FUEL_TAGS` is no-longer used for anything and **will** be removed at a later date. Engine Cylinders are now created with the `TFMGDataComponents.ENGINE_CYLINDER` component.
-  - `TFMGDataComponents.FUELS` is only used for remapping and **will** be removed at a later date. Engine Cylinders are now created with the `TFMGDataComponents.ENGINE_CYLINDER` component.
   - `TFMGDataComponents.FLAMETHROWER_FUEL` is only used for remapping and **will** be removed at a later date.
+  - Engine Cylinders are now created with the `TFMGDataComponents.ENGINE_CYLINDER` component. Consequently, the following **will** be removed at a later date:
+    - `TFMGDataComponents.FUEL_TAGS`, no longer used for anything.
+    - `TFMGDataComponents.FUELS`, only used for remapping.
+    - `CylinderItem`, only used for remapping.
 
 ### New Translations:
 People who wish to translate this mod should look out for changes here.
