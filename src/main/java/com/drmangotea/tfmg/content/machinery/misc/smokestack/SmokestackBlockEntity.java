@@ -56,16 +56,6 @@ public class SmokestackBlockEntity extends SmartBlockEntity {
         );
     }
 
-    //@Nonnull
-    //@Override
-    //@SuppressWarnings("removal")
-    //public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, Direction side) {
-//
-    //    if (cap == ForgeCapabilities.FLUID_HANDLER)
-    //        return fluidCapability.cast();
-    //    return super.getCapability(cap, side);
-    //}
-
     @Override
     public void invalidate() {
         super.invalidate();
@@ -76,78 +66,52 @@ public class SmokestackBlockEntity extends SmartBlockEntity {
     @Override
     protected void read(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {
         super.read(compound,registries , clientPacket);
-
         tankInventory.readFromNBT(registries,compound.getCompound("TankContent"));
-
-
     }
 
     protected void onFluidStackChanged(FluidStack newFluidStack) {
         if (!hasLevel())
             return;
-
         setChanged();
         sendData();
-
-
     }
 
     public static void makeParticles(Level level, BlockPos pos) {
         Random random = TFMG.RANDOM;
         int shouldSpawnSmoke = random.nextInt(7);
         if (shouldSpawnSmoke == 0) {
-
             level.addParticle(ParticleTypes.CAMPFIRE_SIGNAL_SMOKE, pos.getX() + random.nextFloat(1), pos.getY() + 1, pos.getZ() + random.nextFloat(1), 0.0D, 0.08D, 0.0D);
-
         }
-
     }
 
     @Override
     public void tick() {
         super.tick();
-
         if (smokeTimer > 0) {
-
             makeParticles(level, getBlockPos());
-
             smokeTimer--;
         }
-
 
         if (tankInventory.isEmpty())
             return;
 
-
         if (getBlockState().getValue(TOP)) {
             tankInventory.drain(tankInventory.getSpace() < 1000 ? 50 : 10, IFluidHandler.FluidAction.EXECUTE);
-
             smokeTimer = 40;
-
         }
 
-
-        if (level.getBlockEntity(getBlockPos().above()) instanceof SmokestackBlockEntity be) {
-
+        if (level != null && level.getBlockEntity(getBlockPos().above()) instanceof SmokestackBlockEntity be) {
             int transferAmount = Math.min(tankInventory.getFluidAmount(), be.tankInventory.getCapacity() - be.tankInventory.getFluidAmount());
-
             tankInventory.drain(transferAmount, IFluidHandler.FluidAction.EXECUTE);
             be.tankInventory.fill(new FluidStack(TFMGFluids.CARBON_DIOXIDE.get(), transferAmount), IFluidHandler.FluidAction.EXECUTE);
-
         }
     }
 
     @Override
     public void write(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {
         super.write(compound,registries , clientPacket);
-
-
         compound.put("TankContent", tankInventory.writeToNBT(registries,new CompoundTag()));
-
-
         compound.putBoolean("Active", smokeTimer > 0);
-
-
     }
 
 
