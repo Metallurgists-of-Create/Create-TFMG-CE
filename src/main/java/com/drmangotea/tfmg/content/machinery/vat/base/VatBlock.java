@@ -1,9 +1,9 @@
 package com.drmangotea.tfmg.content.machinery.vat.base;
 
 import com.drmangotea.tfmg.TFMG;
+import com.drmangotea.tfmg.base.TFMGBlockConnectivityHandler;
 import com.drmangotea.tfmg.base.lang.TFMGLang;
 import com.drmangotea.tfmg.registry.TFMGBlockEntities;
-import com.simibubi.create.api.connectivity.ConnectivityHandler;
 import com.simibubi.create.content.equipment.wrench.IWrenchable;
 import com.simibubi.create.foundation.block.IBE;
 
@@ -38,8 +38,6 @@ public class VatBlock extends Block implements IWrenchable, IBE<VatBlockEntity> 
     public static final BooleanProperty TOP = BooleanProperty.create("top");
     public static final BooleanProperty BOTTOM = BooleanProperty.create("bottom");
     public static final EnumProperty<Shape> SHAPE = EnumProperty.create("shape", Shape.class);
-
-
 
     public static VatBlock steel(Properties properties){
         return new VatBlock(properties, TFMG.asResource("steel_vat"));
@@ -90,7 +88,7 @@ public class VatBlock extends Block implements IWrenchable, IBE<VatBlockEntity> 
 
     @Override
     public int getLightEmission(BlockState state, BlockGetter world, BlockPos pos) {
-        VatBlockEntity vatAt = ConnectivityHandler.partAt(getBlockEntityType(), world, pos);
+        VatBlockEntity vatAt = TFMGBlockConnectivityHandler.partAt(getBlockEntityType(), world, pos);
         if (vatAt == null)
             return 0;
         VatBlockEntity controllerTE = vatAt.getControllerBE();
@@ -125,7 +123,7 @@ public class VatBlock extends Block implements IWrenchable, IBE<VatBlockEntity> 
             if (!(be instanceof VatBlockEntity tankBE))
                 return;
             world.removeBlockEntity(pos);
-            ConnectivityHandler.splitMulti(tankBE);
+			TFMGBlockConnectivityHandler.splitMulti(tankBE);
         }
     }
     @Override
