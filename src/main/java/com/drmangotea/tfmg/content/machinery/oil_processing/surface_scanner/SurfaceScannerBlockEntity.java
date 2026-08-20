@@ -1,6 +1,5 @@
 package com.drmangotea.tfmg.content.machinery.oil_processing.surface_scanner;
 
-import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.base.TFMGUtils;
 import com.drmangotea.tfmg.base.lang.TFMGTexts;
 import com.drmangotea.tfmg.config.TFMGConfigs;
@@ -49,7 +48,6 @@ public class SurfaceScannerBlockEntity extends SmartBlockEntity implements IHave
 		int scanDepth = TFMGConfigs.common().machines.surfaceScannerScanDepth.get();
 		ChunkPos chunkPos = level.getChunk(actualPosition).getPos();
 		
-		TFMG.LOGGER.info("Scanner({}) -> {}",actualPosition,chunkPos);
         for (int x = 0; x < 5; x++) { for (int z = 0; z < 5; z++) {
 			ChunkAccess chunk = level.getChunk(chunkPos.x + x - 2, chunkPos.z + z - 2);
 			BlockPos midpoint = chunk.getPos().getMiddleBlockPosition(scanDepth).north().west();
