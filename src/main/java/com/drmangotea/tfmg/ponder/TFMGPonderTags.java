@@ -113,6 +113,7 @@ public class TFMGPonderTags {
                 .add(TFMGBlocks.POLARIZER)
                 .add(TFMGBlocks.ACCUMULATOR)
                 .add(TFMGBlocks.TRANSFORMER)
+                .add(TFMGBlocks.LARGE_COIL)
                 .add(TFMGBlocks.ELECTRICAL_SWITCH)
                 .add(TFMGBlocks.DIODE)
                 .add(TFMGBlocks.POTENTIOMETER)

@@ -17,7 +17,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class MetallurgyScenes {
 
-    public static void blast_furnace(SceneBuilder builder, SceneBuildingUtil util) {
+    public static void blastFurnace(SceneBuilder builder, SceneBuildingUtil util) {
         CreateSceneBuilder scene = new CreateSceneBuilder(builder);
         scene.title("blast_furnace", "");
         scene.configureBasePlate(0, 0, 6);
@@ -62,13 +62,13 @@ public class MetallurgyScenes {
                 ;
 
 
-        Selection pipez1 = util.select().fromTo(0, 1, 1, 4, 0, 1);
-        Selection pipez2 = util.select().fromTo(5, 1, 0, 5, 3, 1);
-        Selection pipez3 = util.select().fromTo(0, 1, 3, 0, 2, 3);
-        Selection pipez = util.select().fromTo(1, 2, 3, 1, 2, 3).add(pipez1).add(pipez2).add(pipez3);
+        Selection pipes1 = util.select().fromTo(0, 1, 1, 4, 0, 1);
+        Selection pipes2 = util.select().fromTo(5, 1, 0, 5, 3, 1);
+        Selection pipes3 = util.select().fromTo(0, 1, 3, 0, 2, 3);
+        Selection pipes = util.select().fromTo(1, 2, 3, 1, 2, 3).add(pipes1).add(pipes2).add(pipes3);
 
 
-        scene.world().setKineticSpeed(pipez, 80);
+        scene.world().setKineticSpeed(pipes, 80);
 
 
 
@@ -120,7 +120,7 @@ public class MetallurgyScenes {
                 .placeNearTarget();
         scene.idle(100);
 
-        scene.world().showIndependentSection(pipez, Direction.DOWN);
+        scene.world().showIndependentSection(pipes, Direction.DOWN);
 
         scene.idle(50);
         scene.overlay().showText(100)
@@ -177,7 +177,7 @@ public class MetallurgyScenes {
 
     }
 
-    public static void coke_oven(SceneBuilder builder, SceneBuildingUtil util) {
+    public static void cokeOven(SceneBuilder builder, SceneBuildingUtil util) {
         CreateSceneBuilder scene = new CreateSceneBuilder(builder);
         scene.title("coke_oven", "");
         scene.configureBasePlate(0, 0, 6);
@@ -186,10 +186,10 @@ public class MetallurgyScenes {
         scene.showBasePlate();
 
 
-        Selection coke_oven_middle = util.select().fromTo(3, 1, 2, 3, 3, 4);
+        Selection cokeOvenMiddle = util.select().fromTo(3, 1, 2, 3, 3, 4);
 
-        Selection coke_oven_right = util.select().fromTo(4, 1, 2, 5, 3, 4);
-        Selection coke_oven_left = util.select().fromTo(2, 1, 2, 1, 3, 4);
+        Selection cokeOvenRight = util.select().fromTo(4, 1, 2, 5, 3, 4);
+        Selection cokeOvenLeft = util.select().fromTo(2, 1, 2, 1, 3, 4);
 
         Selection chutes = util.select().fromTo(2, 4, 3, 4, 4, 3);
         Selection exhaust = util.select().fromTo(2, 4, 2, 4, 4, 2)
@@ -200,13 +200,13 @@ public class MetallurgyScenes {
         Selection creosoteOutput = util.select().fromTo(0, 1, 5, 5, 5, 5);
 
         ItemStack coal = new ItemStack(Items.COAL, 3);
-        ItemStack coal_coke = new ItemStack(TFMGItems.COAL_COKE.get(), 10);
+        ItemStack coalCoke = new ItemStack(TFMGItems.COAL_COKE.get(), 10);
 
         scene.world().setKineticSpeed(creosoteOutput, 80);
         scene.world().setKineticSpeed(exhaust, 80);
 
 
-        scene.world().showIndependentSection(coke_oven_middle, Direction.DOWN);
+        scene.world().showIndependentSection(cokeOvenMiddle, Direction.DOWN);
         scene.overlay().showText(70)
                 .attachKeyFrame()
                 .text("The Coke Oven is a machine that produces coal coke from coal")
@@ -217,8 +217,8 @@ public class MetallurgyScenes {
 
 
 
-        scene.world().showIndependentSection(coke_oven_right, Direction.DOWN);
-        scene.world().showIndependentSection(coke_oven_left, Direction.DOWN);
+        scene.world().showIndependentSection(cokeOvenRight, Direction.DOWN);
+        scene.world().showIndependentSection(cokeOvenLeft, Direction.DOWN);
         scene.overlay().showText(70)
                 .attachKeyFrame()
                 .text("It is very slow so it is beneficial to have long arrays of them")
@@ -243,8 +243,7 @@ public class MetallurgyScenes {
                 item = scene.world().createItemEntity(util.vector().centerOf(2 + y, 6, 3), util.vector().of(0, 0, 0), coal);
             }
         }
-        if (item != null)
-            scene.world().modifyEntity(item, Entity::discard);
+        scene.world().modifyEntity(item, Entity::discard);
         scene.idle(40);
 
         scene.world().showIndependentSection(creosoteOutput, Direction.DOWN);
@@ -264,7 +263,7 @@ public class MetallurgyScenes {
                 .text("After some time, coal coke will fall out of the machine");
 
         for (int y = 0; y < 3; y++) {
-            scene.world().createItemEntity(util.vector().centerOf(2 + y, 2, 1), util.vector().of(0, 0, 0), coal_coke);
+            scene.world().createItemEntity(util.vector().centerOf(2 + y, 2, 1), util.vector().of(0, 0, 0), coalCoke);
         }
     }
 }
