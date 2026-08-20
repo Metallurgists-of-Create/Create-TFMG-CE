@@ -16,10 +16,10 @@ import org.joml.Quaternionf;
 
 public class SurfaceScannerRenderer extends SafeBlockEntityRenderer<SurfaceScannerBlockEntity> {
 	private static final Quaternionf
-		FACING_NORTH = new Quaternionf(0, 0, 0,  1).normalize(), //+z
-		FACING_WEST  = new Quaternionf(0, 1, 0,  1).normalize(), //+x
-		FACING_SOUTH = new Quaternionf(0, 1, 0,  0).normalize(), //-z
-		FACING_EAST  = new Quaternionf(0, 1, 0, -1).normalize(); //-x
+		FACING_NORTH = new Quaternionf(0, 1, 0, 0), //-z
+		FACING_SOUTH = new Quaternionf(0, 0, 0, 1), //+z
+		FACING_WEST  = new Quaternionf(0, 1, 0,-1).normalize(), //-x
+		FACING_EAST  = new Quaternionf(0, 1, 0, 1).normalize(); //+x
 	
     public SurfaceScannerRenderer(BlockEntityRendererProvider.Context context) {}
 	
@@ -32,7 +32,7 @@ public class SurfaceScannerRenderer extends SafeBlockEntityRenderer<SurfaceScann
 			west = q.dot(FACING_WEST),
 			south = q.dot(FACING_SOUTH),
 			east = q.dot(FACING_EAST);
-		float dot = Math.min(Math.min(north,west),Math.min(south,east));
+		float dot = Math.max(Math.max(north,west),Math.max(south,east));
 		if (dot == north) return FACING_NORTH;
 		if (dot == west) return FACING_WEST;
 		if (dot == south) return FACING_SOUTH;

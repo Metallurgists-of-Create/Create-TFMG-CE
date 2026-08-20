@@ -87,7 +87,9 @@ Please note that not all bugs are fixed and some new additions are subject to ch
   - Engine types are safely remapped from their legacy values when reading from engine nbt.
   - Added JEI search aliases for Turbine Blades (`turbine`) & Engine Cylinders (`piston`).
 - Surface Scanners:
-    - Surface Scanners now update their detection if they have been moved (if they are on a Sub-Level).
+    - Surface Scanner grid now accuratley based on chunk grid
+    - Surface Scanners on Sub-Levels now re-scan when moved into a new chunk.
+    - Surface Scanners now produce a redstone signal aiming towards the nearest oil chunk.
 - Added TFMG Encased wooden cogwheels.
 - Added Industrial Aluminium encased blocks.
 - Cleaned up Neon Tube.
@@ -140,9 +142,3 @@ People who wish to translate this mod should look out for changes here.
   - "tfmg.multimeter.large_transformer.air_cooled" | "&nbsp;&nbsp;&nbsp;State: Air Cooled" → "Air Cooled"
   - "tfmg.multimeter.large_transformer.metal_cooled" | "&nbsp;&nbsp;&nbsp;State: Metal Heat Sink Cooled" → "Metal Heat Sink Cooled"
   - "tfmg.multimeter.large_transformer.oil_cooled" | "&nbsp;&nbsp;&nbsp;State: Oil + Heat Sink Cooled" → "Oil + Heat Sink Cooled"
-
-
-### Unmentioned:
-These don't go into the changelog yet.
-- Surface Scanners:
-  - Surface Scanners now produce a redstone signal based on the distance from a detected oil chunk.

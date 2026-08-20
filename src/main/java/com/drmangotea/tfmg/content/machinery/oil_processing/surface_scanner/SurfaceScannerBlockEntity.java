@@ -1,5 +1,6 @@
 package com.drmangotea.tfmg.content.machinery.oil_processing.surface_scanner;
 
+import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.base.TFMGUtils;
 import com.drmangotea.tfmg.base.lang.TFMGTexts;
 import com.drmangotea.tfmg.config.TFMGConfigs;
@@ -13,9 +14,8 @@ import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkAccess;
@@ -28,10 +28,10 @@ import org.joml.Quaterniond;
 
 public class SurfaceScannerBlockEntity extends SmartBlockEntity implements IHaveGoggleInformation {
     private long lastScanTick = Long.MIN_VALUE;
-    private BlockPos lastScanPos = null;
-	private Quaterniond lastScanRot = new Quaterniond();
-	private BlockPos nearestDeposit;
-
+    private ChunkPos lastScanPos = null;
+	private BlockPos nearestDeposit = null;
+	private int[] signals = new int[4];
+	
     public boolean[][] grid = new boolean[5][5];
 
     public SurfaceScannerBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
@@ -47,27 +47,25 @@ public class SurfaceScannerBlockEntity extends SmartBlockEntity implements IHave
 
 		BlockPos actualPosition = SurfaceScannerSable.getActualPosition(this);
 		int scanDepth = TFMGConfigs.common().machines.surfaceScannerScanDepth.get();
-
-        for (int x = 0; x < 5; x++) {
-            for (int z = 0; z < 5; z++) {
-                BlockPos pos = new BlockPos(
-                        actualPosition.getX() + (x - 2) * 16,
-                        scanDepth,
-                        actualPosition.getZ() + (z - 2) * 16
-                );
-                boolean oil = hasOil(pos);
-                grid[x][z] = oil;
-                if (oil) {
-                    if (nearestDeposit == null || !nearestDeposit.equals(pos)) {
-                        nearestDeposit = pos;
-                    } else {
-                        float currentDistance = TFMGUtils.getDistance(actualPosition, nearestDeposit, true);
-                        float newDistance = TFMGUtils.getDistance(actualPosition, pos, true);
-                        if (newDistance < currentDistance) nearestDeposit = pos;
-                    }
-                }
-            }
-        }
+		ChunkPos chunkPos = level.getChunk(actualPosition).getPos();
+		
+		TFMG.LOGGER.info("Scanner({}) -> {}",actualPosition,chunkPos);
+        for (int x = 0; x < 5; x++) { for (int z = 0; z < 5; z++) {
+			ChunkAccess chunk = level.getChunk(chunkPos.x + x - 2, chunkPos.z + z - 2);
+			BlockPos midpoint = chunk.getPos().getMiddleBlockPosition(scanDepth).north().west();
+			boolean oil = hasOil(chunk, midpoint);
+			grid[x][z] = oil;
+			if (oil) {
+				if (nearestDeposit == null) {
+					nearestDeposit = midpoint;
+				} else {
+					if (nearestDeposit.equals(midpoint)) continue;
+					float currentDistance = TFMGUtils.getDistance(actualPosition, nearestDeposit, true);
+					float newDistance = TFMGUtils.getDistance(actualPosition, midpoint, true);
+					if (newDistance < currentDistance) nearestDeposit = midpoint;
+				}
+			}
+		} }
     }
 	
 	public boolean operational() {
@@ -90,7 +88,6 @@ public class SurfaceScannerBlockEntity extends SmartBlockEntity implements IHave
             }
             if (depositsFound > 0) {
                 TFMGTexts.SurfaceScanner.deposits(depositsFound).forGoggles(tooltip);
-				//add nearest deposit tooltip?
             } else {
 				TFMGTexts.SurfaceScanner.noDeposit().forGoggles(tooltip);
             }
@@ -105,76 +102,74 @@ public class SurfaceScannerBlockEntity extends SmartBlockEntity implements IHave
     public void lazyTick() {
         super.lazyTick();
         if (level == null) return;
-        BlockPos actualPosition = SurfaceScannerSable.getActualPosition(this);
         if (operational()) {
-            boolean moved = lastScanPos == null || !lastScanPos.equals(actualPosition);
-            Quaterniond currentRot = SurfaceScannerSable.getSublevelRot(this);
-            boolean rotChanged = !currentRot.equals(lastScanRot);
-            int intervalTicks = 2400;
+			BlockPos actualPosition = SurfaceScannerSable.getActualPosition(this);
+			ChunkPos actualChunkPos = level.getChunk(actualPosition).getPos();
+			Quaterniond currentRot = SurfaceScannerSable.getSublevelRot(this);
+			recalculateSignals(actualPosition, currentRot);
+			setChanged();
+			boolean moved = lastScanPos == null || !lastScanPos.equals(actualChunkPos);
             long currentTick = level != null ? level.getGameTime() : Long.MIN_VALUE;
-            boolean intervalElapsed = lastScanTick == Long.MIN_VALUE || (currentTick - lastScanTick) >= intervalTicks;
+            boolean intervalElapsed = lastScanTick == Long.MIN_VALUE || (currentTick - lastScanTick) >= 2400;
 
-            if (!moved && !rotChanged && !intervalElapsed) {
-                return;
-            }
+            if (!moved && !intervalElapsed) return;
 
             findDeposits();
-            lastScanPos = actualPosition;
+            lastScanPos = actualChunkPos;
             lastScanTick = currentTick;
-            lastScanRot = currentRot;
         } else {
             grid = new boolean[5][5];
 			nearestDeposit = null;
         }
-        setChanged();
     }
 
-    public boolean hasOil(BlockPos pos) {
+    public boolean hasOil (ChunkAccess chunk, BlockPos midpoint) {
         if (level == null) return false;
-        ChunkAccess chunk = level.getChunk(pos);
-        AABB checkedArea = new AABB(chunk.getPos().getMiddleBlockPosition(TFMGConfigs.common().machines.surfaceScannerScanDepth.get()).north().west());
-        checkedArea = checkedArea.inflate(7,0,7);
+        AABB checkedArea = new AABB(midpoint).inflate(7,0,7);
         for (BlockState state : chunk.getBlockStates(checkedArea).toList()) {
             if(state.is(TFMGTags.Blocks.SURFACE_SCANNER_FINDABLE.tag))
 				return true;
         }
         return false;
     }
-
-    @Override
-    protected void write(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {
-        super.write(compound, registries, clientPacket);
-    }
-
-    @Override
-    protected void read(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {
-        super.read(compound, registries, clientPacket);
-    }
-
-    public int getDirectionalSignal(Direction side) {
-		if (nearestDeposit == null) return 0;
-		//normalized direction vector:
-		Vec3 direction = switch (side) {
-			case DOWN, UP -> null;
-			case NORTH -> new Vec3(0, 0,  1);
-			case SOUTH -> new Vec3(0, 0, -1);
-			case WEST -> new Vec3( 1, 0,  0);
-			case EAST -> new Vec3(-1, 0,  0);
+	
+	public int getDirectionalSignal (Direction side) {
+		if (!operational()) return 0;
+		return switch (side) {
+			case DOWN, UP -> 0;
+			case NORTH -> signals[0];
+			case SOUTH -> signals[1];
+			case WEST -> signals[2];
+			case EAST -> signals[3];
 		};
-		if (direction == null) return 0; //just in case
-		//direction rotated to sublevel orientation:
-		direction = TFMGUtils.rotateQuat(direction, lastScanRot.conjugate());
+	}
+	
+	private void recalculateSignals (BlockPos actualPosition, Quaterniond rot) {
+		if (nearestDeposit == null) {
+			signals[0] = 0; signals[1] = 0; signals[2] = 0; signals[3] = 0;
+			return;
+		}
 		
-		Vec3 toNearest = Vec3.atCenterOf(lastScanPos).subtract(Vec3.atCenterOf(nearestDeposit));
+		Vec3 toNearest = Vec3.atCenterOf(actualPosition).subtract(Vec3.atCenterOf(nearestDeposit));
 		//2d distance:
 		double dist = Math.sqrt(toNearest.x()*toNearest.x() + toNearest.z()*toNearest.z());
-		if (dist <= 2) return 0;
-		
 		//normalized vector towards nearest deposit:
 		toNearest =  new Vec3(toNearest.x() / dist, 0, toNearest.z() / dist);
 		
+		signals[0] = getSignalForSide(Direction.NORTH, toNearest, rot);
+		signals[1] = getSignalForSide(Direction.SOUTH, toNearest, rot);
+		signals[2] = getSignalForSide(Direction.WEST, toNearest, rot);
+		signals[3] = getSignalForSide(Direction.EAST, toNearest, rot);
+		
+		setChanged();
+	}
+	
+	private int getSignalForSide (Direction side, Vec3 toNearest, Quaterniond rot) {
+		//normalized direction vector, rotated to sublevel orientation:
+		Vec3 direction = TFMGUtils.rotateQuat(Vec3.atLowerCornerOf(side.getNormal()), rot);
 		//cosine of the angle can be given by the dot product, since both are normalized
 		double cosine = toNearest.dot(direction);
-		return (int) Math.max(0, 30 * Math.asin(cosine) / Math.PI); //how Aero does it
+		//how Aero does it
+		return (int) Math.max(0, 30 * Math.asin(cosine) / Math.PI);
 	}
 }
