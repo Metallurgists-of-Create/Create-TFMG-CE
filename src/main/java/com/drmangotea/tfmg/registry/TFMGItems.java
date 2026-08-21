@@ -199,9 +199,6 @@ public class TFMGItems {
             REGISTRATE.item("electromagnetic_coil", ElectromagneticCoilItem::new)
                     .properties(p -> p.stacksTo(1))
                     .register();
-    //public static final ItemEntry<FuseItem> FUSE = REGISTRATE.item("fuse", FuseItem::new)
-    //        .properties(p -> p.stacksTo(1))
-    //        .register();
     public static final ItemEntry<Item> COAL_COKE_DUST = REGISTRATE.item("coal_coke_dust", Item::new)
             .tag(Items.DUSTS_COAL_COKE.tag, Items.BLAST_FURNACE_FUEL.tag, Tags.Items.DUSTS)
             .register();
@@ -219,14 +216,6 @@ public class TFMGItems {
             .properties(p -> p.stacksTo(1)
                     .durability(256))
             .register();
-
-
-
-   // public static final ItemEntry<ArmorItem>
-   //         STEEL_HELMET = armor("steel_helmet", TFMGArmorMaterials.STEEL, ArmorItem.Type.HELMET),
-   //         STEEL_CHESTPLATE = armor("steel_chestplate", TFMGArmorMaterials.STEEL, ArmorItem.Type.CHESTPLATE),
-   //         STEEL_LEGGINGS = armor("steel_leggings", TFMGArmorMaterials.STEEL, ArmorItem.Type.LEGGINGS),
-   //         STEEL_BOOTS = armor("steel_boots", TFMGArmorMaterials.STEEL, ArmorItem.Type.BOOTS);
 
     public static final List<ItemEntry<?>>
             STEEL_TOOLS = toolset("steel", TFMGTiers.STEEL),

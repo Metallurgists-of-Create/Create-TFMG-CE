@@ -3,10 +3,10 @@ package com.drmangotea.tfmg.content.electricity.connection.cables;
 import com.drmangotea.tfmg.base.TFMGUtils;
 import com.drmangotea.tfmg.config.TFMGConfigs;
 import com.drmangotea.tfmg.content.electricity.base.ElectricBlockEntity;
+import com.drmangotea.tfmg.content.electricity.base.IElectric;
 import com.drmangotea.tfmg.content.machinery.misc.winding_machine.SpoolItem;
 import com.drmangotea.tfmg.registry.TFMGBlocks;
 import com.simibubi.create.api.equipment.goggles.IHaveHoveringInformation;
-import com.simibubi.create.foundation.blockEntity.SyncedBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import net.createmod.catnip.animation.AnimationTickHolder;
 import net.createmod.catnip.math.VecHelper;
@@ -121,12 +121,10 @@ public class CableConnectorBlockEntity extends ElectricBlockEntity implements IH
         super.onConnected();
 
         for (CableConnectorBlockEntity be : getConnectedWires()) {
-
             if (be.getData().getId() != getData().getId()) {
                 be.setNetwork(getData().getId());
                 be.onConnected();
             }
-
             be.sendStuff();
         }
         sendStuff();
@@ -158,10 +156,22 @@ public class CableConnectorBlockEntity extends ElectricBlockEntity implements IH
         return foundList;
     }
 
+    public void updateConnections() {
+        this.updateConnections = true;
+        this.setChanged();
+        this.sendStuff();
+    }
+
     @Override
     public void onNetworkChanged(int oldVoltage, float oldPower) {
         super.onNetworkChanged(oldVoltage, oldPower);
-        this.updateConnections = true;
+        if (oldVoltage != this.getData().getVoltage() && oldPower != this.getPowerUsage())
+            updateConnections();
+    }
+
+    @Override
+    public void updateNetwork() {
+        super.updateNetwork();
     }
 
     @Override
@@ -172,10 +182,9 @@ public class CableConnectorBlockEntity extends ElectricBlockEntity implements IH
             for (CableConnection connection : connections) {
                 for (BlockPos pos : List.of(connection.pos1(), connection.pos2())) {
                     BlockEntity be = level.getBlockEntity(pos);
-                    if (be instanceof SyncedBlockEntity synced) {
-                        synced.notifyUpdate();
+                    if (be instanceof IElectric electric) {
+                        electric.updateNetwork();
                     }
-                    level.blockEntityChanged(pos);
                 }
             }
             updateConnections = false;

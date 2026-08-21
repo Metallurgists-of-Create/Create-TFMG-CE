@@ -451,6 +451,7 @@ public interface IElectric {
 
     default void onNetworkChanged(int oldVoltage, float oldPower) {
         if (getData().getsOutsidePower && oldPower != getPowerUsage()) {
+
             //    doActionNextTick(i->recalculateNetworkResistance());
         }
     }
@@ -459,10 +460,10 @@ public interface IElectric {
         if (getData().voltageSupply == 0)
             return 0;
 
-        if ((float) getData().networkPowerGeneration * (float) getNetworkResistance() == 0)
+        if ((float) getData().networkPowerGeneration * getNetworkResistance() == 0)
             return 0;
 
-        return (float) powerGeneration() / (float) getData().networkPowerGeneration * (float) getNetworkResistance();
+        return powerGeneration() / (float) getData().networkPowerGeneration * getNetworkResistance();
     }
 
     default float getGeneratorLoad() {

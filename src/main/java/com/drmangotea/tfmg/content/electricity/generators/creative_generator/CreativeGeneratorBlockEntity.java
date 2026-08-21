@@ -37,6 +37,15 @@ public class CreativeGeneratorBlockEntity extends ElectricBlockEntity {
     }
 
     @Override
+    public void tick() {
+        super.tick();
+        if(data.updateNextTick){
+            updateNetwork();
+            data.updateNextTick = false;
+        }
+    }
+
+    @Override
     public int getMaxVoltage() {
         return 0;
     }

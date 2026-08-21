@@ -102,6 +102,7 @@ public class ElectricalNetwork {
             if (member instanceof VoltageAlteringBlockEntity be) {
                 be.updateInFront();
             }
+            member.getLevelAccessor().blockUpdated(member.position(), member.getLevelAccessor().getBlockState(member.position()).getBlock());
            // if (resistance != 0) {
            //     member.setNetworkResistance(1f / resistance);
            // } else member.setNetworkResistance(0);
