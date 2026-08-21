@@ -144,18 +144,6 @@ Please note that not all bugs are fixed and some new additions are subject to ch
     - `TFMGDataComponents.FUEL_TAGS`, no longer used for anything.
     - `TFMGDataComponents.FUELS`, only used for remapping.
     - `CylinderItem`, only exists for addons that still use it.
-  - Winding Machine:
-    - Change spool to `SpoolInventory`
-    - Support legacy `Spool` NBT and migrate to new system
-    - Create an inventory for output
-    - Shift-right click now takes out the spool instead of the item
-      - Normal right click now takes out the item and resulting item
-    - Wire stops rendering when a recipe has been completed
-    - Fixed spool not being saved/loaded correctly (`read()` parsed spool but never assigned it)
-    - Deployers can insert spools and items into the winding machine
-      - Deployers can also take out empty spools
-      - Prevent deployers from taking out non-empty spools
-    - Empty spool can be emptied from the spool side 
 
 ### New Translations:
 People who wish to translate this mod should look out for changes here.
