@@ -68,17 +68,17 @@ public class WindingMachineBlock extends HorizontalKineticBlock implements IBE<W
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
         if (level.getBlockEntity(pos) instanceof WindingMachineBlockEntity be) {
             if (player.getItemInHand(hand).isEmpty()) {
-                if (!be.inventory.isEmpty() && !(be.inventory.getItem(0).getItem() instanceof SpoolItem) && player.isShiftKeyDown()) {
-                    player.setItemInHand(hand, be.inventory.getStackInSlot(0));
-                    be.inventory.setItem(0, ItemStack.EMPTY);
-                    return ItemInteractionResult.SUCCESS;
-                }
                 if (!be.outputInventory.isEmpty()) {
                     player.setItemInHand(hand, be.outputInventory.getStackInSlot(0));
                     be.outputInventory.setItem(0, ItemStack.EMPTY);
                     return ItemInteractionResult.SUCCESS;
                 }
-                if (!be.getSpool().isEmpty() && be.getSpool().is(TFMGItems.EMPTY_SPOOL.get())) {
+                if (!be.inventory.isEmpty() && !(be.inventory.getItem(0).getItem() instanceof SpoolItem)) {
+                    player.setItemInHand(hand, be.inventory.getStackInSlot(0));
+                    be.inventory.setItem(0, ItemStack.EMPTY);
+                    return ItemInteractionResult.SUCCESS;
+                }
+                if (player.isShiftKeyDown() && !be.getSpool().isEmpty() && be.getSpool().is(TFMGItems.EMPTY_SPOOL.get())) {
                     player.setItemInHand(hand, be.getSpool());
                     be.setSpool(ItemStack.EMPTY);
                     return ItemInteractionResult.SUCCESS;
