@@ -96,6 +96,18 @@ Please note that not all bugs are fixed and some new additions are subject to ch
 - Marked "The Factory Must WORK" as incompatible with Community Edition due to conflicting bug fixes. This may be revoked at a later date.
 - Added credits to `neoforge.mods.toml`.
 - Coke Oven progress is now displayed as a percentage.
+- Winding Machine:
+  - Change spool to `SpoolInventory`
+  - Support legacy `Spool` NBT and migrate to new system
+  - Create an inventory for output
+  - Shift-right click now takes out the spool instead of the item
+    - Normal right click now takes out the item and resulting item
+  - Wire stops rendering when a recipe has been completed
+  - Fixed spool not being saved/loaded correctly (`read()` parsed spool but never assigned it)
+  - Deployers can insert spools and items into the winding machine
+    - Deployers can also take out empty spools
+    - Prevent deployers from taking out non-empty spools
+  - Empty spool can be emptied from the spool side
 
 ### API Changes:
 - Added Sable Companion as an embedded api.

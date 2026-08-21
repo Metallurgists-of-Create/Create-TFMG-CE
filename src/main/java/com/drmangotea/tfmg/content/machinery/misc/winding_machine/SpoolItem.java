@@ -105,10 +105,10 @@ public class SpoolItem extends Item {
 
         if (level.getBlockEntity(pos) instanceof WindingMachineBlockEntity be) {
             ItemStack oldSpool = ItemStack.EMPTY;
-            if (!be.spool.isEmpty()) {
-                oldSpool = be.spool;
+            if (!be.getSpool().isEmpty()) {
+                oldSpool = be.getSpool();
             }
-            be.spool = context.getItemInHand();
+            be.setSpool(context.getItemInHand());
             player.setItemInHand(context.getHand(), oldSpool);
             be.sendData();
             be.setChanged();
