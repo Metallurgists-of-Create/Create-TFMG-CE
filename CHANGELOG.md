@@ -108,6 +108,7 @@ Please note that not all bugs are fixed and some new additions are subject to ch
     - Deployers can also take out empty spools
     - Prevent deployers from taking out non-empty spools
   - Empty spool can be emptied from the spool side
+  - Prevent items from being inserted when output is full
 
 ### API Changes:
 - Added Sable Companion as an embedded api.
