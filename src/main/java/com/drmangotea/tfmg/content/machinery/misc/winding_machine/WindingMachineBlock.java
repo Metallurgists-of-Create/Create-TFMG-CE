@@ -2,6 +2,7 @@ package com.drmangotea.tfmg.content.machinery.misc.winding_machine;
 
 import com.drmangotea.tfmg.base.TFMGShapes;
 import com.drmangotea.tfmg.registry.TFMGBlockEntities;
+import com.drmangotea.tfmg.registry.TFMGItems;
 import com.simibubi.create.content.kinetics.base.HorizontalKineticBlock;
 import com.simibubi.create.foundation.block.IBE;
 import net.minecraft.core.BlockPos;
@@ -77,9 +78,9 @@ public class WindingMachineBlock extends HorizontalKineticBlock implements IBE<W
                     be.outputInventory.setItem(0, ItemStack.EMPTY);
                     return ItemInteractionResult.SUCCESS;
                 }
-                if (!be.spool.isEmpty()) {
-                    player.setItemInHand(hand, be.spool);
-                    be.spool = ItemStack.EMPTY;
+                if (!be.getSpool().isEmpty() && be.getSpool().is(TFMGItems.EMPTY_SPOOL.get())) {
+                    player.setItemInHand(hand, be.getSpool());
+                    be.setSpool(ItemStack.EMPTY);
                     return ItemInteractionResult.SUCCESS;
                 }
             } else {
