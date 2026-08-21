@@ -78,8 +78,8 @@ public class WindingMachineBlockEntity extends KineticBlockEntity implements IHa
                 TFMGBlockEntities.WINDING_MACHINE.get(),
                 (be, context) -> {
                     if (context == be.getBlockState().getValue(HORIZONTAL_FACING))
-                        return new CombinedInvWrapper(be.inventory, be.outputInventory, new SpoolSlotHandler(be));
-                    return new CombinedInvWrapper(be.inventory, be.outputInventory);
+                        return new CombinedInvWrapper(new InputSlotHandler(be), be.outputInventory, new SpoolSlotHandler(be));
+                    return new CombinedInvWrapper(new InputSlotHandler(be), be.outputInventory);
                 }
         );
     }
@@ -325,6 +325,62 @@ public class WindingMachineBlockEntity extends KineticBlockEntity implements IHa
                 setChanged();
                 return;
             }
+        }
+    }
+
+    private record InputSlotHandler(WindingMachineBlockEntity be) implements IItemHandlerModifiable {
+        @Override
+        public void setStackInSlot(int slot, ItemStack stack) {
+            be.inventory.setStackInSlot(slot, stack);
+            be.onContentsChanged();
+            be.notifyUpdate();
+        }
+
+        @Override
+        public int getSlots() {
+            return 1;
+        }
+
+        @Override
+        public ItemStack getStackInSlot(int slot) {
+            return be.inventory.getStackInSlot(slot);
+        }
+
+        @Override
+        public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
+            if (stack.isEmpty())
+                return stack;
+
+            if (!be.outputInventory.isEmpty())
+                return stack;
+
+            if (!be.inventory.getStackInSlot(slot).isEmpty())
+                return stack;
+
+            if (!isItemValid(slot, stack))
+                return stack;
+
+            if (!simulate) {
+                be.inventory.setStackInSlot(slot, stack.copy());
+                be.onContentsChanged();
+                be.notifyUpdate();
+            }
+            return ItemStack.EMPTY;
+        }
+
+        @Override
+        public ItemStack extractItem(int slot, int amount, boolean simulate) {
+            return ItemStack.EMPTY;
+        }
+
+        @Override
+        public int getSlotLimit(int slot) {
+            return 1;
+        }
+
+        @Override
+        public boolean isItemValid(int slot, ItemStack stack) {
+            return be.isWindingIngredient(stack);
         }
     }
 
