@@ -1,14 +1,20 @@
 package com.drmangotea.tfmg.integration.jei.category;
 
+import com.drmangotea.tfmg.base.lang.TFMGLang;
 import com.drmangotea.tfmg.recipes.CokingRecipe;
 import com.drmangotea.tfmg.integration.jei.render.CokeOven;
 import com.simibubi.create.compat.jei.category.CreateRecipeCategory;
 import com.simibubi.create.foundation.gui.AllGuiTextures;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
+import mezz.jei.api.gui.builder.ITooltipBuilder;
+import mezz.jei.api.gui.ingredient.IRecipeSlotView;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.util.StringUtil;
+import net.minecraft.world.item.alchemy.PotionContents;
+import net.neoforged.neoforge.fluids.FluidStack;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -35,10 +41,15 @@ public class CokingCategory extends CreateRecipeCategory<CokingRecipe> {
                 .addItemStack(recipe.getRollableResults().getFirst().getStack());
 
         //fluid
-        if (recipe.getFluidResults().size() >= 2)
-            addFluidSlot(builder, 160, 46, recipe.getFluidResults().get(1));
-        if (!recipe.getFluidResults().isEmpty())
-            addFluidSlot(builder, 160, 22, recipe.getFluidResults().get(0));
+        //TODO: Add a way to select Coke Oven size through the category as it influences recipe duration so the Over Time tooltip could be inaccurate.
+        FluidStack primaryFluid = recipe.getFluidResults().get(0);
+        FluidStack secondaryFluid = recipe.getFluidResults().get(1);
+        if (recipe.getFluidResults().size() >= 2) {
+            addFluidSlot(builder, 160, 46, secondaryFluid.copyWithAmount(secondaryFluid.getAmount() * recipe.getProcessingDuration())).addRichTooltipCallback((slotView, tooltip) -> tooltip.add(TFMGLang.translate("recipe.over_time", StringUtil.formatTickDuration(recipe.getProcessingDuration(), 1)).component()));
+        }
+        if (!recipe.getFluidResults().isEmpty()) {
+            addFluidSlot(builder, 160, 22, primaryFluid.copyWithAmount(primaryFluid.getAmount() * recipe.getProcessingDuration())).addRichTooltipCallback((slotView, tooltip) -> tooltip.add(TFMGLang.translate("recipe.over_time", StringUtil.formatTickDuration(recipe.getProcessingDuration(), 1)).component()));
+        }
     }
 
     @Override

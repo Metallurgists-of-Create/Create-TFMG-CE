@@ -29,6 +29,8 @@
   "tfmg.goggles.blast_stove.tank3": "Output Tank 1: ",
   "tfmg.goggles.blast_stove.tank4": "Output Tank 2: ",
 
+  "tfmg.large_engine.header": "Large Engine:",
+
   "tfmg.coke_oven.header": "Coke Oven:",
 
   "tfmg.pumpjack.header": "Pumpjack Info:",
@@ -99,6 +101,9 @@
   "tfmg.goggles.vat.tfmg.electrode": "Electrode",
   "tfmg.goggles.vat.tfmg.mixing": "Mixer",
   "tfmg.goggles.vat.tfmg.centrifuge": "Centrifuge",
+  "tfmg.goggles.vat.tfmg.compressor": "Compressor",
+  "tfmg.goggles.vat.tfmg.decompressor": "Decompressor",
+  "tfmg.goggles.vat.tfmg.freezer": "Freezer",
   "create.vat.pressure_dots": "... ",
   "create.vat.pressure": "Pressure",
   "create.vat.heat_dots": "................ ",
@@ -157,6 +162,8 @@
   "tfmg.recipe.vat.electrode": "Requires Electrodes",
   "tfmg.recipe.vat.graphite_electrode": "Requires Graphite Electrodes",
   "chemica.recipe.vat.platinum_electrode": "Requires Platinum Electrodes",
+
+  "tfmg.recipe.over_time": "Over %1$s",
 
   "tfmg.keyinfo.custom_button": "Engine Controller Custom Button",
   "tfmg.keyinfo.engine_start": "Start Engine",

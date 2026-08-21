@@ -60,6 +60,7 @@ import net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient;
 import net.neoforged.neoforge.items.IItemHandlerModifiable;
 import net.neoforged.neoforge.items.wrapper.CombinedInvWrapper;
 import org.jetbrains.annotations.NotNull;
+import oshi.util.tuples.Triplet;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -790,6 +791,23 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
         lastKnownPos = worldPosition;
     }
 
+    public void notifyItemContentsChanged() {
+        if (level == null)
+            return;
+
+        VatBlockEntity controller = getControllerBE();
+        if (controller != null && controller != this) {
+            controller.notifyItemContentsChanged();
+            return;
+        }
+
+        recipe = getMatchingRecipe();
+        if (!level.isClientSide) {
+            setChanged();
+            sendData();
+        }
+    }
+
     protected void onInventoryChanged() {
         if (level == null)
             return;
@@ -1156,6 +1174,22 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
         operation.forGoggles(tooltip);
     }
 
+    public void addMachineTooltip(Map<String, Couple<Integer>> countedMachines, List<Component> tooltip) {
+        for (Map.Entry<String, Couple<Integer>> entry : countedMachines.entrySet()) {
+            String operationId = entry.getKey();
+            LangBuilder operation = TFMGTexts.Vat.operation(operationId);
+            Couple<Integer> counts = entry.getValue();
+            boolean isOperational = counts.getSecond() > 0;
+            if (!isOperational) {
+                operation.add(TFMGTexts.Vat.notOperational());
+            } else {
+                operation.add(TFMGTexts.Vat.operational());
+            }
+            operation.space().add(TFMGTexts.Vat.count(counts.getFirst(), counts.getSecond()));
+            operation.forGoggles(tooltip);
+        }
+    }
+
     @Override
     public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
         if (getControllerBE() == null)
@@ -1172,10 +1206,13 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
         TFMGTexts.Vat.attachments()
                 .style(ChatFormatting.GRAY)
                 .forGoggles(tooltip);
+        Map<String, Couple<Integer>> countedMachines = new HashMap<>();
         for (Map.Entry<BlockPos, String> machines : machineMap.entrySet()) {
             boolean operational = operationalMachinesMap.getOrDefault(machines.getKey(), true);
-            addMachineTooltip(machines.getValue(), operational, tooltip);
+            countedMachines.compute(machines.getValue(), (k, v) -> v == null ? Couple.create(1, operational ? 1 : 0) : Couple.create(v.getFirst() + 1, v.getSecond() + (operational ? 1 : 0)));
+            //addMachineTooltip(machines.getValue(), operational, tooltip);
         }
+        addMachineTooltip(countedMachines, tooltip);
 
         TFMGUtils.createStorageTooltip(this, tooltip);
         return true;

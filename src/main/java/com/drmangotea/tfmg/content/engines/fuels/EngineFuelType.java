@@ -4,16 +4,14 @@ import com.drmangotea.tfmg.TFMGRegistries;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.simibubi.create.foundation.fluid.FluidHelper;
-import net.minecraft.core.Holder;
-import net.minecraft.core.HolderSet;
-import net.minecraft.core.RegistryAccess;
-import net.minecraft.core.RegistryCodecs;
+import net.minecraft.core.*;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.fluids.FluidStack;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
@@ -36,6 +34,23 @@ public record EngineFuelType(HolderSet<Fluid> fluids, float speed, float efficie
 
     public boolean test(FluidStack fluidStack) {
         return fluidStack.is(fluids);
+    }
+
+    public static boolean test(FluidStack fluidStack, TagKey<EngineFuelType> fuelTypeTag, RegistryAccess registryAccess) {
+        HolderGetter<EngineFuelType> lookup = registryAccess.asGetterLookup().lookupOrThrow(TFMGRegistries.ENGINE_FUEL_TYPE);
+        var tagged = lookup.getOrThrow(fuelTypeTag);
+        return tagged.stream().map(Holder::value).anyMatch(type -> type.test(fluidStack));
+    }
+
+    public static Optional<EngineFuelType> find(FluidStack fluidStack, RegistryAccess registryAccess, @Nullable TagKey<EngineFuelType> tagFilter) {
+        if (tagFilter != null) {
+            HolderGetter<EngineFuelType> lookup = registryAccess.asGetterLookup().lookupOrThrow(TFMGRegistries.ENGINE_FUEL_TYPE);
+            var tagged = lookup.getOrThrow(tagFilter);
+            return tagged.stream().map(Holder::value).filter(type -> type.test(fluidStack)).findFirst();
+        } else {
+            Registry<EngineFuelType> registry = registryAccess.registryOrThrow(TFMGRegistries.ENGINE_FUEL_TYPE);
+            return registry.holders().map(Holder::value).filter(type -> type.test(fluidStack)).findFirst();
+        }
     }
 
     public static class Builder {

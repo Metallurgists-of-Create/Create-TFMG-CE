@@ -37,7 +37,10 @@ Please note that not all bugs are fixed and some new additions are subject to ch
 - Rolled back a change done to `IElectric` that made Power Grid incompatible.
 - Industrial Mixers should no-longer void the Mixer Blade/Centrifuge item.
 - Electrode Holders should no-longer void the Electrode item.
-- Chemica is now functional with this fork.
+- Added native support for Chemica.
+- Engines are now mineable.
+- Spools properly prevent duplicate connections.
+- Cable Insulators deduplicate existing connections on-load.
 
 ### Changes:
 - Added some new configs:
@@ -51,23 +54,29 @@ Please note that not all bugs are fixed and some new additions are subject to ch
   - Multiblock logic has been separated into a new class.
   - Tuyere position and multiblock size are now saved to the block entity nbt.
   - Multiblock evaluation happens every lazyTick instead of once on placement.
-  - Added `lazyTick` to Blast Stoves to update connectivity
+  - Added `lazyTick` to Blast Stoves to update connectivity.
 - Vat:
   - Vat Machines now display personal goggle/multimeter info if they are operational or not.
   - Vats can now be multi-placed.
-  - Vat pressure and heat level do not display floats anymore
-  - Vat recipe `allowed_vat_types` now uses a list of `ResourceLocation`s
-  - Vat types now use `ResourceLocation` in place of `String`
-  - `VatRecipeGen` no longer uses generics
-  - Vat pressure is limited to between `-9` and `9` (inclusive)
+  - Vat pressure and heat level do not display floats any more.
+  - Vat recipe `allowed_vat_types` now uses a list of `ResourceLocation`s.
+  - Vat types now use `ResourceLocation` in place of `String`.
+  - `VatRecipeGen` no longer uses generics.
+  - Vat pressure is limited to between `-9` and `9` (inclusive).
   - Industrial Mixers now have an item handler.
   - Added `tfmg:mixer_mode` registry.
   - Added `tfmg:mixer_mode` data component.
   - `IndustrialMixerBlock` now handles item insertion and extraction better.
   - Mixer rendering is now handled through the registered mode.
   - Industrial Mixers now also update the vat during a speed change or when their item handler is changed.
+  - The Vat's item inventory now notifies the vat when it is updated.
+  - Multiple vat attachments of the same type are now grouped in the tooltip.
+  - Compressors now have operation ids: `tfmg:compressor` and `tfmg:decompressor`.
+  - Freezers now have an operation id: `tfmg:freezer`.
+  - Compressors now notify the vat when their speed changes.
 - Electricity:
   - Modified the extraction calculation on Cable Insulators to improve the amount of FE being consumed.
+  - Nicer Cable visuals.
 - Engines & Engine Adjacent:
   - Improved Air Intake goggle tooltip.
   - Engine types are now a registry.
@@ -76,10 +85,11 @@ Please note that not all bugs are fixed and some new additions are subject to ch
     - Turbine Engine denies `tfmg:engine/cylinder`.
     - Both cases require the input to have the `tfmg:engine_cylinder` component to be valid.
   - Engine types are safely remapped from their legacy values when reading from engine nbt.
-  - Added JEI search aliases for Turbine Blades (`turbine`) & Engine Cylinders (`piston`)
+  - Added JEI search aliases for Turbine Blades (`turbine`) & Engine Cylinders (`piston`).
 - Surface Scanners:
-  - Surface Scanners now update their detection if they have been moved (if they are on a Sub-Level)
-  - Surface Scanners now produce a redstone signal based on the distance from a detected oil chunk.
+    - Surface Scanner grid now accuratley based on chunk grid
+    - Surface Scanners on Sub-Levels now re-scan when moved into a new chunk.
+    - Surface Scanners now produce a redstone signal aiming towards the nearest oil chunk.
 - Added TFMG Encased wooden cogwheels.
 - Added Industrial Aluminium encased blocks.
 - Cleaned up Neon Tube.
@@ -105,16 +115,47 @@ Please note that not all bugs are fixed and some new additions are subject to ch
 - JEI integration has been moved to a new folder. (`recipes` → `inregration.jei`)
 - Engine types are now blacklisted from the schematic cycle via the `tfmg:schematic_cycle_blacklist` tag.
 - Engine Upgrades now use the `tfmg:upgrades_on_side` engine tag for rendering.
+- Large Engine fuels are now determined through the `tfmg:large_engine` engine fuel type tag.
 - Removed `RegularEngineBlockEntity.EngineType` enum.
 - Internal tag enums in `TFMGTags` have been renamed (`TFMGTags.TFMGItemTags` → `TFMGTags.Items`).
 - Added `formatFluid` in `TFMGUtils` for fluid units.
 - Added `fluidProduction` in `TFMGTexts` for fluid production.
-- Renamed & remapped Heavy casing encased blocks to Heavy encased.
+- Added `count` in `TFMGTexts.Vat` for Vat Attachment counts.
+- Renamed & remapped `heavy_casing_encased_` blocks to `heavy_encased_`.
 - Added Decimal Formats to `TFMGTexts` for properly formatting numbers.
 - Re-introduced Micron unit just in case.
-- Added `returnItemToInventory` method in `TFMGUtils`.
+- Added `returnItemToInventory` method to `TFMGUtils`.
 - Removed `IndustrialMixerBlockEntity.MixerMode` enum.
-- Added `getSpool`/`setSpool` accessors wrapping spoolInventory for `WindingMachineBlockEntity`
+- Removed `TFMGLang.temporaryText`.
+- Removed `IHaveCables`.
+- Flamethrower Fuels now use the `tfmg:hellfire` tag instead of the `hellfire` boolean.
+- Flamethrower Fuels now use the `tfmg:cold` tag instead of the `is_cold` boolean.
+- Removed `"hellfire"` and `"is_cold"` from `FlamethrowerFuelType` in favour of tags.
+- Added `rotateQuat` method to `TFMGUtils`.
+- Item component remapping is now handled via `ComponentRemapper` instead of the item class.
+- Moved TFMGRemapper from `base` → `remap`.
+- The following are deprecated for removal. If you are migrating your addon to depend on Community Edition I'd recommend fixing these:
+  - `IElectric.getPos()` (returns long). We are trying to move away from storing BlockPos as a long and you should use `IElectric.position()` instead.
+  - `Electrode.Properties.item(ItemEntry<?>)`. Electrodes are stored as a data component and this is now irrelevant. You should assign a default component to your electrode item instead.
+  - `Electrode.Properties.operationId(String)` The operationId in Electrodes is now a ResourceLocation. You should use the `operationId(ResourceLocation)` builder method instead.
+  - `FuelType` & `FuelType.Builder` are no-longer used to register custom engine fuels. Instead, use a datapack registry with `TFMGRegistries.ENGINE_FUEL_TYPE` to create types.
+  - `TFMGDataComponents.FLAMETHROWER_FUEL` is only used for remapping and **will** be removed at a later date.
+  - Engine Cylinders are now created with the `TFMGDataComponents.ENGINE_CYLINDER` component. Consequently, the following **will** be removed at a later date:
+    - `TFMGDataComponents.FUEL_TAGS`, no longer used for anything.
+    - `TFMGDataComponents.FUELS`, only used for remapping.
+    - `CylinderItem`, only exists for addons that still use it.
+  - Winding Machine:
+    - Change spool to `SpoolInventory`
+    - Support legacy `Spool` NBT and migrate to new system
+    - Create an inventory for output
+    - Shift-right click now takes out the spool instead of the item
+      - Normal right click now takes out the item and resulting item
+    - Wire stops rendering when a recipe has been completed
+    - Fixed spool not being saved/loaded correctly (`read()` parsed spool but never assigned it)
+    - Deployers can insert spools and items into the winding machine
+      - Deployers can also take out empty spools
+      - Prevent deployers from taking out non-empty spools
+    - Empty spool can be emptied from the spool side 
 
 ### New Translations:
 People who wish to translate this mod should look out for changes here.
@@ -127,4 +168,3 @@ People who wish to translate this mod should look out for changes here.
   - "tfmg.multimeter.large_transformer.air_cooled" | "&nbsp;&nbsp;&nbsp;State: Air Cooled" → "Air Cooled"
   - "tfmg.multimeter.large_transformer.metal_cooled" | "&nbsp;&nbsp;&nbsp;State: Metal Heat Sink Cooled" → "Metal Heat Sink Cooled"
   - "tfmg.multimeter.large_transformer.oil_cooled" | "&nbsp;&nbsp;&nbsp;State: Oil + Heat Sink Cooled" → "Oil + Heat Sink Cooled"
-

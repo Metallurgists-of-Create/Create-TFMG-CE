@@ -1,6 +1,5 @@
 package com.drmangotea.tfmg.content.electricity.connection.cables;
 
-import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.base.TFMGUtils;
 import com.drmangotea.tfmg.config.TFMGConfigs;
 import com.drmangotea.tfmg.content.electricity.base.ElectricBlockEntity;
@@ -188,7 +187,6 @@ public class CableConnectorBlockEntity extends ElectricBlockEntity implements IH
             //  TFMG.LOGGER.debug("meowe "+powerNeeded);
 
             for (var entry : getData().energyOutputs.entrySet()) {
-                Direction direction = entry.getKey();
                 IEnergyStorage energyStorage = entry.getValue();
 
                 int energyToTake = energyStorage.extractEnergy(Math.round((float)Math.clamp(powerNeeded, 0, energyStorage.getEnergyStored())), true);//(int) Math.min(Math.clamp(powerNeeded, 10, 1028 * 10), c.getEnergyStored());
@@ -226,10 +224,10 @@ public class CableConnectorBlockEntity extends ElectricBlockEntity implements IH
 
         connections = new ArrayList<>();
         for (int i = 0; i < compound.getInt("ConnectionCount"); i++) {
-
-            connections.add(CableConnection.loadConnection(compound.getCompound("Connection" + i)));
+			CableConnection connection = CableConnection.loadConnection(compound.getCompound("Connection" + i));
+			if (connections.contains(connection)) continue;
+            connections.add(connection);
         }
-
     }
 
     @Override

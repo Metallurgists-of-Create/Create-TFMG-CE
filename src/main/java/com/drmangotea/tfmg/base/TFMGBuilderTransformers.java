@@ -292,7 +292,7 @@ public class TFMGBuilderTransformers {
         concrete.wall = REGISTRATE.block(name + "_wall", WallBlock::new)
                 .initialProperties(() -> Blocks.STONE)
                 .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
-                .properties(p -> p.strength(rebar ? 12f : 3.5f, rebar ? 1200f : 3.5f))
+                .properties(p -> p.strength(rebar ? 5f : 3.5f, rebar ? 17f : 3.5f))
                 .transform(pickaxeOnly())
                 .blockstate((c, p) -> TFMGVanillaBlockStates.generateWallBlockState(c, p, "concrete"))
                 .tag(BlockTags.NEEDS_STONE_TOOL)
@@ -305,7 +305,7 @@ public class TFMGBuilderTransformers {
 
         concrete.block = REGISTRATE.block(name, Block::new)
                 .initialProperties(() -> Blocks.STONE)
-                .properties(p -> p.strength(rebar ? 12f : 3.5f, rebar ? 1200f : 3.5f))
+                .properties(p -> p.strength(rebar ? 5f : 3.5f, rebar ? 17f : 3.5f))
                 .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
                 .transform(pickaxeOnly())
                 .blockstate(simpleCubeAll("concrete"))
@@ -317,7 +317,7 @@ public class TFMGBuilderTransformers {
         concrete.stairs = REGISTRATE.block(name + "_stairs", p -> new StairBlock(concrete.block.get().defaultBlockState(), p))
                 .initialProperties(() -> Blocks.STONE)
                 .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
-                .properties(p -> p.strength(rebar ? 12f : 3.5f, rebar ? 1200f : 3.5f))
+                .properties(p -> p.strength(rebar ? 5f : 3.5f, rebar ? 17f : 3.5f))
                 .transform(pickaxeOnly())
                 .blockstate((c, p) -> TFMGVanillaBlockStates.generateStairBlockState(c, p, name))
                 .tag(BlockTags.NEEDS_STONE_TOOL)
@@ -327,11 +327,9 @@ public class TFMGBuilderTransformers {
                 .transform(customItemModel(name + "_stairs"))
                 .register();
 
-
-
         concrete.slab = REGISTRATE.block(name + "_slab", SlabBlock::new)
                 .initialProperties(() -> Blocks.STONE)
-                .properties(p -> p.strength(rebar ? 12f : 3.5f, rebar ? 1200f : 3.5f))
+                .properties(p -> p.strength(rebar ? 5f : 3.5f, rebar ? 17f : 3.5f))
                 .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
                 .transform(pickaxeOnly())
                 .blockstate((c, p) -> TFMGVanillaBlockStates.generateSlabBlockState(c, p, "concrete"))

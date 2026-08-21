@@ -3,16 +3,21 @@ package com.drmangotea.tfmg.content.items.weapons.flamethrover;
 import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.TFMGClient;
 import com.drmangotea.tfmg.TFMGRegistries;
+import com.drmangotea.tfmg.base.spark.DryIceFlake;
+import com.drmangotea.tfmg.base.spark.LithiumSpark;
 import com.drmangotea.tfmg.base.spark.Spark;
 import com.drmangotea.tfmg.registry.TFMGDataComponents;
 import com.drmangotea.tfmg.registry.TFMGEntityTypes;
 import com.drmangotea.tfmg.registry.TFMGFlamethrowerFuelTypes;
+import com.drmangotea.tfmg.registry.TFMGTags;
 import com.simibubi.create.foundation.item.CustomArmPoseItem;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
@@ -39,20 +44,8 @@ public class FlamethrowerItem extends Item implements CustomArmPoseItem {
 
     public static final int FUEL_CAPACITY = 4000;
 
-
     public FlamethrowerItem(Properties pProperties) {
         super(pProperties);
-    }
-
-    public void inventoryTick(ItemStack stack, Level level, Entity entity, int slotId, boolean isSelected) {
-        super.inventoryTick(stack, level, entity, slotId, isSelected);
-        if (remapOldComponents(stack, level.registryAccess())) {
-            TFMG.LOGGER.info("[TFMG Remapper] Remapped old Flamethrower components");
-        } else {
-            if(!stack.has(TFMGDataComponents.FLAMETHROWER)) {
-                stack.set(TFMGDataComponents.FLAMETHROWER, FlamethrowerFuel.EMPTY);
-            }
-        }
     }
 
     public void onUseTick(Level level, LivingEntity entity, ItemStack stack, int time) {
@@ -67,7 +60,7 @@ public class FlamethrowerItem extends Item implements CustomArmPoseItem {
             return;
         }
 
-        level.playSound(null, entity.getX(), entity.getY(), entity.getZ(), SoundEvents.FIRE_EXTINGUISH, SoundSource.NEUTRAL, 0.1F, 0.04F);
+        Registry<FlamethrowerFuelType> registry = level.registryAccess().registryOrThrow(TFMGRegistries.FLAMETHROWER_FUEL_TYPE);
 
         FlamethrowerFuel fuel = stack.getOrDefault(TFMGDataComponents.FLAMETHROWER, FlamethrowerFuel.EMPTY);
         FlamethrowerFuelType fuelType = getFuel(level.registryAccess(), stack);
@@ -75,14 +68,36 @@ public class FlamethrowerItem extends Item implements CustomArmPoseItem {
         Vec3 barrelPos = getGunBarrelVec(entity, entity.getUsedItemHand() == InteractionHand.MAIN_HAND,
                     new Vec3(.75f, -0.65f, 1.5f));
 
-        if (fuel.fuelType() != TFMGFlamethrowerFuelTypes.FALLBACK && fuel.amount() > 0) {
+        boolean isCold = fuel.fuelType() != null && registry.getHolder(fuel.fuelType().location()).filter((holder) -> holder.is(TFMGTags.FlamethrowerFuel.COLD.tag)).isPresent();
+        boolean isHellfire = fuel.fuelType() != null && registry.getHolder(fuel.fuelType().location()).filter((holder) -> holder.is(TFMGTags.FlamethrowerFuel.HELLFIRE.tag)).isPresent();
+
+        SoundEvent sound = isCold ? SoundEvents.SNOW_BREAK : SoundEvents.FIRE_EXTINGUISH;
+        level.playSound(null, entity.getX(), entity.getY(), entity.getZ(), sound, SoundSource.PLAYERS, 0.1F, 0.04F);
+
+        if (fuelType != null && fuel.fuelType() != TFMGFlamethrowerFuelTypes.FALLBACK && fuel.amount() > 0) {
             int amountToFire = Math.min(fuelType.amount(), fuel.amount());
             for(int i =0; i < amountToFire; i++) {
-                Spark spark = TFMGEntityTypes.SPARK.create(level);
-                if (spark != null) {
-                    spark.setPos(barrelPos.x, barrelPos.y, barrelPos.z);
-                    spark.shoot(entity.getLookAngle().x, entity.getLookAngle().y, entity.getLookAngle().z, fuelType.speed(), fuelType.spread());
-                    level.addFreshEntity(spark);
+                if (isCold) {
+                    DryIceFlake flake = TFMGEntityTypes.DRY_ICE_FLAKE.create(level);
+                    if (flake != null) {
+                        flake.setPos(barrelPos.x, barrelPos.y, barrelPos.z);
+                        flake.shoot(entity.getLookAngle().x, entity.getLookAngle().y, entity.getLookAngle().z, fuelType.speed(), fuelType.spread());
+                        level.addFreshEntity(flake);
+                    }
+                } else if (isHellfire) {
+                    LithiumSpark spark = TFMGEntityTypes.LITHIUM_SPARK.create(level);
+                    if (spark != null) {
+                        spark.setPos(barrelPos.x, barrelPos.y, barrelPos.z);
+                        spark.shoot(entity.getLookAngle().x, entity.getLookAngle().y, entity.getLookAngle().z, fuelType.speed(), fuelType.spread());
+                        level.addFreshEntity(spark);
+                    }
+                } else {
+                    Spark spark = TFMGEntityTypes.SPARK.create(level);
+                    if (spark != null) {
+                        spark.setPos(barrelPos.x, barrelPos.y, barrelPos.z);
+                        spark.shoot(entity.getLookAngle().x, entity.getLookAngle().y, entity.getLookAngle().z, fuelType.speed(), fuelType.spread());
+                        level.addFreshEntity(spark);
+                    }
                 }
             }
             int fuelConsumed = level.random.nextIntBetweenInclusive(amountToFire / 2, amountToFire);
@@ -141,7 +156,6 @@ public class FlamethrowerItem extends Item implements CustomArmPoseItem {
 
         return InteractionResultHolder.pass(player.getItemInHand(hand));
     }
-
 
     @Override
     public int getUseDuration(ItemStack stack, LivingEntity entity) {

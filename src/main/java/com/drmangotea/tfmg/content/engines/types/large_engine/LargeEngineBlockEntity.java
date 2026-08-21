@@ -2,6 +2,7 @@ package com.drmangotea.tfmg.content.engines.types.large_engine;
 
 import com.drmangotea.tfmg.base.TFMGUtils;
 import com.drmangotea.tfmg.base.lang.TFMGLang;
+import com.drmangotea.tfmg.base.lang.TFMGTexts;
 import com.drmangotea.tfmg.config.TFMGConfigs;
 import com.drmangotea.tfmg.content.engines.base.AbstractEngineBlockEntity;
 import com.drmangotea.tfmg.content.engines.base.EngineFluidTank;
@@ -69,14 +70,13 @@ public class LargeEngineBlockEntity extends AbstractEngineBlockEntity {
 
     @Override
     public Predicate<FluidStack> validFuels() {
-        return (fs -> fs.is(TFMGTags.Fluids.DIESEL.tag) || fs.is(TFMGTags.Fluids.KEROSENE.tag) || fs.is(TFMGTags.Fluids.NAPHTHA.tag) || fs.is(TFMGTags.Fluids.FURNACE_GAS.tag));
+        return fs -> level != null && EngineFuelType.test(fs, TFMGTags.EngineFuel.LARGE_ENGINE.tag, level.registryAccess());
     }
 
     @Override
     public void addBehaviours(List<BlockEntityBehaviour> behaviours) {
         behaviours.add(new DirectBeltInputBehaviour(this));
     }
-
 
     public boolean isSimpleEngine(){
         return TFMGBlocks.SIMPLE_LARGE_ENGINE.has(getBlockState());
@@ -90,10 +90,7 @@ public class LargeEngineBlockEntity extends AbstractEngineBlockEntity {
     @Override
     public void manageFuelAndExhaust() {
         super.manageFuelAndExhaust();
-
-
-            airTank.forceDrain(50, IFluidHandler.FluidAction.EXECUTE);
-
+        airTank.forceDrain(50, IFluidHandler.FluidAction.EXECUTE);
     }
 
     @SuppressWarnings({"DuplicateCondition", "ConstantValue"})
@@ -135,19 +132,33 @@ public class LargeEngineBlockEntity extends AbstractEngineBlockEntity {
 
     @Override
     public float efficiencyModifier() {
-        return 0.5f;
+        AtomicReference<Float> fuelTypeEfficiency = new AtomicReference<>(1.0f);
+        if (level != null) {
+            Optional<EngineFuelType> fuelType = EngineFuelType.find(fuelTank.getFluid(), level.registryAccess(), TFMGTags.EngineFuel.LARGE_ENGINE.tag);
+            fuelType.ifPresent(type -> fuelTypeEfficiency.set(type.efficiency()));
+        }
+        return fuelTypeEfficiency.get() * 0.5f;
     }
 
     @Override
     public float speedModifier() {
-        return 1;
+        AtomicReference<Float> fuelTypeSpeed = new AtomicReference<>(1.0f);
+        if (level != null) {
+            Optional<EngineFuelType> fuelType = EngineFuelType.find(fuelTank.getFluid(), level.registryAccess(), TFMGTags.EngineFuel.LARGE_ENGINE.tag);
+            fuelType.ifPresent(type -> fuelTypeSpeed.set(type.speed()));
+        }
+        return fuelTypeSpeed.get();
     }
 
     @Override
     public float torqueModifier() {
-        return 1;
+        AtomicReference<Float> fuelTypeTorque = new AtomicReference<>(1.0f);
+        if (level != null) {
+            Optional<EngineFuelType> fuelType = EngineFuelType.find(fuelTank.getFluid(), level.registryAccess(), TFMGTags.EngineFuel.LARGE_ENGINE.tag);
+            fuelType.ifPresent(type -> fuelTypeTorque.set(type.torque()));
+        }
+        return fuelTypeTorque.get();
     }
-
     
     @OnlyIn(Dist.CLIENT)
     private void makeSound() {
@@ -192,10 +203,8 @@ public class LargeEngineBlockEntity extends AbstractEngineBlockEntity {
 
     @Override
     public boolean canWork() {
-
         if (airTank.isEmpty())
             return false;
-
 
         return super.canWork();
     }
@@ -211,7 +220,7 @@ public class LargeEngineBlockEntity extends AbstractEngineBlockEntity {
         boolean isFuelValid = validFuels().test(fuelTank.getFluid());
         AtomicReference<Float> fuelTypeTorque = new AtomicReference<>(1.0f);
         if (level != null) {
-            Optional<EngineFuelType> fuelType = getFuelType().getFuelType(this.level.registryAccess());
+            Optional<EngineFuelType> fuelType = EngineFuelType.find(fuelTank.getFluid(), level.registryAccess(), TFMGTags.EngineFuel.LARGE_ENGINE.tag);
             fuelType.ifPresent(type -> fuelTypeTorque.set(type.torque()));
         }
 
@@ -222,13 +231,11 @@ public class LargeEngineBlockEntity extends AbstractEngineBlockEntity {
 
     @Override
     public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
-
-        if(getShaft() == null)
+        boolean tanksEmpty = fuelTank.isEmpty() && airTank.isEmpty() && exhaustTank.isEmpty();
+        if(getShaft() == null || tanksEmpty)
             return false;
-
-        TFMGLang.text("").style(ChatFormatting.GRAY).forGoggles(tooltip);
-
-        TFMGUtils.createFluidTooltip(this,tooltip);
+        TFMGTexts.header("large_engine").forGoggles(tooltip);
+        TFMGUtils.createFluidTooltip(this, tooltip);
 
         return true;
     }

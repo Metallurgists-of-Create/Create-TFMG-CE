@@ -6,6 +6,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.NotNull;
 
 public record CableConnection(BlockPos pos1, BlockPos pos2, CableType type, boolean visible) {
 	public CompoundTag saveConnection() {
@@ -31,5 +32,25 @@ public record CableConnection(BlockPos pos1, BlockPos pos2, CableType type, bool
 	
 	public float getLength() {
 		return TFMGUtils.getDistance(pos1, pos2, false);
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if (o instanceof CableConnection c) {
+			return (pos1.equals(c.pos1) && pos2.equals(c.pos2))
+				|| (pos1.equals(c.pos2) && pos2.equals(c.pos1));
+		} //this is only used for checking whether a new connection should be made,
+		//  so we only care if a connection already exists between the two points.
+		return false;
+	}
+	
+	@Override @NotNull
+	public String toString() { // for Debug purposes
+		return "CableConnection{" +
+			pos1 +
+			" -{" + type.getKey() + "}-> " +
+			pos2 +
+			", visible=" + visible +
+			'}';
 	}
 }

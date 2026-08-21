@@ -23,30 +23,31 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CableConnectorBlock extends WallMountBlock implements IBE<CableConnectorBlockEntity>, IHaveCables, IWrenchable {
-
+public class CableConnectorBlock extends WallMountBlock implements IBE<CableConnectorBlockEntity>, IWrenchable {
     public static final BooleanProperty EXTENSION = BooleanProperty.create("extension");
     public static final BooleanProperty INPUT_MODE = BooleanProperty.create("input_mode");
 
-    public CableConnectorBlock(Properties p_49795_) {
-        super(p_49795_);
+    public CableConnectorBlock(Properties properties) {
+        super(properties);
         this.registerDefaultState(this.getStateDefinition().any().setValue(EXTENSION, false).setValue(INPUT_MODE, false));
     }
 
-    @Override
-    public void onPlace(BlockState state, Level level, BlockPos pos, BlockState blockState1, boolean b) {
+    @Override @ParametersAreNonnullByDefault
+    public void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean movedByPiston) {
         updateExtension(level, state, pos);
         withBlockEntityDo(level, pos, IElectric::onPlaced);
         BlockPos below = pos.relative(state.getValue(FACING).getOpposite());
         BlockState stateBelow = level.getBlockState(below);
-        if (stateBelow.getBlock() instanceof IHaveCables)
+        if (stateBelow.getBlock() instanceof CableConnectorBlock)
             updateExtension(level, stateBelow, below);
 
-        super.onPlace(state, level, pos, blockState1, b);
+        super.onPlace(state, level, pos, oldState, movedByPiston);
     }
 
     @Override
@@ -54,18 +55,16 @@ public class CableConnectorBlock extends WallMountBlock implements IBE<CableConn
         return handleChangingTypes(state,context.getLevel(),context.getClickedPos());
     }
 
-    public InteractionResult handleChangingTypes(BlockState state, Level level, BlockPos pos){
+    public InteractionResult handleChangingTypes (BlockState state, Level level, BlockPos pos) {
         Direction facing = state.getValue(FACING).getOpposite();
         BlockState stateBelow = level.getBlockState(pos.relative(facing));
         if (stateBelow.getBlock() instanceof CableConnectorBlock) {
             return handleChangingTypes(stateBelow, level, pos.relative(facing));
         }
-
         return changeTypes(state, level, pos);
     }
 
     public InteractionResult changeTypes(BlockState state, Level level, BlockPos pos) {
-
         if(level.getBlockEntity(pos) instanceof CableConnectorBlockEntity be){
             be.getData().energyGiven = 0;
             be.getData().energyTaken = 0;
@@ -76,16 +75,13 @@ public class CableConnectorBlock extends WallMountBlock implements IBE<CableConn
         return InteractionResult.SUCCESS;
     }
 
-    @Override
+    @Override @ParametersAreNonnullByDefault
     public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
         IBE.onRemove(state, level, pos, newState);
     }
 
-
-    @Override
+    @Override @ParametersAreNonnullByDefault
     public void onNeighborChange(BlockState state, LevelReader level, BlockPos pos, BlockPos neighbor) {
-
-
         updateExtension((Level) level, state, pos);
         if (level.getBlockEntity(pos) instanceof CableConnectorBlockEntity be) {
             Direction facing = state.getValue(FACING);
@@ -97,12 +93,11 @@ public class CableConnectorBlock extends WallMountBlock implements IBE<CableConn
         super.onNeighborChange(state, level, pos, neighbor);
     }
 
-
     public void updateExtension(Level level, BlockState state, BlockPos pos) {
         BlockPos above = pos.relative(state.getValue(FACING));
         BlockState stateAbove = level.getBlockState(above);
 
-        if (stateAbove.getBlock() instanceof IHaveCables && stateAbove.getValue(FACING) == state.getValue(FACING)) {
+        if (stateAbove.getBlock() instanceof CableConnectorBlock && stateAbove.getValue(FACING) == state.getValue(FACING)) {
             level.setBlockAndUpdate(pos, state.setValue(EXTENSION, true));
         } else {
             level.setBlockAndUpdate(pos, state.setValue(EXTENSION, false));
@@ -116,14 +111,12 @@ public class CableConnectorBlock extends WallMountBlock implements IBE<CableConn
         builder.add(INPUT_MODE);
     }
 
-    @Override
+    @Override @NotNull @ParametersAreNonnullByDefault
     public VoxelShape getShape(BlockState pState, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
         if (pState.getValue(EXTENSION))
             return TFMGShapes.CABLE_CONNECTOR_MIDDLE.get(pState.getValue(FACING));
 
-
         return TFMGShapes.CABLE_CONNECTOR.get(pState.getValue(FACING));
-
     }
 
     @Override

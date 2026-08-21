@@ -30,7 +30,7 @@ import java.util.*;
 import static com.simibubi.create.content.kinetics.base.DirectionalKineticBlock.FACING;
 
 public class ElectricPumpBlockEntity extends PumpBlockEntity implements IElectric {
-    public ElectricBlockValues data = new ElectricBlockValues(BlockPos.of(getPos()));
+    public ElectricBlockValues data = new ElectricBlockValues(position());
 
     public ElectricPumpBlockEntity(BlockEntityType<?> typeIn, BlockPos pos, BlockState state) {
         super(typeIn, pos, state);
@@ -40,15 +40,12 @@ public class ElectricPumpBlockEntity extends PumpBlockEntity implements IElectri
     }
     @Override
     public void addBehaviours(List<BlockEntityBehaviour> behaviours) {
-
         behaviours.add(new ElectricPumpTransferBehavior(this));
         registerAwardables(behaviours, FluidPropagator.getSharedTriggers());
         registerAwardables(behaviours, AllAdvancements.PUMP);
     }
 
     protected void distributePressureTo(Direction side) {
-
-
         BlockFace start = new BlockFace(worldPosition, side);
         boolean pull = isPullingOnSide(isFront(side));
         Set<BlockFace> targets = new HashSet<>();

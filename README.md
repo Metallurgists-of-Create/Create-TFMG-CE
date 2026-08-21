@@ -29,6 +29,8 @@ but due to its modularity and polishedness, it is a perfect base for other tech 
 essentially using it as a library.
 We wanna be the first ones to try and prove this concept.
 
+For Documentation see [Metallurgists of Create docs](https://metallurgists-of-create.github.io/tfmg/)
+
 <br>
 
 ## Features

@@ -6,17 +6,20 @@ import com.simibubi.create.foundation.block.IBE;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.SignalGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.concurrent.atomic.AtomicInteger;
+import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 
 public class SurfaceScannerBlock extends Block implements IBE<SurfaceScannerBlockEntity> {
-    public SurfaceScannerBlock(Properties p_49795_) {
-        super(p_49795_);
+    public SurfaceScannerBlock(Properties p) {
+        super(p);
     }
 
     @Override
@@ -24,25 +27,36 @@ public class SurfaceScannerBlock extends Block implements IBE<SurfaceScannerBloc
         return SurfaceScannerBlockEntity.class;
     }
 
-    @Override
-    public VoxelShape getShape(BlockState p_60555_, BlockGetter p_60556_, BlockPos p_60557_, CollisionContext p_60558_) {
+    @Override @NotNull @ParametersAreNonnullByDefault
+    public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return TFMGShapes.SLAB;
     }
-
+	
+	//TODO: Make the redstone work
+	@Override @ParametersAreNonnullByDefault
     public boolean isSignalSource(BlockState state) {
         return true;
     }
 
-    public int getSignal(BlockState blockState, BlockGetter blockAccess, BlockPos pos, Direction side) {
-        if (side.getAxis().isVertical()) {
+    @Override @ParametersAreNonnullByDefault
+    protected int getSignal(BlockState state, BlockGetter level, BlockPos pos, Direction side) {
+        final SurfaceScannerBlockEntity be = this.getBlockEntity(level, pos);
+        if (be == null || side.getAxis().isVertical())
             return 0;
-        }
-        AtomicInteger signal = new AtomicInteger(0);
-        withBlockEntityDo(blockAccess, pos, (scanner) -> signal.set(scanner.getDirectionalSignal(side)));
-        return signal.get();
+        return be.getDirectionalSignal(side);
     }
-
-    @Override
+	
+	@Override @ParametersAreNonnullByDefault
+	public boolean shouldCheckWeakPower(final BlockState state, final SignalGetter level, final BlockPos pos, final Direction side) {
+		return false;
+	}
+	
+	@Override @ParametersAreNonnullByDefault
+	public boolean canConnectRedstone(final BlockState state, final BlockGetter level, final BlockPos pos, @Nullable final Direction direction) {
+		return !(direction == null || direction.getAxis().isVertical());
+	}
+	
+	@Override
     public BlockEntityType<? extends SurfaceScannerBlockEntity> getBlockEntityType() {
         return TFMGBlockEntities.SURFACE_SCANNER.get();
     }

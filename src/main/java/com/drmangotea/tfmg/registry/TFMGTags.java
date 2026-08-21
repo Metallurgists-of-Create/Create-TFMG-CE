@@ -3,7 +3,9 @@ package com.drmangotea.tfmg.registry;
 import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.TFMGRegistries;
 import com.drmangotea.tfmg.base.lang.TFMGLang;
+import com.drmangotea.tfmg.content.engines.fuels.EngineFuelType;
 import com.drmangotea.tfmg.content.engines.types.EngineType;
+import com.drmangotea.tfmg.content.items.weapons.flamethrover.FlamethrowerFuelType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.FluidTags;
@@ -177,6 +179,43 @@ public class TFMGTags {
         Engines(NameSpace namespace, String path) {
             ResourceLocation id = ResourceLocation.fromNamespaceAndPath(namespace.id, path == null ? TFMGLang.asId(name()) : path);
             this.tag = TagKey.create(TFMGRegistries.ENGINE_TYPE, id);
+        }
+    }
+
+    public enum EngineFuel {
+        LARGE_ENGINE
+        ;
+
+        public final TagKey<EngineFuelType> tag;
+
+        EngineFuel() {
+            this(NameSpace.MOD);
+        }
+        EngineFuel(NameSpace namespace) {
+            this(namespace, null);
+        }
+        EngineFuel(NameSpace namespace, String path) {
+            ResourceLocation id = ResourceLocation.fromNamespaceAndPath(namespace.id, path == null ? TFMGLang.asId(name()) : path);
+            this.tag = TagKey.create(TFMGRegistries.ENGINE_FUEL_TYPE, id);
+        }
+    }
+
+    public enum FlamethrowerFuel {
+        HELLFIRE,
+        COLD
+        ;
+
+        public final TagKey<FlamethrowerFuelType> tag;
+
+        FlamethrowerFuel() {
+            this(NameSpace.MOD);
+        }
+        FlamethrowerFuel(NameSpace namespace) {
+            this(namespace, null);
+        }
+        FlamethrowerFuel(NameSpace namespace, String path) {
+            ResourceLocation id = ResourceLocation.fromNamespaceAndPath(namespace.id, path == null ? TFMGLang.asId(name()) : path);
+            this.tag = TagKey.create(TFMGRegistries.FLAMETHROWER_FUEL_TYPE, id);
         }
     }
 }

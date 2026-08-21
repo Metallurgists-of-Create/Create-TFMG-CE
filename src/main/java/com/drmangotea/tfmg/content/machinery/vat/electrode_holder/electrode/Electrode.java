@@ -4,6 +4,7 @@ import com.drmangotea.tfmg.TFMGRegistries;
 import com.drmangotea.tfmg.content.machinery.vat.MultiUseAttachment;
 import com.drmangotea.tfmg.content.machinery.vat.base.VatBlockEntity;
 import com.drmangotea.tfmg.content.machinery.vat.electrode_holder.ElectrodeHolderBlockEntity;
+import com.drmangotea.tfmg.registry.TFMGDataComponents;
 import com.drmangotea.tfmg.registry.TFMGElectrodes;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
@@ -103,10 +104,18 @@ public class Electrode implements MultiUseAttachment<ElectrodeHolderBlockEntity>
             return this;
         }
 
-        // Chemica needs these
-        @Deprecated(since = "1.2.4")
+        /**
+         * This exists purely so Chemica can load as it references this when registering its electrode.
+         * @deprecated Apply the {@link TFMGDataComponents#ELECTRODE} to your electrode item on registry.
+         */
+        @Deprecated(since = "1.2.4", forRemoval = true)
         public Properties item(ItemEntry<?> item) {return this;}
-        @Deprecated(since = "1.2.4")
+
+        /**
+         * This exists purely so Chemica can load as it references this when registering its electrode.
+         * @deprecated Use {@link Properties#operationId(ResourceLocation)} instead.
+         */
+        @Deprecated(since = "1.2.4", forRemoval = true)
         public Properties operationId(String operation) {
             this.operation = ResourceLocation.parse(operation);
             return this;

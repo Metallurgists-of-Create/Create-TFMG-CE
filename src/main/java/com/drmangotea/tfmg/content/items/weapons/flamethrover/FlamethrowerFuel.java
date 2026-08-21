@@ -4,6 +4,7 @@ import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.TFMGRegistries;
 import com.drmangotea.tfmg.base.lang.TFMGLang;
 import com.drmangotea.tfmg.registry.TFMGFlamethrowerFuelTypes;
+import com.drmangotea.tfmg.registry.TFMGTags;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.netty.buffer.ByteBuf;
@@ -11,6 +12,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.Holder;
+import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
@@ -56,8 +58,9 @@ public record FlamethrowerFuel(@Nullable ResourceKey<FlamethrowerFuelType> fuelT
         LocalPlayer player = Minecraft.getInstance().player;
         if (player == null) return;
         var registries = player.registryAccess();
-        FlamethrowerFuelType fallback = registries.registryOrThrow(TFMGRegistries.FLAMETHROWER_FUEL_TYPE).get(TFMGFlamethrowerFuelTypes.FALLBACK);
-        FlamethrowerFuelType fuelType = getFuelType(registries).orElse(registries.registryOrThrow(TFMGRegistries.FLAMETHROWER_FUEL_TYPE).get(TFMGFlamethrowerFuelTypes.FALLBACK));
+        Registry<FlamethrowerFuelType> registry = player.registryAccess().registryOrThrow(TFMGRegistries.FLAMETHROWER_FUEL_TYPE);
+        FlamethrowerFuelType fallback = registry.get(TFMGFlamethrowerFuelTypes.FALLBACK);
+        FlamethrowerFuelType fuelType = getFuelType(registries).orElse(registry.get(TFMGFlamethrowerFuelTypes.FALLBACK));
 
         if (fuelType() == null || fuelType == null || fuelType == fallback || !this.hasFuel()) return;
 
@@ -78,8 +81,8 @@ public record FlamethrowerFuel(@Nullable ResourceKey<FlamethrowerFuelType> fuelT
         int spreadF = fuelType.spread();
         float speedF = fuelType.speed();
         int amountF = fuelType.amount();
-        boolean coldF = fuelType.isCold();
-        boolean hellfireF = fuelType.hellfire();
+        boolean coldF = registry.getHolder(fuelType().location()).filter((holder) -> holder.is(TFMGTags.FlamethrowerFuel.COLD.tag)).isPresent();
+        boolean hellfireF = registry.getHolder(fuelType().location()).filter((holder) -> holder.is(TFMGTags.FlamethrowerFuel.HELLFIRE.tag)).isPresent();
 
         MutableComponent spread = Component.literal("" + spreadF);
         MutableComponent speed = Component.literal(speedF == Mth.floor(speedF) ? "" + Mth.floor(speedF) : "" + speedF);

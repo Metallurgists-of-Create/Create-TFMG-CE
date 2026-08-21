@@ -50,7 +50,6 @@ public class TFMGResistivity extends ConfigBase {
 
     public static <B extends CableType, P> NonNullUnaryOperator<CableTypeBuilder<B, P>> setResistivity(double value) {
         return builder -> {
-            //assertFromCreate(builder);
             ResourceLocation id = TFMG.asResource(builder.getName());
             DEFAULT_RESISTIVITIES.put(id, value);
             return builder;

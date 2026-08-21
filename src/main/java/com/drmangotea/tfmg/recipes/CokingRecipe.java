@@ -32,7 +32,7 @@ public class CokingRecipe extends StandardProcessingRecipe<RecipeWrapper> {
 	}
 
 	public FluidStack getPrimaryResult(){
-		return getFluidResults().get(0);
+		return getFluidResults().getFirst();
 	}
 	public FluidStack getSecondaryResult(){
 		return getFluidResults().get(1);

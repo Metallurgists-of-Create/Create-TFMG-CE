@@ -2,24 +2,39 @@ package com.drmangotea.tfmg.content.machinery.vat.compressor;
 
 import com.drmangotea.tfmg.base.lang.TFMGTexts;
 import com.drmangotea.tfmg.config.TFMGConfigs;
+import com.drmangotea.tfmg.content.machinery.vat.base.IVatMachine;
+import com.drmangotea.tfmg.content.machinery.vat.base.VatBlock;
+import com.drmangotea.tfmg.content.machinery.vat.base.VatBlockEntity;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Locale;
 
-public class CompressorBlockEntity extends KineticBlockEntity {
+public class CompressorBlockEntity extends KineticBlockEntity implements IVatMachine {
 
+    public boolean updateVat = false;
     public CompressorBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
     }
 
-
+    @Override
+    public void tick() {
+        super.tick();
+        if (level == null)
+            return;
+        if (this.updateVat) {
+            VatBlock.updateVatState(getBlockState(), level, getBlockPos().relative(Direction.UP));
+            this.updateVat = false;
+        }
+    }
 
     public CompressorState getState() {
         if(Math.abs(getSpeed()) < TFMGConfigs.common().machines.compressorMinimumRPM.get()){
@@ -31,6 +46,22 @@ public class CompressorBlockEntity extends KineticBlockEntity {
         return CompressorState.DEPRESSURIZING;
     }
 
+    @Override
+    public String getOperationId() {
+        if (getSpeed() < 0)
+            return "tfmg:decompressor";
+        return "tfmg:compressor";
+    }
+
+    @Override
+    public boolean canOperate(VatBlockEntity vat) {
+        return getState() != CompressorState.NOT_OPERATIONAL;
+    }
+
+    @Override
+    public PositionRequirement getPositionRequirement() {
+        return PositionRequirement.BOTTOM;
+    }
 
     @Override
     public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
@@ -39,6 +70,13 @@ public class CompressorBlockEntity extends KineticBlockEntity {
             TFMGTexts.CommonMachines.minRPM(TFMGConfigs.common().machines.compressorMinimumRPM.get()).style(ChatFormatting.RED).forGoggles(tooltip);
         }
         return super.addToGoggleTooltip(tooltip, isPlayerSneaking);
+    }
+
+    public void onSpeedChanged(float previous) {
+        super.onSpeedChanged(previous);
+        if (getSpeed() != previous) {
+            this.updateVat = true;
+        }
     }
 
     public enum CompressorState implements StringRepresentable {
@@ -53,7 +91,7 @@ public class CompressorBlockEntity extends KineticBlockEntity {
         }
 
         @Override
-        public String getSerializedName() {
+        public @NotNull String getSerializedName() {
             return this.name().toLowerCase(Locale.ROOT);
         }
     }
