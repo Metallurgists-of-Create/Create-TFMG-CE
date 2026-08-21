@@ -77,6 +77,8 @@ public class FlarestackBlockEntity extends SmartBlockEntity implements IHaveGogg
     @Override
     public void tick() {
         super.tick();
+        if (level == null) return;
+        level.invalidateCapabilities(getBlockPos());
 
         if (tankInventory.isEmpty() || !tankInventory.isFluidValid(tankInventory.getFluid())) {
             level.setBlock(getBlockPos(), this.getBlockState().setValue(FlarestackBlock.LIT, false), 2);

@@ -147,10 +147,14 @@ public class DistillationControllerBlockEntity extends SmartBlockEntity implemen
     @Override
     public void tick() {
         super.tick();
+        if (level == null) return;
+        level.invalidateCapabilities(getBlockPos());
+        for (var output : getOutputs()) {
+            level.invalidateCapabilities(output.getBlockPos());
+        }
 
         manageDialRendering();
         manageRecipe();
-
     }
 
     protected void onFluidStackChanged(FluidStack newFluidStack) {
@@ -196,16 +200,9 @@ public class DistillationControllerBlockEntity extends SmartBlockEntity implemen
         return DistillationRecipesKey;
     }
 
-    //@Nonnull
-    //@Override
-    //public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, Direction side) {
-    //    if (cap == ForgeCapabilities.FLUID_HANDLER)
-    //        return fluidCapability.cast();
-    //    return super.getCapability(cap, side);
-    //}
-
     public ArrayList<DistillationOutputBlockEntity> getOutputs() {
         ArrayList<DistillationOutputBlockEntity> outputs = new ArrayList<>();
+        if (level == null) return outputs;
         BlockPos checkedPos = this.getBlockPos().above();
         for (int i = 0; i < 11; i++) {
             if (i == 0 || i == 2 || i == 4 || i == 6 || i == 8 || i == 10) {

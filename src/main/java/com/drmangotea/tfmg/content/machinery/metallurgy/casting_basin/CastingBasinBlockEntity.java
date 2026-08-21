@@ -68,6 +68,8 @@ public class CastingBasinBlockEntity extends SmartBlockEntity implements IHaveGo
     public void tick() {
         super.tick();
         if (level == null) return;
+        level.invalidateCapabilities(getBlockPos());
+
         if (tank.getSpace() == 0) {
             if (recipe == null)
                 findRecipe();

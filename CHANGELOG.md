@@ -41,6 +41,7 @@ Please note that not all bugs are fixed and some new additions are subject to ch
 - Engines are now mineable.
 - Spools properly prevent duplicate connections.
 - Cable Insulators deduplicate existing connections on-load.
+- Various fluid handlers now properly invalidate their capabilities.
 
 ### Changes:
 - Added some new configs:

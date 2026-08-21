@@ -69,8 +69,7 @@ public interface IElectric {
         if (getLevelAccessor().getBlockEntity(BlockPos.of(getData().electricalNetworkId)) instanceof IElectric) {
             return TFMG.NETWORK_MANAGER.getOrCreateNetworkFor((IElectric) getLevelAccessor().getBlockEntity(BlockPos.of(getData().electricalNetworkId)));
         } else {
-            ElectricNetworkManager.networks.get(getLevelAccessor())
-                    .remove(getData().electricalNetworkId);
+            ElectricNetworkManager.networks.computeIfAbsent(getLevelAccessor(), lvl -> new HashMap<>()).remove(getData().electricalNetworkId);
             return TFMG.NETWORK_MANAGER.getOrCreateNetworkFor(this);
         }
     }
@@ -115,7 +114,7 @@ public interface IElectric {
         for (Direction d : Direction.values()) {
             if (hasElectricitySlot(d))
                 if (getLevelAccessor().getBlockEntity(position().relative(d)) instanceof IElectric be && be.hasElectricitySlot(d.getOpposite())) {
-                    ElectricNetworkManager.networks.get(getLevelAccessor())
+                    ElectricNetworkManager.networks.computeIfAbsent(getLevelAccessor(), lvl -> new HashMap<>())
 						.remove(be.position().asLong());
                     be.setNetwork(be.position().asLong());
                     be.onPlaced();
@@ -126,7 +125,7 @@ public interface IElectric {
             getOrCreateElectricNetwork().getMembers().remove(this);
 //
         if (getData().electricalNetworkId == position().asLong())
-            ElectricNetworkManager.networks.get(getLevelAccessor())
+            ElectricNetworkManager.networks.computeIfAbsent(getLevelAccessor(), lvl -> new HashMap<>())
                     .remove(getData().getId());
     }
 
@@ -276,7 +275,7 @@ public interface IElectric {
         BlockPos pos = position();
         if (this instanceof CableConnectorBlockEntity be) {
             for (CableConnection connection : be.connections) {
-                if (getLevelAccessor().getBlockEntity(connection.pos1() == pos ? connection.pos2() : connection.pos1()) instanceof CableConnectorBlockEntity otherBe) {
+                if (getLevelAccessor().getBlockEntity(connection.pos1().equals(position()) ? connection.pos2() : connection.pos1()) instanceof CableConnectorBlockEntity otherBe) {
 
                     if (!otherBe.destroyed()) {
                         if (!getOrCreateElectricNetwork().members.contains(otherBe))
@@ -324,8 +323,7 @@ public interface IElectric {
 
         if (this instanceof CableConnectorBlockEntity connectorBE) {
             for (CableConnection connection : connectorBE.connections) {
-                if (getLevelAccessor().getBlockEntity(connection.pos1()) instanceof CableConnectorBlockEntity be2 && !alreadyChecked.contains(be2.getBlockPos().asLong())
-                ) {
+                if (getLevelAccessor().getBlockEntity(connection.pos1().equals(position()) ? connection.pos2() : connection.pos1()) instanceof CableConnectorBlockEntity be2 && !alreadyChecked.contains(be2.getBlockPos().asLong())) {
                     be2.updateUnpowered(alreadyChecked);
                 }
             }
@@ -618,7 +616,7 @@ public interface IElectric {
     default void setNetwork(long network) {
         getData().electricalNetworkId = network;
         if (network != position().asLong())
-            ElectricNetworkManager.networks.get(getLevelAccessor())
+            ElectricNetworkManager.networks.computeIfAbsent(getLevelAccessor(), lvl -> new HashMap<>())
                     .remove(position().asLong());
     }
 }

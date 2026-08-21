@@ -6,6 +6,7 @@ import com.drmangotea.tfmg.content.electricity.base.ElectricBlockEntity;
 import com.drmangotea.tfmg.content.machinery.misc.winding_machine.SpoolItem;
 import com.drmangotea.tfmg.registry.TFMGBlocks;
 import com.simibubi.create.api.equipment.goggles.IHaveHoveringInformation;
+import com.simibubi.create.foundation.blockEntity.SyncedBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import net.createmod.catnip.animation.AnimationTickHolder;
 import net.createmod.catnip.math.VecHelper;
@@ -19,6 +20,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
@@ -42,6 +44,7 @@ public class CableConnectorBlockEntity extends ElectricBlockEntity implements IH
     //
     public List<CableConnection> connections = new ArrayList<>();
     public boolean removeWiresNextTick = false;
+    private boolean updateConnections = false;
 
     public CableConnectorBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
@@ -98,7 +101,7 @@ public class CableConnectorBlockEntity extends ElectricBlockEntity implements IH
             if (itemToDrop.getItem().getCount() > 0) {
                 level.addFreshEntity(itemToDrop);
             }
-            if (level.getBlockEntity(connection.pos1()) instanceof CableConnectorBlockEntity be) {
+            if (level.getBlockEntity(connection.pos1().equals(getBlockPos()) ? connection.pos2() : connection.pos1()) instanceof CableConnectorBlockEntity be) {
                 if (be.getBlockPos() == getBlockPos())
                     continue;
                 be.onPlaced();
@@ -108,7 +111,8 @@ public class CableConnectorBlockEntity extends ElectricBlockEntity implements IH
     }
 
     public void removeConnection() {
-        connections.removeIf(c -> !(level.getBlockEntity(c.pos1()) instanceof CableConnectorBlockEntity));
+        if (level == null) return;
+        connections.removeIf(c -> !(level.getBlockEntity(c.pos1().equals(getBlockPos()) ? c.pos2() : c.pos1()) instanceof CableConnectorBlockEntity));
         sendStuff();
     }
 
@@ -138,7 +142,7 @@ public class CableConnectorBlockEntity extends ElectricBlockEntity implements IH
         }
 
         for (CableConnection connection : connections) {
-            BlockPos pos = connection.pos1();
+            BlockPos pos = connection.pos1().equals(getBlockPos()) ? connection.pos2() : connection.pos1();
             if (pos == getBlockPos()) { continue; }
             //  TFMGUtils.debugMessage(level, "Eﴤ "+connections.size());
 
@@ -154,10 +158,28 @@ public class CableConnectorBlockEntity extends ElectricBlockEntity implements IH
         return foundList;
     }
 
+    @Override
+    public void onNetworkChanged(int oldVoltage, float oldPower) {
+        super.onNetworkChanged(oldVoltage, oldPower);
+        this.updateConnections = true;
+    }
 
     @Override
     public void tick() {
         super.tick();
+        if (level == null) return;
+        if (updateConnections) {
+            for (CableConnection connection : connections) {
+                for (BlockPos pos : List.of(connection.pos1(), connection.pos2())) {
+                    BlockEntity be = level.getBlockEntity(pos);
+                    if (be instanceof SyncedBlockEntity synced) {
+                        synced.notifyUpdate();
+                    }
+                    level.blockEntityChanged(pos);
+                }
+            }
+            updateConnections = false;
+        }
         if (removeWiresNextTick) {
             removeConnection();
             removeWiresNextTick = false;
@@ -221,7 +243,6 @@ public class CableConnectorBlockEntity extends ElectricBlockEntity implements IH
     @Override
     protected void read(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {
         super.read(compound, registries, clientPacket);
-
         connections = new ArrayList<>();
         for (int i = 0; i < compound.getInt("ConnectionCount"); i++) {
 			CableConnection connection = CableConnection.loadConnection(compound.getCompound("Connection" + i));

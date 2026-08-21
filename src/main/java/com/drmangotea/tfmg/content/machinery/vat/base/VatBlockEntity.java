@@ -470,7 +470,6 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
 
         areMachinesValid = operationalMachinesMap.values().stream().allMatch((op) -> op == true);
 
-
         if (syncCooldown > 0) {
             syncCooldown--;
             if (syncCooldown == 0 && queuedSync)
@@ -987,25 +986,29 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
     }
 
     public void removeController(boolean keepFluids) {
-        if (level == null)
-            return;
-        if (level.isClientSide)
-            return;
-        updateConnectivity = true;
-        if (!keepFluids)
-            applyVatSize(1);
+        if (level == null) return;
+
         controller = null;
         width = 1;
         height = 1;
-        onInventoryChanged();
 
         BlockState state = getBlockState();
         if (VatBlock.isVat(state)) {
             state = state.setValue(VatBlock.BOTTOM, true);
             state = state.setValue(VatBlock.TOP, true);
             state = state.setValue(VatBlock.SHAPE, window ? VatBlock.Shape.WINDOW : VatBlock.Shape.PLAIN);
-            level.setBlock(worldPosition, state, 22);
+            level.setBlock(getBlockPos(), state, 22);
         }
+
+        if (level.isClientSide) {
+            return;
+        }
+
+        updateConnectivity = true;
+        if (!keepFluids) {
+            applyVatSize(1);
+        }
+        onInventoryChanged();
 
         evaluateNextTick = true;
 

@@ -1,12 +1,17 @@
 package com.drmangotea.tfmg.content.electricity.connection.cables;
 
+import com.drmangotea.tfmg.TFMGRegistries;
 import com.drmangotea.tfmg.base.TFMGUtils;
 import com.drmangotea.tfmg.content.electricity.connection.cable_type.CableType;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 public record CableConnection(BlockPos pos1, BlockPos pos2, CableType type, boolean visible) {
 	public CompoundTag saveConnection() {
@@ -29,6 +34,15 @@ public record CableConnection(BlockPos pos1, BlockPos pos2, CableType type, bool
 		CableType type = TFMGUtils.getCableType(ResourceLocation.parse(compoundTag.getString("CableType")));
 		return new CableConnection(pos1, pos2, type, visible);
 	}
+
+	public static Codec<CableConnection> CODEC = RecordCodecBuilder.create((instance) -> instance.group(
+			BlockPos.CODEC.fieldOf("pos1").forGetter(CableConnection::pos1),
+			BlockPos.CODEC.fieldOf("pos2").forGetter(CableConnection::pos2),
+			TFMGRegistries.CABLE_TYPE_REGISTRY.byNameCodec().fieldOf("cableType").forGetter(CableConnection::type),
+			Codec.BOOL.optionalFieldOf("visible", true).forGetter(CableConnection::visible)
+	).apply(instance, CableConnection::new));
+
+	public static Codec<List<CableConnection>> LIST_CODEC = Codec.list(CODEC);
 	
 	public float getLength() {
 		return TFMGUtils.getDistance(pos1, pos2, false);

@@ -75,6 +75,9 @@ public class ExhaustBlockEntity extends SmartBlockEntity implements IHaveGoggleI
     @Override
     public void tick() {
         super.tick();
+        if (level == null) return;
+        level.invalidateCapabilities(getBlockPos());
+
         Direction direction = this.getBlockState().getValue(ExhaustBlock.FACING);
 
         if(smokeTimer != 0) {
