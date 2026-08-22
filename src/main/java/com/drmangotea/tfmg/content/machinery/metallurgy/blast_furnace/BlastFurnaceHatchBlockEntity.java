@@ -102,7 +102,6 @@ public class BlastFurnaceHatchBlockEntity extends SmartBlockEntity implements IH
     @Override
     protected void read(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {
         super.read(compound,registries , clientPacket);
-
         tank.readFromNBT(registries,compound.getCompound("TankContent"));
     }
 
@@ -110,8 +109,6 @@ public class BlastFurnaceHatchBlockEntity extends SmartBlockEntity implements IH
     public void write(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {
         super.write(compound,registries , clientPacket);
         compound.put("TankContent", tank.writeToNBT(registries,new CompoundTag()));
-
-
     }
 
     private void onFluidChanged(FluidStack stack) {

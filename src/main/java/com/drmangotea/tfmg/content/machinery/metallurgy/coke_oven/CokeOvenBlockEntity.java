@@ -130,7 +130,7 @@ public class CokeOvenBlockEntity extends SmartBlockEntity implements IHaveGoggle
         }
     }
 
-    public void tickRecipe(){
+    public void tickRecipe() {
         if(level == null)
             return;
         if(inventory.isEmpty() || totalTime == 0)

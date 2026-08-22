@@ -50,7 +50,7 @@ public class IndustrialBlastingCategory extends CreateRecipeCategory<IndustrialB
             addFluidSlot(builder, 160, 117, recipe.getFluidResults().get(1));
 
         if (recipe.hotAirUsage > 0) {
-            addFluidSlot(builder, 90, 13, SizedFluidIngredient.of(new FluidStack(FluidHelper.convertToStill(TFMGFluids.HOT_AIR.get()), recipe.hotAirUsage * recipe.getProcessingDuration()))).addRichTooltipCallback((slotView, tooltip) -> tooltip.add(TFMGLang.translate("recipe.over_time", StringUtil.formatTickDuration(recipe.getProcessingDuration(), 1)).component()));
+            addFluidSlot(builder, 90, 13, SizedFluidIngredient.of(new FluidStack(FluidHelper.convertToStill(TFMGFluids.HOT_AIR.get()), recipe.hotAirUsage * recipe.getProcessingDuration() * 20))).addRichTooltipCallback((slotView, tooltip) -> tooltip.add(TFMGLang.translate("recipe.over_time", StringUtil.formatTickDuration(recipe.getProcessingDuration(), 1)).component()));
         }
     }
 
