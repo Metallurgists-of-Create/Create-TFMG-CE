@@ -1,4 +1,4 @@
-# Create: TFMG Community Edition 1.2.4
+# Create: TFMG Community Edition 1.2.5
 ## Rant:
 Yippee new version! <br>
 This one has quite a few changes to how some parts of the mod work, but it is all safely converted so don't worry!!
@@ -10,6 +10,12 @@ And now for the notice at the start of every changelog!<br>
 Please note that not all bugs are fixed and some new additions are subject to change and should be considered experimental.
 
 ## Changelog:
+## 1.2.5
+### Bug Fixes:
+- Fix `TFMGMixerModes` from attempting to load models on the server (client side only)
+
+
+## 1.2.4
 ### Bug Fixes:
 - Our version checker no-longer prints html.
 - Re-implemented the Vat Evaluation packet so vats should now evaluate properly on clients.
