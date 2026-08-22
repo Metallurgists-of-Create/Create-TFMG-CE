@@ -35,6 +35,8 @@ public class TFMGPonderScenes {
                 .addStoryBoard("electric_subnetworks", ElectricityScenes::electricSubnetworks, TFMGPonderTags.ELECTRIC_MACHINERY);
         HELPER.forComponents(TFMGBlocks.LARGE_COIL)
                 .addStoryBoard("large_transformer", ElectricityScenes::largeTransformer, TFMGPonderTags.ELECTRIC_MACHINERY);
+        HELPER.forComponents(TFMGBlocks.WINDING_MACHINE)
+                .addStoryBoard("winding_machine", ElectricityScenes::windingMachine, TFMGPonderTags.ELECTRIC_MACHINERY);
 
         // Engines
         //HELPER.forComponents(TFMGBlocks.REGULAR_ENGINE, TFMGBlocks.TURBINE_ENGINE, TFMGBlocks.RADIAL_ENGINE)

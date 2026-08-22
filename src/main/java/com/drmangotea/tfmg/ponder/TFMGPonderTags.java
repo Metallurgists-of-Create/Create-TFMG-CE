@@ -125,6 +125,8 @@ public class TFMGPonderTags {
                 .add(TFMGBlocks.TRAFFIC_LIGHT)
                 .add(TFMGItems.COPPER_SPOOL)
                 .add(TFMGItems.ALUMINUM_SPOOL)
+                .add(TFMGItems.CONSTANTAN_SPOOL)
+                .add(TFMGBlocks.WINDING_MACHINE)
         ;
         HELPER.addToTag(CHEMICAL_VAT)
                 .add(TFMGBlocks.STEEL_CHEMICAL_VAT)

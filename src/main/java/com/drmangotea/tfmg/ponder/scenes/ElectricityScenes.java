@@ -2,9 +2,13 @@ package com.drmangotea.tfmg.ponder.scenes;
 
 import com.drmangotea.tfmg.content.electricity.network.transformer.large.LargeTransformerBlock;
 import com.drmangotea.tfmg.content.electricity.network.transformer.large.LargeTransformerBlockEntity;
+import com.drmangotea.tfmg.content.machinery.misc.winding_machine.WindingMachineBlockEntity;
 import com.drmangotea.tfmg.registry.TFMGBlocks;
 import com.drmangotea.tfmg.registry.TFMGItems;
+import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllItems;
+import com.simibubi.create.content.kinetics.crank.HandCrankBlockEntity;
+import com.simibubi.create.content.kinetics.simpleRelays.ShaftBlock;
 import com.simibubi.create.foundation.ponder.CreateSceneBuilder;
 import net.createmod.catnip.math.Pointing;
 import net.createmod.ponder.api.PonderPalette;
@@ -337,5 +341,78 @@ public class ElectricityScenes {
         scene.world().showIndependentSection(cables, Direction.DOWN);
         scene.idle(50);
 
+    }
+
+    public static void windingMachine(SceneBuilder builder, SceneBuildingUtil util) {
+        CreateSceneBuilder scene = new CreateSceneBuilder(builder);
+        scene.title("winding_machine", "Winding Machine");
+        scene.showBasePlate();
+        scene.configureBasePlate(0, 0, 5);
+
+        Selection windingMachine = util.select().position(2, 2, 2);
+
+        Selection largeCog = util.select().position(1, 0, 5);
+        Selection smallerKinetics = util.select().fromTo(2, 1, 3, 2, 1, 5);
+
+        Selection inputBelt = util.select().fromTo(3, 1, 2, 4, 1, 2);
+        Selection inputFunnel = util.select().position(3, 2, 2);
+        Selection input = inputBelt.add(inputFunnel);
+
+        var windingMachineElement = scene.world().showIndependentSection(windingMachine, Direction.UP);
+        scene.world().moveSection(windingMachineElement, new Vec3(0d, -1d, 0d), 0);
+        scene.overlay().showText(40)
+                .attachKeyFrame()
+                .text("Winding Machines are used to turn a spool around an item");
+        scene.idle(50);
+        scene.overlay().showText(40)
+                .attachKeyFrame()
+                .placeNearTarget()
+                .pointAt(windingMachine.getCenter().subtract(0.5, 0.5, 0))
+                .text("Spools can be inserted by right clicking.");
+        scene.idle(20);
+        scene.overlay().showControls(windingMachine.getCenter().subtract(0.5, 0.5, 0), Pointing.DOWN, 5).rightClick()
+                .withItem(new ItemStack(TFMGItems.COPPER_SPOOL.get()));
+        scene.world().modifyBlockEntity(new BlockPos(2, 2, 2), WindingMachineBlockEntity.class, (wm) -> wm.spoolInventory.setStackInSlot(0, new ItemStack(TFMGItems.COPPER_SPOOL.get())));
+        scene.idle(10);
+        scene.overlay().showControls(windingMachine.getCenter().subtract(0.5, 0.5, 0), Pointing.DOWN, 5).rightClick()
+                .withItem(new ItemStack(TFMGItems.ALUMINUM_SPOOL.get()));
+        scene.world().modifyBlockEntity(new BlockPos(2, 2, 2), WindingMachineBlockEntity.class, (wm) -> wm.spoolInventory.setStackInSlot(0, new ItemStack(TFMGItems.ALUMINUM_SPOOL.get())));
+        scene.idle(10);
+        scene.overlay().showControls(windingMachine.getCenter().subtract(0.5, 0.5, 0), Pointing.DOWN, 5).rightClick()
+                .withItem(new ItemStack(TFMGItems.CONSTANTAN_SPOOL.get()));
+        scene.world().modifyBlockEntity(new BlockPos(2, 2, 2), WindingMachineBlockEntity.class, (wm) -> wm.spoolInventory.setStackInSlot(0, new ItemStack(TFMGItems.CONSTANTAN_SPOOL.get())));
+        scene.idle(5);
+        scene.addKeyframe();
+        scene.idle(15);
+        scene.rotateCameraY(180);
+        scene.idle(20);
+        scene.overlay().showText(40)
+                .placeNearTarget()
+                .pointAt(windingMachine.getCenter().subtract(-0.5, 0.6, 0))
+                .text("Right clicking with an input places it in the correct position");
+        scene.idle(20);
+        scene.overlay().showControls(windingMachine.getCenter().subtract(-0.5, 0.6, 0), Pointing.DOWN, 5).rightClick()
+                .withItem(new ItemStack(TFMGItems.UNFINISHED_RESISTOR.get()));
+        scene.world().modifyBlockEntity(new BlockPos(2, 2, 2), WindingMachineBlockEntity.class, (wm) -> wm.inventory.setStackInSlot(0, new ItemStack(TFMGItems.UNFINISHED_RESISTOR.get())));
+        scene.idle(25);
+        scene.rotateCameraY(-180);
+        scene.idle(20);
+        var kineticPowerElement = scene.world().showIndependentSection(largeCog.add(smallerKinetics), Direction.DOWN);
+        scene.world().setBlock(new BlockPos(2, 1, 3), AllBlocks.SHAFT.getDefaultState().setValue(ShaftBlock.AXIS, Direction.Axis.Z), false);
+        scene.overlay().showText(40)
+                .attachKeyFrame()
+                .placeNearTarget()
+                .text("When rotation is provided it will begin winding...");
+        scene.world().setKineticSpeed(largeCog, -16);
+        scene.world().setKineticSpeed(smallerKinetics, 32);
+        //TODO: Spool doesn't rotate
+        scene.world().setKineticSpeed(windingMachine, 32);
+        scene.idle(60);
+        scene.overlay().showText(30)
+                .placeNearTarget()
+                .text("...and will stop on completion!");
+        scene.idle(40);
+        scene.world().modifyBlockEntity(new BlockPos(2, 2, 2), WindingMachineBlockEntity.class, (wm) -> wm.inventory.setStackInSlot(0, ItemStack.EMPTY));
+        scene.world().modifyBlockEntity(new BlockPos(2, 2, 2), WindingMachineBlockEntity.class, (wm) -> wm.outputInventory.setStackInSlot(0, TFMGBlocks.RESISTOR.asStack()));
     }
 }

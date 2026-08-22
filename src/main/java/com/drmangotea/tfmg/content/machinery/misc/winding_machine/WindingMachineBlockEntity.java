@@ -198,8 +198,7 @@ public class WindingMachineBlockEntity extends KineticBlockEntity implements IHa
             update = false;
         }
 
-        if (level.isClientSide)
-            manageRotation();
+        manageRotation();
     }
 
     public void performRecipe() {
@@ -280,7 +279,6 @@ public class WindingMachineBlockEntity extends KineticBlockEntity implements IHa
         float targetSpeed = (float) Math.min(Math.abs(getSpeed() * 1.5), 30);
         spoolSpeed.updateChaseTarget(targetSpeed);
         spoolSpeed.tickChaser();
-
     }
 
     @Override
