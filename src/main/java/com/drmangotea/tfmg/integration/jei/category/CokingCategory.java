@@ -1,19 +1,16 @@
 package com.drmangotea.tfmg.integration.jei.category;
 
 import com.drmangotea.tfmg.base.lang.TFMGLang;
-import com.drmangotea.tfmg.recipes.CokingRecipe;
 import com.drmangotea.tfmg.integration.jei.render.CokeOven;
+import com.drmangotea.tfmg.recipes.CokingRecipe;
 import com.simibubi.create.compat.jei.category.CreateRecipeCategory;
 import com.simibubi.create.foundation.gui.AllGuiTextures;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
-import mezz.jei.api.gui.builder.ITooltipBuilder;
-import mezz.jei.api.gui.ingredient.IRecipeSlotView;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.util.StringUtil;
-import net.minecraft.world.item.alchemy.PotionContents;
 import net.neoforged.neoforge.fluids.FluidStack;
 
 import javax.annotation.ParametersAreNonnullByDefault;

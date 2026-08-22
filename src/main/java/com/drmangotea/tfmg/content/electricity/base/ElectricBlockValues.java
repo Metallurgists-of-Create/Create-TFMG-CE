@@ -2,10 +2,8 @@ package com.drmangotea.tfmg.content.electricity.base;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.world.level.LevelAccessor;
 import net.neoforged.neoforge.energy.IEnergyStorage;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

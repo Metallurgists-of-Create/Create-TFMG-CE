@@ -1,7 +1,6 @@
 package com.drmangotea.tfmg.content.engines.types.large_engine;
 
 import com.drmangotea.tfmg.base.TFMGUtils;
-import com.drmangotea.tfmg.base.lang.TFMGLang;
 import com.drmangotea.tfmg.base.lang.TFMGTexts;
 import com.drmangotea.tfmg.config.TFMGConfigs;
 import com.drmangotea.tfmg.content.engines.base.AbstractEngineBlockEntity;
@@ -18,7 +17,6 @@ import com.simibubi.create.content.kinetics.steamEngine.SteamEngineBlock;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.fluid.CombinedTankWrapper;
 import net.createmod.catnip.math.AngleHelper;
-import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;

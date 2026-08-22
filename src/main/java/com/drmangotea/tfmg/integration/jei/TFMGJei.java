@@ -8,11 +8,13 @@ import com.drmangotea.tfmg.registry.TFMGItems;
 import com.drmangotea.tfmg.registry.TFMGRecipeTypes;
 import com.simibubi.create.compat.jei.category.CreateRecipeCategory;
 import com.simibubi.create.foundation.item.ItemHelper;
-
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.recipe.category.IRecipeCategory;
-import mezz.jei.api.registration.*;
+import mezz.jei.api.registration.IIngredientAliasRegistration;
+import mezz.jei.api.registration.IRecipeCatalystRegistration;
+import mezz.jei.api.registration.IRecipeCategoryRegistration;
+import mezz.jei.api.registration.IRecipeRegistration;
 import mezz.jei.api.runtime.IIngredientManager;
 import mezz.jei.api.runtime.IJeiRuntime;
 import net.minecraft.client.Minecraft;
@@ -26,7 +28,8 @@ import net.minecraft.world.item.crafting.RecipeType;
 
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 

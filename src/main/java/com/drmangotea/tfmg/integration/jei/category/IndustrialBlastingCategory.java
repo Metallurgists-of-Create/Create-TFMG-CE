@@ -2,9 +2,8 @@ package com.drmangotea.tfmg.integration.jei.category;
 
 
 import com.drmangotea.tfmg.base.lang.TFMGLang;
-import com.drmangotea.tfmg.base.lang.TFMGTexts;
-import com.drmangotea.tfmg.recipes.IndustrialBlastingRecipe;
 import com.drmangotea.tfmg.integration.jei.render.BlastFurnace;
+import com.drmangotea.tfmg.recipes.IndustrialBlastingRecipe;
 import com.drmangotea.tfmg.registry.TFMGFluids;
 import com.drmangotea.tfmg.registry.TFMGItems;
 import com.simibubi.create.compat.jei.category.CreateRecipeCategory;

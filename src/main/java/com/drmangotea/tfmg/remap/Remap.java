@@ -5,7 +5,6 @@ import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.neoforge.registries.RegisterEvent;
 
 import java.util.ArrayList;
 import java.util.Arrays;

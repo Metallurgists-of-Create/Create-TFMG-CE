@@ -1,15 +1,10 @@
 package com.drmangotea.tfmg.content.machinery.vat.electrode_holder;
 
-import com.drmangotea.tfmg.TFMG;
-import com.drmangotea.tfmg.base.TFMGUtils;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Axis;
 import com.simibubi.create.foundation.blockEntity.renderer.SafeBlockEntityRenderer;
-import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.entity.ItemRenderer;
-import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class ElectrodeHolderRenderer extends SafeBlockEntityRenderer<ElectrodeHolderBlockEntity> {

@@ -1,17 +1,13 @@
 package com.drmangotea.tfmg.content.electricity.utilities.polarizer;
 
-import com.drmangotea.tfmg.base.TFMGUtils;
 import com.drmangotea.tfmg.base.lang.TFMGTexts;
 import com.drmangotea.tfmg.config.TFMGConfigs;
 import com.drmangotea.tfmg.content.electricity.base.ElectricBlockEntity;
 import com.drmangotea.tfmg.recipes.PolarizingRecipe;
 import com.drmangotea.tfmg.registry.TFMGBlockEntities;
-import com.drmangotea.tfmg.registry.TFMGRecipeTypes;
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
-import com.simibubi.create.content.processing.sequenced.SequencedAssemblyRecipe;
 import com.simibubi.create.foundation.item.ItemHelper;
 import com.simibubi.create.foundation.item.SmartInventory;
-
 import net.createmod.catnip.animation.LerpedFloat;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -26,7 +22,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.items.IItemHandlerModifiable;
-import net.neoforged.neoforge.items.wrapper.RecipeWrapper;
 
 import java.util.List;
 import java.util.Optional;

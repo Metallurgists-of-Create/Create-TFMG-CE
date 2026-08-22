@@ -7,8 +7,6 @@ import com.drmangotea.tfmg.config.TFMGConfigs;
 import com.drmangotea.tfmg.content.engines.base.AbstractEngineBlockEntity;
 import com.drmangotea.tfmg.content.engines.base.EngineComponentsInventory;
 import com.drmangotea.tfmg.content.engines.base.EngineProperties;
-import com.drmangotea.tfmg.content.engines.types.regular_engine.RegularEngineBlock;
-import com.drmangotea.tfmg.content.engines.types.regular_engine.RegularEngineBlockEntity;
 import com.drmangotea.tfmg.content.engines.upgrades.EnginePipingUpgrade;
 import com.drmangotea.tfmg.content.engines.upgrades.EngineUpgrade;
 import com.drmangotea.tfmg.registry.TFMGBlocks;

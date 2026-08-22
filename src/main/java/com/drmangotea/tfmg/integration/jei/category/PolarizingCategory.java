@@ -1,19 +1,17 @@
 package com.drmangotea.tfmg.integration.jei.category;
 
 import com.drmangotea.tfmg.integration.jei.TFMGJeiConstants;
-import com.drmangotea.tfmg.recipes.PolarizingRecipe;
 import com.drmangotea.tfmg.integration.jei.render.Polarizer;
+import com.drmangotea.tfmg.recipes.PolarizingRecipe;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.compat.jei.category.CreateRecipeCategory;
 import com.simibubi.create.compat.jei.category.sequencedAssembly.SequencedAssemblySubCategory;
 import com.simibubi.create.content.processing.sequenced.SequencedRecipe;
 import com.simibubi.create.foundation.gui.AllGuiTextures;
-
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 
 public class PolarizingCategory extends CreateRecipeCategory<PolarizingRecipe> {

@@ -9,7 +9,6 @@ import com.drmangotea.tfmg.registry.TFMGTags;
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
-
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -19,11 +18,10 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.phys.AABB;
-
-import java.util.List;
-
 import net.minecraft.world.phys.Vec3;
 import org.joml.Quaterniond;
+
+import java.util.List;
 
 public class SurfaceScannerBlockEntity extends SmartBlockEntity implements IHaveGoggleInformation {
     private long lastScanTick = Long.MIN_VALUE;

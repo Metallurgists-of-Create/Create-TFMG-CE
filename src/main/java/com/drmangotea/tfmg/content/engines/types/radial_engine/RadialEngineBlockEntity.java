@@ -4,7 +4,6 @@ import com.drmangotea.tfmg.content.engines.types.AbstractSmallEngineBlockEntity;
 import com.drmangotea.tfmg.content.engines.types.EngineType;
 import com.drmangotea.tfmg.content.engines.types.regular_engine.RegularEngineBlockEntity;
 import com.drmangotea.tfmg.registry.TFMGEngineTypes;
-import com.simibubi.create.foundation.item.ItemHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.entity.BlockEntityType;

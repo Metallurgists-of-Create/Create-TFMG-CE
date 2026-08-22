@@ -8,7 +8,6 @@ import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.recipe.IFocusGroup;
 import net.minecraft.client.gui.GuiGraphics;
-import net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 

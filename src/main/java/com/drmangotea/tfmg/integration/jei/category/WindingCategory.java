@@ -2,8 +2,8 @@ package com.drmangotea.tfmg.integration.jei.category;
 
 import com.drmangotea.tfmg.content.machinery.misc.winding_machine.SpoolItem;
 import com.drmangotea.tfmg.integration.jei.TFMGJeiConstants;
-import com.drmangotea.tfmg.recipes.WindingRecipe;
 import com.drmangotea.tfmg.integration.jei.render.WindingMachine;
+import com.drmangotea.tfmg.recipes.WindingRecipe;
 import com.drmangotea.tfmg.registry.TFMGDataComponents;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.compat.jei.category.CreateRecipeCategory;
@@ -17,7 +17,6 @@ import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.world.item.ItemStack;
 
 public class WindingCategory extends CreateRecipeCategory<WindingRecipe> {

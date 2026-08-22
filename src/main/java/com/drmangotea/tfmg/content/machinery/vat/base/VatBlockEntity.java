@@ -60,7 +60,6 @@ import net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient;
 import net.neoforged.neoforge.items.IItemHandlerModifiable;
 import net.neoforged.neoforge.items.wrapper.CombinedInvWrapper;
 import org.jetbrains.annotations.NotNull;
-import oshi.util.tuples.Triplet;
 
 import javax.annotation.Nullable;
 import java.util.*;

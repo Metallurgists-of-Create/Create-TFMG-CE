@@ -1,9 +1,9 @@
 package com.drmangotea.tfmg.ponder;
 
 import com.drmangotea.tfmg.content.decoration.pipes.TFMGPipes;
+import com.drmangotea.tfmg.ponder.scenes.ChemistryScenes;
 import com.drmangotea.tfmg.ponder.scenes.ElectricityScenes;
 import com.drmangotea.tfmg.ponder.scenes.MetallurgyScenes;
-import com.drmangotea.tfmg.ponder.scenes.ChemistryScenes;
 import com.drmangotea.tfmg.ponder.scenes.OilScenes;
 import com.drmangotea.tfmg.registry.TFMGBlocks;
 import com.simibubi.create.Create;
