@@ -56,8 +56,15 @@ public class CableConnectorBlockEntity extends ElectricBlockEntity implements IH
 
     @Override
     public void remove() {
-        super.remove();
         notifyRemoval();
+        super.remove();
+    }
+
+    @Override
+    public void destroy() {
+        notifyRemoval();
+        this.connections.clear();
+        super.destroy();
     }
 
     @Override
@@ -113,6 +120,8 @@ public class CableConnectorBlockEntity extends ElectricBlockEntity implements IH
     public void removeConnection() {
         if (level == null) return;
         connections.removeIf(c -> !(level.getBlockEntity(c.pos1().equals(getBlockPos()) ? c.pos2() : c.pos1()) instanceof CableConnectorBlockEntity));
+        updateNextTick();
+        updateConnections();
         sendStuff();
     }
 
@@ -165,7 +174,7 @@ public class CableConnectorBlockEntity extends ElectricBlockEntity implements IH
     @Override
     public void onNetworkChanged(int oldVoltage, float oldPower) {
         super.onNetworkChanged(oldVoltage, oldPower);
-        if (oldVoltage != this.getData().getVoltage() && oldPower != this.getPowerUsage())
+        if (oldVoltage != this.getData().getVoltage() || oldPower != this.getPowerUsage())
             updateConnections();
     }
 
@@ -191,6 +200,7 @@ public class CableConnectorBlockEntity extends ElectricBlockEntity implements IH
         }
         if (removeWiresNextTick) {
             removeConnection();
+            updateNextTick();
             removeWiresNextTick = false;
         }
     }

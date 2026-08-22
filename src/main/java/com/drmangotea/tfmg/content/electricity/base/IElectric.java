@@ -146,6 +146,9 @@ public interface IElectric {
         if (getData().tickUntilConnectFE == -1)
             sendEnergy();
 
+        if (powerStateChanged()) {
+            updateNextTick();
+        }
 
         if (oldEnergyGiven != getData().energyGiven) {
             updateNextTick();
@@ -179,6 +182,35 @@ public interface IElectric {
             setVoltage(getData().voltageSupply);
             getData().setVoltageNextTick = false;
         }
+    }
+
+    default boolean powerStateChanged() {
+        float currentPowerUsage = getPowerUsage();
+        float currentPowerGeneration = powerGeneration();
+        int currentVoltageGeneration = voltageGeneration();
+        int currentVoltage = getData().getVoltage();
+
+        if (Float.isNaN(getData().lastPowerUsage)) {
+            getData().lastPowerUsage = currentPowerUsage;
+            getData().lastPowerGeneration = Math.round(currentPowerGeneration);
+            getData().lastVoltageGeneration = currentVoltageGeneration;
+            getData().lastVoltage = currentVoltage;
+            return false;
+        }
+
+        boolean changed = Math.abs(getData().lastPowerUsage - currentPowerUsage) > 0.001F ||
+                getData().lastPowerGeneration != Math.round(currentPowerGeneration) ||
+                getData().lastVoltageGeneration != currentVoltageGeneration ||
+                getData().lastVoltage != currentVoltage;
+
+        if (changed) {
+            getData().lastPowerUsage = currentPowerUsage;
+            getData().lastPowerGeneration = Math.round(currentPowerGeneration);
+            getData().lastVoltageGeneration = currentVoltageGeneration;
+            getData().lastVoltage = currentVoltage;
+        }
+
+        return changed;
     }
 
     default void sendEnergy() {

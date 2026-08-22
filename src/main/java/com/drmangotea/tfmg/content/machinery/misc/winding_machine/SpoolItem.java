@@ -168,6 +168,7 @@ public class SpoolItem extends Item {
                     stack.set(TFMGDataComponents.SPOOL_AMOUNT, turnsLeft - amount);
                     be.player = null;
                     otherBE.player = null;
+                    be.onConnected();
                     otherBE.onConnected();
                     be.updateConnections();
                     otherBE.updateConnections();

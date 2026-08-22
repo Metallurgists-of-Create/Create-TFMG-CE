@@ -2,6 +2,7 @@ package com.drmangotea.tfmg.content.electricity.base;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.level.LevelAccessor;
 import net.neoforged.neoforge.energy.IEnergyStorage;
 
 import java.util.ArrayList;
@@ -32,6 +33,14 @@ public class ElectricBlockValues {
     public int voltageSupply = 0;
 
     public int networkPowerGeneration = 0;
+
+    public float lastPowerUsage = Float.NaN;
+
+    public int lastPowerGeneration = Integer.MIN_VALUE;
+
+    public int lastVoltageGeneration = Integer.MIN_VALUE;
+
+    public int lastVoltage = Integer.MIN_VALUE;
 
     public float highestCurrent = 0;
 

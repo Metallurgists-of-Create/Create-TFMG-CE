@@ -50,7 +50,10 @@ public class CreativeGeneratorBlockEntity extends ElectricBlockEntity {
         return 0;
     }
 
-    public static void update(CreativeGeneratorBlockEntity be){
+    public static void update(CreativeGeneratorBlockEntity be) {
+        if (be.level != null) {
+            be.level.blockEntityChanged(be.getBlockPos());
+        }
         be.updateNextTick();
     }
 
