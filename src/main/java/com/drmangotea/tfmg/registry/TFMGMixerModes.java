@@ -1,7 +1,7 @@
 package com.drmangotea.tfmg.registry;
 
 import com.drmangotea.tfmg.TFMG;
-import com.drmangotea.tfmg.content.machinery.vat.industrial_mixer.IndustrialMixerRenderer;
+import com.drmangotea.tfmg.content.machinery.vat.industrial_mixer.IndustrialMixerModels;
 import com.drmangotea.tfmg.content.machinery.vat.industrial_mixer.mode.MixerMode;
 import com.drmangotea.tfmg.content.machinery.vat.industrial_mixer.mode.MixerModeEntry;
 
@@ -14,11 +14,11 @@ public class TFMGMixerModes {
             .register();
 
     public static final MixerModeEntry<MixerMode> mixing = REGISTRATE.mixerMode("mixing", MixerMode::new)
-            .properties((p) -> p.operation(TFMG.asResource("mixing")).partial(IndustrialMixerRenderer::getMixerModel))
+            .properties((p) -> p.operation(TFMG.asResource("mixing")).partial(IndustrialMixerModels::getMixerModel))
             .register();
 
     public static final MixerModeEntry<MixerMode> centrifuge = REGISTRATE.mixerMode("centrifuge", MixerMode::new)
-            .properties((p) -> p.operation(TFMG.asResource("centrifuge")).partial(IndustrialMixerRenderer::getCentrifugeModel))
+            .properties((p) -> p.operation(TFMG.asResource("centrifuge")).partial(IndustrialMixerModels::getCentrifugeModel))
             .register();
 
     public static void init() { }
