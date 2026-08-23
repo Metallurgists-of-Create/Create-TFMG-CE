@@ -73,6 +73,8 @@ public class SteelTankBlockEntity extends TFMGFluidTankBlockEntity implements IH
     @Override
     public void initialize() {
         super.initialize();
+        if (isDistillationTower)
+            updateTemperature();
         sendData();
         if (level == null)
             return;
