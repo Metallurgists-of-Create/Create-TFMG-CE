@@ -94,7 +94,7 @@ public class DistillationControllerBlockEntity extends SmartBlockEntity implemen
         }
     }
 
-    public void manageRecipe(){
+    public void manageRecipe() {
         ArrayList<DistillationOutputBlockEntity> outputs = getOutputs();
         BlockEntity beBehind = level.getBlockEntity(getBlockPos().relative(getFacing(getBlockState()).getOpposite()));
         if (!(beBehind instanceof SteelTankBlockEntity be))
@@ -110,9 +110,16 @@ public class DistillationControllerBlockEntity extends SmartBlockEntity implemen
         if (recipe == null)
             return;
 
-        ///
         float speedModifier = (float) controllerBe.activeHeat / 2;
-        if (recipe.getInputFluid().amount() * speedModifier > tank.getFluidAmount())
+
+        int recipeDelay = 80;
+        if (level.getGameTime() % (recipeDelay / speedModifier) != 0)
+            return;
+
+        ///
+        int toDrain = recipe.getInputFluid().amount();
+        int maxOutput = tank.drain(toDrain, IFluidHandler.FluidAction.SIMULATE).getAmount();
+        if (maxOutput < toDrain)
             return;
 
         if (recipe.getFluidResults().toArray().length != getOutputs().toArray().length)
@@ -125,25 +132,22 @@ public class DistillationControllerBlockEntity extends SmartBlockEntity implemen
                 if (be.getControllerBE().getHeight() < outputs.toArray().length * 2 || ((FluidTankBlockEntityAccessor) be.getControllerBE()).tfmg$getWidth() < 2)
                     return;
         }
-
-        for (DistillationOutputBlockEntity be1 : outputs) {
-            if (be1.tank.getSpace() == 0&&be1.mode.get() == DistillationOutputBlockEntity.DistillationOutputMode.KEEP_FLUID)
+        for (DistillationOutputBlockEntity output : outputs) {
+            if (output.tank.getSpace() == 0 && output.mode.get() == DistillationOutputBlockEntity.DistillationOutputMode.KEEP_FLUID)
                 return;
         }
         int numero = 0;
         for (DistillationOutputBlockEntity output : outputs) {
             FluidStack fluidStack = recipe.getFluidResults().get(numero);
+            FluidStack result = new FluidStack(fluidStack.getFluidHolder(), fluidStack.getAmount());
             if (fluidStack.isEmpty())
                 break;
-            if (output.tank.fill(new FluidStack(fluidStack.getFluidHolder(), (int) (fluidStack.getAmount() * speedModifier)), IFluidHandler.FluidAction.SIMULATE) > output.tank.getCapacity()&&output.mode.get() == DistillationOutputBlockEntity.DistillationOutputMode.KEEP_FLUID)
+            if (output.tank.fill(result, IFluidHandler.FluidAction.SIMULATE) > output.tank.getCapacity() && output.mode.get() == DistillationOutputBlockEntity.DistillationOutputMode.KEEP_FLUID)
                 break;
-
-            output.tank.fill(new FluidStack(fluidStack.getFluidHolder(), (int) (fluidStack.getAmount() * speedModifier)), IFluidHandler.FluidAction.EXECUTE);
-            int consumption = (recipe.getInputFluid().amount() / 6);
-
-            tank.drain((int) (consumption * speedModifier), IFluidHandler.FluidAction.EXECUTE);
+            output.tank.fill(result, IFluidHandler.FluidAction.EXECUTE);
             numero++;
         }
+        tank.drain(toDrain, IFluidHandler.FluidAction.EXECUTE);
     }
     @Override
     public void tick() {
