@@ -20,6 +20,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.Clearable;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -30,7 +31,7 @@ import net.neoforged.neoforge.items.IItemHandlerModifiable;
 
 import java.util.List;
 
-public class ElectrodeHolderBlockEntity extends ElectricBlockEntity implements IVatMachine {
+public class ElectrodeHolderBlockEntity extends ElectricBlockEntity implements IVatMachine, Clearable {
     public SmartInventory inventory = new SmartInventory(1, this, 1, false)
             .whenContentsChanged(this::onInventoryChanged);
     public IItemHandlerModifiable itemCapability;
@@ -121,10 +122,8 @@ public class ElectrodeHolderBlockEntity extends ElectricBlockEntity implements I
 
     @Override
     public void destroy() {
-        if (level == null || level.isClientSide) {
-            return;
-        }
-        ItemHelper.dropContents(level, getBlockPos(), inventory);
+        super.destroy();
+        ItemHelper.dropContents(level, worldPosition, inventory);
     }
 
     @Override
@@ -174,5 +173,10 @@ public class ElectrodeHolderBlockEntity extends ElectricBlockEntity implements I
     @Override
     public void vatUpdated(VatBlockEntity be) {
         IVatMachine.super.vatUpdated(be);
+    }
+
+    @Override
+    public void clearContent() {
+        this.inventory.clearContent();
     }
 }

@@ -23,6 +23,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.Clearable;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeManager;
@@ -42,7 +43,7 @@ import java.util.List;
 
 import static net.minecraft.world.level.block.HorizontalDirectionalBlock.FACING;
 
-public class CokeOvenBlockEntity extends SmartBlockEntity implements IHaveGoggleInformation {
+public class CokeOvenBlockEntity extends SmartBlockEntity implements IHaveGoggleInformation, Clearable {
 
     public SmartInventory inventory;
     public FluidTank primaryTank;
@@ -372,5 +373,10 @@ public class CokeOvenBlockEntity extends SmartBlockEntity implements IHaveGoggle
         primaryTank.readFromNBT(registries,compound.getCompound("PrimaryTankContent"));
         secondaryTank.readFromNBT(registries,compound.getCompound("SecondaryTankContent"));
         controller = BlockPos.of(compound.getLong("Controller"));
+    }
+
+    @Override
+    public void clearContent() {
+        this.inventory.clearContent();
     }
 }

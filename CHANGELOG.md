@@ -13,6 +13,7 @@ Contributors:<br>
 - Fixed Blast Furnace not being able to finish recipes.
 - Fixed Distillation Controller not detecting heat properly.
 - Fixed names of the Layered Galena textures.
+- Fixed a duplication bug related to Sable.
 
 ### Changes:
 - Distillation

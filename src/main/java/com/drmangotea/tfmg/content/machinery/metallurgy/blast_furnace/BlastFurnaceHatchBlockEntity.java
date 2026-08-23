@@ -12,6 +12,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.Clearable;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -29,7 +30,7 @@ import net.neoforged.neoforge.items.IItemHandlerModifiable;
 import java.util.List;
 
 
-public class BlastFurnaceHatchBlockEntity extends SmartBlockEntity implements IHaveGoggleInformation {
+public class BlastFurnaceHatchBlockEntity extends SmartBlockEntity implements IHaveGoggleInformation, Clearable {
 
 
     public FluidTank tank;
@@ -122,7 +123,8 @@ public class BlastFurnaceHatchBlockEntity extends SmartBlockEntity implements IH
     }
 
 
-
-
-
+    @Override
+    public void clearContent() {
+        this.inventory.clearContent();
+    }
 }

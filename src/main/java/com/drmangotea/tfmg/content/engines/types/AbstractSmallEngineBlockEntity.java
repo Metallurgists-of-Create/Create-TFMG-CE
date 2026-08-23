@@ -24,6 +24,7 @@ import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.Clearable;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -45,7 +46,7 @@ import static com.drmangotea.tfmg.content.engines.base.EngineBlock.EngineState.S
 import static com.drmangotea.tfmg.content.engines.base.EngineBlock.SHAFT_FACING;
 import static com.simibubi.create.content.kinetics.base.HorizontalKineticBlock.HORIZONTAL_FACING;
 
-public abstract class AbstractSmallEngineBlockEntity extends AbstractEngineBlockEntity {
+public abstract class AbstractSmallEngineBlockEntity extends AbstractEngineBlockEntity implements Clearable {
     public Optional<? extends EngineUpgrade> upgrade = Optional.empty();
 
     public int oil = 0;
@@ -637,4 +638,8 @@ public abstract class AbstractSmallEngineBlockEntity extends AbstractEngineBlock
         return modifier;
     }
 
+    @Override
+    public void clearContent() {
+        this.componentsInventory.clearContent();
+    }
 }

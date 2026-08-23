@@ -40,6 +40,7 @@ import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.Clearable;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
@@ -66,7 +67,7 @@ import java.util.*;
 
 import static java.lang.Math.abs;
 
-public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInformation, IMultiBlockEntityContainer.Fluid {
+public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInformation, IMultiBlockEntityContainer.Fluid, Clearable {
 
     private static final int MAX_SIZE = 3;
 
@@ -1440,4 +1441,11 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
         return inputTank.getPrimaryHandler().getFluid();
     }
 
+    @Override
+    public void clearContent() {
+        if (isController()) {
+            this.inputInventory.clearContent();
+            this.outputInventory.clearContent();
+        }
+    }
 }

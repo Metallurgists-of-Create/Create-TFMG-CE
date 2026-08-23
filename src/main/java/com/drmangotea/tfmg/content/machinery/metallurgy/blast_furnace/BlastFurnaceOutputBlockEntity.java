@@ -27,6 +27,7 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.Clearable;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
@@ -51,7 +52,7 @@ import java.util.Random;
 
 import static net.minecraft.world.level.block.HorizontalDirectionalBlock.FACING;
 
-public class BlastFurnaceOutputBlockEntity extends SmartBlockEntity implements IHaveGoggleInformation {
+public class BlastFurnaceOutputBlockEntity extends SmartBlockEntity implements IHaveGoggleInformation, Clearable {
 
     public SmartInventory inputInventory;
     public SmartInventory fluxInventory;
@@ -385,5 +386,11 @@ public class BlastFurnaceOutputBlockEntity extends SmartBlockEntity implements I
         super.destroy();
         ItemHelper.dropContents(level, worldPosition, inputInventory);
         ItemHelper.dropContents(level, worldPosition, fluxInventory);
+    }
+
+    @Override
+    public void clearContent() {
+        this.inputInventory.clearContent();
+        this.fluxInventory.clearContent();
     }
 }

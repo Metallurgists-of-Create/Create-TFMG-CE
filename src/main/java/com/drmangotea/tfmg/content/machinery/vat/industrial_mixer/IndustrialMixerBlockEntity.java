@@ -22,6 +22,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.Clearable;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -33,7 +34,7 @@ import net.neoforged.neoforge.items.IItemHandlerModifiable;
 import java.util.List;
 
 
-public class IndustrialMixerBlockEntity extends KineticBlockEntity implements IVatMachine {
+public class IndustrialMixerBlockEntity extends KineticBlockEntity implements IVatMachine, Clearable {
     public SmartInventory inventory = new SmartInventory(1, this, 1, false)
             .whenContentsChanged(this::onInventoryChanged);
     public IItemHandlerModifiable itemCapability;
@@ -148,10 +149,8 @@ public class IndustrialMixerBlockEntity extends KineticBlockEntity implements IV
 
     @Override
     public void destroy() {
-        if (level == null || level.isClientSide) {
-            return;
-        }
-        ItemHelper.dropContents(level, getBlockPos(), inventory);
+        super.destroy();
+        ItemHelper.dropContents(level, worldPosition, inventory);
     }
 
     @Override
@@ -182,5 +181,10 @@ public class IndustrialMixerBlockEntity extends KineticBlockEntity implements IV
     @Override
     public String[] doesntWorkWith() {
         return new String[]{"tfmg:electrode", "tfmg:graphite_electrode"};
+    }
+
+    @Override
+    public void clearContent() {
+        this.inventory.clearContent();
     }
 }

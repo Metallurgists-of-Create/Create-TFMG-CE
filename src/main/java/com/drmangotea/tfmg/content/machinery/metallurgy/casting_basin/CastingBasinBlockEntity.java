@@ -18,6 +18,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.Clearable;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -31,7 +32,7 @@ import net.neoforged.neoforge.items.IItemHandlerModifiable;
 
 import java.util.List;
 
-public class CastingBasinBlockEntity extends SmartBlockEntity implements IHaveGoggleInformation {
+public class CastingBasinBlockEntity extends SmartBlockEntity implements IHaveGoggleInformation, Clearable {
 
     int flowTimer = 0;
     public SmartInventory inventory = new SmartInventory(1, this, 1, false);
@@ -148,5 +149,10 @@ public class CastingBasinBlockEntity extends SmartBlockEntity implements IHaveGo
         inventory.deserializeNBT(registries,compound.getCompound("Inventory"));
         tank.readFromNBT(registries,compound.getCompound("Tank"));
         timer = compound.getInt("Timer");
+    }
+
+    @Override
+    public void clearContent() {
+        this.inventory.clearContent();
     }
 }
