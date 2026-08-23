@@ -1,4 +1,4 @@
-package com.drmangotea.tfmg.content.machinery.oil_processing.distillation_tower.controller;
+    package com.drmangotea.tfmg.content.machinery.oil_processing.distillation_tower.controller;
 
 import com.drmangotea.tfmg.base.TFMGUtils;
 import com.drmangotea.tfmg.base.lang.TFMGTexts;
@@ -100,8 +100,9 @@ public class DistillationControllerBlockEntity extends SmartBlockEntity implemen
         if (!(beBehind instanceof SteelTankBlockEntity be))
             return;
 
+        SteelTankBlockEntity controllerBe = be.getControllerBE() == null ? be : be.getControllerBE();
 
-        if (outputs.isEmpty() || be.activeHeat == 0)
+        if (outputs.isEmpty() || controllerBe.activeHeat == 0)
             return;
 
         findRecipe(outputs);
@@ -110,18 +111,18 @@ public class DistillationControllerBlockEntity extends SmartBlockEntity implemen
             return;
 
         ///
-        float speedModifier = (float) be.activeHeat / 2;
+        float speedModifier = (float) controllerBe.activeHeat / 2;
         if (recipe.getInputFluid().amount() * speedModifier > tank.getFluidAmount())
             return;
 
         if (recipe.getFluidResults().toArray().length != getOutputs().toArray().length)
             return;
         if (be.isController()) {
-            if (be.getHeight() < outputs.toArray().length * 2 || (((FluidTankBlockEntityAccessor)be).tfmg$getWidth() < 2 && outputs.toArray().length > 3))
+            if (be.getHeight() < outputs.toArray().length * 2 || (((FluidTankBlockEntityAccessor) be).tfmg$getWidth() < 2 && outputs.toArray().length > 3))
                 return;
         }  else {
             if (be.getControllerBE() != null)
-                if (be.getControllerBE().getHeight() < outputs.toArray().length * 2 || ((FluidTankBlockEntityAccessor)be.getControllerBE()).tfmg$getWidth() < 2)
+                if (be.getControllerBE().getHeight() < outputs.toArray().length * 2 || ((FluidTankBlockEntityAccessor) be.getControllerBE()).tfmg$getWidth() < 2)
                     return;
         }
 
@@ -172,8 +173,10 @@ public class DistillationControllerBlockEntity extends SmartBlockEntity implemen
 
         BlockEntity beBehind = level.getBlockEntity(getBlockPos().relative(getFacing(getBlockState()).getOpposite()));
         if (beBehind instanceof SteelTankBlockEntity be) {
+            SteelTankBlockEntity controllerBe = be.getControllerBE() == null ? be : be.getControllerBE();
+
             TFMGTexts.header("distillation_tower").style(ChatFormatting.GRAY).forGoggles(tooltip, 1);
-            TFMGTexts.Distillation.level(be.getControllerBE().activeHeat).forGoggles(tooltip, 1);
+            TFMGTexts.Distillation.level(controllerBe.activeHeat).forGoggles(tooltip, 1);
             TFMGTexts.Distillation.outputs(getOutputs().toArray().length).forGoggles(tooltip, 1);
         } else
             TFMGTexts.Distillation.tankNotFound().forGoggles(tooltip, 1);
