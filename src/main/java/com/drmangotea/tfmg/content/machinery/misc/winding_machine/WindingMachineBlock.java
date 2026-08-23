@@ -68,28 +68,29 @@ public class WindingMachineBlock extends HorizontalKineticBlock implements IBE<W
     @Override
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
         if (level.getBlockEntity(pos) instanceof WindingMachineBlockEntity be) {
-            if (player.getItemInHand(hand).isEmpty()) {
-                if (!be.outputInventory.isEmpty()) {
-                    player.setItemInHand(hand, be.outputInventory.getStackInSlot(0));
-                    be.outputInventory.setItem(0, ItemStack.EMPTY);
+            ItemStack heldItem = player.getItemInHand(hand);
+            if (heldItem.isEmpty()) {
+                if (!be.getOutput().isEmpty()) {
+                    player.setItemInHand(hand, be.getOutput());
+                    be.setOutput(ItemStack.EMPTY);
                     return ItemInteractionResult.SUCCESS;
                 }
-                if (!be.inventory.isEmpty() && !(be.inventory.getItem(0).getItem() instanceof SpoolItem) && !(player instanceof DeployerFakePlayer)) {
-                    player.setItemInHand(hand, be.inventory.getStackInSlot(0));
-                    be.inventory.setItem(0, ItemStack.EMPTY);
+                if (!be.getInput().isEmpty() && !(be.getInput().getItem() instanceof SpoolItem) && !(player instanceof DeployerFakePlayer)) {
+                    player.setItemInHand(hand, be.getInput());
+                    be.setInput(ItemStack.EMPTY);
                     return ItemInteractionResult.SUCCESS;
                 }
-                if (player.isShiftKeyDown() && !be.getSpool().isEmpty()) {
+                if (player.isShiftKeyDown() && be.hasAnySpool()) {
                     player.setItemInHand(hand, be.getSpool());
                     be.setSpool(ItemStack.EMPTY);
                     return ItemInteractionResult.SUCCESS;
                 }
             } else {
-                if (be.inventory.isEmpty() && !(player.getItemInHand(hand).getItem() instanceof SpoolItem)){
-                    ItemStack stack1 = player.getItemInHand(hand).copy();
+                if (be.getInput().isEmpty() && !(heldItem.getItem() instanceof SpoolItem)){
+                    ItemStack stack1 = heldItem.copy();
                     stack1.setCount(1);
-                    be.inventory.setItem(0, stack1);
-                    player.getItemInHand(hand).shrink(1);
+                    be.setInput(stack1);
+                    heldItem.shrink(1);
                     return ItemInteractionResult.SUCCESS;
                 }
             }
