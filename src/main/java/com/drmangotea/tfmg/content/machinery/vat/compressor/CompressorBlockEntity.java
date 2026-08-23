@@ -48,9 +48,7 @@ public class CompressorBlockEntity extends KineticBlockEntity implements IVatMac
 
     @Override
     public String getOperationId() {
-        if (getSpeed() < 0)
-            return "tfmg:decompressor";
-        return "tfmg:compressor";
+        return getSpeed() < 0 ? "tfmg:decompressor" : "tfmg:compressor";
     }
 
     @Override
