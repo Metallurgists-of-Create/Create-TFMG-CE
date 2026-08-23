@@ -2,7 +2,6 @@ package com.drmangotea.tfmg.content.machinery.misc.winding_machine;
 
 import com.drmangotea.tfmg.base.TFMGShapes;
 import com.drmangotea.tfmg.registry.TFMGBlockEntities;
-import com.drmangotea.tfmg.registry.TFMGItems;
 import com.simibubi.create.content.kinetics.base.HorizontalKineticBlock;
 import com.simibubi.create.content.kinetics.deployer.DeployerFakePlayer;
 import com.simibubi.create.foundation.block.IBE;
@@ -75,12 +74,12 @@ public class WindingMachineBlock extends HorizontalKineticBlock implements IBE<W
                     be.setOutput(ItemStack.EMPTY);
                     return ItemInteractionResult.SUCCESS;
                 }
-                if (!be.getInput().isEmpty() && !(be.getInput().getItem() instanceof SpoolItem) && !(player instanceof DeployerFakePlayer)) {
+                if (!be.getInput().isEmpty() && !(player instanceof DeployerFakePlayer)) {
                     player.setItemInHand(hand, be.getInput());
                     be.setInput(ItemStack.EMPTY);
                     return ItemInteractionResult.SUCCESS;
                 }
-                if (player.isShiftKeyDown() && be.hasAnySpool()) {
+                if (be.hasAnySpool() && (player.isShiftKeyDown() || !be.hasNonEmptySpool())) {
                     player.setItemInHand(hand, be.getSpool());
                     be.setSpool(ItemStack.EMPTY);
                     return ItemInteractionResult.SUCCESS;
