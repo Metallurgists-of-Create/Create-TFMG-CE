@@ -107,9 +107,6 @@
 	"block.tfmg.firebox.tooltip.condition1": "When filled with lpg, butane, diesel, propane, naphtha or kerosene with carbon dioxide being pumped out",
 	"block.tfmg.firebox.tooltip.behaviour1": "Heats machinery above it acting as a blaze burner",
 
-	"block.tfmg.winding_machine.tooltip.summary": "Changes the amount of turns on spools and the resistance on resistors",
-	"block.tfmg.winding_machine.tooltip.behaviour1": "Right click with your desired item (Electromagnetic Coil or Resistor) and then right click with either a Copper spool for Coils and an Aluminium one for resistors. Interact with it to set the amount of turns/ohms and power with rotation. Use the Engineers goggles to see when your winding is finished.",
-
 	"block.tfmg.surface_scanner.tooltip.summary": "Helps to find chunks with oil",
 	"block.tfmg.surface_scanner.tooltip.condition1": "When powered from below with a Machine Input",
 	"block.tfmg.surface_scanner.tooltip.behaviour1": "The machines top 5x5 grid shows the surrounding chunks with its chunk in the center, the chunks that have at least 1 oil deposit in them should glow. If the surface does not start to glow within a few seconds then it is likely that there are no oil deposits nearby. Chunks can be seen in-game with F3+G",
@@ -196,7 +193,7 @@
 	"item.tfmg.flamethrower.tooltip.condition2": "When R-Clicking a Fluid Container with valid fuel inside",
 	"item.tfmg.flamethrower.tooltip.behaviour2": "The _Fuel_ will be consumed from the tank. _Range_, _Spread_ and _Amount_ change according to your _Fuel_ of choice",
 
-	"item.tfmg.pipebomb.tooltip.summary": "So cool",
+	"item.tfmg.pipe_bomb.tooltip.summary": "So cool",
 
 	"item.tfmg.screwdriver.tooltip.summary": "Can lock pipes in place",
 	"item.tfmg.screwdriver.tooltip.condition1": "When R-Clicking pipe",

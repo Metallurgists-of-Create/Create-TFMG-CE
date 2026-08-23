@@ -79,7 +79,7 @@ public class WindingMachineBlock extends HorizontalKineticBlock implements IBE<W
                     be.inventory.setItem(0, ItemStack.EMPTY);
                     return ItemInteractionResult.SUCCESS;
                 }
-                if (player.isShiftKeyDown() && !be.getSpool().isEmpty() && be.getSpool().is(TFMGItems.EMPTY_SPOOL.get())) {
+                if (player.isShiftKeyDown() && !be.getSpool().isEmpty()) {
                     player.setItemInHand(hand, be.getSpool());
                     be.setSpool(ItemStack.EMPTY);
                     return ItemInteractionResult.SUCCESS;
