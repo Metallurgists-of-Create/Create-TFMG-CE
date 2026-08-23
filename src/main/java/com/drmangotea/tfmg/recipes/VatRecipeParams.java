@@ -31,7 +31,7 @@ public class VatRecipeParams extends ProcessingRecipeParams {
                     .forGetter(VatRecipeParams::getMinSize),
             Codec.INT.optionalFieldOf("heat_level", 0)
                     .forGetter(VatRecipeParams::getHeatLevel),
-            Codec.intRange(-9, 9).optionalFieldOf("pressure", 0)
+            Codec.intRange(-10, 10).optionalFieldOf("pressure", 0)
                     .forGetter(VatRecipeParams::getPressure),
             Codec.STRING.listOf().optionalFieldOf("machines", new ArrayList<>()).forGetter(VatRecipeParams::getMachines),
             ResourceLocation.CODEC.listOf().optionalFieldOf("allowed_vat_types", types).forGetter(VatRecipeParams::getAllowedVatTypes)
