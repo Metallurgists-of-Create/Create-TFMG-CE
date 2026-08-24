@@ -1,6 +1,7 @@
 package com.drmangotea.tfmg.recipes;
 
 import com.drmangotea.tfmg.TFMG;
+import com.drmangotea.tfmg.base.pressure.Pressure;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -21,7 +22,7 @@ public class VatRecipeParams extends ProcessingRecipeParams {
 
     static {
         types.add(TFMG.asResource("steel_vat"));
-        types.add(TFMG.asResource("tcast_iron_vat"));
+        types.add(TFMG.asResource("cast_iron_vat"));
         types.add(TFMG.asResource("firebrick_lined_vat"));
     }
 
@@ -31,7 +32,7 @@ public class VatRecipeParams extends ProcessingRecipeParams {
                     .forGetter(VatRecipeParams::getMinSize),
             Codec.INT.optionalFieldOf("heat_level", 0)
                     .forGetter(VatRecipeParams::getHeatLevel),
-            Codec.intRange(-9, 9).optionalFieldOf("pressure", 0)
+            Pressure.CODEC.optionalFieldOf("pressure", Pressure.EMPTY)
                     .forGetter(VatRecipeParams::getPressure),
             Codec.STRING.listOf().optionalFieldOf("machines", new ArrayList<>()).forGetter(VatRecipeParams::getMachines),
             ResourceLocation.CODEC.listOf().optionalFieldOf("allowed_vat_types", types).forGetter(VatRecipeParams::getAllowedVatTypes)
@@ -49,7 +50,7 @@ public class VatRecipeParams extends ProcessingRecipeParams {
 
     public int heat_level;
 
-    public int pressure;
+    public Pressure pressure;
 
     public List<String> machines;
     public List<ResourceLocation> allowedVatTypes;
@@ -58,7 +59,7 @@ public class VatRecipeParams extends ProcessingRecipeParams {
         return heat_level;
     }
 
-    protected final int getPressure() {
+    protected final Pressure getPressure() {
         return pressure;
     }
 
@@ -80,7 +81,7 @@ public class VatRecipeParams extends ProcessingRecipeParams {
         super.encode(buffer);
         ByteBufCodecs.INT.encode(buffer, min_size);
         ByteBufCodecs.INT.encode(buffer, heat_level);
-        ByteBufCodecs.INT.encode(buffer, pressure);
+        Pressure.STREAM_CODEC.encode(buffer, pressure);
 
         CatnipStreamCodecBuilders.list(ByteBufCodecs.STRING_UTF8).encode(buffer, machines);
         CatnipStreamCodecBuilders.list(ResourceLocation.STREAM_CODEC).encode(buffer, allowedVatTypes);
@@ -92,7 +93,7 @@ public class VatRecipeParams extends ProcessingRecipeParams {
         super.decode(buffer);
         min_size = ByteBufCodecs.INT.decode(buffer);
         heat_level = ByteBufCodecs.INT.decode(buffer);
-        pressure = ByteBufCodecs.INT.decode(buffer);
+        pressure = Pressure.STREAM_CODEC.decode(buffer);
 
         machines = CatnipStreamCodecBuilders.list(ByteBufCodecs.STRING_UTF8).decode(buffer);
         allowedVatTypes = CatnipStreamCodecBuilders.list(ResourceLocation.STREAM_CODEC).decode(buffer);
