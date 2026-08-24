@@ -325,8 +325,7 @@ public abstract class AbstractSmallEngineBlockEntity extends AbstractEngineBlock
     }
 
     public boolean insertItem(ItemStack itemStack, boolean shifting, Player player, InteractionHand hand) {
-        if (level == null) return false;
-        if (itemStack.isEmpty() && !player.isCreative()) return false;
+        if (level == null || (itemStack.isEmpty() && !player.isCreative())) return false;
         Direction shaft_facing = getBlockState().getValue(SHAFT_FACING);
 
         if (itemStack.is(AllBlocks.SHAFT.asItem()) && getBlockState().getValue(ENGINE_STATE) == NORMAL && !(level.getBlockEntity(getBlockPos().relative(shaft_facing)) instanceof AbstractEngineBlockEntity)) {
