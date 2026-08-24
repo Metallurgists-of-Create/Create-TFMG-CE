@@ -2,7 +2,12 @@ package com.drmangotea.tfmg.content.machinery.vat.base;
 
 import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.base.TFMGUtils;
+import com.drmangotea.tfmg.base.capabilities.TFMGCapabilities;
+import com.drmangotea.tfmg.base.capabilities.pressure.IPressureHandler;
 import com.drmangotea.tfmg.base.lang.TFMGTexts;
+import com.drmangotea.tfmg.base.pressure.Pressure;
+import com.drmangotea.tfmg.base.pressure.behaviour.SmartPressureTankBehaviour;
+import com.drmangotea.tfmg.base.pressure.tank.SmartPressureTank;
 import com.drmangotea.tfmg.content.machinery.vat.compressor.CompressorBlockEntity;
 import com.drmangotea.tfmg.content.machinery.vat.freezer.FreezerBlockEntity;
 import com.drmangotea.tfmg.mixin.accessor.TankSegmentAccessor;
@@ -67,8 +72,8 @@ import java.util.*;
 import static java.lang.Math.abs;
 
 public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInformation, IMultiBlockEntityContainer.Fluid {
-
     private static final int MAX_SIZE = 3;
+    private static final int MAX_PRESSURE = 30;
 
     //item inventory
     public VatInventory inputInventory;
@@ -77,9 +82,12 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
     public SmartFluidTankBehaviour inputTank;
     public SmartFluidTankBehaviour outputTank;
     private final Couple<SmartFluidTankBehaviour> tanks;
+    //pressure
+    private SmartPressureTankBehaviour pressureTank;
     //capabilities
     protected IFluidHandler fluidCapability;
     protected IItemHandlerModifiable itemCapability;
+    protected IPressureHandler pressureCapability;
     //rendering
     protected boolean forceFluidLevelUpdate;
     public LerpedFloat[] fluidLevel = new LerpedFloat[8];
@@ -106,7 +114,7 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
     //processing data
     float efficiency = 1;
     int heatLevel = 0;
-    int pressure = 0;
+    Pressure pressure = Pressure.EMPTY;
     HeatCondition heatCondition = HeatCondition.NONE;
     private static final Object vatRecipeKey = new Object();
 
@@ -152,6 +160,15 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
                     return be.itemCapability;
                 }
         );
+        event.registerBlockEntity(
+                TFMGCapabilities.PressureStorage.BLOCK,
+                TFMGBlockEntities.CHEMICAL_VAT.get(),
+                (be, context) -> {
+                    if (be.pressureCapability == null)
+                        be.refreshCapability();
+                    return be.pressureCapability;
+                }
+        );
     }
 
     @Override
@@ -165,6 +182,11 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
         behaviours.add(inputTank);
         behaviours.add(outputTank);
 
+        pressureTank = new SmartPressureTankBehaviour(SmartPressureTankBehaviour.INPUT, this, 1, MAX_PRESSURE)
+                .whenPressureUpdates(this::onInventoryChanged)
+                .forbidExtraction();
+
+        pressureCapability = pressureTank.getCapability();
         fluidCapability = new CombinedTankWrapper(inputTank.getCapability(), outputTank.getCapability());
     }
 
@@ -185,7 +207,7 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
     }
 
     public MutableComponent getPressureComponent(boolean forGoggles) {
-        return componentHelper("pressure", pressure, forGoggles);
+        return componentHelper("pressure", pressure.getValue(), forGoggles);
     }
 
     private MutableComponent componentHelper(String label, int level, boolean forGoggles, ChatFormatting... styles) {
@@ -266,9 +288,9 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
             return;
 
         int prevHeat = heatLevel;
+        int prevPressure = pressure.getValue();
         heatLevel = 0;
-        pressure = 0;
-        heatCondition = HeatCondition.NONE;
+        int newPressure = 0;
         BlockPos pos1 = controller == null ? getBlockPos() : controller;
         VatBlockEntity be = getControllerBE() == null ? this : getControllerBE();
 
@@ -297,11 +319,13 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
             }
             if (machineBe instanceof CompressorBlockEntity compressor && compressor.getState() != CompressorBlockEntity.CompressorState.NOT_OPERATIONAL) {
                 if (compressor.getState() == CompressorBlockEntity.CompressorState.PRESSURIZING)
-                    pressure++;
+                    newPressure++;
                 if (compressor.getState() == CompressorBlockEntity.CompressorState.DEPRESSURIZING)
-                    pressure--;
+                    newPressure--;
             }
         }
+
+        pressure = new Pressure(newPressure);
 
         if (heatLevel >= 2) {
             heatCondition = HeatCondition.HEATED;
@@ -309,7 +333,7 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
         if (heatLevel >= 4) {
             heatCondition = HeatCondition.SUPERHEATED;
         }
-        if (heatLevel != prevHeat)
+        if (heatLevel != prevHeat || newPressure != prevPressure)
             notifyUpdate();
     }
 
@@ -443,8 +467,6 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
     @Override
     public void tick() {
         super.tick();
-
-
         handleRecipe();
 
         if (isController() && level != null) {
@@ -506,27 +528,13 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
      * ticks the processing timer
      */
     public void handleRecipe() {
-        if (level == null || (level.isClientSide && !isVirtual()))
-            return;
-        if (recipe == null)
-            return;
-        if (!isController())
-            return;
-        if (recipe.heatLevel > 0 && heatLevel < recipe.heatLevel)
-            return;
-        if (recipe.heatLevel < 0 && heatLevel > recipe.heatLevel)
-            return;
-        if (recipe.getRequiredHeat() == HeatCondition.HEATED && heatCondition == HeatCondition.NONE)
-            return;
-        if (recipe.getRequiredHeat() == HeatCondition.SUPERHEATED && heatCondition != HeatCondition.SUPERHEATED)
-            return;
-        if (recipe.pressure > 0 && pressure < recipe.pressure)
-            return;
-        if (recipe.pressure < 0 && pressure > recipe.pressure)
+        if (level == null || recipe == null || !isController() ||
+                level.isClientSide && !isVirtual() ||
+                recipe.heatLevel * (recipe.heatLevel - heatLevel) > 0 ||
+                recipe.pressure.getValue() * (recipe.pressure.getValue() - pressure.getValue()) > 0)
             return;
 
         if (timer >= recipe.getProcessingDuration()) {
-
             if (!canFitAllOutputs(recipe)) {
                 return;
             }
@@ -971,6 +979,7 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
             if (overflow > 0)
                 tank.drain(overflow, IFluidHandler.FluidAction.EXECUTE);
         });
+
         outputTank.forEach(s -> {
             SmartFluidTank tank = ((TankSegmentAccessor) s).tfmg$tank();
             tank.setCapacity(blocks * getCapacityMultiplier());
@@ -979,8 +988,15 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
                 tank.drain(overflow, IFluidHandler.FluidAction.EXECUTE);
         });
 
-        forceFluidLevelUpdate = true;
+        pressureTank.forEach(s -> {
+            SmartPressureTank tank = s.getTank();
+            tank.setCapacity(blocks * getCapacityMultiplier());
+            int overflow = tank.getPressure().getValue() - tank.getCapacity();
+            if (overflow > 0)
+                tank.drain(overflow, false);
+        });
 
+        forceFluidLevelUpdate = true;
         evaluateNextTick = true;
     }
 
@@ -1119,6 +1135,7 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
     private void refreshCapability() {
         fluidCapability = getNewFluidCapability();
         itemCapability = getNewItemCapability();
+        pressureCapability = getNewPressureCapability();
         invalidateCapabilities();
     }
 
@@ -1147,6 +1164,11 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
     private IItemHandlerModifiable getNewItemCapability() {
         return isController() ? new CombinedInvWrapper(inputInventory, outputInventory)
                 : getControllerBE() != null ? getControllerBE().getNewItemCapability() : itemCapability;
+    }
+
+    private IPressureHandler getNewPressureCapability() {
+        return isController() ? pressureTank.getCapability()
+                : getControllerBE() != null ? getControllerBE().getNewPressureCapability() : pressureCapability;
     }
 
     /**
@@ -1259,7 +1281,7 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
             outputInventory.deserializeNBT(registries, compound.getCompound("OutputItems"));
             timer = compound.getInt("Timer");
             heatLevel = compound.getInt("HeatLevel");
-            pressure = compound.getInt("Pressure");
+            pressure = Pressure.from(compound);
         }
 
         updateCapability = true;
@@ -1310,7 +1332,7 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
             compound.put("OutputItems", outputInventory.serializeNBT(registries));
             compound.putInt("Timer", timer);
             compound.putInt("HeatLevel", heatLevel);
-            compound.putInt("Pressure", pressure);
+            pressure.save(compound);
         }
         compound.putInt("Luminosity", luminosity);
         super.write(compound, registries, clientPacket);
