@@ -181,12 +181,12 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
         outputTank = new SmartFluidTankBehaviour(SmartFluidTankBehaviour.OUTPUT, this, 4, 4000, true)
                 .whenFluidUpdates(this::onInventoryChanged)
                 .forbidInsertion();
-        behaviours.add(inputTank);
-        behaviours.add(outputTank);
-
         pressureTank = new SmartPressureTankBehaviour(SmartPressureTankBehaviour.INPUT, this, 1, MAX_PRESSURE)
                 .whenPressureUpdates(this::onInventoryChanged)
                 .forbidExtraction();
+        behaviours.add(inputTank);
+        behaviours.add(outputTank);
+        behaviours.add(pressureTank);
 
         pressureCapability = pressureTank.getCapability();
         fluidCapability = new CombinedTankWrapper(inputTank.getCapability(), outputTank.getCapability());
