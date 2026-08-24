@@ -38,11 +38,14 @@ public class TFMGPonderScenes {
 
         // Engines
         HELPER.forComponents(TFMGBlocks.REGULAR_ENGINE)
-                 .addStoryBoard("regular_engine", EngineScenes::regularEngine, TFMGPonderTags.ENGINES);
+                 .addStoryBoard("regular_engine", EngineScenes::regularEngineAssembly, TFMGPonderTags.ENGINES)
+                .addStoryBoard("regular_engine", EngineScenes::regularEngineOperation, TFMGPonderTags.ENGINES);
         HELPER.forComponents(TFMGBlocks.TURBINE_ENGINE)
-                 .addStoryBoard("turbine_engine", EngineScenes::turbineEngine, TFMGPonderTags.ENGINES);
+                 .addStoryBoard("turbine_engine", EngineScenes::turbineEngineAssembly, TFMGPonderTags.ENGINES)
+                .addStoryBoard("turbine_engine", EngineScenes::turbineEngineOperation, TFMGPonderTags.ENGINES);
         HELPER.forComponents(TFMGBlocks.RADIAL_ENGINE)
-                 .addStoryBoard("radial_engine", EngineScenes::radialEngine, TFMGPonderTags.ENGINES);
+                 .addStoryBoard("radial_engine", EngineScenes::radialEngineAssembly, TFMGPonderTags.ENGINES)
+                .addStoryBoard("radial_engine", EngineScenes::radialEngineOperation, TFMGPonderTags.ENGINES);
         HELPER.forComponents(TFMGBlocks.LARGE_ENGINE)
                  .addStoryBoard("large_engine", EngineScenes::largeEngine, TFMGPonderTags.ENGINES);
         HELPER.forComponents(TFMGBlocks.SIMPLE_LARGE_ENGINE)

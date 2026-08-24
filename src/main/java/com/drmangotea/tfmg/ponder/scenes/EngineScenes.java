@@ -1,6 +1,7 @@
 package com.drmangotea.tfmg.ponder.scenes;
 
 import com.drmangotea.tfmg.TFMG;
+import com.drmangotea.tfmg.content.decoration.pipes.TFMGPipes;
 import com.drmangotea.tfmg.content.decoration.tanks.steel.SteelTankBlockEntity;
 import com.drmangotea.tfmg.ponder.TFMGSceneBuilder;
 import com.drmangotea.tfmg.registry.TFMGBlocks;
@@ -340,23 +341,145 @@ public class EngineScenes {
         scene.idle(50);
     }
 
-    public static void regularEngine(SceneBuilder builder, SceneBuildingUtil util) {
+    public static void regularEngineAssembly(SceneBuilder builder, SceneBuildingUtil util) {
         CreateSceneBuilder scene = new CreateSceneBuilder(builder);
-        scene.title("regular_engine", "Regular Engine");
+        scene.title("regular_engine_assembly", "Regular Engine Assembly");
+        scene.configureBasePlate(1, 1, 5);
+        scene.showBasePlate();
+
+        Selection singleEngineNoShaft = util.select().position(6, 1, 6);
+        Selection singleEngine = util.select().position(5, 1, 6);
+
+        var engineElement = scene.world().showIndependentSection(singleEngineNoShaft, Direction.UP);
+        scene.world().moveSection(engineElement, util.vector().of(-3, 0, -3), 0);
+
+        scene.overlay().showText(30)
+                .placeNearTarget()
+                .text("Regular Engines require assembly.");
+        scene.idle(40);
+
+        scene.overlay().showControls(util.vector().blockSurface(util.grid().at(3, 1, 3), Direction.UP), Pointing.DOWN, 7)
+                .withItem(TFMGItems.CRANKSHAFT.asStack())
+                .rightClick();
+        scene.idle(14);
+        scene.overlay().showControls(util.vector().blockSurface(util.grid().at(3, 1, 3), Direction.UP), Pointing.DOWN, 7)
+                .withItem(TFMGBlocks.STEEL_COGWHEEL.asStack())
+                .rightClick();
+        scene.idle(14);
+        scene.overlay().showControls(util.vector().blockSurface(util.grid().at(3, 1, 3), Direction.UP), Pointing.DOWN, 7)
+                .withItem(TFMGBlocks.LARGE_STEEL_COGWHEEL.asStack())
+                .rightClick();
+        scene.idle(14);
+        scene.overlay().showControls(util.vector().blockSurface(util.grid().at(3, 1, 3), Direction.UP), Pointing.DOWN, 7)
+                .withItem(AllItems.BELT_CONNECTOR.asStack())
+                .rightClick();
+        scene.idle(14);
+        scene.overlay().showControls(util.vector().blockSurface(util.grid().at(3, 1, 3), Direction.UP), Pointing.DOWN, 7)
+                .withItem(TFMGPipes.PIPES.get(TFMGPipes.PipeMaterial.STEEL).getPipe().asStack())
+                .rightClick();
+        scene.idle(14);
+        scene.overlay().showControls(util.vector().blockSurface(util.grid().at(3, 1, 3), Direction.UP), Pointing.DOWN, 7)
+                .withItem(TFMGPipes.PIPES.get(TFMGPipes.PipeMaterial.STEEL).getPipe().asStack())
+                .rightClick();
+        scene.idle(14);
+        scene.overlay().showControls(util.vector().blockSurface(util.grid().at(3, 1, 3), Direction.UP), Pointing.DOWN, 7)
+                .withItem(TFMGItems.STEEL_MECHANISM.asStack())
+                .rightClick();
+        scene.idle(20);
+        scene.addKeyframe();
+        scene.overlay().showControls(util.vector().blockSurface(util.grid().at(3, 1, 3), Direction.UP), Pointing.DOWN, 60)
+                .withItem(AllBlocks.SHAFT.asStack())
+                .rightClick();
+        scene.idle(10);
+        scene.world().moveSection(engineElement, util.vector().of(0, -1000, 0), 0);
+        scene.world().hideIndependentSection(engineElement, null);
+        engineElement = scene.world().showIndependentSectionImmediately(singleEngine);
+        scene.world().moveSection(engineElement, util.vector().of(-2, 0, -3), 0);
+        scene.overlay().showText(60)
+                .colored(PonderPalette.BLUE)
+                .text("Clicking the engine with a Shaft creates the Kinetic Output")
+                .pointAt(util.vector().centerOf(util.grid().at(3, 1, 3)))
+                .placeNearTarget();
+        scene.idle(70);
+        scene.addKeyframe();
+        scene.overlay().showText(50)
+                .placeNearTarget()
+                .text("A Regular Engine's type can be cycled by clicking it with an Empty Schematic");
+        scene.idle(10);
+        scene.overlay().showControls(util.vector().blockSurface(util.grid().at(3, 1, 3), Direction.UP), Pointing.DOWN, 20)
+                .withItem(AllItems.EMPTY_SCHEMATIC.asStack())
+                .rightClick();
+        scene.idle(30);
+        scene.addKeyframe();
+        scene.idle(10);
+        scene.overlay().showControls(util.vector().blockSurface(util.grid().at(3, 1, 3), Direction.UP), Pointing.DOWN, 7)
+                .withItem(TFMGItems.ENGINE_CYLINDER.asStack())
+                .rightClick();
+        scene.world().moveSection(engineElement, util.vector().of(0, -1000, 0), 0);
+        scene.world().hideIndependentSection(engineElement, null);
+        engineElement = scene.world().showIndependentSectionImmediately(util.select().position(6, 2, 6));
+        scene.world().moveSection(engineElement, util.vector().of(-3, -1, -3), 0);
+        scene.overlay().showText(60)
+                .colored(PonderPalette.BLUE)
+                .text("Engine Cylinders of the same type must then be inserted to complete the engine.")
+                .pointAt(util.vector().centerOf(util.grid().at(3, 1, 3)))
+                .placeNearTarget();
+        scene.idle(14);
+        scene.overlay().showControls(util.vector().blockSurface(util.grid().at(3, 1, 3), Direction.UP), Pointing.DOWN, 7)
+                .withItem(TFMGItems.ENGINE_CYLINDER.asStack())
+                .rightClick();
+        scene.world().moveSection(engineElement, util.vector().of(0, -1000, 0), 0);
+        scene.world().hideIndependentSection(engineElement, null);
+        engineElement = scene.world().showIndependentSectionImmediately(util.select().position(5, 2, 6));
+        scene.world().moveSection(engineElement, util.vector().of(-2, -1, -3), 0);
+    }
+
+    public static void regularEngineOperation(SceneBuilder builder, SceneBuildingUtil util) {
+        CreateSceneBuilder scene = new CreateSceneBuilder(builder);
+        scene.title("regular_engine_operation", "Operating a Regular Engine");
+        scene.configureBasePlate(0, 0, 7);
+        scene.showBasePlate();
+
+        Selection fullEngine = util.select().fromTo(6, 1, 2, 6, 1, 4);
+        Selection doubleEngine = util.select().fromTo(4, 2, 5, 4, 2, 6);
+        Selection singleEngine = util.select().position(5, 2, 6);
+
+        Selection fuelTankPump = util.select().position(4, 1, 2);
+        Selection fuelTank = util.select().fromTo(5, 1, 2, 5, 2, 2);
+
+        Selection exhaustPump = util.select().position(2, 1, 4);
+        Selection exhaust = util.select().fromTo(1, 1, 4, 1, 2, 4);
+
+        var engineElement = scene.world().showIndependentSection(singleEngine, Direction.UP);
+        scene.world().moveSection(engineElement, util.vector().of(-2, -1, -3), 0);
+    }
+
+    public static void turbineEngineAssembly(SceneBuilder builder, SceneBuildingUtil util) {
+        CreateSceneBuilder scene = new CreateSceneBuilder(builder);
+        scene.title("turbine_engine_assembly", "Turbine Engine Assembly");
         scene.configureBasePlate(0, 0, 7);
         scene.showBasePlate();
     }
 
-    public static void turbineEngine(SceneBuilder builder, SceneBuildingUtil util) {
+    public static void turbineEngineOperation(SceneBuilder builder, SceneBuildingUtil util) {
         CreateSceneBuilder scene = new CreateSceneBuilder(builder);
-        scene.title("turbine_engine", "Turbine Engine");
+        scene.title("turbine_engine_operation", "Operating a Turbine Engine");
         scene.configureBasePlate(0, 0, 7);
         scene.showBasePlate();
     }
 
-    public static void radialEngine(SceneBuilder builder, SceneBuildingUtil util) {
+    public static void radialEngineAssembly(SceneBuilder builder, SceneBuildingUtil util) {
         CreateSceneBuilder scene = new CreateSceneBuilder(builder);
-        scene.title("radial_engine", "Radial Engine");
+        scene.title("radial_engine_assembly", "Radial Engine Assembly");
+        scene.configureBasePlate(0, 0, 7);
+        scene.showBasePlate();
+
+
+    }
+
+    public static void radialEngineOperation(SceneBuilder builder, SceneBuildingUtil util) {
+        CreateSceneBuilder scene = new CreateSceneBuilder(builder);
+        scene.title("radial_engine_operation", "Operating a Radial Engine");
         scene.configureBasePlate(0, 0, 7);
         scene.showBasePlate();
     }
@@ -399,7 +522,7 @@ public class EngineScenes {
                 .setValue(ShaftBlock.AXIS, Direction.Axis.X), false);
         ElementLink<WorldSectionElement> engineShaftElement = scene.world().showIndependentSection(engineShaft, null);
         scene.idle(5);
-        scene.world().moveSection(engineElement, util.vector().of(0, 0, 0), 0);
+        scene.world().moveSection(engineElement, util.vector().of(0, -1000, 0), 0);
         scene.world().hideIndependentSection(engineElement, null);
         engineElement = scene.world().showIndependentSectionImmediately(engine);
         scene.world().setBlock(engineShaftPos, AllBlocks.POWERED_SHAFT.getDefaultState()
@@ -509,7 +632,7 @@ public class EngineScenes {
                 .setValue(ShaftBlock.AXIS, Direction.Axis.X), false);
         ElementLink<WorldSectionElement> engineShaftElement = scene.world().showIndependentSection(engineShaft, null);
         scene.idle(5);
-        scene.world().moveSection(engineElement, util.vector().of(0, 0, 0), 0);
+        scene.world().moveSection(engineElement, util.vector().of(0, -1000, 0), 0);
         scene.world().hideIndependentSection(engineElement, null);
         engineElement = scene.world().showIndependentSectionImmediately(engine);
         scene.world().setBlock(engineShaftPos, AllBlocks.POWERED_SHAFT.getDefaultState()
