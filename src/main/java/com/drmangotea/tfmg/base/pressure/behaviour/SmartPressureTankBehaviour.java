@@ -197,6 +197,10 @@ public class SmartPressureTankBehaviour extends BlockEntityBehaviour {
         public void readNBT(CompoundTag compound) {
             this.tank.readFromNBT(compound.getCompound("TankContent"));
         }
+
+        public SmartPressureTank getTank() {
+            return tank;
+        }
     }
 
     public class InternalPressureHandler extends CombinedPressureTankWrapper {
