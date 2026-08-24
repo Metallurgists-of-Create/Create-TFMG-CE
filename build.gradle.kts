@@ -169,7 +169,7 @@ publishing {
     publications {
         register<MavenPublication>("mavenJava") {
             from(components["java"])
-            artifactId = "${property("mod_group_id")}.${property("mod_id")}"
+            artifactId = "${property("mod_id")}"
         }
     }
     repositories {
