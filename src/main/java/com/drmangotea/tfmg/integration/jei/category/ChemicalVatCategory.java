@@ -2,6 +2,7 @@ package com.drmangotea.tfmg.integration.jei.category;
 
 import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.base.lang.TFMGLang;
+import com.drmangotea.tfmg.base.pressure.Pressure;
 import com.drmangotea.tfmg.recipes.VatMachineRecipe;
 import com.drmangotea.tfmg.registry.TFMGGuiTextures;
 import com.simibubi.create.compat.jei.category.CreateRecipeCategory;
@@ -119,7 +120,7 @@ public class ChemicalVatCategory extends CreateRecipeCategory<VatMachineRecipe> 
     @NotNull
     public List<Component> getTooltipStrings(VatMachineRecipe recipe, IRecipeSlotsView recipeSlotsView, double mouseX, double mouseY) {
         List<Component> tooltip = new ArrayList<>();
-        int pressure = recipe.pressure;
+        int pressure = recipe.pressure.getValue();
 
         if (mouseY > -3 && mouseY < 43 && mouseX > 127 && mouseX < 170) {
             if(pressure != 0) {
@@ -191,14 +192,14 @@ public class ChemicalVatCategory extends CreateRecipeCategory<VatMachineRecipe> 
         return tooltip;
     }
 
-    private void renderPressure(int pressure, GuiGraphics graphics) {
+    private void renderPressure(Pressure pressure, GuiGraphics graphics) {
         TFMGGuiTextures.VAT_BAROMETER.render(graphics, 128, 0);
         TFMGGuiTextures spritemap = TFMGGuiTextures.VAT_BAROMETER_NEEDLE;
-        if (pressure == 0) {
+        if (pressure.isEmpty()) {
             spritemap.render(graphics, 125, -3, 0, 0, 48, 48);
         } else {
-            int xOffset = pressure < 0 ? 0 : 48;
-            int yOffset = 48 + (Math.abs(pressure) * 48);
+            int xOffset = pressure.isEmpty() ? 0 : 48;
+            int yOffset = 48 + (Math.abs(pressure.getValue()) * 48);
             spritemap.render(graphics,  125, -3, xOffset, yOffset, 48, 48);
         }
     }
