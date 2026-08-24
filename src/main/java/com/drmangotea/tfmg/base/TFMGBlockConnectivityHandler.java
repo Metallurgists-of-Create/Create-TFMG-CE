@@ -9,6 +9,7 @@ import java.util.Optional;
 import java.util.PriorityQueue;
 import java.util.Set;
 
+import com.drmangotea.tfmg.TFMG;
 import org.jetbrains.annotations.Nullable;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -85,6 +86,7 @@ public class TFMGBlockConnectivityHandler {
 			visited.add(toCreate.getBlockPos());
 			tryToFormNewMulti(toCreate, cache);
 		}
+		cache.printHits();
 	}
 	
 	private static <T extends BlockEntity & IMultiBlockEntityContainer> void tryToFormNewMulti(
@@ -382,6 +384,7 @@ public class TFMGBlockConnectivityHandler {
 	}
 	
 	private static class SearchCache<T extends BlockEntity & IMultiBlockEntityContainer> {
+		private int CacheAdds = 0, CacheHits = 0, CacheCalls = 0;
 		Map<BlockPos, Optional<T>> controllerMap;
 		
 		public SearchCache() {
@@ -389,16 +392,25 @@ public class TFMGBlockConnectivityHandler {
 		}
 		
 		void put(BlockPos pos, T target) {
+			CacheAdds++;
 			controllerMap.put(pos, Optional.of(target));
 		}
 		
 		void putEmpty(BlockPos pos) {
+			CacheAdds++;
 			controllerMap.put(pos, Optional.empty());
 		}
 		
+		void printHits () {
+			TFMG.LOGGER.info("Connectivity Cache:\n  Calls: {}\n  Adds: {}\n  Hits: {}", CacheCalls, CacheAdds, CacheHits);
+		}
+		
 		Optional<T> getOrCache(BlockEntityType<?> type, BlockGetter level, BlockPos pos) {
-			if (controllerMap.containsKey(pos))
+			CacheCalls++;
+			if (controllerMap.containsKey(pos)) {
+				CacheHits++;
 				return controllerMap.get(pos);
+			}
 			
 			T partAt = partAt(type, level, pos);
 			if (partAt == null) {
