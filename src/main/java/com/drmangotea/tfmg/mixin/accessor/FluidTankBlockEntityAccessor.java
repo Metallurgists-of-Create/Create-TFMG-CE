@@ -24,9 +24,6 @@ public interface FluidTankBlockEntityAccessor {
     @Accessor("fluidCapability")
     IFluidHandler tfmg$getFluidCapability();
 
-    @Invoker("updateConnectivity")
-    void tfmg$updateConnectivity();
-
     @Invoker("refreshCapability")
     void tfmg$refreshCapability();
 }

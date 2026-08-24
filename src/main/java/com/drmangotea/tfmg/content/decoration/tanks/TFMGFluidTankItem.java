@@ -24,7 +24,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 @MethodsReturnNonnullByDefault
-public abstract class TFMGFluidTankItem<T extends TFMGFluidTankBlock<R>, R extends FluidTankBlockEntity> extends BlockItem {
+public abstract class TFMGFluidTankItem<T extends TFMGFluidTankBlock<R>, R extends TFMGFluidTankBlockEntity> extends BlockItem {
 	public TFMGFluidTankItem(Block b, Properties p) { super(b, p); }
 	
 	@Override @ParametersAreNonnullByDefault

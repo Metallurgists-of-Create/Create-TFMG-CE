@@ -1,5 +1,6 @@
 package com.drmangotea.tfmg.content.decoration.tanks;
 
+import com.drmangotea.tfmg.base.TFMGBlockConnectivityHandler;
 import com.drmangotea.tfmg.content.decoration.tanks.aluminum.AluminumTankBlock;
 import com.drmangotea.tfmg.content.decoration.tanks.cast_iron.CastIronTankBlock;
 import com.drmangotea.tfmg.mixin.accessor.FluidTankBlockEntityAccessor;
@@ -38,6 +39,14 @@ public class TFMGFluidTankBlockEntity extends FluidTankBlockEntity {
 		if (level != null && level.getBlockEntity(controller) instanceof TFMGFluidTankBlockEntity be)
 			return be;
 		return null;
+	}
+	
+	@Override
+	protected void updateConnectivity() {
+		updateConnectivity = false;
+		if (level.isClientSide || !isController())
+			return;
+		TFMGBlockConnectivityHandler.formMulti(this);
 	}
 	
 	@Override

@@ -1,9 +1,9 @@
 package com.drmangotea.tfmg.content.machinery.vat.base;
 
 import com.drmangotea.tfmg.TFMG;
+import com.drmangotea.tfmg.base.TFMGBlockConnectivityHandler;
 import com.drmangotea.tfmg.base.lang.TFMGLang;
 import com.drmangotea.tfmg.registry.TFMGBlockEntities;
-import com.simibubi.create.api.connectivity.ConnectivityHandler;
 import com.simibubi.create.content.equipment.wrench.IWrenchable;
 import com.simibubi.create.foundation.block.IBE;
 
@@ -32,14 +32,16 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.neoforge.common.util.DeferredSoundType;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
+
 public class VatBlock extends Block implements IWrenchable, IBE<VatBlockEntity> {
     public final ResourceLocation vatType;
 
     public static final BooleanProperty TOP = BooleanProperty.create("top");
     public static final BooleanProperty BOTTOM = BooleanProperty.create("bottom");
     public static final EnumProperty<Shape> SHAPE = EnumProperty.create("shape", Shape.class);
-
-
 
     public static VatBlock steel(Properties properties){
         return new VatBlock(properties, TFMG.asResource("steel_vat"));
@@ -74,7 +76,7 @@ public class VatBlock extends Block implements IWrenchable, IBE<VatBlockEntity> 
 
         vatBE.evaluateNextTick=true;
     }
-    @Override
+    @Override @ParametersAreNonnullByDefault
     public void onPlace(BlockState state, Level world, BlockPos pos, BlockState oldState, boolean moved) {
         if (oldState.getBlock() == state.getBlock())
             return;
@@ -88,9 +90,9 @@ public class VatBlock extends Block implements IWrenchable, IBE<VatBlockEntity> 
         p_206840_1_.add(TOP, BOTTOM, SHAPE);
     }
 
-    @Override
+    @Override @ParametersAreNonnullByDefault
     public int getLightEmission(BlockState state, BlockGetter world, BlockPos pos) {
-        VatBlockEntity vatAt = ConnectivityHandler.partAt(getBlockEntityType(), world, pos);
+        VatBlockEntity vatAt = TFMGBlockConnectivityHandler.partAt(getBlockEntityType(), world, pos);
         if (vatAt == null)
             return 0;
         VatBlockEntity controllerTE = vatAt.getControllerBE();
@@ -106,26 +108,26 @@ public class VatBlock extends Block implements IWrenchable, IBE<VatBlockEntity> 
 
     static final VoxelShape CAMPFIRE_SMOKE_CLIP = Block.box(0, 4, 0, 16, 16, 16);
 
-    @Override
+    @Override @ParametersAreNonnullByDefault @Nonnull
     public VoxelShape getCollisionShape(BlockState pState, BlockGetter pLevel, BlockPos pPos,
                                         CollisionContext pContext) {
         if (pContext == CollisionContext.empty())
             return CAMPFIRE_SMOKE_CLIP;
         return pState.getShape(pLevel, pPos);
     }
-    @Override
+    @Override @ParametersAreNonnullByDefault @Nonnull
     public VoxelShape getBlockSupportShape(BlockState pState, BlockGetter pReader, BlockPos pPos) {
         return Shapes.block();
     }
 
-    @Override
+    @Override @ParametersAreNonnullByDefault
     public void onRemove(BlockState state, Level world, BlockPos pos, BlockState newState, boolean isMoving) {
         if (state.hasBlockEntity() && (state.getBlock() != newState.getBlock() || !newState.hasBlockEntity())) {
             BlockEntity be = world.getBlockEntity(pos);
             if (!(be instanceof VatBlockEntity tankBE))
                 return;
             world.removeBlockEntity(pos);
-            ConnectivityHandler.splitMulti(tankBE);
+			TFMGBlockConnectivityHandler.splitMulti(tankBE);
         }
     }
     @Override
@@ -138,7 +140,7 @@ public class VatBlock extends Block implements IWrenchable, IBE<VatBlockEntity> 
         return TFMGBlockEntities.CHEMICAL_VAT.get();
     }
 
-    @Override
+    @Override @ParametersAreNonnullByDefault @Nonnull
     public BlockState mirror(BlockState state, Mirror mirror) {
         if (mirror == Mirror.NONE)
             return state;
@@ -152,7 +154,7 @@ public class VatBlock extends Block implements IWrenchable, IBE<VatBlockEntity> 
         };
     }
 
-    @Override
+    @Override @ParametersAreNonnullByDefault @Nonnull
     public BlockState rotate(BlockState state, Rotation rotation) {
         for (int i = 0; i < rotation.ordinal(); i++)
             state = rotateOnce(state);
@@ -172,7 +174,7 @@ public class VatBlock extends Block implements IWrenchable, IBE<VatBlockEntity> 
     public enum Shape implements StringRepresentable {
         PLAIN, WINDOW, WINDOW_NW, WINDOW_SW, WINDOW_NE, WINDOW_SE;
 
-        @Override
+        @Override @Nonnull
         public String getSerializedName() {
             return TFMGLang.asId(name());
         }
@@ -183,26 +185,12 @@ public class VatBlock extends Block implements IWrenchable, IBE<VatBlockEntity> 
             new DeferredSoundType(0.1F, 1.5F, () -> SoundEvents.METAL_BREAK, () -> SoundEvents.METAL_STEP,
                     () -> SoundEvents.METAL_PLACE, () -> SoundEvents.METAL_HIT, () -> SoundEvents.METAL_FALL);
 
-    @Override
-    public SoundType getSoundType(BlockState state, LevelReader world, BlockPos pos, Entity entity) {
+    @Override @ParametersAreNonnullByDefault @Nonnull
+    public SoundType getSoundType(BlockState state, LevelReader world, BlockPos pos, @Nullable Entity entity) {
         SoundType soundType = super.getSoundType(state, world, pos, entity);
         if (entity != null && entity.getPersistentData()
                 .contains("SilenceTankSound"))
             return SILENCED_METAL;
         return soundType;
     }
-
-    //@Override
-    //public boolean hasAnalogOutputSignal(BlockState state) {
-    //    return true;
-    //}
-//
-    //@Override
-    //public int getAnalogOutputSignal(BlockState blockState, Level worldIn, BlockPos pos) {
-    //    return getBlockEntityOptional(worldIn, pos).map(SteelTankBlockEntity::getControllerBE)
-    //            .map(te -> ComparatorUtil.fractionToRedstoneLevel(te.getFillState()))
-    //            .orElse(0);
-    //}
-
-
 }

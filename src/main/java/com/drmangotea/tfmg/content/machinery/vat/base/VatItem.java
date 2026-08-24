@@ -1,7 +1,7 @@
 package com.drmangotea.tfmg.content.machinery.vat.base;
 
 import com.drmangotea.tfmg.registry.TFMGBlockEntities;
-import com.simibubi.create.api.connectivity.ConnectivityHandler;
+import com.drmangotea.tfmg.base.TFMGBlockConnectivityHandler;
 import com.simibubi.create.content.fluids.tank.FluidTankBlockEntity;
 import com.simibubi.create.foundation.block.IBE;
 import net.minecraft.core.BlockPos;
@@ -21,13 +21,16 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.fluids.FluidStack;
 
-public class VatItem extends BlockItem {
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 
+public class VatItem extends BlockItem {
     public VatItem(Block block, Properties properties) {
         super(block, properties);
     }
 
-    @Override
+    @Override @ParametersAreNonnullByDefault @Nonnull
     public InteractionResult place(BlockPlaceContext ctx) {
         InteractionResult initialResult = super.place(ctx);
         if (!initialResult.consumesAction())
@@ -36,8 +39,8 @@ public class VatItem extends BlockItem {
         return initialResult;
     }
 
-    @Override
-    protected boolean updateCustomBlockEntityTag(BlockPos blockPos, Level level, Player player, ItemStack itemStack, BlockState blockState) {
+    @Override  @ParametersAreNonnullByDefault
+    protected boolean updateCustomBlockEntityTag(BlockPos blockPos, Level level, @Nullable Player player, ItemStack itemStack, BlockState blockState) {
         MinecraftServer minecraftserver = level.getServer();
         if (minecraftserver == null)
             return false;
@@ -80,7 +83,7 @@ public class VatItem extends BlockItem {
 
         if (!VatBlock.isVat(placedOnState))
             return;
-        VatBlockEntity tankAt = ConnectivityHandler.partAt(TFMGBlockEntities.CHEMICAL_VAT.get(), world, placedOnPos);
+        VatBlockEntity tankAt = TFMGBlockConnectivityHandler.partAt(TFMGBlockEntities.CHEMICAL_VAT.get(), world, placedOnPos);
         if (tankAt == null)
             return;
         VatBlockEntity controllerTE =  tankAt.getControllerBE();
