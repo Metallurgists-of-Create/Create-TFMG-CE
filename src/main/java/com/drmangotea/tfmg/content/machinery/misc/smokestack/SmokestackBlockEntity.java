@@ -96,7 +96,7 @@ public class SmokestackBlockEntity extends SmartBlockEntity {
             return;
 
         if (getBlockState().getValue(TOP)) {
-            tankInventory.drain(tankInventory.getSpace() < 1000 ? 50 : 10, IFluidHandler.FluidAction.EXECUTE);
+            tankInventory.drain(100, IFluidHandler.FluidAction.EXECUTE);
             smokeTimer = 40;
         }
 
