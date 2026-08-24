@@ -1,6 +1,6 @@
 package com.drmangotea.tfmg.content.decoration.tanks;
 
-import com.simibubi.create.api.connectivity.ConnectivityHandler;
+import com.drmangotea.tfmg.base.TFMGBlockConnectivityHandler;
 import com.simibubi.create.content.fluids.tank.FluidTankCTBehaviour;
 import com.simibubi.create.foundation.block.connected.CTModel;
 import com.simibubi.create.foundation.block.connected.CTSpriteShiftEntry;
@@ -34,7 +34,7 @@ public abstract class TFMGFluidTankModel extends CTModel {
 		super.gatherModelData(builder, world, pos, state, blockEntityData);
 		CullData cullData = new CullData();
 		for (Direction d : Iterate.horizontalDirections)
-			cullData.setCulled(d, ConnectivityHandler.isConnected(world, pos, pos.relative(d)));
+			cullData.setCulled(d, TFMGBlockConnectivityHandler.isConnected(world, pos, pos.relative(d)));
 		return builder.with(CULL_PROPERTY, cullData);
 	}
 	

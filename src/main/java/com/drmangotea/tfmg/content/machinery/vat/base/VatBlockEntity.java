@@ -1,6 +1,7 @@
 package com.drmangotea.tfmg.content.machinery.vat.base;
 
 import com.drmangotea.tfmg.TFMG;
+import com.drmangotea.tfmg.base.TFMGBlockConnectivityHandler;
 import com.drmangotea.tfmg.base.TFMGUtils;
 import com.drmangotea.tfmg.base.lang.TFMGTexts;
 import com.drmangotea.tfmg.content.machinery.vat.compressor.CompressorBlockEntity;
@@ -10,7 +11,6 @@ import com.drmangotea.tfmg.recipes.VatMachineRecipe;
 import com.drmangotea.tfmg.registry.TFMGBlockEntities;
 import com.drmangotea.tfmg.registry.TFMGRecipeTypes;
 import com.simibubi.create.api.boiler.BoilerHeater;
-import com.simibubi.create.api.connectivity.ConnectivityHandler;
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.content.processing.recipe.HeatCondition;
 import com.simibubi.create.content.processing.recipe.ProcessingOutput;
@@ -177,7 +177,7 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
         updateConnectivity = false;
         if (level == null || level.isClientSide || !isController())
             return;
-        ConnectivityHandler.formMulti(this);
+		TFMGBlockConnectivityHandler.formMulti(this);
     }
 
     //goggle stuff
@@ -825,7 +825,7 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
             for (int xOffset = 0; xOffset < width; xOffset++) {
                 for (int zOffset = 0; zOffset < width; zOffset++) {
                     BlockPos pos = this.worldPosition.offset(xOffset, yOffset, zOffset);
-                    VatBlockEntity vatAt = ConnectivityHandler.partAt(getType(), level, pos);
+                    VatBlockEntity vatAt = TFMGBlockConnectivityHandler.partAt(getType(), level, pos);
                     if (vatAt == null)
                         continue;
                     level.updateNeighbourForOutputSignal(pos, vatAt.getBlockState()
