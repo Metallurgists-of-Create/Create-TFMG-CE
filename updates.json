@@ -4,10 +4,11 @@
     "1.2.3-community-11.08.26": "https://github.com/Metallurgists-of-Create/Create-TFMG-CE/releases/tag/v1.2.3-11.08.26",
     "1.2.3a-community": "https://github.com/Metallurgists-of-Create/Create-TFMG-CE/releases/tag/v1.2.3a",
     "1.2.4-community": "https://github.com/Metallurgists-of-Create/Create-TFMG-CE/releases/tag/v1.2.4",
-    "1.2.4a-community": "https://github.com/Metallurgists-of-Create/Create-TFMG-CE/releases/tag/v1.2.4a"
+    "1.2.4a-community": "https://github.com/Metallurgists-of-Create/Create-TFMG-CE/releases/tag/v1.2.4a",
+    "1.2.4b-community": "https://github.com/Metallurgists-of-Create/Create-TFMG-CE/releases/tag/v1.2.4b"
   },
   "promos": {
-    "1.21.1-latest": "1.2.4a-community",
-    "1.21.1-recommended": "1.2.4a-community"
+    "1.21.1-latest": "1.2.4b-community",
+    "1.21.1-recommended": "1.2.4b-community"
   }
 }

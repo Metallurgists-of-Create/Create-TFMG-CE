@@ -2,6 +2,8 @@
 ## Rant:
 Something something version idk :3
 
+This patch fixes some recipes, a weird texture and a dupe bug
+
 Contributors:<br>
 @pouffy @wolfieboy09 @ShallowAssumption @pepagg
 
