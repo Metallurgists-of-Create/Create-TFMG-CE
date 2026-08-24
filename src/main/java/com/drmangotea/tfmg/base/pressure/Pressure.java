@@ -31,12 +31,16 @@ public class Pressure {
         return new Pressure(kpa);
     }
 
+    public static Pressure from(CompoundTag tag) {
+        return new Pressure(tag.getInt("Pressure"));
+    }
+
     public static final Codec<Pressure> CODEC =  RecordCodecBuilder.create(inst -> inst.group(
-            Codec.INT.fieldOf("kpa").forGetter(Pressure::getPressure)
+            Codec.INT.fieldOf("kpa").forGetter(Pressure::getValue)
     ).apply(inst, Pressure::new));
 
     public static final StreamCodec<ByteBuf, Pressure> STREAM_CODEC = StreamCodec.composite(
-            ByteBufCodecs.INT, Pressure::getPressure,
+            ByteBufCodecs.INT, Pressure::getValue,
             Pressure::new
     );
 
@@ -44,7 +48,7 @@ public class Pressure {
         return new Pressure(this.kpa);
     }
 
-    public int getPressure() {
+    public int getValue() {
         return this.kpa;
     }
 
