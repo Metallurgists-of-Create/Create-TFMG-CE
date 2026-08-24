@@ -2,6 +2,7 @@ package com.drmangotea.tfmg.datagen.recipes.values.tfmg;
 
 
 import com.drmangotea.tfmg.TFMG;
+import com.drmangotea.tfmg.base.pressure.Pressure;
 import com.drmangotea.tfmg.datagen.recipes.builder.VatRecipeGen;
 import com.drmangotea.tfmg.registry.TFMGFluids;
 import com.drmangotea.tfmg.registry.TFMGItems;
@@ -204,30 +205,31 @@ public class TFMGVatRecipeGen extends VatRecipeGen {
     }
 
     public static class VatRecipeValues {
-
         public List<String> machines;
         public int minSize;
         public int heat;
-        public int pressure;
+        public Pressure pressure;
         public List<ResourceLocation> allowedVatTypes;
-
 
         public VatRecipeValues() {
             machines = new ArrayList<>();
             minSize = 1;
             heat = 0;
-            pressure = 0;
+            pressure = Pressure.EMPTY;
             allowedVatTypes = new ArrayList<>();
             allowedVatTypes.add(TFMG.asResource("steel_vat"));
             allowedVatTypes.add(TFMG.asResource("cast_iron_vat"));
             allowedVatTypes.add(TFMG.asResource("firebrick_lined_vat"));
-
         }
 
         public VatRecipeValues heat(int heat) {
-            VatRecipeValues values = this;
-            values.heat = heat;
-            return values;
+            this.heat = heat;
+            return this;
+        }
+
+        public VatRecipeValues pressure(int kpa) {
+            this.pressure = Pressure.of(kpa);
+            return this;
         }
 
     }
