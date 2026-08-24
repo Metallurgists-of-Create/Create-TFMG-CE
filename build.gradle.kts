@@ -177,8 +177,16 @@ publishing {
             name = "krystal-maven"
             url = uri("https://krystalsmaven.oreostack.uk/${findProperty("krystalRepository") ?: "releases"}")
             credentials {
-                username = findProperty("krystalMavenUser") as String
-                password = findProperty("krystalMavenToken") as String
+                username = "${findProperty("krystalMavenUser") ?: System.getenv("KRYSTAL_MAVEN_USER")}"
+                password = "${findProperty("krystalMavenToken") ?: System.getenv("KRYSTAL_MAVEN_PASSWORD")}"
+            }
+        }
+        maven {
+            name = "krystal-snapshot-maven"
+            url = uri("https://krystalsmaven.oreostack.uk/snapshots")
+            credentials {
+                username = "${findProperty("krystalMavenUser") ?: System.getenv("KRYSTAL_MAVEN_USER")}"
+                password = "${findProperty("krystalMavenToken") ?: System.getenv("KRYSTAL_MAVEN_PASSWORD")}"
             }
         }
     }
