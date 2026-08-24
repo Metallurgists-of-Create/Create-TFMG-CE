@@ -94,6 +94,19 @@ public class VatMachineRecipe extends ProcessingRecipe<RecipeInput, VatRecipePar
             params.min_size = value.minSize;
             return this;
         }
+
+        public VatMachineRecipe.Builder<R> pressure(int kpa) {
+            params.pressure = Pressure.of(kpa);
+            return this;
+        }
+
+        public VatMachineRecipe.Builder<R> heatLevel(int level) {
+            if (level < 0) {
+                throw new IllegalArgumentException("Heat level can not be less than 0!");
+            }
+            params.heat_level = level;
+            return this;
+        }
     }
 
     public static class Serializer<R extends VatMachineRecipe> implements RecipeSerializer<R> {
