@@ -19,11 +19,13 @@ import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
@@ -31,6 +33,7 @@ import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.IItemHandlerModifiable;
+import net.neoforged.neoforge.items.ItemStackHandler;
 import net.neoforged.neoforge.items.wrapper.CombinedInvWrapper;
 import net.neoforged.neoforge.items.wrapper.RecipeWrapper;
 
@@ -136,7 +139,26 @@ public class WindingMachineBlockEntity extends KineticBlockEntity implements IHa
     }
 
     public boolean isWindingIngredient(ItemStack stack) {
-        return !stack.isEmpty() && !(stack.getItem() instanceof SpoolItem);
+        if (stack.isEmpty() || stack.getItem() instanceof SpoolItem)
+            return false;
+
+        if (stack.is(TFMGItems.ELECTROMAGNETIC_COIL) || stack.is(TFMGBlocks.LARGE_COIL.asItem()) || stack.is(TFMGBlocks.RESISTOR.asItem()))
+            return true;
+
+        if (level == null)
+            return true; // ¯\_(ツ)_/¯
+
+        // TODO: define a tag instead of scanning all winding recipes?
+
+        RecipeType<WindingRecipe> type = TFMGRecipeTypes.WINDING.getType();
+        RecipeWrapper wrapper = new RecipeWrapper(new ItemStackHandler(NonNullList.of(stack)));
+        if (level.getRecipeManager().getRecipeFor(type, wrapper, level).isPresent())
+            return true;
+
+        if (SequencedAssemblyRecipe.getRecipe(level, stack, type, WindingRecipe.class).isPresent())
+            return true;
+
+        return false;
     }
 
     protected void depleteSpool() {
