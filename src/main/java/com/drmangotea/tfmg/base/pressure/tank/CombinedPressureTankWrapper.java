@@ -118,11 +118,11 @@ public class CombinedPressureTankWrapper implements IPressureHandler {
 
         for (IPressureHandler iPressureHandler : pressureHandler) {
             Pressure drainedFromCurrent = iPressureHandler.drain(pressure, simulate);
-            int amount = drainedFromCurrent.getPressure();
+            int amount = drainedFromCurrent.getValue();
             pressure.shrink(amount);
 
             if (!drainedFromCurrent.isEmpty())
-                drained = drainedFromCurrent.copyWithAmount(amount + drained.getPressure());
+                drained = drainedFromCurrent.copyWithAmount(amount + drained.getValue());
             if (pressure.isEmpty())
                 break;
         }
@@ -136,11 +136,11 @@ public class CombinedPressureTankWrapper implements IPressureHandler {
 
         for (IPressureHandler iPressureHandler : pressureHandler) {
             Pressure drainedFromCurrent = iPressureHandler.drain(maxDrain, simulate);
-            int amount = drainedFromCurrent.getPressure();
+            int amount = drainedFromCurrent.getValue();
             maxDrain -= amount;
 
             if (!drainedFromCurrent.isEmpty())
-                drained = drainedFromCurrent.copyWithAmount(amount + drained.getPressure());
+                drained = drainedFromCurrent.copyWithAmount(amount + drained.getValue());
             if (maxDrain == 0)
                 break;
         }

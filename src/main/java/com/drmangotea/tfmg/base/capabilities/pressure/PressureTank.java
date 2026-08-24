@@ -97,16 +97,16 @@ public class PressureTank implements IPressureHandler, IPressureTank {
     public int fill(Pressure pressure, boolean simulate) {
         if (!pressure.isEmpty()) {
             if (simulate) {
-                return Math.min(this.capacity, pressure.getPressure());
+                return Math.min(this.capacity, pressure.getValue());
             } else if (this.pressure.isEmpty()) {
-                this.pressure = pressure.copyWithAmount(Math.min(this.capacity, pressure.getPressure()));
+                this.pressure = pressure.copyWithAmount(Math.min(this.capacity, pressure.getValue()));
                 this.onContentsChanged();
-                return this.pressure.getPressure();
+                return this.pressure.getValue();
             }  else {
-                int filled = this.capacity - this.pressure.getPressure();
-                if (pressure.getPressure() < filled) {
-                    this.pressure.grow(pressure.getPressure());
-                    filled = pressure.getPressure();
+                int filled = this.capacity - this.pressure.getValue();
+                if (pressure.getValue() < filled) {
+                    this.pressure.grow(pressure.getValue());
+                    filled = pressure.getValue();
                 } else {
                     this.pressure.setPressure(this.capacity);
                 }
@@ -122,12 +122,12 @@ public class PressureTank implements IPressureHandler, IPressureTank {
 
     @Override
     public Pressure drain(Pressure resource, boolean simulate) {
-        return !resource.isEmpty() ? this.drain(resource.getPressure(), simulate) : Pressure.EMPTY;
+        return !resource.isEmpty() ? this.drain(resource.getValue(), simulate) : Pressure.EMPTY;
     }
 
     @Override
     public Pressure drain(int maxDrain, boolean simulate) {
-        int drained = Math.min(this.pressure.getPressure(), maxDrain);
+        int drained = Math.min(this.pressure.getValue(), maxDrain);
         Pressure stack = this.pressure.copyWithAmount(drained);
         if (!simulate && drained > 0) {
             this.pressure.shrink(drained);
