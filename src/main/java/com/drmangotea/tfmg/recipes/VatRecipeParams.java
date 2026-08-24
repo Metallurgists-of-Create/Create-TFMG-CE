@@ -22,7 +22,7 @@ public class VatRecipeParams extends ProcessingRecipeParams {
 
     static {
         types.add(TFMG.asResource("steel_vat"));
-        types.add(TFMG.asResource("tcast_iron_vat"));
+        types.add(TFMG.asResource("cast_iron_vat"));
         types.add(TFMG.asResource("firebrick_lined_vat"));
     }
 
