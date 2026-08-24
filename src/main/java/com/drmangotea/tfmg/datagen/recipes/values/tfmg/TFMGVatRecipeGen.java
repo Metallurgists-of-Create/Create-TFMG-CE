@@ -220,13 +220,16 @@ public class TFMGVatRecipeGen extends VatRecipeGen {
             allowedVatTypes.add(TFMG.asResource("steel_vat"));
             allowedVatTypes.add(TFMG.asResource("cast_iron_vat"));
             allowedVatTypes.add(TFMG.asResource("firebrick_lined_vat"));
-
         }
 
         public VatRecipeValues heat(int heat) {
-            VatRecipeValues values = this;
-            values.heat = heat;
-            return values;
+            this.heat = heat;
+            return this;
+        }
+
+        public VatRecipeValues pressure(int kpa) {
+            this.pressure = Pressure.of(kpa);
+            return this;
         }
 
     }
