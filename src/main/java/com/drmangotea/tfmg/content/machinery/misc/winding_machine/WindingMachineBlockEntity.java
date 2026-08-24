@@ -157,6 +157,16 @@ public class WindingMachineBlockEntity extends KineticBlockEntity implements IHa
         }
     }
 
+    protected void finishRecipe(ItemStack result) {
+        setInput(ItemStack.EMPTY);
+        setOutput(result);
+        recipe = null;
+        amountWinded = 0;
+
+        sendData();
+        setChanged();
+    }
+
     public void findRecipe() {
         if (level == null) {
             return;
@@ -249,10 +259,10 @@ public class WindingMachineBlockEntity extends KineticBlockEntity implements IHa
             return;
         }
 
-        if (getSpeed() == 0 || !outputInventory.isEmpty() || !hasNonEmptySpool())
-            return;
-
         ItemStack input = getInput();
+
+        if (getSpeed() == 0 || input.isEmpty() || !outputInventory.isEmpty() || !hasNonEmptySpool())
+            return;
 
         SpoolItem specialRecipeSpool = null;
         DataComponentType<Integer> specialRecipeComponent = null;
@@ -266,10 +276,12 @@ public class WindingMachineBlockEntity extends KineticBlockEntity implements IHa
         
         if (specialRecipeSpool != null && getSpool().is(specialRecipeSpool)) {
             int amount = input.getOrDefault(specialRecipeComponent, 0);
-            if (amount < turnPercentage.getValue() * 10) {
+            if (amount >= turnPercentage.getValue() * 10) {
+                finishRecipe(input);
+            } else {
                 input.set(specialRecipeComponent, amount + 1);
                 depleteSpool();
-            } // Should the item be moved to the output slot if the turn percentage is reached?
+            }
             return;
         } else if (recipe == null) {
             return;
@@ -277,14 +289,7 @@ public class WindingMachineBlockEntity extends KineticBlockEntity implements IHa
 
         if (amountWinded >= recipe.getProcessingDuration()) {
             ItemStack result = recipe.rollResults(level.random).getFirst();
-
-            setInput(ItemStack.EMPTY);
-            setOutput(result);
-            recipe = null;
-            amountWinded = 0;
-
-            sendData();
-            setChanged();
+            finishRecipe(result);
         } else if (recipe.getSpool().test(getSpool())) {
             amountWinded++;
             depleteSpool();
