@@ -1,5 +1,6 @@
 package com.drmangotea.tfmg;
 
+import com.drmangotea.tfmg.base.TFMGArmInteractionPoints;
 import com.drmangotea.tfmg.base.TFMGBoilerHeaters;
 import com.drmangotea.tfmg.base.TFMGContraptions;
 import com.drmangotea.tfmg.base.TFMGCreativeTabs;
@@ -111,6 +112,7 @@ public class TFMG {
 
     public static void onRegister(final RegisterEvent event) {
         TFMGContraptions.prepare();
+        TFMGArmInteractionPoints.prepare();
     }
 
     @Contract("_ -> new")
