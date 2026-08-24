@@ -12,6 +12,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
 import com.drmangotea.tfmg.TFMG;
+import net.minecraft.world.level.block.Block;
 import org.jetbrains.annotations.Nullable;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -80,8 +81,7 @@ public class TFMGBlockConnectivityHandler {
 		visited.clear();
 		
 		while (!creationQueue.isEmpty()) {
-			Pair<Integer, T> next = creationQueue.poll();
-			T toCreate = next.getValue();
+			T toCreate = creationQueue.poll().getValue();
 			if (visited.contains(toCreate.getBlockPos()))
 				continue;
 			
@@ -208,6 +208,9 @@ public class TFMGBlockConnectivityHandler {
 	) {
 		int amount = 0;
 		int height = 0;
+		
+		Block b = level.getBlockState(origin).getBlock();
+		
 		Search:
 		for (int Y = 0; Y < be.getMaxLength(axis, width); Y++) {
 			for (int X = 0; X < width; X++) { for (int Z = 0; Z < width; Z++) {
@@ -218,6 +221,10 @@ public class TFMGBlockConnectivityHandler {
 				};
 				Optional<T> part = cache.getOrCache(type, level, pos);
 				if (part.isEmpty())
+					break Search;
+				
+				Block otherBlock = level.getBlockState(pos).getBlock();
+				if (!b.equals(otherBlock))
 					break Search;
 				
 				T controller = part.get();
