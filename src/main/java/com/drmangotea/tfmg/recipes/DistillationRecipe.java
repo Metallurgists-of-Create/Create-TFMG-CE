@@ -3,6 +3,7 @@ package com.drmangotea.tfmg.recipes;
 
 
 
+import com.drmangotea.tfmg.recipes.input.DistillationRecipeInput;
 import com.drmangotea.tfmg.registry.TFMGRecipeTypes;
 import com.simibubi.create.content.processing.recipe.ProcessingRecipeParams;
 import com.simibubi.create.content.processing.recipe.StandardProcessingRecipe;
@@ -13,7 +14,7 @@ import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
 import net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient;
 
 
-public class DistillationRecipe extends StandardProcessingRecipe<RecipeInput> {
+public class DistillationRecipe extends StandardProcessingRecipe<DistillationRecipeInput> {
 
     public DistillationRecipe(ProcessingRecipeParams params) {
         super(TFMGRecipeTypes.DISTILLATION, params);
@@ -53,7 +54,7 @@ public class DistillationRecipe extends StandardProcessingRecipe<RecipeInput> {
     }
 
     public FluidStack getFirstFluidResult(){
-        return fluidResults.get(0);
+        return fluidResults.getFirst();
     }
 
     public int getOutputCount(DistillationRecipe recipe){
@@ -61,20 +62,21 @@ public class DistillationRecipe extends StandardProcessingRecipe<RecipeInput> {
     }
 
     public boolean matches(FluidTank inv, int outputs) {
-
         int neededOutputs = fluidIngredients.toArray().length;
-
-        if(outputs !=neededOutputs)
+        if(outputs != neededOutputs)
             return false;
-
         if (inv.getFluidInTank(0).getAmount()==0)
             return false;
-        return fluidIngredients.get(0)
-                .test(inv.getFluidInTank(0));
+        return fluidIngredients.getFirst().test(inv.getFluidInTank(0));
     }
 
     @Override
-    public boolean matches(RecipeInput pContainer, Level pLevel) {
-        return false;
+    public boolean matches(DistillationRecipeInput input, Level pLevel) {
+        int neededOutputs = fluidResults.toArray().length;
+        if(input.outputs != neededOutputs)
+            return false;
+        if (input.fluid.getAmount() == 0)
+            return false;
+        return fluidIngredients.getFirst().test(input.fluid);
     }
 }
