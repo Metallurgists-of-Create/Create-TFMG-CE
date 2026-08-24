@@ -91,7 +91,8 @@ public class FireboxBlockEntity extends SmartBlockEntity implements IHaveGoggleI
     @Override
     public void lazyTick() {
         super.lazyTick();
-
+        if (level == null) return;
+        level.invalidateCapabilities(getBlockPos());
         FireboxBlockEntity controller = isController() ? this : getControllerBE();
 
         if (controller == null)

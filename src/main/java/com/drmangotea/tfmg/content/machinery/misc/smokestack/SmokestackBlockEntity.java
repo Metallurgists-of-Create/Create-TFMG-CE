@@ -87,6 +87,8 @@ public class SmokestackBlockEntity extends SmartBlockEntity {
     @Override
     public void tick() {
         super.tick();
+        if (level == null) return;
+        level.invalidateCapabilities(getBlockPos());
         if (smokeTimer > 0) {
             makeParticles(level, getBlockPos());
             smokeTimer--;

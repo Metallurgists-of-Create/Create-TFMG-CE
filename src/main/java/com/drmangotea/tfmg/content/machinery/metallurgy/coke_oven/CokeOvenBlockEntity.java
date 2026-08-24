@@ -109,8 +109,8 @@ public class CokeOvenBlockEntity extends SmartBlockEntity implements IHaveGoggle
     @Override
     public void tick() {
         super.tick();
-        if(level == null)
-            return;
+        if (level == null) return;
+        level.invalidateCapabilities(getBlockPos());
 
         tickRecipe();
 

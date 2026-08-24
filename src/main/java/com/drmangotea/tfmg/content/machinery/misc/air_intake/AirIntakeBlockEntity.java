@@ -96,7 +96,10 @@ public class AirIntakeBlockEntity extends KineticBlockEntity implements IWrencha
 
     public void tick(){
         super.tick();
-        if (level != null && !level.isClientSide) {
+        if (level == null) return;
+        level.invalidateCapabilities(getBlockPos());
+
+        if (!level.isClientSide) {
             if (tankInventory.getFluidAmount() + Math.min(getProduction(), tankInventory.getSpace()) <= tankInventory.getCapacity()) {
                 tankInventory.fill(new FluidStack(FluidHelper.convertToStill(TFMGFluids.AIR.get()), getProduction()), IFluidHandler.FluidAction.EXECUTE);
             }
