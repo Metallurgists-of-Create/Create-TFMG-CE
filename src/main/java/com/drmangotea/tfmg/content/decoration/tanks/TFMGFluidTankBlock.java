@@ -194,14 +194,14 @@ public abstract class TFMGFluidTankBlock<T extends TFMGFluidTankBlockEntity> ext
 		if (stack.isEmpty()) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
 		if (!player.isCreative()) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
 		
-		FluidHelper.FluidExchange exchange = null;
-		FluidTankBlockEntity be = TFMGBlockConnectivityHandler.partAt(getBlockEntityType(), level, pos);
+		TFMGFluidTankBlockEntity be = TFMGBlockConnectivityHandler.partAt(getBlockEntityType(), level, pos);
 		if (be == null) return ItemInteractionResult.FAIL;
 		
 		IFluidHandler tankCapability = level.getCapability(Capabilities.FluidHandler.BLOCK, be.getBlockPos(), null);
 		if (tankCapability == null) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
 		FluidStack prevFluidInTank = tankCapability.getFluidInTank(0).copy();
 		
+		FluidHelper.FluidExchange exchange = null;
 		if (FluidHelper.tryEmptyItemIntoBE(level, player, hand, stack, be))
 			exchange = FluidHelper.FluidExchange.ITEM_TO_TANK;
 		else if (FluidHelper.tryFillItemFromBE(level, player, hand, stack, be))
