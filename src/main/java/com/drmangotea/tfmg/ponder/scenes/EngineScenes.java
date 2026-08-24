@@ -1,12 +1,18 @@
 package com.drmangotea.tfmg.ponder.scenes;
 
+import com.drmangotea.tfmg.TFMG;
+import com.drmangotea.tfmg.content.decoration.tanks.steel.SteelTankBlockEntity;
 import com.drmangotea.tfmg.ponder.TFMGSceneBuilder;
 import com.drmangotea.tfmg.registry.TFMGBlocks;
+import com.drmangotea.tfmg.registry.TFMGFluids;
 import com.drmangotea.tfmg.registry.TFMGItems;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllItems;
+import com.simibubi.create.content.kinetics.simpleRelays.ShaftBlock;
 import com.simibubi.create.foundation.ponder.CreateSceneBuilder;
+import com.simibubi.create.infrastructure.ponder.scenes.SteamScenes;
 import net.createmod.catnip.math.Pointing;
+import net.createmod.ponder.api.PonderPalette;
 import net.createmod.ponder.api.element.ElementLink;
 import net.createmod.ponder.api.element.WorldSectionElement;
 import net.createmod.ponder.api.scene.SceneBuilder;
@@ -14,8 +20,11 @@ import net.createmod.ponder.api.scene.SceneBuildingUtil;
 import net.createmod.ponder.api.scene.Selection;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 
 public class EngineScenes {
 
@@ -329,5 +338,246 @@ public class EngineScenes {
                 .attachKeyFrame()
                 .text("The second variant of a radial is The Large Radial Engine which uses kerosene as fuel");
         scene.idle(50);
+    }
+
+    public static void regularEngine(SceneBuilder builder, SceneBuildingUtil util) {
+        CreateSceneBuilder scene = new CreateSceneBuilder(builder);
+        scene.title("regular_engine", "Regular Engine");
+        scene.configureBasePlate(0, 0, 7);
+        scene.showBasePlate();
+    }
+
+    public static void turbineEngine(SceneBuilder builder, SceneBuildingUtil util) {
+        CreateSceneBuilder scene = new CreateSceneBuilder(builder);
+        scene.title("turbine_engine", "Turbine Engine");
+        scene.configureBasePlate(0, 0, 7);
+        scene.showBasePlate();
+    }
+
+    public static void radialEngine(SceneBuilder builder, SceneBuildingUtil util) {
+        CreateSceneBuilder scene = new CreateSceneBuilder(builder);
+        scene.title("radial_engine", "Radial Engine");
+        scene.configureBasePlate(0, 0, 7);
+        scene.showBasePlate();
+    }
+
+    public static void largeEngine(SceneBuilder builder, SceneBuildingUtil util) {
+        CreateSceneBuilder scene = new CreateSceneBuilder(builder);
+        scene.title("large_engine", "Large Engine");
+        scene.configureBasePlate(0, 0, 7);
+        scene.showBasePlate();
+
+        Selection engine = util.select().position(3, 1, 3);
+        Selection engineShaft = util.select().position(3, 1, 1);
+        Selection disconnectedEngine = util.select().position(6, 1, 3);
+        BlockPos engineShaftPos = util.grid().at(6, 1, 1);
+
+        Selection airIntakePump = util.select().position(2, 1, 3);
+        Selection airIntake = util.select().fromTo(1, 1, 3, 0, 2, 3);
+
+        Selection fuelTankPump = util.select().position(4, 1, 3);
+        Selection fuelTank = util.select().fromTo(5, 1, 3, 5, 2, 3);
+
+        Selection exhaustPump = util.select().position(3, 1, 4);
+        Selection exhaust = util.select().fromTo(3, 1, 5, 3, 2, 5);
+
+        scene.idle(30);
+
+        var engineElement = scene.world().showIndependentSection(disconnectedEngine, Direction.DOWN);
+        scene.world().moveSection(engineElement, util.vector().of(-3, 0, 0), 0);
+
+        scene.overlay().showText(50)
+                .placeNearTarget()
+                .text("Large Engines create rotation from less refined fuels.");
+        scene.idle(60);
+
+        scene.overlay().showControls(util.vector().blockSurface(util.grid().at(3, 1, 3), Direction.UP), Pointing.DOWN, 60)
+                .withItem(AllBlocks.SHAFT.asStack())
+                .rightClick();
+        scene.idle(10);
+        scene.world().setBlock(engineShaftPos, AllBlocks.SHAFT.getDefaultState()
+                .setValue(ShaftBlock.AXIS, Direction.Axis.X), false);
+        ElementLink<WorldSectionElement> engineShaftElement = scene.world().showIndependentSection(engineShaft, null);
+        scene.idle(5);
+        scene.world().moveSection(engineElement, util.vector().of(0, 0, 0), 0);
+        scene.world().hideIndependentSection(engineElement, null);
+        engineElement = scene.world().showIndependentSectionImmediately(engine);
+        scene.world().setBlock(engineShaftPos, AllBlocks.POWERED_SHAFT.getDefaultState()
+                .setValue(ShaftBlock.AXIS, Direction.Axis.X), false);
+        scene.effects().indicateSuccess(util.grid().at(3, 1, 1));
+        scene.idle(40);
+        scene.overlay().showText(80)
+                .attachKeyFrame()
+                .colored(PonderPalette.BLUE)
+                .text("Clicking the engine with a Shaft creates the Kinetic Output")
+                .pointAt(util.vector().centerOf(util.grid().at(3, 1, 3)))
+                .placeNearTarget();
+        scene.idle(90);
+        scene.addKeyframe();
+        ElementLink<WorldSectionElement> fuelTankElement = scene.world().showIndependentSection(fuelTank, Direction.DOWN);
+        ElementLink<WorldSectionElement> fuelTankPumpElement = scene.world().showIndependentSection(fuelTankPump, Direction.DOWN);
+        scene.idle(10);
+        scene.overlay().showText(80)
+                .colored(PonderPalette.BLUE)
+                .text("Fuel is pumped in from the side")
+                .pointAt(fuelTank.getCenter())
+                .placeNearTarget();
+        scene.idle(40);
+        scene.overlay().showControls(util.vector().blockSurface(util.grid().at(5, 2, 3), Direction.EAST), Pointing.RIGHT, 60)
+                .withItem(TFMGFluids.DIESEL.get().getBucket().getDefaultInstance())
+                .rightClick();
+        scene.idle(10);
+        FluidStack content = new FluidStack(TFMGFluids.DIESEL.get().getSource(), 8000);
+        scene.world().modifyBlockEntity(new BlockPos(5, 1, 3), SteelTankBlockEntity.class, be -> be.getTankInventory().fill(content, IFluidHandler.FluidAction.EXECUTE));
+        scene.idle(25);
+        scene.world().setKineticSpeed(fuelTankPump, 32);
+        scene.idle(30);
+        scene.addKeyframe();
+        scene.overlay().showText(50)
+                .placeNearTarget()
+                .text("Unlike other engines, Large Engines require a steady supply of air to function.");
+        scene.idle(10);
+        ElementLink<WorldSectionElement> airIntakeElement = scene.world().showIndependentSection(airIntake, Direction.DOWN);
+        ElementLink<WorldSectionElement> airIntakePumpElement = scene.world().showIndependentSection(airIntakePump, Direction.DOWN);
+        scene.idle(40);
+        scene.world().setKineticSpeed(util.select().position(0, 2, 3), 32);
+        scene.world().setKineticSpeed(airIntakePump, 32);
+        scene.idle(10);
+        scene.world().setKineticSpeed(engineShaft, 128);
+        scene.idle(40);
+        scene.addKeyframe();
+        scene.idle(10);
+        scene.world().setKineticSpeed(engineShaft, 0);
+        scene.effects().indicateRedstone(util.grid().at(3, 1, 1));
+        scene.idle(10);
+        scene.overlay().showText(50)
+                .placeNearTarget()
+                .text("Over time the Large Engine will produce Carbon Dioxide which can stop it from functioning...");
+        scene.idle(60);
+        ElementLink<WorldSectionElement> exhaustElement = scene.world().showIndependentSection(exhaust, Direction.DOWN);
+        ElementLink<WorldSectionElement> exhaustPumpElement = scene.world().showIndependentSection(exhaustPump, Direction.DOWN);
+        scene.overlay().showText(50)
+                .placeNearTarget()
+                .text("It is a good idea to pump out any Carbon Dioxide into an Exhaust");
+        scene.world().setKineticSpeed(exhaustPump, 32);
+        scene.idle(10);
+        scene.effects().emitParticles(new Vec3(3.5, 2.5, 5.5), (world, x, y, z) -> {
+            int shouldSpawnSmoke = TFMG.RANDOM.nextInt(7);
+            if (shouldSpawnSmoke == 0) {
+                world.addParticle(ParticleTypes.CAMPFIRE_SIGNAL_SMOKE, x + TFMG.RANDOM.nextFloat(0.3f), y + 1, z + TFMG.RANDOM.nextFloat(0.3f), 0.0D, 0.08D, 0.0D);
+            }
+        }, 1, 120);
+        scene.effects().indicateSuccess(util.grid().at(3, 1, 1));
+        scene.world().setKineticSpeed(engineShaft, 128);
+    }
+
+    public static void simpleLargeEngine(SceneBuilder builder, SceneBuildingUtil util) {
+        CreateSceneBuilder scene = new CreateSceneBuilder(builder);
+        scene.title("simple_large_engine", "Simple Large Engine");
+        scene.configureBasePlate(0, 0, 7);
+        scene.showBasePlate();
+
+        Selection engine = util.select().position(3, 1, 3);
+        Selection engineShaft = util.select().position(3, 1, 1);
+        Selection disconnectedEngine = util.select().position(6, 1, 3);
+        BlockPos engineShaftPos = util.grid().at(6, 1, 1);
+
+        Selection airIntakePump = util.select().position(2, 1, 3);
+        Selection airIntake = util.select().fromTo(1, 1, 3, 0, 2, 3);
+
+        Selection fuelTankPump = util.select().position(4, 1, 3);
+        Selection fuelTank = util.select().fromTo(5, 1, 3, 5, 2, 3);
+
+        Selection exhaustPump = util.select().position(3, 1, 4);
+        Selection exhaust = util.select().fromTo(3, 1, 5, 3, 2, 5);
+
+        scene.idle(30);
+
+        var engineElement = scene.world().showIndependentSection(disconnectedEngine, Direction.DOWN);
+        scene.world().moveSection(engineElement, util.vector().of(-3, 0, 0), 0);
+
+        scene.overlay().showText(50)
+                .placeNearTarget()
+                .text("Large Engines create rotation from less refined fuels.");
+        scene.idle(60);
+
+        scene.overlay().showControls(util.vector().blockSurface(util.grid().at(3, 1, 3), Direction.UP), Pointing.DOWN, 60)
+                .withItem(AllBlocks.SHAFT.asStack())
+                .rightClick();
+        scene.idle(10);
+        scene.world().setBlock(engineShaftPos, AllBlocks.SHAFT.getDefaultState()
+                .setValue(ShaftBlock.AXIS, Direction.Axis.X), false);
+        ElementLink<WorldSectionElement> engineShaftElement = scene.world().showIndependentSection(engineShaft, null);
+        scene.idle(5);
+        scene.world().moveSection(engineElement, util.vector().of(0, 0, 0), 0);
+        scene.world().hideIndependentSection(engineElement, null);
+        engineElement = scene.world().showIndependentSectionImmediately(engine);
+        scene.world().setBlock(engineShaftPos, AllBlocks.POWERED_SHAFT.getDefaultState()
+                .setValue(ShaftBlock.AXIS, Direction.Axis.X), false);
+        scene.effects().indicateSuccess(util.grid().at(3, 1, 1));
+        scene.idle(40);
+        scene.overlay().showText(80)
+                .attachKeyFrame()
+                .colored(PonderPalette.BLUE)
+                .text("Clicking the engine with a Shaft creates the Kinetic Output")
+                .pointAt(util.vector().centerOf(util.grid().at(3, 1, 3)))
+                .placeNearTarget();
+        scene.idle(90);
+        scene.addKeyframe();
+        ElementLink<WorldSectionElement> fuelTankElement = scene.world().showIndependentSection(fuelTank, Direction.DOWN);
+        ElementLink<WorldSectionElement> fuelTankPumpElement = scene.world().showIndependentSection(fuelTankPump, Direction.DOWN);
+        scene.idle(10);
+        scene.overlay().showText(80)
+                .colored(PonderPalette.BLUE)
+                .text("Fuel is pumped in from the side")
+                .pointAt(fuelTank.getCenter())
+                .placeNearTarget();
+        scene.idle(40);
+        scene.overlay().showControls(util.vector().blockSurface(util.grid().at(5, 2, 3), Direction.EAST), Pointing.RIGHT, 60)
+                .withItem(TFMGFluids.DIESEL.get().getBucket().getDefaultInstance())
+                .rightClick();
+        scene.idle(10);
+        FluidStack content = new FluidStack(TFMGFluids.DIESEL.get().getSource(), 8000);
+        scene.world().modifyBlockEntity(new BlockPos(5, 1, 3), SteelTankBlockEntity.class, be -> be.getTankInventory().fill(content, IFluidHandler.FluidAction.EXECUTE));
+        scene.idle(25);
+        scene.world().setKineticSpeed(fuelTankPump, 32);
+        scene.idle(30);
+        scene.addKeyframe();
+        scene.overlay().showText(50)
+                .placeNearTarget()
+                .text("Unlike other engines, Large Engines require a steady supply of air to function.");
+        scene.idle(10);
+        ElementLink<WorldSectionElement> airIntakeElement = scene.world().showIndependentSection(airIntake, Direction.DOWN);
+        ElementLink<WorldSectionElement> airIntakePumpElement = scene.world().showIndependentSection(airIntakePump, Direction.DOWN);
+        scene.idle(40);
+        scene.world().setKineticSpeed(util.select().position(0, 2, 3), 32);
+        scene.world().setKineticSpeed(airIntakePump, 32);
+        scene.idle(10);
+        scene.world().setKineticSpeed(engineShaft, 128);
+        scene.idle(40);
+        scene.addKeyframe();
+        scene.idle(10);
+        scene.world().setKineticSpeed(engineShaft, 0);
+        scene.effects().indicateRedstone(util.grid().at(3, 1, 1));
+        scene.idle(10);
+        scene.overlay().showText(50)
+                .placeNearTarget()
+                .text("Over time the Large Engine will produce Carbon Dioxide which can stop it from functioning...");
+        scene.idle(60);
+        ElementLink<WorldSectionElement> exhaustElement = scene.world().showIndependentSection(exhaust, Direction.DOWN);
+        ElementLink<WorldSectionElement> exhaustPumpElement = scene.world().showIndependentSection(exhaustPump, Direction.DOWN);
+        scene.overlay().showText(50)
+                .placeNearTarget()
+                .text("It is a good idea to pump out any Carbon Dioxide into an Exhaust");
+        scene.world().setKineticSpeed(exhaustPump, 32);
+        scene.idle(10);
+        scene.effects().emitParticles(new Vec3(3.5, 2.5, 5.5), (world, x, y, z) -> {
+            int shouldSpawnSmoke = TFMG.RANDOM.nextInt(7);
+            if (shouldSpawnSmoke == 0) {
+                world.addParticle(ParticleTypes.CAMPFIRE_SIGNAL_SMOKE, x + TFMG.RANDOM.nextFloat(0.3f), y + 1, z + TFMG.RANDOM.nextFloat(0.3f), 0.0D, 0.08D, 0.0D);
+            }
+        }, 1, 120);
+        scene.effects().indicateSuccess(util.grid().at(3, 1, 1));
+        scene.world().setKineticSpeed(engineShaft, 128);
     }
 }

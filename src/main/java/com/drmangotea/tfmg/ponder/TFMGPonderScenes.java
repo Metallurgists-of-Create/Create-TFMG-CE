@@ -1,10 +1,7 @@
 package com.drmangotea.tfmg.ponder;
 
 import com.drmangotea.tfmg.content.decoration.pipes.TFMGPipes;
-import com.drmangotea.tfmg.ponder.scenes.ChemistryScenes;
-import com.drmangotea.tfmg.ponder.scenes.ElectricityScenes;
-import com.drmangotea.tfmg.ponder.scenes.MetallurgyScenes;
-import com.drmangotea.tfmg.ponder.scenes.OilScenes;
+import com.drmangotea.tfmg.ponder.scenes.*;
 import com.drmangotea.tfmg.registry.TFMGBlocks;
 import com.simibubi.create.Create;
 import com.simibubi.create.infrastructure.ponder.AllCreatePonderTags;
@@ -40,8 +37,16 @@ public class TFMGPonderScenes {
                 .addStoryBoard("winding_machine", ElectricityScenes::windingMachineAutomation, TFMGPonderTags.ELECTRIC_MACHINERY);
 
         // Engines
-        //HELPER.forComponents(TFMGBlocks.REGULAR_ENGINE, TFMGBlocks.TURBINE_ENGINE, TFMGBlocks.RADIAL_ENGINE)
-        //         .addStoryBoard("engines", ChemistryScenes::engines, TFMGPonderTags.ENGINES);
+        HELPER.forComponents(TFMGBlocks.REGULAR_ENGINE)
+                 .addStoryBoard("regular_engine", EngineScenes::regularEngine, TFMGPonderTags.ENGINES);
+        HELPER.forComponents(TFMGBlocks.TURBINE_ENGINE)
+                 .addStoryBoard("turbine_engine", EngineScenes::turbineEngine, TFMGPonderTags.ENGINES);
+        HELPER.forComponents(TFMGBlocks.RADIAL_ENGINE)
+                 .addStoryBoard("radial_engine", EngineScenes::radialEngine, TFMGPonderTags.ENGINES);
+        HELPER.forComponents(TFMGBlocks.LARGE_ENGINE)
+                 .addStoryBoard("large_engine", EngineScenes::largeEngine, TFMGPonderTags.ENGINES);
+        HELPER.forComponents(TFMGBlocks.SIMPLE_LARGE_ENGINE)
+                 .addStoryBoard("simple_large_engine", EngineScenes::simpleLargeEngine, TFMGPonderTags.ENGINES);
 
         // Metallurgy
         HELPER.forComponents(TFMGBlocks.BLAST_FURNACE_OUTPUT, TFMGBlocks.BLAST_FURNACE_HATCH)
