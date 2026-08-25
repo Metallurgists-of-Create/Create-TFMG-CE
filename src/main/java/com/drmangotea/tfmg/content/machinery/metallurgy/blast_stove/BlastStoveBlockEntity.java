@@ -44,12 +44,14 @@ import static net.neoforged.neoforge.fluids.FluidStack.isSameFluidSameComponents
 public class BlastStoveBlockEntity extends SmartBlockEntity implements IHaveGoggleInformation, IMultiBlockEntityContainer.Fluid {
     private static final int MAX_SIZE = 2;
 	
-	protected IFluidHandler primaryCapability;
-    protected IFluidHandler secondaryCapability;
-    public TFMGSmartFluidTank primaryOutputInventory;
-    public TFMGSmartFluidTank secondaryOutputInventory;
-    public TFMGSmartFluidTank primaryInputInventory;
-    public TFMGSmartFluidTank secondaryInputInventory;
+	protected IFluidHandler
+		primaryCapability,
+		secondaryCapability;
+	protected TFMGSmartFluidTank
+		primaryOutputInventory,
+		secondaryOutputInventory,
+		primaryInputInventory,
+		secondaryInputInventory;
     protected BlockPos controller;
     protected BlockPos lastKnownPos;
     public boolean updateConnectivity;
@@ -107,21 +109,23 @@ public class BlastStoveBlockEntity extends SmartBlockEntity implements IHaveGogg
 			!primaryInputInventory.isEmpty() &&
 			!secondaryInputInventory.isEmpty() &&
 			primaryOutputInventory.getSpace() != 0 &&
-			secondaryOutputInventory.getSpace() != 0 &&
-			recipe != null
+			secondaryOutputInventory.getSpace() != 0
 		) {
-			if (timer >= getSpeed()) {
-				if (
-					(primaryOutputInventory.isEmpty() || isSameFluidSameComponents(primaryOutputInventory.getFluid(),recipe.getPrimaryResult())) &&
-					(secondaryOutputInventory.isEmpty() || isSameFluidSameComponents(secondaryOutputInventory.getFluid(),recipe.getSecondaryResult()))
-				) {
-					primaryInputInventory.forceDrain(recipe.getPrimaryIngredient().amount(), IFluidHandler.FluidAction.EXECUTE);
-					secondaryInputInventory.forceDrain(recipe.getSecondaryIngredient().amount(), IFluidHandler.FluidAction.EXECUTE);
-					primaryOutputInventory.forceFill(recipe.getPrimaryResult(), IFluidHandler.FluidAction.EXECUTE);
-					secondaryOutputInventory.forceFill(recipe.getSecondaryResult(), IFluidHandler.FluidAction.EXECUTE);
-					level.invalidateCapabilities(getBlockPos());
-				}
-			} else { timer++; }
+			recipe = getMatchingRecipes();
+			if (recipe != null) {
+				if (timer >= getSpeed()) {
+					if (
+						(primaryOutputInventory.isEmpty() || isSameFluidSameComponents(primaryOutputInventory.getFluid(), recipe.getPrimaryResult())) &&
+							(secondaryOutputInventory.isEmpty() || isSameFluidSameComponents(secondaryOutputInventory.getFluid(), recipe.getSecondaryResult()))
+					) {
+						primaryInputInventory.forceDrain(recipe.getPrimaryIngredient().amount(), IFluidHandler.FluidAction.EXECUTE);
+						secondaryInputInventory.forceDrain(recipe.getSecondaryIngredient().amount(), IFluidHandler.FluidAction.EXECUTE);
+						primaryOutputInventory.forceFill(recipe.getPrimaryResult(), IFluidHandler.FluidAction.EXECUTE);
+						secondaryOutputInventory.forceFill(recipe.getSecondaryResult(), IFluidHandler.FluidAction.EXECUTE);
+						level.invalidateCapabilities(getBlockPos());
+					}
+				} else { timer++; }
+			}
         }
 
 
@@ -162,9 +166,6 @@ public class BlastStoveBlockEntity extends SmartBlockEntity implements IHaveGogg
     }
 
     protected HotBlastRecipe getMatchingRecipes() {
-		if (primaryInputInventory.getFluid().isEmpty() || secondaryInputInventory.getFluid().isEmpty())
-			return null;
-		
         List<RecipeHolder<? extends Recipe<?>>> list = RecipeFinder.get(getRecipeCacheKey(), level, RecipeConditions.isOfType(TFMGRecipeTypes.HOT_BLAST.getType()));
 		
         for (int i = 0; i < list.toArray().length; i++) {
