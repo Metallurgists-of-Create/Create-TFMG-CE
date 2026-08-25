@@ -1,6 +1,9 @@
 package com.drmangotea.tfmg.config;
 
 
+import com.drmangotea.tfmg.config.common.DepositConfig;
+import com.drmangotea.tfmg.config.common.EquipmentConfig;
+import com.drmangotea.tfmg.config.common.MachineConfig;
 import net.createmod.catnip.config.ConfigBase;
 
 public class TFMGCommonConfig extends ConfigBase {

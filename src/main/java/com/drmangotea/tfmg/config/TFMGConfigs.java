@@ -1,5 +1,7 @@
 package com.drmangotea.tfmg.config;
 
+import com.drmangotea.tfmg.config.server.TFMGResistivity;
+import com.drmangotea.tfmg.config.server.TFMGStress;
 import com.drmangotea.tfmg.content.electricity.connection.cable_type.ResistivityValues;
 import com.simibubi.create.api.stress.BlockStressValues;
 

@@ -235,7 +235,7 @@ public class ChemicalVatCategory extends CreateRecipeCategory<VatMachineRecipe> 
 
         float angleDegrees = getNeedleAngle(pressure);
 
-        if (TFMGConfigs.client().enablePressureNeedleWobble.get() && Math.abs(pressure) >= PRESSURE_ANGLES.length) {
+        if (TFMGConfigs.client().ui.pressureNeedleWobble.get() && Math.abs(pressure) >= PRESSURE_ANGLES.length) {
             angleDegrees += getPeggedWobble();
         }
 

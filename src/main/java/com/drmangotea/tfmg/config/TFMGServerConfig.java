@@ -1,6 +1,8 @@
 package com.drmangotea.tfmg.config;
 
 
+import com.drmangotea.tfmg.config.server.TFMGResistivity;
+import com.drmangotea.tfmg.config.server.TFMGStress;
 import net.createmod.catnip.config.ConfigBase;
 
 public class TFMGServerConfig extends ConfigBase {
