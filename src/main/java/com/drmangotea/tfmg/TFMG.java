@@ -104,9 +104,7 @@ public class TFMG {
      */
     public static void commonSetup(final FMLCommonSetupEvent event) {
         TFMGFluidInteractions.registerFluidInteractions();
-        event.enqueueWork(() -> {
-            TFMGBoilerHeaters.registerDefaults();
-        });
+        event.enqueueWork(TFMGBoilerHeaters::registerDefaults);
     }
 
     public static void onRegister(final RegisterEvent event) {
