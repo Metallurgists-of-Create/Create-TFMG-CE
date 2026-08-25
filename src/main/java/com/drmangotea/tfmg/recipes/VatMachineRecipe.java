@@ -1,6 +1,7 @@
 package com.drmangotea.tfmg.recipes;
 
 import com.drmangotea.tfmg.base.pressure.Pressure;
+import com.drmangotea.tfmg.content.machinery.vat.base.registry.VatOperation;
 import com.drmangotea.tfmg.datagen.recipes.values.tfmg.TFMGVatRecipeGen;
 import com.drmangotea.tfmg.registry.TFMGRecipeTypes;
 import com.mojang.serialization.MapCodec;
@@ -18,7 +19,7 @@ import java.util.List;
 
 public class VatMachineRecipe extends ProcessingRecipe<RecipeInput, VatRecipeParams> {
 
-    public List<String> machines;
+    public List<VatOperation> machines;
     public List<ResourceLocation> allowedVatTypes;
     public int minSize;
     public int heatLevel;

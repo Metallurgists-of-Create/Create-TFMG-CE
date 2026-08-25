@@ -3,6 +3,7 @@ package com.drmangotea.tfmg.content.machinery.vat.industrial_mixer.mode;
 import com.drmangotea.tfmg.TFMGRegistries;
 import com.drmangotea.tfmg.content.machinery.vat.MultiUseAttachment;
 import com.drmangotea.tfmg.content.machinery.vat.base.VatBlockEntity;
+import com.drmangotea.tfmg.content.machinery.vat.base.registry.VatOperationEntry;
 import com.drmangotea.tfmg.content.machinery.vat.industrial_mixer.IndustrialMixerBlockEntity;
 import com.drmangotea.tfmg.registry.TFMGMixerModes;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -30,7 +31,7 @@ import javax.annotation.Nullable;
 public class MixerMode implements MultiUseAttachment<IndustrialMixerBlockEntity> {
     private String descriptionId;
     private final ResourceLocation id;
-    private final ResourceLocation operation;
+    private final VatOperationEntry operation;
     private final MixerPartial mixerPartial;
 
     public MixerMode(Properties properties) {
@@ -39,7 +40,7 @@ public class MixerMode implements MultiUseAttachment<IndustrialMixerBlockEntity>
         this.mixerPartial = properties.mixerPartial;
     }
 
-    public ResourceLocation getOperation() {
+    public VatOperationEntry getOperation() {
         return this.operation;
     }
 
@@ -91,10 +92,10 @@ public class MixerMode implements MultiUseAttachment<IndustrialMixerBlockEntity>
     public static class Properties {
         private final ResourceLocation id;
 
-        ResourceLocation operation = null;
+        VatOperationEntry operation = null;
         MixerPartial mixerPartial = null;
 
-        public Properties operation(ResourceLocation operation) {
+        public Properties operation(VatOperationEntry operation) {
             this.operation = operation;
             return this;
         }

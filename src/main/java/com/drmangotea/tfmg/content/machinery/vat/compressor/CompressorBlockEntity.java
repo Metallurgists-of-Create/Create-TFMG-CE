@@ -1,15 +1,19 @@
 package com.drmangotea.tfmg.content.machinery.vat.compressor;
 
+import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.base.lang.TFMGTexts;
 import com.drmangotea.tfmg.config.TFMGConfigs;
 import com.drmangotea.tfmg.content.machinery.vat.base.IVatMachine;
 import com.drmangotea.tfmg.content.machinery.vat.base.VatBlock;
 import com.drmangotea.tfmg.content.machinery.vat.base.VatBlockEntity;
+import com.drmangotea.tfmg.content.machinery.vat.base.registry.VatOperation;
+import com.drmangotea.tfmg.registry.TFMGVatOperations;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -47,8 +51,8 @@ public class CompressorBlockEntity extends KineticBlockEntity implements IVatMac
     }
 
     @Override
-    public String getOperationId() {
-        return getSpeed() < 0 ? "tfmg:decompressor" : "tfmg:compressor";
+    public VatOperation getOperationId() {
+        return getSpeed() < 0 ? TFMGVatOperations.DECOMPRESSOR.get() : TFMGVatOperations.COMPRESSOR.get();
     }
 
     @Override
