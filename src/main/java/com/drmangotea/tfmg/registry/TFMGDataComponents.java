@@ -2,6 +2,7 @@ package com.drmangotea.tfmg.registry;
 
 import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.base.data_storage.CylinderFuels;
+import com.drmangotea.tfmg.content.items.weapons.fire_extinguisher.FireExtinguisherFuel;
 import com.drmangotea.tfmg.content.items.weapons.flamethrover.FlamethrowerFuel;
 import com.drmangotea.tfmg.content.machinery.vat.electrode_holder.electrode.Electrode;
 import com.drmangotea.tfmg.content.machinery.vat.industrial_mixer.mode.MixerMode;
@@ -25,7 +26,9 @@ public class TFMGDataComponents {
 	public static final DataComponentType<Integer> COIL_TURNS = register("coil_turns", ExtraCodecs.NON_NEGATIVE_INT, ByteBufCodecs.VAR_INT);
 	public static final DataComponentType<Integer> CONFIGURATION_WRENCH_NUMBER = register("number", Codec.INT, ByteBufCodecs.VAR_INT);
 	public static final DataComponentType<Integer> LITHIUM_BLADE_TIMER = register("timer", Codec.INT, ByteBufCodecs.VAR_INT);
+
 	public static final DataComponentType<FlamethrowerFuel> FLAMETHROWER = register("flamethrower", FlamethrowerFuel.CODEC, FlamethrowerFuel.STREAM_CODEC);
+	public static final DataComponentType<FireExtinguisherFuel> FIRE_EXTINGUISHER = register("fire_extinguisher", FireExtinguisherFuel.CODEC, FireExtinguisherFuel.STREAM_CODEC);
 
 	public static final DataComponentType<Integer> ACCUMULATOR_STORAGE = register("storage", Codec.INT, ByteBufCodecs.VAR_INT);
 

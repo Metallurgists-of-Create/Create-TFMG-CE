@@ -4,6 +4,7 @@ package com.drmangotea.tfmg.datagen;
 import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.TFMGRegistries;
 import com.drmangotea.tfmg.registry.TFMGEngineFuelTypes;
+import com.drmangotea.tfmg.registry.TFMGFireExtinguisherFuelTypes;
 import com.drmangotea.tfmg.registry.TFMGFlamethrowerFuelTypes;
 import com.drmangotea.tfmg.worldgen.TFMGBiomeModifiers;
 import com.drmangotea.tfmg.worldgen.TFMGConfiguredFeatures;
@@ -22,6 +23,7 @@ public class TFMGGeneratedEntriesProvider extends DatapackBuiltinEntriesProvider
     private static final RegistrySetBuilder BUILDER = new RegistrySetBuilder()
             .add(TFMGRegistries.FLAMETHROWER_FUEL_TYPE, TFMGFlamethrowerFuelTypes::bootstrap)
             .add(TFMGRegistries.ENGINE_FUEL_TYPE, TFMGEngineFuelTypes::bootstrap)
+            .add(TFMGRegistries.FIRE_EXTINGUISHER_FUEL_TYPE, TFMGFireExtinguisherFuelTypes::bootstrap)
             .add(Registries.CONFIGURED_FEATURE, TFMGConfiguredFeatures::bootstrap)
             .add(Registries.PLACED_FEATURE, TFMGPlacedFeatures::bootstrap)
             .add(NeoForgeRegistries.Keys.BIOME_MODIFIERS, TFMGBiomeModifiers::bootstrap)
