@@ -57,7 +57,7 @@ public class CokeOvenBlockEntity extends SmartBlockEntity implements IHaveGoggle
     public int size = 1;
     public boolean forceOpen = false;
 
-    int totalTime = 0;
+    int totalTime = -1;
     int timer = 0;
     private final RecipeManager.CachedCheck<RecipeWrapper, CokingRecipe> quickCheck;
 
@@ -82,7 +82,7 @@ public class CokeOvenBlockEntity extends SmartBlockEntity implements IHaveGoggle
             executeRecipe();
         }
         if(inventory.isEmpty()) {
-            totalTime = 0;
+            totalTime = -1;
             timer = 0;
         }
     }
@@ -145,15 +145,15 @@ public class CokeOvenBlockEntity extends SmartBlockEntity implements IHaveGoggle
         }
 
         if(recipeholder == null) {
-            totalTime = 0;
+            totalTime = -1;
             timer = 0;
             return;
         }
 
         CokingRecipe recipe = recipeholder.value();
 
-        if(timer == totalTime){
-            totalTime = 0;
+        if(timer >= totalTime) {
+            totalTime = -1;
             timer = 0;
             inventory.getItem(0).shrink(recipe.getIngredients().getFirst().getItems()[0].getCount());
 

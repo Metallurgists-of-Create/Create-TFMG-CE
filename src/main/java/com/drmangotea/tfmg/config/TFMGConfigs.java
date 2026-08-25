@@ -1,5 +1,7 @@
 package com.drmangotea.tfmg.config;
 
+import com.drmangotea.tfmg.config.server.TFMGResistivity;
+import com.drmangotea.tfmg.config.server.TFMGStress;
 import com.drmangotea.tfmg.content.electricity.connection.cable_type.ResistivityValues;
 import com.simibubi.create.api.stress.BlockStressValues;
 
@@ -24,8 +26,7 @@ public class TFMGConfigs {
 
 	private static TFMGServerConfig server;
 	private static TFMGCommonConfig common;
-
-
+	private static TFMGClientConfig client;
 
 	public static TFMGServerConfig server() {
 		return server;
@@ -34,6 +35,8 @@ public class TFMGConfigs {
 	public static TFMGCommonConfig common() {
 		return common;
 	}
+
+	public static TFMGClientConfig client() {return client;}
 
 	public static ConfigBase byType(ModConfig.Type type) {
 		return CONFIGS.get(type);
@@ -51,10 +54,11 @@ public class TFMGConfigs {
 		CONFIGS.put(side, config);
 		return config;
 	}
-	@SuppressWarnings("removal")
+
 	public static void register(ModLoadingContext context, ModContainer container) {
 		server = register(TFMGServerConfig::new, ModConfig.Type.SERVER);
 		common = register(TFMGCommonConfig::new, ModConfig.Type.COMMON);
+		client = register(TFMGClientConfig::new, ModConfig.Type.CLIENT);
 		for (Map.Entry<ModConfig.Type, ConfigBase> pair : CONFIGS.entrySet())
 			container.registerConfig(pair.getKey(), pair.getValue().specification);
 		TFMGStress stress = TFMGConfigs.server().stressValues;

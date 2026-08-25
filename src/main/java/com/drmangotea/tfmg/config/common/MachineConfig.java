@@ -1,4 +1,4 @@
-package com.drmangotea.tfmg.config;
+package com.drmangotea.tfmg.config.common;
 
 
 import net.createmod.catnip.config.ConfigBase;
@@ -75,7 +75,7 @@ public class MachineConfig extends ConfigBase {
         static String electricMotorInternalResistance = "Sets the internal resistance of the electric motor.";
         static String cokeOvenMaxSize = "Determines the maximum size of coke ovens.";
         static String accumulatorStorage = "Determines the storage space of accumulators.";
-        static String fireboxExhaustRequirement = "If set to true,fireboxes will require exhaust management.";
+        static String fireboxExhaustRequirement = "If set to true, fireboxes will require exhaust management.";
         static String fireboxFuelConsumption = "Determines the amount of fuel a firebox needs to run for 3 seconds.";
         static String engineMaxLength = "The maximum length of engines.";
         static String engineFuelConsumption = "Modifier of engine fuel consumption in %.";

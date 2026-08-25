@@ -1,4 +1,4 @@
-package com.drmangotea.tfmg.config;
+package com.drmangotea.tfmg.config.common;
 
 
 import net.createmod.catnip.config.ConfigBase;

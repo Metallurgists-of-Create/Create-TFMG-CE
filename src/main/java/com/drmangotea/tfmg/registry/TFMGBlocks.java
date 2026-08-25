@@ -4,7 +4,7 @@ package com.drmangotea.tfmg.registry;
 import com.drmangotea.tfmg.base.*;
 import com.drmangotea.tfmg.base.blocks.TFMGDirectionalBlock;
 import com.drmangotea.tfmg.base.blocks.TFMGVanillaBlockStates;
-import com.drmangotea.tfmg.config.TFMGStress;
+import com.drmangotea.tfmg.config.server.TFMGStress;
 import com.drmangotea.tfmg.content.decoration.*;
 import com.drmangotea.tfmg.content.decoration.concrete.*;
 import com.drmangotea.tfmg.content.decoration.doors.TFMGSlidingDoorBlock;

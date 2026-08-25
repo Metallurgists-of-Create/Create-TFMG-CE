@@ -37,7 +37,6 @@ public enum TFMGGuiTextures implements ScreenElement {
     VAT_HEATER("chemical_vat", 112, 89, 9, 9),
     VAT_SUPERHEATER("chemical_vat", 112, 98, 9, 9),
     VAT_BAROMETER("chemical_vat",211,3,42,42),
-    VAT_BAROMETER_NEEDLE("barometer_needle",0,0,96,528),
     PLATINUM_ELECTRODE("chemical_vat", 202, 0, 8, 29)
     ;
 
@@ -45,8 +44,10 @@ public enum TFMGGuiTextures implements ScreenElement {
 
 
     public final ResourceLocation location;
-    public int width, height;
-    public int startX, startY;
+    public final int width;
+    public final int height;
+    public final int startX;
+    public final int startY;
 
     private TFMGGuiTextures(String location, int width, int height) {
         this(location, 0, 0, width, height);
