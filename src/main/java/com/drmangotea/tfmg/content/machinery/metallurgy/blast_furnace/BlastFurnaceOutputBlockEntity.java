@@ -4,7 +4,6 @@ import com.drmangotea.tfmg.base.TFMGUtils;
 import com.drmangotea.tfmg.base.lang.TFMGTexts;
 import com.drmangotea.tfmg.config.TFMGConfigs;
 import com.drmangotea.tfmg.datagen.TFMGDamageSources;
-import com.drmangotea.tfmg.recipes.CokingRecipe;
 import com.drmangotea.tfmg.recipes.IndustrialBlastingRecipe;
 import com.drmangotea.tfmg.recipes.input.IndustrialBlastingRecipeInput;
 import com.drmangotea.tfmg.registry.TFMGBlockEntities;
@@ -32,7 +31,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
-import net.minecraft.world.item.crafting.RecipeInput;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -44,10 +42,8 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
 import net.neoforged.neoforge.items.IItemHandlerModifiable;
 import net.neoforged.neoforge.items.wrapper.CombinedInvWrapper;
-import net.neoforged.neoforge.items.wrapper.RecipeWrapper;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.Random;
 
 import static net.minecraft.world.level.block.HorizontalDirectionalBlock.FACING;

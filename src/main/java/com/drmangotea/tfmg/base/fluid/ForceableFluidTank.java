@@ -4,7 +4,6 @@ import com.simibubi.create.foundation.fluid.SmartFluidTank;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.neoforged.neoforge.fluids.FluidStack;
-import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
 
 import java.util.function.Consumer;
 import java.util.function.Predicate;

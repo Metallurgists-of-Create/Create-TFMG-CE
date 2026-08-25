@@ -16,8 +16,6 @@ import com.simibubi.create.content.fluids.VirtualFluid;
 import com.simibubi.create.foundation.data.CreateRegistrate;
 import com.simibubi.create.foundation.data.VirtualFluidBuilder;
 import com.simibubi.create.foundation.item.TooltipModifier;
-import com.tterrag.registrate.AbstractRegistrate;
-import com.tterrag.registrate.Registrate;
 import com.tterrag.registrate.builders.FluidBuilder;
 import com.tterrag.registrate.util.nullness.NonNullFunction;
 import net.minecraft.core.registries.Registries;

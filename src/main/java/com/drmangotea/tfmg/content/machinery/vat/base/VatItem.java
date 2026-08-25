@@ -1,7 +1,7 @@
 package com.drmangotea.tfmg.content.machinery.vat.base;
 
-import com.drmangotea.tfmg.registry.TFMGBlockEntities;
 import com.drmangotea.tfmg.base.TFMGBlockConnectivityHandler;
+import com.drmangotea.tfmg.registry.TFMGBlockEntities;
 import com.simibubi.create.content.fluids.tank.FluidTankBlockEntity;
 import com.simibubi.create.foundation.block.IBE;
 import net.minecraft.core.BlockPos;

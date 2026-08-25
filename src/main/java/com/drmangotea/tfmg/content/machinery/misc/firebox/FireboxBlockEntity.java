@@ -1,6 +1,5 @@
 package com.drmangotea.tfmg.content.machinery.misc.firebox;
 
-import com.drmangotea.tfmg.base.TFMGUtils;
 import com.drmangotea.tfmg.base.fluid.ForceableFluidTank;
 import com.drmangotea.tfmg.config.TFMGConfigs;
 import com.drmangotea.tfmg.registry.TFMGBlockEntities;
@@ -15,7 +14,6 @@ import com.simibubi.create.foundation.blockEntity.IMultiBlockEntityContainer;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.fluid.CombinedTankWrapper;
-import com.simibubi.create.foundation.fluid.SmartFluidTank;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;

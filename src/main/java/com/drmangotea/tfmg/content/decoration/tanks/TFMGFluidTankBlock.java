@@ -1,7 +1,7 @@
 package com.drmangotea.tfmg.content.decoration.tanks;
 
-import com.drmangotea.tfmg.mixin.accessor.FluidTankBlockEntityAccessor;
 import com.drmangotea.tfmg.base.TFMGBlockConnectivityHandler;
+import com.drmangotea.tfmg.mixin.accessor.FluidTankBlockEntityAccessor;
 import com.simibubi.create.content.equipment.wrench.IWrenchable;
 import com.simibubi.create.content.fluids.tank.FluidTankBlock;
 import com.simibubi.create.content.fluids.tank.FluidTankBlockEntity;
