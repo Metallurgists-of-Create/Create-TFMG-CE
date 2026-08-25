@@ -1,5 +1,6 @@
 package com.drmangotea.tfmg.content.machinery.misc.firebox;
 
+import com.drmangotea.tfmg.base.TFMGSmartFluidTank;
 import com.drmangotea.tfmg.base.TFMGUtils;
 import com.drmangotea.tfmg.config.TFMGConfigs;
 import com.drmangotea.tfmg.registry.TFMGBlockEntities;
@@ -61,8 +62,8 @@ public class FireboxBlockEntity extends SmartBlockEntity implements IHaveGoggleI
     public FireboxBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
         setLazyTickRate(60);
-        tankInventory = TFMGUtils.createTank(getCapacityMultiplier(), false, true, this::onFluidStackChanged);
-        exhuastTank = TFMGUtils.createTank(getCapacityMultiplier(), true, false, this::onFluidStackChanged);
+        tankInventory = TFMGSmartFluidTank.inputOnly(getCapacityMultiplier(), this::onFluidStackChanged);
+        exhuastTank = TFMGSmartFluidTank.outputOnly(getCapacityMultiplier(), this::onFluidStackChanged);
         fluidCapability = new CombinedTankWrapper(tankInventory, exhuastTank);
         updateConnectivity = false;
         updateCapability = false;

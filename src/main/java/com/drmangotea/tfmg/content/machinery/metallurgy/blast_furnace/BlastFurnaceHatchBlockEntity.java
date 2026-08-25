@@ -1,5 +1,6 @@
 package com.drmangotea.tfmg.content.machinery.metallurgy.blast_furnace;
 
+import com.drmangotea.tfmg.base.TFMGSmartFluidTank;
 import com.drmangotea.tfmg.base.TFMGUtils;
 import com.drmangotea.tfmg.registry.TFMGBlockEntities;
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
@@ -45,7 +46,7 @@ public class BlastFurnaceHatchBlockEntity extends SmartBlockEntity implements IH
     public BlastFurnaceHatchBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
         setLazyTickRate(10);
-        tank = TFMGUtils.createTank(4000, true, this::onFluidChanged);
+        tank = TFMGSmartFluidTank.IO(4000, this::onFluidChanged);
         inventory = new SmartInventory(1, this).withMaxStackSize(64);
         fluidCapability = tank;
         itemCapability = inventory;

@@ -31,7 +31,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.capabilities.Capabilities;
@@ -43,7 +42,6 @@ import org.joml.Quaterniond;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public class TFMGUtils {
@@ -315,48 +313,6 @@ public class TFMGUtils {
 
     public static Iterable<BlockPos> AABBtoBlockPos(AABB aabb) {
         return BlockPos.betweenClosed(new BlockPos((int) aabb.minX, (int) aabb.minY, (int) aabb.minZ), new BlockPos((int) aabb.maxX, (int) aabb.maxY, (int) aabb.maxZ));
-    }
-
-    public static SmartFluidTank createTank(int capacity, boolean extractionAllowed, Consumer<FluidStack> updateCallback) {
-        return createTank(capacity, extractionAllowed, true, updateCallback, null);
-    }
-
-    public static SmartFluidTank createTank(int capacity, boolean extractionAllowed, boolean insertionAllowed, Consumer<FluidStack> updateCallback) {
-        return createTank(capacity, extractionAllowed, insertionAllowed, updateCallback, null);
-    }
-
-    public static SmartFluidTank createTank(int capacity, boolean extractionAllowed, boolean insertionAllowed, Consumer<FluidStack> updateCallback, Fluid validFluid) {
-        return new SmartFluidTank(capacity, updateCallback) {
-            @Override
-            public boolean isFluidValid(FluidStack stack) {
-
-                if (validFluid == null) return true;
-
-                return stack.getFluid().isSame(validFluid);
-            }
-
-            @Override
-            public FluidStack drain(FluidStack resource, FluidAction action) {
-                if (!extractionAllowed) return FluidStack.EMPTY;
-                return super.drain(resource, action);
-            }
-
-            public FluidStack forceDrain(FluidStack resource, FluidAction action){
-                return super.drain(resource,action);
-            }
-
-            @Override
-            public FluidStack drain(int maxDrain, FluidAction action) {
-                if (!extractionAllowed) return FluidStack.EMPTY;
-                return super.drain(maxDrain, action);
-            }
-
-            @Override
-            public int fill(FluidStack resource, FluidAction action) {
-                if (!insertionAllowed) return 0;
-                return super.fill(resource, action);
-            }
-        };
     }
 
     /// //////////////////////

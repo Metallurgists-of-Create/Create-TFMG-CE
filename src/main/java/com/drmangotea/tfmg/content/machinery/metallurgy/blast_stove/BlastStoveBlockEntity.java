@@ -1,7 +1,6 @@
 package com.drmangotea.tfmg.content.machinery.metallurgy.blast_stove;
 
-
-import com.drmangotea.tfmg.base.TFMGUtils;
+import com.drmangotea.tfmg.base.TFMGSmartFluidTank;
 import com.drmangotea.tfmg.base.lang.TFMGLang;
 import com.drmangotea.tfmg.base.lang.TFMGTexts;
 import com.drmangotea.tfmg.recipes.HotBlastRecipe;
@@ -9,8 +8,9 @@ import com.drmangotea.tfmg.registry.TFMGBlockEntities;
 import com.drmangotea.tfmg.registry.TFMGRecipeTypes;
 import com.simibubi.create.api.connectivity.ConnectivityHandler;
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
-import com.simibubi.create.content.fluids.tank.FluidTankBlockEntity;
 import com.simibubi.create.foundation.blockEntity.IMultiBlockEntityContainer;
+import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
+import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.fluid.CombinedTankWrapper;
 import com.simibubi.create.foundation.recipe.RecipeConditions;
 import com.simibubi.create.foundation.recipe.RecipeFinder;
@@ -26,7 +26,6 @@ import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluids;
@@ -38,43 +37,43 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
 
 import java.util.List;
+import java.util.Objects;
 
+import static net.neoforged.neoforge.fluids.FluidStack.isSameFluidSameComponents;
 
-public class BlastStoveBlockEntity extends FluidTankBlockEntity implements IHaveGoggleInformation, IMultiBlockEntityContainer.Fluid {
-
+public class BlastStoveBlockEntity extends SmartBlockEntity implements IHaveGoggleInformation, IMultiBlockEntityContainer.Fluid {
     private static final int MAX_SIZE = 2;
-
-    protected IFluidHandler primaryCapability;
+	
+	protected IFluidHandler primaryCapability;
     protected IFluidHandler secondaryCapability;
-    public FluidTank primaryOutputInventory;
-    public FluidTank secondaryOutputInventory;
-    public FluidTank primaryInputInventory;
-    public FluidTank secondaryInputInventory;
+    public TFMGSmartFluidTank primaryOutputInventory;
+    public TFMGSmartFluidTank secondaryOutputInventory;
+    public TFMGSmartFluidTank primaryInputInventory;
+    public TFMGSmartFluidTank secondaryInputInventory;
     protected BlockPos controller;
     protected BlockPos lastKnownPos;
     public boolean updateConnectivity;
     private static final Object HotBlastRecipesKey = new Object();
     private static final int SYNC_RATE = 8;
+	private HotBlastRecipe recipe;
     protected int syncCooldown;
     protected boolean queuedSync;
+	protected int height = 1, width = 1;
     public int timer = 0;
 
     public BlastStoveBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
         setLazyTickRate(10);
-        primaryOutputInventory = TFMGUtils.createTank(8000, true, false, this::onFluidStackChanged);
-        secondaryOutputInventory = TFMGUtils.createTank(8000, true, false, this::onFluidStackChanged);
-        primaryInputInventory = TFMGUtils.createTank(8000, false, this::onFluidStackChanged);
-        secondaryInputInventory = TFMGUtils.createTank(8000, false, this::onFluidStackChanged);
+		int capacity = getCapacityMultiplier();
+        primaryOutputInventory = TFMGSmartFluidTank.outputOnly(capacity, this::onFluidStackChanged);
+        secondaryOutputInventory = TFMGSmartFluidTank.outputOnly(capacity, this::onFluidStackChanged);
+        primaryInputInventory = TFMGSmartFluidTank.inputOnly(capacity, this::onFluidStackChanged);
+        secondaryInputInventory = TFMGSmartFluidTank.inputOnly(capacity, this::onFluidStackChanged);
         primaryCapability = new CombinedTankWrapper(primaryOutputInventory, secondaryInputInventory);
         secondaryCapability = new CombinedTankWrapper(primaryInputInventory, secondaryOutputInventory);
-        updateConnectivity = false;
-        height = 1;
-        width = 1;
+		updateConnectivity = false;
+		recipe = null;
         refreshCapability();
-    }
-
-    public void updateBoilerState() {
     }
 
     public void updateConnectivity() {
@@ -95,34 +94,34 @@ public class BlastStoveBlockEntity extends FluidTankBlockEntity implements IHave
         refreshCapability();
 
         ConnectivityHandler.formMulti(this);
+		recipe = getMatchingRecipes();
     }
 
 
     @Override
-    @SuppressWarnings("removal")
-    public void tick() {
+	public void tick() {
         super.tick();
-        if (level == null) return;
-        level.invalidateCapabilities(getBlockPos());
-
-        if (isController() && !primaryInputInventory.isEmpty() && !secondaryInputInventory.isEmpty() && primaryOutputInventory.getSpace() != 0 && secondaryOutputInventory.getSpace() != 0) {
-            HotBlastRecipe recipe = getMatchingRecipes();
-            if (recipe != null) {
-                if (timer >= getSpeedModifier() / (getTotalTankSize() * 0.3f)) {
-                    if ((primaryOutputInventory.isEmpty() || primaryOutputInventory.getFluid().isFluidEqual(recipe.getPrimaryResult())) && (secondaryOutputInventory.isEmpty() || secondaryOutputInventory.getFluid().isFluidEqual(recipe.getSecondaryResult()))) {
-
-
-                        primaryInputInventory.setFluid(new FluidStack(primaryInputInventory.getFluid().copy().getFluidHolder(), primaryInputInventory.getFluidAmount() - recipe.getPrimaryIngredient().amount()));
-                        secondaryInputInventory.setFluid(new FluidStack(secondaryInputInventory.getFluid().copy().getFluidHolder(), secondaryInputInventory.getFluidAmount() - recipe.getSecondaryIngredient().amount()));
-
-
-                        primaryOutputInventory.setFluid(new FluidStack(recipe.getPrimaryResult().getFluidHolder(), primaryOutputInventory.getFluidAmount() + recipe.getPrimaryResult().getAmount()));
-                        secondaryOutputInventory.setFluid(new FluidStack(recipe.getSecondaryResult().getFluidHolder(), secondaryOutputInventory.getFluidAmount() + recipe.getSecondaryResult().getAmount()));
-                    }
-                } else {
-                    timer++;
-                }
-            }
+		if (level == null) return;
+		level.invalidateCapabilities(getBlockPos());
+        if (isController() &&
+			!primaryInputInventory.isEmpty() &&
+			!secondaryInputInventory.isEmpty() &&
+			primaryOutputInventory.getSpace() != 0 &&
+			secondaryOutputInventory.getSpace() != 0 &&
+			recipe != null
+		) {
+			if (timer >= getSpeed()) {
+				if (
+					(primaryOutputInventory.isEmpty() || isSameFluidSameComponents(primaryOutputInventory.getFluid(),recipe.getPrimaryResult())) &&
+					(secondaryOutputInventory.isEmpty() || isSameFluidSameComponents(secondaryOutputInventory.getFluid(),recipe.getSecondaryResult()))
+				) {
+					primaryInputInventory.forceDrain(recipe.getPrimaryIngredient().amount(), IFluidHandler.FluidAction.EXECUTE);
+					secondaryInputInventory.forceDrain(recipe.getSecondaryIngredient().amount(), IFluidHandler.FluidAction.EXECUTE);
+					primaryOutputInventory.forceFill(recipe.getPrimaryResult(), IFluidHandler.FluidAction.EXECUTE);
+					secondaryOutputInventory.forceFill(recipe.getSecondaryResult(), IFluidHandler.FluidAction.EXECUTE);
+					level.invalidateCapabilities(getBlockPos());
+				}
+			} else { timer++; }
         }
 
 
@@ -134,35 +133,40 @@ public class BlastStoveBlockEntity extends FluidTankBlockEntity implements IHave
 
         if (lastKnownPos == null)
             lastKnownPos = getBlockPos();
-        else if (!lastKnownPos.equals(worldPosition) && worldPosition != null) {
+        else if (!lastKnownPos.equals(worldPosition)) {
             onPositionChanged();
             return;
         }
-
+		
         if (updateConnectivity)
             updateConnectivity();
-
     }
 
     @Override
     public void lazyTick() {
         super.lazyTick();
+		recipe = getMatchingRecipes();
         updateConnectivity = true;
     }
+	
+	public int getTotalTankSize() {
+		return width * width * height;
+	}
 
-    public int getSpeedModifier() {
-        return 100;
+    public int getSpeed () {
+        return (int) (1000f / (getTotalTankSize() * 3));
     }
-
 
     protected Object getRecipeCacheKey() {
         return HotBlastRecipesKey;
     }
 
     protected HotBlastRecipe getMatchingRecipes() {
-
+		if (primaryInputInventory.getFluid().isEmpty() || secondaryInputInventory.getFluid().isEmpty())
+			return null;
+		
         List<RecipeHolder<? extends Recipe<?>>> list = RecipeFinder.get(getRecipeCacheKey(), level, RecipeConditions.isOfType(TFMGRecipeTypes.HOT_BLAST.getType()));
-
+		
         for (int i = 0; i < list.toArray().length; i++) {
             HotBlastRecipe recipe = (HotBlastRecipe) list.get(i).value();
             if (recipe.getPrimaryIngredient().test(primaryInputInventory.getFluid()) && recipe.getSecondaryIngredient().test(secondaryInputInventory.getFluid()))
@@ -203,7 +207,6 @@ public class BlastStoveBlockEntity extends FluidTankBlockEntity implements IHave
             setChanged();
             sendData();
         }
-
     }
 
     @Override
@@ -217,9 +220,8 @@ public class BlastStoveBlockEntity extends FluidTankBlockEntity implements IHave
     public BlastStoveBlockEntity getControllerBE() {
         if (isController())
             return this;
-        BlockEntity tileEntity = level.getBlockEntity(controller);
-        if (tileEntity instanceof BlastStoveBlockEntity)
-            return (BlastStoveBlockEntity) tileEntity;
+        if (level != null && level.getBlockEntity(controller) instanceof BlastStoveBlockEntity be)
+            return be;
         return null;
     }
 
@@ -264,7 +266,6 @@ public class BlastStoveBlockEntity extends FluidTankBlockEntity implements IHave
 
     @Override
     public void setController(BlockPos controller) {
-
         if (level.isClientSide && !isVirtual())
             return;
         if (controller.equals(this.controller))
@@ -276,23 +277,22 @@ public class BlastStoveBlockEntity extends FluidTankBlockEntity implements IHave
     }
 
     public void refreshCapability() {
-        primaryCapability = handlerForCapability();
+        primaryCapability = handlerForPrimaryCapability();
         secondaryCapability = handlerForSecondaryCapability();
-        invalidateCapabilities();
-
+		if (level == null) return;
+		level.invalidateCapabilities(getBlockPos());
     }
 
-
-    private IFluidHandler handlerForCapability() {
-        return isController() ?
-                new CombinedTankWrapper(primaryOutputInventory, secondaryInputInventory)
-                : getControllerBE() != null ? getControllerBE().handlerForCapability() : new CombinedTankWrapper(primaryOutputInventory, secondaryInputInventory);
+    private IFluidHandler handlerForPrimaryCapability() {
+		if (isController() || getControllerBE() == null)
+			return new CombinedTankWrapper(primaryOutputInventory, secondaryInputInventory);
+		return getControllerBE().handlerForPrimaryCapability();
     }
 
     private IFluidHandler handlerForSecondaryCapability() {
-        return isController() ?
-                new CombinedTankWrapper(primaryInputInventory, secondaryOutputInventory)
-                : getControllerBE() != null ? getControllerBE().handlerForSecondaryCapability() : new CombinedTankWrapper(primaryInputInventory, secondaryOutputInventory);
+		if (isController() || getControllerBE() == null)
+			return new CombinedTankWrapper(primaryInputInventory, secondaryOutputInventory);
+        return getControllerBE().handlerForSecondaryCapability();
     }
 
     @Override
@@ -337,82 +337,43 @@ public class BlastStoveBlockEntity extends FluidTankBlockEntity implements IHave
                 primaryOutputInventory.drain(-primaryOutputInventory.getSpace(), IFluidHandler.FluidAction.EXECUTE);
         }
 
-
         if (!clientPacket)
             return;
 
-        boolean changeOfController =
-                controllerBefore == null ? controller != null : !controllerBefore.equals(controller);
+        boolean changeOfController = !Objects.equals(controllerBefore, controller);
         if (changeOfController || prevSize != width || prevHeight != height) {
-            if (hasLevel())
+            if (level != null)
                 level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 16);
             invalidateRenderBoundingBox();
         }
-
     }
-
-    public float getFillState() {
-        return (float) primaryOutputInventory.getFluidAmount() / primaryOutputInventory.getCapacity();
-    }
-
 
     @Override
-    @SuppressWarnings("removal")
-    public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
-
-        if (getControllerBE() == null) {
-            return false;
-        }
-
-        LangBuilder mb = CreateLang.translate("generic.unit.millibuckets");
+	public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
+        if (getControllerBE() == null) { return false; }
+		
+		IFluidHandler pri = getControllerBE().primaryCapability;
+		IFluidHandler sec = getControllerBE().secondaryCapability;
 
         TFMGTexts.header("blast_stove").forGoggles(tooltip);
-        TFMGLang.builder()
-                .add(TFMGLang.translate("goggles.blast_stove.tank1"))
-                .add(TFMGLang.number(getControllerBE().secondaryCapability.getFluidInTank(0).getAmount())
-                        .add(mb)
-                        .add(getControllerBE().secondaryCapability.getFluidInTank(0).getFluid() == Fluids.EMPTY ? TFMGLang.text("") :  TFMGLang.text(" "+getControllerBE().secondaryCapability.getFluidInTank(0).getDisplayName().getString()))
-                        .style(ChatFormatting.DARK_GREEN))
-                .text(ChatFormatting.GRAY, " / ")
-                .add(TFMGLang.number(8000)
-                        .add(mb)
-                        .style(ChatFormatting.DARK_GRAY))
-                .forGoggles(tooltip, 1);
-        TFMGLang.builder()
-                .add(TFMGLang.translate("goggles.blast_stove.tank2"))
-                .add(TFMGLang.number(getControllerBE().primaryCapability.getFluidInTank(1).getAmount())
-                        .add(mb)
-                        .add(getControllerBE().primaryCapability.getFluidInTank(1).getFluid() == Fluids.EMPTY ? TFMGLang.text("") :  TFMGLang.text(" "+getControllerBE().primaryCapability.getFluidInTank(1).getDisplayName().getString()))
-                        .style(ChatFormatting.DARK_GREEN))
-                .text(ChatFormatting.GRAY, " / ")
-                .add(TFMGLang.number(8000)
-                        .add(mb)
-                        .style(ChatFormatting.DARK_GRAY))
-                .forGoggles(tooltip, 1);
-        TFMGLang.builder()
-                .add(TFMGLang.translate("goggles.blast_stove.tank3"))
-                .add(TFMGLang.number(getControllerBE().primaryCapability.getFluidInTank(0).getAmount())
-                        .add(mb)
-                        .add(getControllerBE().primaryCapability.getFluidInTank(0).getFluid() == Fluids.EMPTY ? TFMGLang.text("") :  TFMGLang.text(" "+getControllerBE().primaryCapability.getFluidInTank(0).getDisplayName().getString()))
-                        .style(ChatFormatting.YELLOW))
-                .text(ChatFormatting.GRAY, " / ")
-                .add(TFMGLang.number(8000)
-                        .add(mb)
-                        .style(ChatFormatting.DARK_GRAY))
-                .forGoggles(tooltip, 1);
-        TFMGLang.builder()
-                .add(TFMGLang.translate("goggles.blast_stove.tank4"))
-                .add(TFMGLang.number(getControllerBE().secondaryCapability.getFluidInTank(1).getAmount())
-                        .add(mb)
-                        .add(getControllerBE().secondaryCapability.getFluidInTank(1).getFluid() == Fluids.EMPTY ? TFMGLang.text("") :  TFMGLang.text(" "+getControllerBE().secondaryCapability.getFluidInTank(1).getDisplayName().getString()))
-                        .style(ChatFormatting.YELLOW))
-                .text(ChatFormatting.GRAY, " / ")
-                .add(TFMGLang.number(8000)
-                        .add(mb)
-                        .style(ChatFormatting.DARK_GRAY))
-                .forGoggles(tooltip, 1);
+        tankTooltip(tooltip, "goggles.blast_stove.tank1", sec.getFluidInTank(0), ChatFormatting.DARK_GREEN);
+        tankTooltip(tooltip, "goggles.blast_stove.tank2", pri.getFluidInTank(1), ChatFormatting.DARK_GREEN);
+        tankTooltip(tooltip, "goggles.blast_stove.tank3", pri.getFluidInTank(0), ChatFormatting.YELLOW);
+        tankTooltip(tooltip, "goggles.blast_stove.tank4", sec.getFluidInTank(1), ChatFormatting.YELLOW);
         return true;
     }
+	
+	private void tankTooltip (List<Component> tooltip, String key, FluidStack fluid, ChatFormatting color) {
+		LangBuilder mb = CreateLang.translate("generic.unit.millibuckets");
+		LangBuilder name = fluid.getFluid() == Fluids.EMPTY ? TFMGLang.text("") :  TFMGLang.text(" "+fluid.getHoverName().getString());
+	
+		TFMGLang.builder()
+			.add(TFMGLang.translate(key))
+			.add(TFMGLang.number(fluid.getAmount()).add(mb).add(name).style(color))
+			.text(ChatFormatting.GRAY, " / ")
+			.add(TFMGLang.number(getCapacityMultiplier()).add(mb).style(ChatFormatting.DARK_GRAY))
+			.forGoggles(tooltip, 1);
+	}
 
 
     @Override
@@ -444,44 +405,55 @@ public class BlastStoveBlockEntity extends FluidTankBlockEntity implements IHave
     }
 
     public static void registerCapabilities(RegisterCapabilitiesEvent event) {
-        event.registerBlockEntity(
-                Capabilities.FluidHandler.BLOCK,
-                TFMGBlockEntities.BLAST_STOVE.get(),
-                (be, context) -> {
-                    if (be.getControllerBE() == null)
-                        return null;
-                    
-                    if (be.getControllerBE().fluidCapability == null)
-                        be.getControllerBE().refreshCapability();
-                    if (be.getControllerBE().secondaryCapability == null)
-                        be.getControllerBE().refreshCapability();
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, TFMGBlockEntities.BLAST_STOVE.get(),
+			(be, dir) -> {
+				if (!(be.getControllerBE() instanceof BlastStoveBlockEntity controller))
+					return null;
+					
+				if (controller.primaryCapability == null || controller.secondaryCapability == null)
+					controller.refreshCapability();
 
-
-                    if (context.getAxis() == Direction.Axis.Y) {
-                        return be.getControllerBE().primaryCapability;
-                    } else if (be.getController().getY() == be.getBlockPos().getY()) {
-                        return be.getControllerBE().secondaryCapability;
-                    }
-
-                    return null;
-                }
+				if (dir != null && dir.getAxis().isVertical()) {
+					return controller.primaryCapability;
+				} else if (be.getController().getY() == be.getBlockPos().getY()) {
+					return controller.secondaryCapability;
+				}
+				
+				return null;
+			}
         );
     }
+	
+	@Override
+	public int getHeight() { return height; }
+	
+	@Override
+	public void setHeight(int height) { this.height = height; }
+	
+	@Override
+	public int getWidth() { return width; }
+	
+	@Override
+	public void setWidth(int width) { this.width = width; }
+	
+	@Override
+	public void addBehaviours(List<BlockEntityBehaviour> behaviours) { }
 
-
-    public FluidTank getTankInventory() {
+    public FluidTank getTank () {
         return primaryOutputInventory;
     }
-
-
-    public static int getCapacityMultiplier() {
-        return AllConfigs.server().fluids.fluidTankCapacity.get() * 1000;
-    }
+	
+	public FluidStack getFluid () {
+		return primaryOutputInventory.getFluid().copy();
+	}
+	
+	public static int getCapacityMultiplier() {
+		return AllConfigs.server().fluids.fluidTankCapacity.get() * 1000;
+	}
 
     public static int getMaxHeight() {
         return AllConfigs.server().fluids.fluidTankMaxHeight.get();
     }
-
 
     @Override
     public void preventConnectivityUpdate() {
@@ -491,21 +463,11 @@ public class BlastStoveBlockEntity extends FluidTankBlockEntity implements IHave
     @Override
     public void notifyMultiUpdated() {
         onFluidStackChanged(primaryOutputInventory.getFluid());
-        updateBoilerState();
         setChanged();
         updateConnectivity = true;
 
         sendData();
         setChanged();
-    }
-
-    @Override
-    public Object modifyExtraData(Object data) {
-        if (data instanceof Boolean windows) {
-            windows |= window;
-            return windows;
-        }
-        return data;
     }
 
     @Override
