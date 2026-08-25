@@ -63,6 +63,8 @@ public class BlastStoveBlockEntity extends SmartBlockEntity implements IHaveGogg
 	protected int height = 1, width = 1;
     public int timer = 0;
 
+    public boolean refreshCapability;
+
     public BlastStoveBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
         setLazyTickRate(10);
@@ -103,29 +105,35 @@ public class BlastStoveBlockEntity extends SmartBlockEntity implements IHaveGogg
     @Override
 	public void tick() {
         super.tick();
+
+        if (refreshCapability) {
+            refreshCapability = false;
+            refreshCapability();
+        }
+
 		if (level == null) return;
-		level.invalidateCapabilities(getBlockPos());
-        if (isController() &&
-			!primaryInputInventory.isEmpty() &&
-			!secondaryInputInventory.isEmpty() &&
-			primaryOutputInventory.getSpace() != 0 &&
-			secondaryOutputInventory.getSpace() != 0
-		) {
-			recipe = getMatchingRecipes();
-			if (recipe != null) {
-				if (timer >= getSpeed()) {
-					if (
-						(primaryOutputInventory.isEmpty() || isSameFluidSameComponents(primaryOutputInventory.getFluid(), recipe.getPrimaryResult())) &&
-							(secondaryOutputInventory.isEmpty() || isSameFluidSameComponents(secondaryOutputInventory.getFluid(), recipe.getSecondaryResult()))
-					) {
-						primaryInputInventory.forceDrain(recipe.getPrimaryIngredient().amount(), IFluidHandler.FluidAction.EXECUTE);
-						secondaryInputInventory.forceDrain(recipe.getSecondaryIngredient().amount(), IFluidHandler.FluidAction.EXECUTE);
-						primaryOutputInventory.forceFill(recipe.getPrimaryResult(), IFluidHandler.FluidAction.EXECUTE);
-						secondaryOutputInventory.forceFill(recipe.getSecondaryResult(), IFluidHandler.FluidAction.EXECUTE);
-						level.invalidateCapabilities(getBlockPos());
-					}
-				} else { timer++; }
-			}
+
+
+        if(!(level.isClientSide && !isVirtual())) {
+            if (isController() && !primaryInputInventory.isEmpty() && !secondaryInputInventory.isEmpty() && primaryOutputInventory.getSpace() != 0 && secondaryOutputInventory.getSpace() != 0) {
+                recipe = getMatchingRecipes();
+                if (recipe != null) {
+                    if (timer >= getSpeed()) {
+                        if ((primaryOutputInventory.isEmpty() || isSameFluidSameComponents(primaryOutputInventory.getFluid(), recipe.getPrimaryResult())) &&
+                                (secondaryOutputInventory.isEmpty() || isSameFluidSameComponents(secondaryOutputInventory.getFluid(), recipe.getSecondaryResult())) &&
+                                primaryOutputInventory.getSpace() >= recipe.getPrimaryResult().getAmount() && secondaryOutputInventory.getSpace() >= recipe.getSecondaryResult().getAmount()) {
+                            primaryInputInventory.forceDrain(recipe.getPrimaryIngredient().amount(), IFluidHandler.FluidAction.EXECUTE);
+                            secondaryInputInventory.forceDrain(recipe.getSecondaryIngredient().amount(), IFluidHandler.FluidAction.EXECUTE);
+                            primaryOutputInventory.forceFill(recipe.getPrimaryResult(), IFluidHandler.FluidAction.EXECUTE);
+                            secondaryOutputInventory.forceFill(recipe.getSecondaryResult(), IFluidHandler.FluidAction.EXECUTE);
+                        }
+                        timer = 0;
+                    } else {
+                        timer++;
+                    }
+                }
+                refreshCapability = true;
+            }
         }
 
 
@@ -167,9 +175,9 @@ public class BlastStoveBlockEntity extends SmartBlockEntity implements IHaveGogg
 
     protected HotBlastRecipe getMatchingRecipes() {
         List<RecipeHolder<? extends Recipe<?>>> list = RecipeFinder.get(getRecipeCacheKey(), level, RecipeConditions.isOfType(TFMGRecipeTypes.HOT_BLAST.getType()));
-		
-        for (int i = 0; i < list.toArray().length; i++) {
-            HotBlastRecipe recipe = (HotBlastRecipe) list.get(i).value();
+
+        for (RecipeHolder<? extends Recipe<?>> recipeHolder : list) {
+            HotBlastRecipe recipe = (HotBlastRecipe) recipeHolder.value();
             if (recipe.getPrimaryIngredient().test(primaryInputInventory.getFluid()) && recipe.getSecondaryIngredient().test(secondaryInputInventory.getFluid()))
                 return recipe;
         }
@@ -338,6 +346,10 @@ public class BlastStoveBlockEntity extends SmartBlockEntity implements IHaveGogg
                 primaryOutputInventory.drain(-primaryOutputInventory.getSpace(), IFluidHandler.FluidAction.EXECUTE);
         }
 
+        timer = compound.getInt("Timer");
+
+        refreshCapability = true;
+
         if (!clientPacket)
             return;
 
@@ -396,6 +408,8 @@ public class BlastStoveBlockEntity extends SmartBlockEntity implements IHaveGogg
             compound.putInt("Height", height);
         }
 
+        compound.putInt("Timer", timer);
+
         forEachBehaviour(tb -> tb.write(compound, registries, clientPacket));
 
         if (!clientPacket)
@@ -408,17 +422,17 @@ public class BlastStoveBlockEntity extends SmartBlockEntity implements IHaveGogg
     public static void registerCapabilities(RegisterCapabilitiesEvent event) {
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, TFMGBlockEntities.BLAST_STOVE.get(),
 			(be, dir) -> {
-				if (!(be.getControllerBE() instanceof BlastStoveBlockEntity controller))
-					return null;
-					
-				if (controller.primaryCapability == null || controller.secondaryCapability == null)
-					controller.refreshCapability();
+                BlastStoveBlockEntity controller = be.getControllerBE();
+                if (controller == null)
+                    return null;
 
-				if (dir != null && dir.getAxis().isVertical()) {
-					return controller.primaryCapability;
-				} else if (be.getController().getY() == be.getBlockPos().getY()) {
-					return controller.secondaryCapability;
-				}
+                if (controller.primaryCapability == null || controller.secondaryCapability == null)
+                    controller.refreshCapability();
+
+                if (dir == null || dir.getAxis().isVertical())
+                    return controller.primaryCapability;
+                if (be.getController().getY() == be.getBlockPos().getY())
+                    return controller.secondaryCapability;
 				
 				return null;
 			}
