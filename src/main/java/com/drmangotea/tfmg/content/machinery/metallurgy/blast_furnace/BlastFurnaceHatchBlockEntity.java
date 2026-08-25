@@ -1,11 +1,11 @@
 package com.drmangotea.tfmg.content.machinery.metallurgy.blast_furnace;
 
-import com.drmangotea.tfmg.base.TFMGSmartFluidTank;
 import com.drmangotea.tfmg.base.TFMGUtils;
 import com.drmangotea.tfmg.registry.TFMGBlockEntities;
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
+import com.simibubi.create.foundation.fluid.SmartFluidTank;
 import com.simibubi.create.foundation.item.ItemHelper;
 import com.simibubi.create.foundation.item.SmartInventory;
 import net.createmod.catnip.math.VecHelper;
@@ -30,10 +30,7 @@ import net.neoforged.neoforge.items.IItemHandlerModifiable;
 
 import java.util.List;
 
-
 public class BlastFurnaceHatchBlockEntity extends SmartBlockEntity implements IHaveGoggleInformation, Clearable {
-
-
     public FluidTank tank;
 
     public SmartInventory inventory;
@@ -46,7 +43,7 @@ public class BlastFurnaceHatchBlockEntity extends SmartBlockEntity implements IH
     public BlastFurnaceHatchBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
         setLazyTickRate(10);
-        tank = TFMGSmartFluidTank.IO(4000, this::onFluidChanged);
+        tank = new SmartFluidTank(4000, this::onFluidChanged);
         inventory = new SmartInventory(1, this).withMaxStackSize(64);
         fluidCapability = tank;
         itemCapability = inventory;

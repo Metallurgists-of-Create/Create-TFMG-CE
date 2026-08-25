@@ -1,7 +1,7 @@
 package com.drmangotea.tfmg.content.machinery.misc.firebox;
 
-import com.drmangotea.tfmg.base.TFMGUtils;
 import com.drmangotea.tfmg.base.fluid.ForceableFluidTank;
+import com.drmangotea.tfmg.base.fluid.InputOutputTankWrapper;
 import com.drmangotea.tfmg.config.TFMGConfigs;
 import com.drmangotea.tfmg.registry.TFMGBlockEntities;
 import com.drmangotea.tfmg.registry.TFMGFluids;
@@ -14,8 +14,6 @@ import com.simibubi.create.foundation.advancement.AllAdvancements;
 import com.simibubi.create.foundation.blockEntity.IMultiBlockEntityContainer;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
-import com.simibubi.create.foundation.fluid.CombinedTankWrapper;
-import com.simibubi.create.foundation.fluid.SmartFluidTank;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -64,7 +62,7 @@ public class FireboxBlockEntity extends SmartBlockEntity implements IHaveGoggleI
         setLazyTickRate(60);
         tankInventory = new ForceableFluidTank(getCapacityMultiplier(), this::onFluidStackChanged).blockExtraction().withValidator(fs -> fs.is(TFMGTags.Fluids.FIREBOX_FUEL.tag));
         exhuastTank = new ForceableFluidTank(getCapacityMultiplier(), this::onFluidStackChanged).blockInsertion();
-        fluidCapability = new CombinedTankWrapper(tankInventory, exhuastTank);
+        fluidCapability = new InputOutputTankWrapper(exhuastTank, tankInventory);
         updateConnectivity = false;
         updateCapability = false;
         height = 1;
@@ -265,7 +263,7 @@ public class FireboxBlockEntity extends SmartBlockEntity implements IHaveGoggleI
     }
 
     private IFluidHandler handlerForCapability() {
-        return isController() ? new CombinedTankWrapper(tankInventory, exhuastTank)
+        return isController() ? new InputOutputTankWrapper(exhuastTank, tankInventory)
                 : getControllerBE() != null ? getControllerBE().handlerForCapability() : new FluidTank(0);
     }
 

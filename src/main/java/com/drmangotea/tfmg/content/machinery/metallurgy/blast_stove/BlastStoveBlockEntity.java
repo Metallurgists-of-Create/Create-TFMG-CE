@@ -1,6 +1,7 @@
 package com.drmangotea.tfmg.content.machinery.metallurgy.blast_stove;
 
-import com.drmangotea.tfmg.base.TFMGSmartFluidTank;
+import com.drmangotea.tfmg.base.fluid.ForceableFluidTank;
+import com.drmangotea.tfmg.base.fluid.InputOutputTankWrapper;
 import com.drmangotea.tfmg.base.lang.TFMGLang;
 import com.drmangotea.tfmg.base.lang.TFMGTexts;
 import com.drmangotea.tfmg.recipes.HotBlastRecipe;
@@ -11,7 +12,6 @@ import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.foundation.blockEntity.IMultiBlockEntityContainer;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
-import com.simibubi.create.foundation.fluid.CombinedTankWrapper;
 import com.simibubi.create.foundation.recipe.RecipeConditions;
 import com.simibubi.create.foundation.recipe.RecipeFinder;
 import com.simibubi.create.foundation.utility.CreateLang;
@@ -47,7 +47,7 @@ public class BlastStoveBlockEntity extends SmartBlockEntity implements IHaveGogg
 	protected IFluidHandler
 		primaryCapability,
 		secondaryCapability;
-	protected TFMGSmartFluidTank
+	protected ForceableFluidTank
 		primaryOutputInventory,
 		secondaryOutputInventory,
 		primaryInputInventory,
@@ -69,12 +69,12 @@ public class BlastStoveBlockEntity extends SmartBlockEntity implements IHaveGogg
         super(type, pos, state);
         setLazyTickRate(10);
 		int capacity = getCapacityMultiplier();
-        primaryOutputInventory = TFMGSmartFluidTank.outputOnly(capacity, this::onFluidStackChanged);
-        secondaryOutputInventory = TFMGSmartFluidTank.outputOnly(capacity, this::onFluidStackChanged);
-        primaryInputInventory = TFMGSmartFluidTank.inputOnly(capacity, this::onFluidStackChanged);
-        secondaryInputInventory = TFMGSmartFluidTank.inputOnly(capacity, this::onFluidStackChanged);
-        primaryCapability = new CombinedTankWrapper(primaryOutputInventory, secondaryInputInventory);
-        secondaryCapability = new CombinedTankWrapper(primaryInputInventory, secondaryOutputInventory);
+        primaryOutputInventory = new ForceableFluidTank(capacity, this::onFluidStackChanged).blockInsertion();
+        secondaryOutputInventory = new ForceableFluidTank(capacity, this::onFluidStackChanged).blockInsertion();
+        primaryInputInventory = new ForceableFluidTank(capacity, this::onFluidStackChanged).blockExtraction();
+        secondaryInputInventory = new ForceableFluidTank(capacity, this::onFluidStackChanged).blockExtraction();
+        primaryCapability = new InputOutputTankWrapper(primaryOutputInventory, secondaryInputInventory);
+        secondaryCapability = new InputOutputTankWrapper(secondaryOutputInventory, primaryInputInventory);
 		updateConnectivity = false;
 		recipe = null;
         refreshCapability();
@@ -98,7 +98,7 @@ public class BlastStoveBlockEntity extends SmartBlockEntity implements IHaveGogg
         refreshCapability();
 
         ConnectivityHandler.formMulti(this);
-		recipe = getMatchingRecipes();
+		updateRecipe();
     }
 
 
@@ -112,30 +112,32 @@ public class BlastStoveBlockEntity extends SmartBlockEntity implements IHaveGogg
         }
 
 		if (level == null) return;
-
-
-        if(!(level.isClientSide && !isVirtual())) {
-            if (isController() && !primaryInputInventory.isEmpty() && !secondaryInputInventory.isEmpty() && primaryOutputInventory.getSpace() != 0 && secondaryOutputInventory.getSpace() != 0) {
-                recipe = getMatchingRecipes();
-                if (recipe != null) {
-                    if (timer >= getSpeed()) {
-                        if ((primaryOutputInventory.isEmpty() || isSameFluidSameComponents(primaryOutputInventory.getFluid(), recipe.getPrimaryResult())) &&
-                                (secondaryOutputInventory.isEmpty() || isSameFluidSameComponents(secondaryOutputInventory.getFluid(), recipe.getSecondaryResult())) &&
-                                primaryOutputInventory.getSpace() >= recipe.getPrimaryResult().getAmount() && secondaryOutputInventory.getSpace() >= recipe.getSecondaryResult().getAmount()) {
-                            primaryInputInventory.forceDrain(recipe.getPrimaryIngredient().amount(), IFluidHandler.FluidAction.EXECUTE);
-                            secondaryInputInventory.forceDrain(recipe.getSecondaryIngredient().amount(), IFluidHandler.FluidAction.EXECUTE);
-                            primaryOutputInventory.forceFill(recipe.getPrimaryResult(), IFluidHandler.FluidAction.EXECUTE);
-                            secondaryOutputInventory.forceFill(recipe.getSecondaryResult(), IFluidHandler.FluidAction.EXECUTE);
-                        }
-                        timer = 0;
-                    } else {
-                        timer++;
-                    }
-                }
-                refreshCapability = true;
-            }
+		if(!(level.isClientSide && !isVirtual()) &&
+			isController() &&
+			!primaryInputInventory.isEmpty() &&
+			!secondaryInputInventory.isEmpty() &&
+			primaryOutputInventory.getSpace() != 0 &&
+			secondaryOutputInventory.getSpace() != 0
+		) {
+			if (recipe == null) updateRecipe();
+			if (recipe != null) {
+				if (timer >= getSpeed()) {
+					if (
+						(primaryOutputInventory.isEmpty() || isSameFluidSameComponents(primaryOutputInventory.getFluid(), recipe.getPrimaryResult())) &&
+						(secondaryOutputInventory.isEmpty() || isSameFluidSameComponents(secondaryOutputInventory.getFluid(), recipe.getSecondaryResult()))  &&
+						primaryOutputInventory.getSpace() >= recipe.getPrimaryResult().getAmount() &&
+						secondaryOutputInventory.getSpace() >= recipe.getSecondaryResult().getAmount()
+					) {
+						primaryInputInventory.forceDrain(recipe.getPrimaryIngredient().amount(), IFluidHandler.FluidAction.EXECUTE);
+						secondaryInputInventory.forceDrain(recipe.getSecondaryIngredient().amount(), IFluidHandler.FluidAction.EXECUTE);
+						primaryOutputInventory.forceFill(recipe.getPrimaryResult(), IFluidHandler.FluidAction.EXECUTE);
+						secondaryOutputInventory.forceFill(recipe.getSecondaryResult(), IFluidHandler.FluidAction.EXECUTE);
+					}
+					timer = 0;
+				} else { timer++; }
+			}
+			refreshCapability = true;
         }
-
 
         if (syncCooldown > 0) {
             syncCooldown--;
@@ -157,7 +159,8 @@ public class BlastStoveBlockEntity extends SmartBlockEntity implements IHaveGogg
     @Override
     public void lazyTick() {
         super.lazyTick();
-		recipe = getMatchingRecipes();
+		updateRecipe();
+		refreshCapability = true;
         updateConnectivity = true;
     }
 	
@@ -173,16 +176,21 @@ public class BlastStoveBlockEntity extends SmartBlockEntity implements IHaveGogg
         return HotBlastRecipesKey;
     }
 
-    protected HotBlastRecipe getMatchingRecipes() {
+    protected void updateRecipe() {
         List<RecipeHolder<? extends Recipe<?>>> list = RecipeFinder.get(getRecipeCacheKey(), level, RecipeConditions.isOfType(TFMGRecipeTypes.HOT_BLAST.getType()));
 
         for (RecipeHolder<? extends Recipe<?>> recipeHolder : list) {
-            HotBlastRecipe recipe = (HotBlastRecipe) recipeHolder.value();
-            if (recipe.getPrimaryIngredient().test(primaryInputInventory.getFluid()) && recipe.getSecondaryIngredient().test(secondaryInputInventory.getFluid()))
-                return recipe;
+            HotBlastRecipe r = (HotBlastRecipe) recipeHolder.value();
+            if (
+				r.getPrimaryIngredient().test(primaryInputInventory.getFluid()) &&
+				r.getSecondaryIngredient().test(secondaryInputInventory.getFluid())
+			) {
+				recipe = r;
+                return;
+			}
         }
-
-        return null;
+		
+		recipe = null;
     }
 
     @Override
@@ -294,13 +302,13 @@ public class BlastStoveBlockEntity extends SmartBlockEntity implements IHaveGogg
 
     private IFluidHandler handlerForPrimaryCapability() {
 		if (isController() || getControllerBE() == null)
-			return new CombinedTankWrapper(primaryOutputInventory, secondaryInputInventory);
+			return new InputOutputTankWrapper(primaryOutputInventory, secondaryInputInventory);
 		return getControllerBE().handlerForPrimaryCapability();
     }
 
     private IFluidHandler handlerForSecondaryCapability() {
 		if (isController() || getControllerBE() == null)
-			return new CombinedTankWrapper(primaryInputInventory, secondaryOutputInventory);
+			return new InputOutputTankWrapper(secondaryOutputInventory, primaryInputInventory);
         return getControllerBE().handlerForSecondaryCapability();
     }
 
@@ -369,10 +377,10 @@ public class BlastStoveBlockEntity extends SmartBlockEntity implements IHaveGogg
 		IFluidHandler sec = getControllerBE().secondaryCapability;
 
         TFMGTexts.header("blast_stove").forGoggles(tooltip);
-        tankTooltip(tooltip, "goggles.blast_stove.tank1", sec.getFluidInTank(0), ChatFormatting.DARK_GREEN);
+        tankTooltip(tooltip, "goggles.blast_stove.tank1", sec.getFluidInTank(1), ChatFormatting.DARK_GREEN);
         tankTooltip(tooltip, "goggles.blast_stove.tank2", pri.getFluidInTank(1), ChatFormatting.DARK_GREEN);
         tankTooltip(tooltip, "goggles.blast_stove.tank3", pri.getFluidInTank(0), ChatFormatting.YELLOW);
-        tankTooltip(tooltip, "goggles.blast_stove.tank4", sec.getFluidInTank(1), ChatFormatting.YELLOW);
+        tankTooltip(tooltip, "goggles.blast_stove.tank4", sec.getFluidInTank(0), ChatFormatting.YELLOW);
         return true;
     }
 	
