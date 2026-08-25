@@ -81,9 +81,24 @@ public class TFMGRecipeProvider extends RecipeProvider {
 
             @Override
             public @NotNull CompletableFuture<?> run(CachedOutput dc) {
-                return CompletableFuture.allOf(GENERATORS.stream()
-                        .map(gen -> gen.run(dc))
-                        .toArray(CompletableFuture[]::new));
+                List<CompletableFuture<?>> futures = new ArrayList<>();
+
+                for (ProcessingRecipeGen<?, ?, ?> generator : GENERATORS) {
+                    String generatorName = generator.getClass().getSimpleName();
+                    try {
+                        CompletableFuture<?> future = generator.run(dc);
+                        future = future.exceptionally(ex -> {
+                            TFMG.LOGGER.error("Processing recipe gen '{}' failed to write recipes", generatorName, ex);
+                            throw new RuntimeException("Failed in generator: " + generatorName, ex);
+                        });
+                        futures.add(future);
+                    } catch (Throwable t) {
+                        TFMG.LOGGER.error("Processing recipe gen '{}' threw synchronously", generatorName, t);
+                        throw new RuntimeException("Failed in generator: " + generatorName, t);
+                    }
+                }
+
+                return CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]));
             }
         });
     }
