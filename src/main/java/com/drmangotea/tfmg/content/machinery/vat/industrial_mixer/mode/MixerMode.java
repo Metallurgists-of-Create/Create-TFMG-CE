@@ -6,6 +6,7 @@ import com.drmangotea.tfmg.content.machinery.vat.base.VatBlockEntity;
 import com.drmangotea.tfmg.content.machinery.vat.base.registry.VatOperationEntry;
 import com.drmangotea.tfmg.content.machinery.vat.industrial_mixer.IndustrialMixerBlockEntity;
 import com.drmangotea.tfmg.registry.TFMGMixerModes;
+import com.drmangotea.tfmg.registry.TFMGVatOperations;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -92,7 +93,7 @@ public class MixerMode implements MultiUseAttachment<IndustrialMixerBlockEntity>
     public static class Properties {
         private final ResourceLocation id;
 
-        VatOperationEntry operation = null;
+        VatOperationEntry operation = TFMGVatOperations.NONE;
         MixerPartial mixerPartial = null;
 
         public Properties operation(VatOperationEntry operation) {

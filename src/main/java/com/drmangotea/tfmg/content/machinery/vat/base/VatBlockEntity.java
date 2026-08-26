@@ -16,6 +16,7 @@ import com.drmangotea.tfmg.mixin.accessor.TankSegmentAccessor;
 import com.drmangotea.tfmg.recipes.VatMachineRecipe;
 import com.drmangotea.tfmg.registry.TFMGBlockEntities;
 import com.drmangotea.tfmg.registry.TFMGRecipeTypes;
+import com.drmangotea.tfmg.registry.TFMGVatOperations;
 import com.simibubi.create.api.boiler.BoilerHeater;
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.content.processing.recipe.HeatCondition;
@@ -903,7 +904,7 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
                     BlockEntity blockEntity = level.getBlockEntity(pos);
 
                     if (blockEntity instanceof IVatMachine be) {
-                        if (be.getOperationId().equals(TFMG.asResource("none")))
+                        if (be.getOperationId().equals(TFMGVatOperations.NONE.get()))
                             continue;
 
                         if (!isAtValidLocation(be.getPositionRequirement(), pos))
@@ -1190,17 +1191,6 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
             return super.createRenderBoundingBox().expandTowards(width - 1, height - 1, width - 1);
         else
             return super.createRenderBoundingBox();
-    }
-
-
-    public void addMachineTooltip(VatOperation operationId, boolean isOperational, List<Component> tooltip) {
-        LangBuilder operation = TFMGTexts.Vat.operation(operationId);
-        if (!isOperational) {
-            operation.add(TFMGTexts.Vat.notOperational());
-        } else {
-            operation.add(TFMGTexts.Vat.operational());
-        }
-        operation.forGoggles(tooltip);
     }
 
     public void addMachineTooltip(Map<VatOperation, Couple<Integer>> countedMachines, List<Component> tooltip) {

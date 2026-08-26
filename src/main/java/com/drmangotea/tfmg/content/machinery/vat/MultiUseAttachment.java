@@ -20,7 +20,7 @@ public interface MultiUseAttachment<BE extends IVatMachine> {
     }
 
     default boolean isValid() {
-        return getOperation() != null;
+        return getOperation() != null && !getOperation().get().isNone();
     }
 
     void renderInVat(BE be, float partialTicks, PoseStack ms, MultiBufferSource buffer, int light, int overlay, @Nullable ItemRenderer itemRenderer);

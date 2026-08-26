@@ -7,6 +7,7 @@ import com.drmangotea.tfmg.content.machinery.vat.base.registry.VatOperationEntry
 import com.drmangotea.tfmg.content.machinery.vat.electrode_holder.ElectrodeHolderBlockEntity;
 import com.drmangotea.tfmg.registry.TFMGDataComponents;
 import com.drmangotea.tfmg.registry.TFMGElectrodes;
+import com.drmangotea.tfmg.registry.TFMGVatOperations;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import com.mojang.serialization.Codec;
@@ -93,7 +94,7 @@ public class Electrode implements MultiUseAttachment<ElectrodeHolderBlockEntity>
         private final ResourceLocation id;
 
         int resistance = 0;
-        VatOperationEntry operation = null;
+        VatOperationEntry operation = TFMGVatOperations.NONE;
 
         public Properties resistance(int resistance) {
             this.resistance = resistance;
