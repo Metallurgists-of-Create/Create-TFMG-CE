@@ -80,8 +80,14 @@ public class FlarestackBlockEntity extends SmartBlockEntity implements IHaveGogg
         if (level == null) return;
         level.invalidateCapabilities(getBlockPos());
 
-        if (tankInventory.isEmpty() || !tankInventory.isFluidValid(tankInventory.getFluid())) {
-            level.setBlock(getBlockPos(), this.getBlockState().setValue(FlarestackBlock.LIT, false), 2);
+        level.setBlock(getBlockPos(), this.getBlockState().setValue(FlarestackBlock.LIT, smokeTimer > 0), 2);
+
+        if (smokeTimer > 0) {
+            smokeTimer--;
+            makeParticles(level, this.getBlockPos());
+        }
+
+        if ((tankInventory.isEmpty() || !tankInventory.isFluidValid(tankInventory.getFluid()))) {
             return;
         }
 
@@ -90,11 +96,7 @@ public class FlarestackBlockEntity extends SmartBlockEntity implements IHaveGogg
             tankInventory.drain(25, IFluidHandler.FluidAction.EXECUTE);
         }
 
-        if (smokeTimer > 0) {
-            smokeTimer--;
-            makeParticles(level, this.getBlockPos());
-            level.setBlock(getBlockPos(), this.getBlockState().setValue(FlarestackBlock.LIT, true), 2);
-        }
+
     }
 
     public static void makeParticles(Level level, BlockPos pos) {
@@ -112,12 +114,14 @@ public class FlarestackBlockEntity extends SmartBlockEntity implements IHaveGogg
     protected void read(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {
         super.read(compound,registries , clientPacket);
         tankInventory.readFromNBT(registries,compound.getCompound("TankContent"));
+        smokeTimer = compound.getInt("Timer");
     }
 
     @Override
     public void write(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {
         super.write(compound,registries , clientPacket);
         compound.put("TankContent", tankInventory.writeToNBT(registries,new CompoundTag()));
+        compound.putInt("Timer", smokeTimer);
     }
 
     @Override
