@@ -22,6 +22,7 @@ Contributors:<br>
   - `ChemicalVatCategory` now uses a dynamic barometer needle to display pressure
 
 ### API Changes:
+- Created VAT operation registry
 - Created `TFMGClientConfig`
   - Created `UIConfig`
 - Vat
