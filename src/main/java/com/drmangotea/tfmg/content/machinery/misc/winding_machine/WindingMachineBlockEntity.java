@@ -23,6 +23,7 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.Clearable;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
@@ -43,7 +44,7 @@ import java.util.Optional;
 import static com.drmangotea.tfmg.content.machinery.misc.winding_machine.WindingMachineBlock.POWERED;
 import static com.simibubi.create.content.kinetics.base.HorizontalKineticBlock.HORIZONTAL_FACING;
 
-public class WindingMachineBlockEntity extends KineticBlockEntity implements IHaveGoggleInformation {
+public class WindingMachineBlockEntity extends KineticBlockEntity implements IHaveGoggleInformation, Clearable {
     LerpedFloat spoolSpeed = LerpedFloat.linear();
     float angle;
     public SmartInventory inventory;
@@ -367,6 +368,13 @@ public class WindingMachineBlockEntity extends KineticBlockEntity implements IHa
                 return;
             }
         }
+    }
+
+    @Override
+    public void clearContent() {
+        this.inventory.clearContent();
+        this.outputInventory.clearContent();
+        this.spoolInventory.clearContent();
     }
 
     private record InputSlotHandler(WindingMachineBlockEntity be) implements IItemHandlerModifiable {

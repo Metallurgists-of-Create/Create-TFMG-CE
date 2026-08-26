@@ -1,4 +1,4 @@
-package com.drmangotea.tfmg.config;
+package com.drmangotea.tfmg.config.server;
 
 
 import com.drmangotea.tfmg.TFMG;

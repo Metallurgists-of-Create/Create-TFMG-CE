@@ -97,11 +97,10 @@ public class ExhaustBlockEntity extends SmartBlockEntity implements IHaveGoggleI
         if(tankInventory.getFluidAmount() > 0) {
             smokeTimer = 100;
             spawnsSmoke = true;
+            tankInventory.drain(50, IFluidHandler.FluidAction.EXECUTE);
         }
 
-        if (tankInventory.getSpace() > 700) {
-            tankInventory.drain(100, IFluidHandler.FluidAction.EXECUTE);
-        } else tankInventory.drain(10, IFluidHandler.FluidAction.EXECUTE);
+
     }
 
 

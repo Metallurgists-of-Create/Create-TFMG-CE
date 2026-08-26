@@ -102,7 +102,8 @@ public class BlastStoveBlockEntity extends FluidTankBlockEntity implements IHave
     @SuppressWarnings("removal")
     public void tick() {
         super.tick();
-
+        if (level == null) return;
+        level.invalidateCapabilities(getBlockPos());
 
         if (isController() && !primaryInputInventory.isEmpty() && !secondaryInputInventory.isEmpty() && primaryOutputInventory.getSpace() != 0 && secondaryOutputInventory.getSpace() != 0) {
             HotBlastRecipe recipe = getMatchingRecipes();
@@ -121,7 +122,6 @@ public class BlastStoveBlockEntity extends FluidTankBlockEntity implements IHave
                 } else {
                     timer++;
                 }
-
             }
         }
 
@@ -206,6 +206,11 @@ public class BlastStoveBlockEntity extends FluidTankBlockEntity implements IHave
 
     }
 
+    @Override
+    public void invalidate() {
+        super.invalidate();
+        invalidateCapabilities();
+    }
 
     @SuppressWarnings("unchecked")
     @Override

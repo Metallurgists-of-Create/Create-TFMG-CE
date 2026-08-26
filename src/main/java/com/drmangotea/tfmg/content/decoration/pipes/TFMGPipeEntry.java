@@ -1,7 +1,7 @@
 package com.drmangotea.tfmg.content.decoration.pipes;
 
 import com.drmangotea.tfmg.base.TFMGRegistrate;
-import com.drmangotea.tfmg.config.TFMGStress;
+import com.drmangotea.tfmg.config.server.TFMGStress;
 import com.drmangotea.tfmg.content.decoration.pipes.block.*;
 import com.drmangotea.tfmg.content.decoration.pipes.rendering.TFMGPipeAttachmentModel;
 import com.simibubi.create.AllBlocks;

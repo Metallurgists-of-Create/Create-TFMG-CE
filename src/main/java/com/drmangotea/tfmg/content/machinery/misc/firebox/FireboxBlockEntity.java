@@ -1,6 +1,6 @@
 package com.drmangotea.tfmg.content.machinery.misc.firebox;
 
-import com.drmangotea.tfmg.base.TFMGUtils;
+import com.drmangotea.tfmg.base.fluid.ForceableFluidTank;
 import com.drmangotea.tfmg.config.TFMGConfigs;
 import com.drmangotea.tfmg.registry.TFMGBlockEntities;
 import com.drmangotea.tfmg.registry.TFMGFluids;
@@ -14,7 +14,6 @@ import com.simibubi.create.foundation.blockEntity.IMultiBlockEntityContainer;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.fluid.CombinedTankWrapper;
-import com.simibubi.create.foundation.fluid.SmartFluidTank;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -42,8 +41,8 @@ public class FireboxBlockEntity extends SmartBlockEntity implements IHaveGoggleI
     private static final int MAX_SIZE = 3;
 
     protected IFluidHandler fluidCapability;
-    protected FluidTank tankInventory;
-    protected FluidTank exhuastTank;
+    protected ForceableFluidTank tankInventory;
+    protected ForceableFluidTank exhuastTank;
     protected BlockPos controller;
     protected BlockPos lastKnownPos;
     protected boolean updateConnectivity;
@@ -61,8 +60,8 @@ public class FireboxBlockEntity extends SmartBlockEntity implements IHaveGoggleI
     public FireboxBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
         setLazyTickRate(60);
-        tankInventory = TFMGUtils.createTank(getCapacityMultiplier(), false, true, this::onFluidStackChanged);
-        exhuastTank = TFMGUtils.createTank(getCapacityMultiplier(), true, false, this::onFluidStackChanged);
+        tankInventory = new ForceableFluidTank(getCapacityMultiplier(), this::onFluidStackChanged).blockExtraction().withValidator(fs -> fs.is(TFMGTags.Fluids.FIREBOX_FUEL.tag));
+        exhuastTank = new ForceableFluidTank(getCapacityMultiplier(), this::onFluidStackChanged).blockInsertion();
         fluidCapability = new CombinedTankWrapper(tankInventory, exhuastTank);
         updateConnectivity = false;
         updateCapability = false;
@@ -91,7 +90,7 @@ public class FireboxBlockEntity extends SmartBlockEntity implements IHaveGoggleI
     @Override
     public void lazyTick() {
         super.lazyTick();
-
+        if (level == null || level.isClientSide) return;
         FireboxBlockEntity controller = isController() ? this : getControllerBE();
 
         if (controller == null)
@@ -99,28 +98,34 @@ public class FireboxBlockEntity extends SmartBlockEntity implements IHaveGoggleI
 
         boolean wasRunning = running;
 
-        if (!canBurn(controller)) {
-            if (wasRunning)
-                level.setBlock(getBlockPos(), getBlockState().setValue(FireboxBlock.HEAT_LEVEL, BlazeBurnerBlock.HeatLevel.NONE), 2);
-            running = false;
-
-        } else {
+        FluidStack toDrain = controller.tankInventory.getFluid().copyWithAmount(TFMGConfigs.common().machines.fireboxFuelConsumption.get());
+        FluidStack drainable = controller.tankInventory.forceDrain(toDrain.getAmount(), IFluidHandler.FluidAction.SIMULATE);
+        if (canBurn(controller) && !drainable.isEmpty() && FluidStack.isSameFluidSameComponents(toDrain, drainable) && drainable.getAmount() >= TFMGConfigs.common().machines.fireboxFuelConsumption.get()) {
             if (!wasRunning)
                 level.setBlock(getBlockPos(), getBlockState().setValue(FireboxBlock.HEAT_LEVEL, BlazeBurnerBlock.HeatLevel.FADING), 2);
             running = true;
-            TFMGUtils.drainFilteredTank((SmartFluidTank) controller.tankInventory, 50);
+            controller.tankInventory.forceDrain(drainable.getAmount(), IFluidHandler.FluidAction.EXECUTE);
             if (TFMGConfigs.common().machines.fireboxExhaustRequirement.get()) {
-                TFMGUtils.fillFilteredTank((SmartFluidTank) controller.exhuastTank, new FluidStack(TFMGFluids.CARBON_DIOXIDE.get(), 500));
+                int toFill = controller.exhuastTank.forceFill(new FluidStack(TFMGFluids.CARBON_DIOXIDE.get(), 500), IFluidHandler.FluidAction.SIMULATE);
+                if (toFill > 0) {
+                    controller.exhuastTank.forceFill(new FluidStack(TFMGFluids.CARBON_DIOXIDE.get(), toFill), IFluidHandler.FluidAction.EXECUTE);
+                }
             }
-
+            sendData();
+            setChanged();
+        } else {
+            if (wasRunning)
+                level.setBlock(getBlockPos(), getBlockState().setValue(FireboxBlock.HEAT_LEVEL, BlazeBurnerBlock.HeatLevel.NONE), 2);
+            running = false;
         }
     }
 
     public boolean canBurn(FireboxBlockEntity controller) {
         if(exhuastTank == null)
             return false;
-
-        return controller.exhuastTank.getSpace() > 0 && controller.tankInventory.getFluidAmount() >= TFMGConfigs.common().machines.fireboxFuelConsumption.get() && controller.tankInventory.getFluid().getFluid().is(TFMGTags.Fluids.FIREBOX_FUEL.tag);
+        if(controller.exhuastTank.getCapacity() - controller.exhuastTank.getFluidAmount() <= 0)
+            return false;
+        return controller.tankInventory.getFluid().is(TFMGTags.Fluids.FIREBOX_FUEL.tag);
     }
 
     @Override
@@ -135,7 +140,7 @@ public class FireboxBlockEntity extends SmartBlockEntity implements IHaveGoggleI
 
         if (lastKnownPos == null)
             lastKnownPos = getBlockPos();
-        else if (!lastKnownPos.equals(worldPosition) && worldPosition != null) {
+        else if (!lastKnownPos.equals(worldPosition)) {
             onPositionChanged();
             return;
         }
@@ -196,10 +201,13 @@ public class FireboxBlockEntity extends SmartBlockEntity implements IHaveGoggleI
 
     public void applyFluidTankSize(int blocks) {
         tankInventory.setCapacity(blocks * getCapacityMultiplier());
+        exhuastTank.setCapacity(blocks * getCapacityMultiplier());
         int overflow = tankInventory.getFluidAmount() - tankInventory.getCapacity();
         if (overflow > 0)
             tankInventory.drain(overflow, IFluidHandler.FluidAction.EXECUTE);
-
+        int exhaustOverflow = exhuastTank.getFluidAmount() - exhuastTank.getCapacity();
+        if (exhaustOverflow > 0)
+            exhuastTank.drain(exhaustOverflow, IFluidHandler.FluidAction.EXECUTE);
     }
 
     public void removeController(boolean keepFluids) {
@@ -285,8 +293,7 @@ public class FireboxBlockEntity extends SmartBlockEntity implements IHaveGoggleI
         FireboxBlockEntity controllerBE = getControllerBE();
         if (controllerBE == null)
             return false;
-        return containedFluidTooltip(tooltip, isPlayerSneaking,
-                fluidCapability);
+        return containedFluidTooltip(tooltip, isPlayerSneaking, fluidCapability);
     }
 
     @Override
@@ -301,7 +308,7 @@ public class FireboxBlockEntity extends SmartBlockEntity implements IHaveGoggleI
         controller = null;
         lastKnownPos = null;
 
-        compound.getBoolean("IsRunning");
+        running = compound.getBoolean("IsRunning");
 
         if (compound.contains("LastKnownPos"))
             lastKnownPos = NbtUtils.readBlockPos(compound,"LastKnownPos").get();
@@ -316,9 +323,9 @@ public class FireboxBlockEntity extends SmartBlockEntity implements IHaveGoggleI
             exhuastTank.setCapacity(getTotalTankSize() * getCapacityMultiplier());
             exhuastTank.readFromNBT(registries,compound.getCompound("Exhaust"));
             if (tankInventory.getSpace() < 0)
-                tankInventory.drain(-tankInventory.getSpace(), IFluidHandler.FluidAction.EXECUTE);
+                tankInventory.forceDrain(-tankInventory.getSpace(), IFluidHandler.FluidAction.EXECUTE);
             if (exhuastTank.getSpace() < 0)
-                exhuastTank.drain(-exhuastTank.getSpace(), IFluidHandler.FluidAction.EXECUTE);
+                exhuastTank.forceDrain(-exhuastTank.getSpace(), IFluidHandler.FluidAction.EXECUTE);
         }
 
         updateCapability = true;
@@ -330,8 +337,10 @@ public class FireboxBlockEntity extends SmartBlockEntity implements IHaveGoggleI
         if (changeOfController || prevSize != width || prevHeight != height) {
             if (hasLevel())
                 level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 16);
-            if (isController())
+            if (isController()) {
                 tankInventory.setCapacity(getCapacityMultiplier() * getTotalTankSize());
+                exhuastTank.setCapacity(getCapacityMultiplier() * getTotalTankSize());
+            }
             invalidateRenderBoundingBox();
         }
 

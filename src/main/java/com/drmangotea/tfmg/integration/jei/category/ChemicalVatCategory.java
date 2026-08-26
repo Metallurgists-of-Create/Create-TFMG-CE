@@ -2,8 +2,14 @@ package com.drmangotea.tfmg.integration.jei.category;
 
 import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.base.lang.TFMGLang;
+import com.drmangotea.tfmg.base.pressure.Pressure;
+import com.drmangotea.tfmg.config.TFMGConfigs;
+import com.drmangotea.tfmg.content.machinery.vat.base.registry.VatOperation;
 import com.drmangotea.tfmg.recipes.VatMachineRecipe;
 import com.drmangotea.tfmg.registry.TFMGGuiTextures;
+import com.drmangotea.tfmg.registry.TFMGVatOperations;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Axis;
 import com.simibubi.create.compat.jei.category.CreateRecipeCategory;
 import com.simibubi.create.content.processing.recipe.ProcessingOutput;
 import com.simibubi.create.foundation.item.ItemHelper;
@@ -14,6 +20,7 @@ import mezz.jei.api.recipe.RecipeIngredientRole;
 import net.createmod.catnip.data.Pair;
 import net.createmod.ponder.api.PonderPalette;
 import net.minecraft.ChatFormatting;
+import net.minecraft.Util;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -25,7 +32,24 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
+//TODO Create system for addons to draw machines instead
 public class ChemicalVatCategory extends CreateRecipeCategory<VatMachineRecipe> {
+    // Cheap way to do this
+    private static final int[] PRESSURE_ANGLES = {
+            0,   // 0
+            15,  // 1
+            25,  // 2
+            35,  // 3
+            40,  // 4
+            48,  // 5
+            57,  // 6
+            70,  // 7
+            78,  // 8
+            90   // 9
+    };
+
+    private static final float WOBBLE_AMPLITUDE = 2f;
+    private static final float WOBBLE_SPEED = 0.02f;
 
     public ChemicalVatCategory(Info<VatMachineRecipe> info) {
         super(info);
@@ -90,7 +114,7 @@ public class ChemicalVatCategory extends CreateRecipeCategory<VatMachineRecipe> 
     }
 
     public void draw(VatMachineRecipe recipe, IRecipeSlotsView iRecipeSlotsView, GuiGraphics graphics, double mouseX, double mouseY) {
-        List<String> machines = recipe.machines;
+        List<VatOperation> machines = recipe.machines;
         List<ResourceLocation> allowedVatTypes = recipe.allowedVatTypes;
         TFMGGuiTextures.VAT.render(graphics, 0, 24);
         drawVatTypes(allowedVatTypes, graphics);
@@ -119,7 +143,7 @@ public class ChemicalVatCategory extends CreateRecipeCategory<VatMachineRecipe> 
     @NotNull
     public List<Component> getTooltipStrings(VatMachineRecipe recipe, IRecipeSlotsView recipeSlotsView, double mouseX, double mouseY) {
         List<Component> tooltip = new ArrayList<>();
-        int pressure = recipe.pressure;
+        int pressure = recipe.pressure.getValue();
 
         if (mouseY > -3 && mouseY < 43 && mouseX > 127 && mouseX < 170) {
             if(pressure != 0) {
@@ -153,35 +177,35 @@ public class ChemicalVatCategory extends CreateRecipeCategory<VatMachineRecipe> 
         }
 
 
-        List<String> machines = recipe.machines;
+        List<VatOperation> machines = recipe.machines;
 
-        if (machines.contains("tfmg:mixing")) {
+        if (machines.contains(TFMGVatOperations.MIXING.get())) {
             if (mouseY > -3 && mouseY < 60 && mouseX > 43 && mouseX < 67) {
                 tooltip.add(TFMGLang.translate("recipe.vat.mixing").component()
                         .withColor(PonderPalette.INPUT.getColor()));
             }
         }
-        if (machines.contains("tfmg:centrifuge")) {
+        if (machines.contains(TFMGVatOperations.CENTRIFUGE.get())) {
             if (mouseY > -3 && mouseY < 60 && mouseX > 43 && mouseX < 67) {
                 tooltip.add(TFMGLang.translate("recipe.vat.centrifuge").component()
                         .withColor(PonderPalette.INPUT.getColor()));
             }
         }
-        if (machines.contains("tfmg:electrode")) {
+        if (machines.contains(TFMGVatOperations.ELECTRODE.get())) {
             boolean xCheck = mouseX > 11 && mouseX < 35 || mouseX > 75 && mouseX < 99;
             if (mouseY > -3 && mouseY < 60 && xCheck) {
                 tooltip.add(TFMGLang.translate("recipe.vat.electrode").component()
                         .withColor(PonderPalette.INPUT.getColor()));
             }
         }
-        if (machines.contains("tfmg:graphite_electrode")) {
+        if (machines.contains(TFMGVatOperations.GRAPHITE_ELECTRODE.get())) {
             if (mouseY > -3 && mouseY < 60 && mouseX > 11 && mouseX < 99) {
                 tooltip.add(TFMGLang.translate("recipe.vat.graphite_electrode").component()
                         .withColor(PonderPalette.INPUT.getColor()));
             }
         }
         //Chemica fix
-        if (machines.contains("chemica:electrode")) {
+        if (machines.contains(new VatOperation(TFMG.asResource("chemica:electrode")))) {
             boolean xCheck = mouseX > 11 && mouseX < 35 || mouseX > 75 && mouseX < 99;
             if (mouseY > -3 && mouseY < 60 && xCheck) {
                 tooltip.add(Component.translatable("chemica.recipe.vat.platinum_electrode")
@@ -191,16 +215,49 @@ public class ChemicalVatCategory extends CreateRecipeCategory<VatMachineRecipe> 
         return tooltip;
     }
 
-    private void renderPressure(int pressure, GuiGraphics graphics) {
+    private void renderPressure(Pressure pressure, GuiGraphics graphics) {
         TFMGGuiTextures.VAT_BAROMETER.render(graphics, 128, 0);
-        TFMGGuiTextures spritemap = TFMGGuiTextures.VAT_BAROMETER_NEEDLE;
-        if (pressure == 0) {
-            spritemap.render(graphics, 125, -3, 0, 0, 48, 48);
-        } else {
-            int xOffset = pressure < 0 ? 0 : 48;
-            int yOffset = 48 + (Math.abs(pressure) * 48);
-            spritemap.render(graphics,  125, -3, xOffset, yOffset, 48, 48);
+        renderPressureBar(graphics, pressure.getValue());
+    }
+
+    private float getNeedleAngle(int pressure) {
+        int abs = Math.abs(pressure);
+        // 110 is area for above 9 kPa
+        int magnitude = abs >= PRESSURE_ANGLES.length ? 110 : PRESSURE_ANGLES[abs];
+        return pressure < 0 ? -magnitude : magnitude;
+    }
+
+    private void renderPressureBar(GuiGraphics graphics, int pressure) {
+        int minX = 148;
+        int minY = 10;
+        int width = 2;
+        int height = 16;
+
+        float pivotX = minX + width / 2f;
+        float pivotY = minY + height - 1f;
+
+        float angleDegrees = getNeedleAngle(pressure);
+
+        if (TFMGConfigs.client().ui.pressureNeedleWobble.get() && Math.abs(pressure) >= PRESSURE_ANGLES.length) {
+            angleDegrees += getPeggedWobble();
         }
+
+        PoseStack pose = graphics.pose();
+        pose.pushPose();
+
+        pose.translate(pivotX, pivotY, 0);
+        pose.mulPose(Axis.ZP.rotationDegrees(angleDegrees));
+        pose.translate(-pivotX, -pivotY, 0);
+
+        graphics.fill(minX, minY, minX + width, minY + height, 0xFF000000);
+
+        pose.popPose();
+    }
+
+    private float getPeggedWobble() {
+        long time = Util.getMillis();
+        float t = time * WOBBLE_SPEED;
+        return (float) (Math.sin(t) * WOBBLE_AMPLITUDE + Math.sin(t * 2.7f) * (WOBBLE_AMPLITUDE * 0.3f));
     }
 
     private void renderHeated(int heatLevel, GuiGraphics graphics) {
@@ -234,22 +291,22 @@ public class ChemicalVatCategory extends CreateRecipeCategory<VatMachineRecipe> 
         }
     }
 
-    private void drawSprites(List<String> machines, GuiGraphics graphics) {
-        if (machines.contains("tfmg:mixing")) {
+    private void drawSprites(List<VatOperation> machines, GuiGraphics graphics) {
+        if (machines.contains(TFMGVatOperations.MIXING.get())) {
             TFMGGuiTextures.VAT_MACHINE.render(graphics, 55 - 12, 0);
             TFMGGuiTextures.MIXER.render(graphics, 55 - 19, 32);
         }
-        if (machines.contains("tfmg:centrifuge")) {
+        if (machines.contains(TFMGVatOperations.CENTRIFUGE.get())) {
             TFMGGuiTextures.VAT_MACHINE.render(graphics, 55 - 12, 0);
             TFMGGuiTextures.CENTRIFUGE.render(graphics, 55 - 12, 32);
         }
-        if (machines.contains("tfmg:electrode")) {
+        if (machines.contains(TFMGVatOperations.ELECTRODE.get())) {
             TFMGGuiTextures.VAT_MACHINE.render(graphics, 55 - 12 - 32, 0);
             TFMGGuiTextures.VAT_MACHINE.render(graphics, 55 - 12 + 32, 0);
             TFMGGuiTextures.ELECTRODE.render(graphics, 55 - 3 - 32, 32);
             TFMGGuiTextures.ELECTRODE.render(graphics, 55 - 3 + 32, 32);
         }
-        if (machines.contains("tfmg:graphite_electrode")) {
+        if (machines.contains(TFMGVatOperations.GRAPHITE_ELECTRODE.get())) {
             TFMGGuiTextures.VAT_MACHINE.render(graphics, 55 - 12 - 32, 0);
             TFMGGuiTextures.VAT_MACHINE.render(graphics, 55 - 12 + 32, 0);
             TFMGGuiTextures.VAT_MACHINE.render(graphics, 55 - 12, 0);
@@ -258,12 +315,11 @@ public class ChemicalVatCategory extends CreateRecipeCategory<VatMachineRecipe> 
             TFMGGuiTextures.GRAPHITE_ELECTRODE.render(graphics, 55 - 4, 32);
         }
         //Chemica fix
-        if (machines.contains("chemica:electrode")) {
+        if (machines.contains(new VatOperation(TFMG.asResource("chemica:electrode")))) {
             TFMGGuiTextures.VAT_MACHINE.render(graphics, 11, 0);
             TFMGGuiTextures.VAT_MACHINE.render(graphics, 75, 0);
             TFMGGuiTextures.PLATINUM_ELECTRODE.render(graphics, 19, 32);
             TFMGGuiTextures.PLATINUM_ELECTRODE.render(graphics, 83, 32);
         }
     }
-
 }

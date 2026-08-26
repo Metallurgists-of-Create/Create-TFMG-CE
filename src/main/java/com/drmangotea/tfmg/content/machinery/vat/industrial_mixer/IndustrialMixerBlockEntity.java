@@ -6,11 +6,9 @@ import com.drmangotea.tfmg.config.TFMGConfigs;
 import com.drmangotea.tfmg.content.machinery.vat.base.IVatMachine;
 import com.drmangotea.tfmg.content.machinery.vat.base.VatBlock;
 import com.drmangotea.tfmg.content.machinery.vat.base.VatBlockEntity;
+import com.drmangotea.tfmg.content.machinery.vat.base.registry.VatOperation;
 import com.drmangotea.tfmg.content.machinery.vat.industrial_mixer.mode.MixerMode;
-import com.drmangotea.tfmg.registry.TFMGBlockEntities;
-import com.drmangotea.tfmg.registry.TFMGDataComponents;
-import com.drmangotea.tfmg.registry.TFMGItems;
-import com.drmangotea.tfmg.registry.TFMGMixerModes;
+import com.drmangotea.tfmg.registry.*;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.foundation.item.ItemHelper;
 import com.simibubi.create.foundation.item.SmartInventory;
@@ -22,6 +20,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.Clearable;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -33,7 +32,7 @@ import net.neoforged.neoforge.items.IItemHandlerModifiable;
 import java.util.List;
 
 
-public class IndustrialMixerBlockEntity extends KineticBlockEntity implements IVatMachine {
+public class IndustrialMixerBlockEntity extends KineticBlockEntity implements IVatMachine, Clearable {
     public SmartInventory inventory = new SmartInventory(1, this, 1, false)
             .whenContentsChanged(this::onInventoryChanged);
     public IItemHandlerModifiable itemCapability;
@@ -148,10 +147,8 @@ public class IndustrialMixerBlockEntity extends KineticBlockEntity implements IV
 
     @Override
     public void destroy() {
-        if (level == null || level.isClientSide) {
-            return;
-        }
-        ItemHelper.dropContents(level, getBlockPos(), inventory);
+        super.destroy();
+        ItemHelper.dropContents(level, worldPosition, inventory);
     }
 
     @Override
@@ -160,8 +157,8 @@ public class IndustrialMixerBlockEntity extends KineticBlockEntity implements IV
     }
 
     @Override
-    public String getOperationId() {
-        return mixerMode.getOperationId();
+    public VatOperation getOperationId() {
+        return mixerMode.getOperationId().get();
     }
 
     @Override
@@ -180,7 +177,12 @@ public class IndustrialMixerBlockEntity extends KineticBlockEntity implements IV
     }
 
     @Override
-    public String[] doesntWorkWith() {
-        return new String[]{"tfmg:electrode", "tfmg:graphite_electrode"};
+    public List<VatOperation> doesntWorkWith() {
+        return List.of(TFMGVatOperations.ELECTRODE.get(), TFMGVatOperations.GRAPHITE_ELECTRODE.get());
+    }
+
+    @Override
+    public void clearContent() {
+        this.inventory.clearContent();
     }
 }

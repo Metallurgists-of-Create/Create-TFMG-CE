@@ -23,6 +23,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.Clearable;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeManager;
@@ -42,7 +43,7 @@ import java.util.List;
 
 import static net.minecraft.world.level.block.HorizontalDirectionalBlock.FACING;
 
-public class CokeOvenBlockEntity extends SmartBlockEntity implements IHaveGoggleInformation {
+public class CokeOvenBlockEntity extends SmartBlockEntity implements IHaveGoggleInformation, Clearable {
 
     public SmartInventory inventory;
     public FluidTank primaryTank;
@@ -56,7 +57,7 @@ public class CokeOvenBlockEntity extends SmartBlockEntity implements IHaveGoggle
     public int size = 1;
     public boolean forceOpen = false;
 
-    int totalTime = 0;
+    int totalTime = -1;
     int timer = 0;
     private final RecipeManager.CachedCheck<RecipeWrapper, CokingRecipe> quickCheck;
 
@@ -81,7 +82,7 @@ public class CokeOvenBlockEntity extends SmartBlockEntity implements IHaveGoggle
             executeRecipe();
         }
         if(inventory.isEmpty()) {
-            totalTime = 0;
+            totalTime = -1;
             timer = 0;
         }
     }
@@ -108,8 +109,8 @@ public class CokeOvenBlockEntity extends SmartBlockEntity implements IHaveGoggle
     @Override
     public void tick() {
         super.tick();
-        if(level == null)
-            return;
+        if (level == null) return;
+        level.invalidateCapabilities(getBlockPos());
 
         tickRecipe();
 
@@ -144,15 +145,15 @@ public class CokeOvenBlockEntity extends SmartBlockEntity implements IHaveGoggle
         }
 
         if(recipeholder == null) {
-            totalTime = 0;
+            totalTime = -1;
             timer = 0;
             return;
         }
 
         CokingRecipe recipe = recipeholder.value();
 
-        if(timer == totalTime){
-            totalTime = 0;
+        if(timer >= totalTime) {
+            totalTime = -1;
             timer = 0;
             inventory.getItem(0).shrink(recipe.getIngredients().getFirst().getItems()[0].getCount());
 
@@ -372,5 +373,10 @@ public class CokeOvenBlockEntity extends SmartBlockEntity implements IHaveGoggle
         primaryTank.readFromNBT(registries,compound.getCompound("PrimaryTankContent"));
         secondaryTank.readFromNBT(registries,compound.getCompound("SecondaryTankContent"));
         controller = BlockPos.of(compound.getLong("Controller"));
+    }
+
+    @Override
+    public void clearContent() {
+        this.inventory.clearContent();
     }
 }

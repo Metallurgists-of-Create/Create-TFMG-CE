@@ -58,6 +58,7 @@ public class TFMG {
         TFMGSoundEvents.prepare();
         TFMGElectrodes.init();
         TFMGMixerModes.init();
+        TFMGVatOperations.init();
         TFMGCableTypes.init();
         TFMGEngineTypes.init();
         TFMGDisplaySources.init();
@@ -105,9 +106,7 @@ public class TFMG {
      */
     public static void commonSetup(final FMLCommonSetupEvent event) {
         TFMGFluidInteractions.registerFluidInteractions();
-        event.enqueueWork(() -> {
-            TFMGBoilerHeaters.registerDefaults();
-        });
+        event.enqueueWork(TFMGBoilerHeaters::registerDefaults);
     }
 
     public static void onRegister(final RegisterEvent event) {

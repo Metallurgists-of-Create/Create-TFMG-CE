@@ -15,6 +15,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.Clearable;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -29,7 +30,7 @@ import java.util.Optional;
 import static net.minecraft.world.level.block.HorizontalDirectionalBlock.FACING;
 
 
-public class PolarizerBlockEntity extends ElectricBlockEntity implements IHaveGoggleInformation {
+public class PolarizerBlockEntity extends ElectricBlockEntity implements IHaveGoggleInformation, Clearable {
     public SmartInventory inventory = new SmartInventory(1, this, 1, false)
             .whenContentsChanged(this::onInventoryChanged);
     public IItemHandlerModifiable itemCapability;
@@ -155,4 +156,8 @@ public class PolarizerBlockEntity extends ElectricBlockEntity implements IHaveGo
         chargeCapacitors = compound.getBoolean("ChargeCapacitors");
     }
 
+    @Override
+    public void clearContent() {
+        this.inventory.clearContent();
+    }
 }

@@ -1,7 +1,7 @@
 package com.drmangotea.tfmg.content.decoration.tanks;
 
+import com.drmangotea.tfmg.base.TFMGBlockConnectivityHandler;
 import com.drmangotea.tfmg.mixin.accessor.FluidTankBlockEntityAccessor;
-import com.simibubi.create.api.connectivity.ConnectivityHandler;
 import com.simibubi.create.content.equipment.wrench.IWrenchable;
 import com.simibubi.create.content.fluids.tank.FluidTankBlock;
 import com.simibubi.create.content.fluids.tank.FluidTankBlockEntity;
@@ -53,7 +53,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 import static com.simibubi.create.content.fluids.tank.FluidTankBlock.Shape;
 
-public abstract class TFMGFluidTankBlock<T extends FluidTankBlockEntity> extends Block implements IWrenchable, IBE<T> {
+public abstract class TFMGFluidTankBlock<T extends TFMGFluidTankBlockEntity> extends Block implements IWrenchable, IBE<T> {
 	public static final BooleanProperty TOP = FluidTankBlock.TOP;
 	public static final BooleanProperty BOTTOM = FluidTankBlock.BOTTOM;
 	public static final EnumProperty<Shape> SHAPE = FluidTankBlock.SHAPE;
@@ -81,7 +81,7 @@ public abstract class TFMGFluidTankBlock<T extends FluidTankBlockEntity> extends
 	public void onPlace(BlockState state, Level world, BlockPos pos, BlockState oldState, boolean moved) {
 		if (oldState.getBlock() == state.getBlock()) return;
 		if (moved) return;
-		withBlockEntityDo(world, pos, b -> ((FluidTankBlockEntityAccessor)b).tfmg$updateConnectivity());
+		withBlockEntityDo(world, pos, TFMGFluidTankBlockEntity::updateConnectivity);
 	}
 	
 	@Override @ParametersAreNonnullByDefault
@@ -90,13 +90,13 @@ public abstract class TFMGFluidTankBlock<T extends FluidTankBlockEntity> extends
 			if (!(world.getBlockEntity(pos) instanceof FluidTankBlockEntity tankTE))
 				return;
 			world.removeBlockEntity(pos);
-			ConnectivityHandler.splitMulti(tankTE);
+			TFMGBlockConnectivityHandler.splitMulti(tankTE);
 		}
 	}
 	
 	@Override @ParametersAreNonnullByDefault
 	public int getLightEmission(BlockState state, BlockGetter world, BlockPos pos) {
-		FluidTankBlockEntity tankAt = ConnectivityHandler.partAt(getBlockEntityType(), world, pos);
+		FluidTankBlockEntity tankAt = TFMGBlockConnectivityHandler.partAt(getBlockEntityType(), world, pos);
 		if (tankAt == null) return 0;
 		FluidTankBlockEntity controllerTE = tankAt.getControllerBE();
 		if (controllerTE == null || !((FluidTankBlockEntityAccessor)controllerTE).tfmg$getWindow())
@@ -194,14 +194,14 @@ public abstract class TFMGFluidTankBlock<T extends FluidTankBlockEntity> extends
 		if (stack.isEmpty()) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
 		if (!player.isCreative()) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
 		
-		FluidHelper.FluidExchange exchange = null;
-		FluidTankBlockEntity be = ConnectivityHandler.partAt(getBlockEntityType(), level, pos);
+		TFMGFluidTankBlockEntity be = TFMGBlockConnectivityHandler.partAt(getBlockEntityType(), level, pos);
 		if (be == null) return ItemInteractionResult.FAIL;
 		
 		IFluidHandler tankCapability = level.getCapability(Capabilities.FluidHandler.BLOCK, be.getBlockPos(), null);
 		if (tankCapability == null) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
 		FluidStack prevFluidInTank = tankCapability.getFluidInTank(0).copy();
 		
+		FluidHelper.FluidExchange exchange = null;
 		if (FluidHelper.tryEmptyItemIntoBE(level, player, hand, stack, be))
 			exchange = FluidHelper.FluidExchange.ITEM_TO_TANK;
 		else if (FluidHelper.tryFillItemFromBE(level, player, hand, stack, be))

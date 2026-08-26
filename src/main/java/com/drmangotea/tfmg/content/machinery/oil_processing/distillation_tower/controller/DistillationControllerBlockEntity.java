@@ -2,11 +2,13 @@
 
 import com.drmangotea.tfmg.base.TFMGUtils;
 import com.drmangotea.tfmg.base.lang.TFMGTexts;
+import com.drmangotea.tfmg.config.TFMGConfigs;
 import com.drmangotea.tfmg.content.decoration.tanks.steel.SteelTankBlock;
 import com.drmangotea.tfmg.content.decoration.tanks.steel.SteelTankBlockEntity;
 import com.drmangotea.tfmg.content.machinery.oil_processing.distillation_tower.output.DistillationOutputBlockEntity;
 import com.drmangotea.tfmg.mixin.accessor.FluidTankBlockEntityAccessor;
 import com.drmangotea.tfmg.recipes.DistillationRecipe;
+import com.drmangotea.tfmg.recipes.input.DistillationRecipeInput;
 import com.drmangotea.tfmg.registry.TFMGBlockEntities;
 import com.drmangotea.tfmg.registry.TFMGRecipeTypes;
 import com.drmangotea.tfmg.registry.TFMGTags;
@@ -14,17 +16,16 @@ import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.fluid.SmartFluidTank;
-import com.simibubi.create.foundation.recipe.RecipeConditions;
-import com.simibubi.create.foundation.recipe.RecipeFinder;
 
 import net.createmod.catnip.animation.LerpedFloat;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -37,24 +38,29 @@ import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 import static com.drmangotea.tfmg.content.machinery.oil_processing.distillation_tower.controller.DistillationControllerBlock.getFacing;
 
 public class DistillationControllerBlockEntity extends SmartBlockEntity implements IHaveGoggleInformation {
 
-    private static final Object DistillationRecipesKey = new Object();
-
-    public DistillationRecipe recipe;
-
     LerpedFloat angle = LerpedFloat.angular();
 
     protected IFluidHandler fluidCapability;
-
     public final FluidTank tank = new SmartFluidTank(8000, this::onFluidStackChanged);
+
+    private final RecipeManager.CachedCheck<DistillationRecipeInput, DistillationRecipe> quickCheck;
+
+    public boolean refreshOutputs = false;
+    public List<BlockPos> outputs = new ArrayList<>();
+
+    public int untilNextProcess = TFMGConfigs.common().machines.distillationRecipeGapTicks.get();
 
     public DistillationControllerBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
         fluidCapability = tank;
+        this.quickCheck = RecipeManager.createCheck(TFMGRecipeTypes.DISTILLATION.getType());
+        refreshOutputs = true;
     }
 
     public static void registerCapabilities(RegisterCapabilitiesEvent event) {
@@ -69,7 +75,6 @@ public class DistillationControllerBlockEntity extends SmartBlockEntity implemen
     public void remove() {
         super.remove();
         SteelTankBlock.updateTowerState(level, getBlockPos().relative(getFacing(getBlockState()).getOpposite()),false,false);
-
     }
 
     @Override
@@ -83,38 +88,22 @@ public class DistillationControllerBlockEntity extends SmartBlockEntity implemen
         }
     }
 
-    public void findRecipe(ArrayList<DistillationOutputBlockEntity> outputs){
-        if (recipe == null || !recipe.matches(tank, outputs.toArray().length)) {
-            DistillationRecipe recipe = getMatchingRecipes();
-
-            if (recipe != null) {
-                this.recipe = recipe;
-                sendData();
-            }
-        }
-    }
-
-    public void manageRecipe() {
-        ArrayList<DistillationOutputBlockEntity> outputs = getOutputs();
-        BlockEntity beBehind = level.getBlockEntity(getBlockPos().relative(getFacing(getBlockState()).getOpposite()));
-        if (!(beBehind instanceof SteelTankBlockEntity be))
-            return;
-
-        SteelTankBlockEntity controllerBe = be.getControllerBE() == null ? be : be.getControllerBE();
-
+    public void manageRecipe(SteelTankBlockEntity controllerBe) {
         if (outputs.isEmpty() || controllerBe.activeHeat == 0)
             return;
 
-        findRecipe(outputs);
+        RecipeHolder<DistillationRecipe> recipeholder;
+        if (!tank.isEmpty()) {
+            recipeholder = quickCheck.getRecipeFor(new DistillationRecipeInput(tank.getFluidInTank(0), outputs.size()), level).orElse(null);
+        } else {
+            recipeholder = null;
+        }
 
-        if (recipe == null)
+        if(recipeholder == null) {
             return;
+        }
 
-        float speedModifier = (float) controllerBe.activeHeat / 2;
-
-        int recipeDelay = 80;
-        if (level.getGameTime() % (recipeDelay / speedModifier) != 0)
-            return;
+        DistillationRecipe recipe = recipeholder.value();
 
         ///
         int toDrain = recipe.getInputFluid().amount();
@@ -122,22 +111,26 @@ public class DistillationControllerBlockEntity extends SmartBlockEntity implemen
         if (maxOutput < toDrain)
             return;
 
-        if (recipe.getFluidResults().toArray().length != getOutputs().toArray().length)
+        if (recipe.getFluidResults().toArray().length != outputs.size())
             return;
-        if (be.isController()) {
-            if (be.getHeight() < outputs.toArray().length * 2 || (((FluidTankBlockEntityAccessor) be).tfmg$getWidth() < 2 && outputs.toArray().length > 3))
+        if (controllerBe.isController()) {
+            if (controllerBe.getHeight() < outputs.size() * 2 || (((FluidTankBlockEntityAccessor) controllerBe).tfmg$getWidth() < 2 && outputs.size() > 3))
                 return;
         }  else {
-            if (be.getControllerBE() != null)
-                if (be.getControllerBE().getHeight() < outputs.toArray().length * 2 || ((FluidTankBlockEntityAccessor) be.getControllerBE()).tfmg$getWidth() < 2)
+            if (controllerBe.getControllerBE() != null)
+                if (controllerBe.getControllerBE().getHeight() < outputs.size() * 2 || ((FluidTankBlockEntityAccessor) controllerBe.getControllerBE()).tfmg$getWidth() < 2)
                     return;
         }
-        for (DistillationOutputBlockEntity output : outputs) {
+        for (DistillationOutputBlockEntity output : outputs.stream().map(this::getOutput).toList()) {
+            if (output == null)
+                continue;
             if (output.tank.getSpace() == 0 && output.mode.get() == DistillationOutputBlockEntity.DistillationOutputMode.KEEP_FLUID)
                 return;
         }
         int numero = 0;
-        for (DistillationOutputBlockEntity output : outputs) {
+        for (DistillationOutputBlockEntity output : outputs.stream().map(this::getOutput).toList()) {
+            if (output == null)
+                continue;
             FluidStack fluidStack = recipe.getFluidResults().get(numero);
             FluidStack result = new FluidStack(fluidStack.getFluidHolder(), fluidStack.getAmount());
             if (fluidStack.isEmpty())
@@ -149,17 +142,42 @@ public class DistillationControllerBlockEntity extends SmartBlockEntity implemen
         }
         tank.drain(toDrain, IFluidHandler.FluidAction.EXECUTE);
     }
+
     @Override
     public void tick() {
         super.tick();
         if (level == null) return;
         level.invalidateCapabilities(getBlockPos());
-        for (var output : getOutputs()) {
-            level.invalidateCapabilities(output.getBlockPos());
+        this.outputs.forEach(out -> asOutput(out, (be) -> {
+            if (level != null) {
+                level.invalidateCapabilities(be.getBlockPos());
+            }
+        }));
+
+        if (refreshOutputs) {
+            refreshOutputs();
+            refreshOutputs = false;
+        }
+
+        BlockEntity beBehind = level.getBlockEntity(getBlockPos().relative(getFacing(getBlockState()).getOpposite()));
+        if (beBehind instanceof SteelTankBlockEntity be) {
+            SteelTankBlockEntity controllerBe = be.getControllerBE() == null ? be : be.getControllerBE();
+            if (untilNextProcess > 0) {
+                int toDecrement = controllerBe.activeHeat == 1 ? 1 : controllerBe.activeHeat / 2;
+                untilNextProcess -= Math.max(0, toDecrement);
+            } else {
+                untilNextProcess = TFMGConfigs.common().machines.distillationRecipeGapTicks.get();
+                manageRecipe(controllerBe);
+            }
         }
 
         manageDialRendering();
-        manageRecipe();
+    }
+
+    @Override
+    public void lazyTick() {
+        super.lazyTick();
+        refreshOutputs = true;
     }
 
     protected void onFluidStackChanged(FluidStack newFluidStack) {
@@ -181,7 +199,7 @@ public class DistillationControllerBlockEntity extends SmartBlockEntity implemen
 
             TFMGTexts.header("distillation_tower").style(ChatFormatting.GRAY).forGoggles(tooltip, 1);
             TFMGTexts.Distillation.level(controllerBe.activeHeat).forGoggles(tooltip, 1);
-            TFMGTexts.Distillation.outputs(getOutputs().toArray().length).forGoggles(tooltip, 1);
+            TFMGTexts.Distillation.outputs(outputs.size()).forGoggles(tooltip, 1);
         } else
             TFMGTexts.Distillation.tankNotFound().forGoggles(tooltip, 1);
 
@@ -190,31 +208,33 @@ public class DistillationControllerBlockEntity extends SmartBlockEntity implemen
         return true;
     }
 
-    protected DistillationRecipe getMatchingRecipes() {
-        List<RecipeHolder<? extends Recipe<?>>> list = RecipeFinder.get(getRecipeCacheKey(), level, RecipeConditions.isOfType(TFMGRecipeTypes.DISTILLATION.getType()));
-        for (int i = 0; i < list.toArray().length; i++) {
-            DistillationRecipe recipe = (DistillationRecipe) list.get(i).value();
-            if (recipe.getFluidResults().toArray().length == getOutputs().toArray().length)
-                for (int y = 0; y < recipe.getFluidIngredients().getFirst().getFluids().length; y++)
-                    if (tank.getFluid().getFluid() == recipe.getFluidIngredients().getFirst().getFluids()[y].getFluid())
-                        if (tank.getFluidAmount() >= recipe.getFluidIngredients().getFirst().amount())
-                            return recipe;
+    public DistillationOutputBlockEntity getOutput(BlockPos pos) {
+        if (level == null) return null;
+        if (level.getBlockEntity(pos) instanceof DistillationOutputBlockEntity be) {
+            return be;
+        } else {
+            refreshOutputs = true;
         }
         return null;
     }
 
-    protected Object getRecipeCacheKey() {
-        return DistillationRecipesKey;
+    public void asOutput(BlockPos pos, Consumer<DistillationOutputBlockEntity> consumer) {
+        if (level == null) return;
+        if (level.getBlockEntity(pos) instanceof DistillationOutputBlockEntity be) {
+            consumer.accept(be);
+        } else {
+            refreshOutputs = true;
+        }
     }
 
-    public ArrayList<DistillationOutputBlockEntity> getOutputs() {
-        ArrayList<DistillationOutputBlockEntity> outputs = new ArrayList<>();
-        if (level == null) return outputs;
+    public void refreshOutputs() {
+        ArrayList<BlockPos> outputs = new ArrayList<>();
+        if (level == null) return;
         BlockPos checkedPos = this.getBlockPos().above();
         for (int i = 0; i < 11; i++) {
-            if (i == 0 || i == 2 || i == 4 || i == 6 || i == 8 || i == 10) {
-                if (level.getBlockEntity(checkedPos) instanceof DistillationOutputBlockEntity be) {
-                    outputs.add(be);
+            if ((i % 2) == 0) {
+                if (level.getBlockEntity(checkedPos) instanceof DistillationOutputBlockEntity) {
+                    outputs.add(checkedPos);
                 } else break;
             } else {
                 if (!(level.getBlockState(checkedPos).is(TFMGTags.Blocks.INDUSTRIAL_PIPE.tag)))
@@ -222,17 +242,30 @@ public class DistillationControllerBlockEntity extends SmartBlockEntity implemen
             }
             checkedPos = checkedPos.above();
         }
-        return outputs;
+        this.outputs = outputs;
+        this.sendData();
+        this.setChanged();
     }
 
     @Override
     protected void read(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {
         super.read(compound,registries , clientPacket);
         tank.readFromNBT(registries,compound.getCompound("TankContent"));
+        outputs = new ArrayList<>();
+        for (int i = 0; i < compound.getInt("OutputCount"); i++) {
+            NbtUtils.readBlockPos(compound, "Output" + i).ifPresent(output -> outputs.add(output));
+        }
+        this.untilNextProcess = compound.getInt("UntilNextProcess");
     }
 
     @Override
     public void write(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {
         compound.put("TankContent", tank.writeToNBT(registries,new CompoundTag()));
+        compound.putInt("OutputCount", outputs.size());
+        for (int i = 0; i < outputs.size(); i++) {
+            BlockPos output = outputs.get(i);
+            compound.put("Output" + i, NbtUtils.writeBlockPos(output));
+        }
+        compound.putInt("UntilNextProcess", this.untilNextProcess);
     }
 }

@@ -99,8 +99,8 @@ repositories {
     maven("https://mvn.devos.one/snapshots") // Registrate
     maven("https://raw.githubusercontent.com/Fuzss/modresources/main/maven/") // ForgeConfigAPIPort
     maven("https://maven.blamejared.com") // JEI, Vazkii's Mods
-    maven("https://cursemaven.com")
     maven("https://maven.ryanhcode.dev/releases")
+    maven("https://api.modrinth.com/maven")
 
     maven {
         name = "DevAuth Maven"
@@ -119,10 +119,9 @@ dependencies {
     compileOnly("dev.engine-room.flywheel:flywheel-neoforge-api-${property("minecraft_version")}:${property("flywheel_version")}")
     runtimeOnly("dev.engine-room.flywheel:flywheel-neoforge-${property("minecraft_version")}:${property("flywheel_version")}")
 
-    implementation("curse.maven:createaddition-439890:7518252")
-    implementation("curse.maven:spark-361579:6225208")
+    implementation("maven.modrinth:createaddition:neoforge-1.21.1-1.6.0")
+    implementation("maven.modrinth:spark:1.10.124-neoforge-1.21.1")
 
-    runtimeOnly("curse.maven:configured-457570:7122915")
     implementation("mezz.jei:jei-${property("jei_minecraft_version")}-neoforge:${property("jei_version")}")
     implementation("com.tterrag.registrate:Registrate:${property("registrate_version")}")
 
@@ -169,13 +168,26 @@ java {
 publishing {
     publications {
         register<MavenPublication>("mavenJava") {
-            artifactId = "${property("mod_id")}"
             from(components["java"])
+            artifactId = "${property("mod_id")}"
         }
     }
     repositories {
         maven {
-            url = uri("file://${System.getenv("local_maven")}")
+            name = "krystal-maven"
+            url = uri("https://krystalsmaven.oreostack.uk/${findProperty("krystalRepository") ?: "releases"}")
+            credentials {
+                username = "${findProperty("krystalMavenUser") ?: System.getenv("KRYSTAL_MAVEN_USER")}"
+                password = "${findProperty("krystalMavenToken") ?: System.getenv("KRYSTAL_MAVEN_PASSWORD")}"
+            }
+        }
+        maven {
+            name = "krystal-snapshot-maven"
+            url = uri("https://krystalsmaven.oreostack.uk/snapshots")
+            credentials {
+                username = "${findProperty("krystalMavenUser") ?: System.getenv("KRYSTAL_MAVEN_USER")}"
+                password = "${findProperty("krystalMavenToken") ?: System.getenv("KRYSTAL_MAVEN_PASSWORD")}"
+            }
         }
     }
 }

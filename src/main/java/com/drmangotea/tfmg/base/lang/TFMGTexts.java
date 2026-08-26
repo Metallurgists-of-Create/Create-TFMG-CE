@@ -2,6 +2,7 @@ package com.drmangotea.tfmg.base.lang;
 
 import com.drmangotea.tfmg.base.TFMGUtils;
 import com.drmangotea.tfmg.content.engines.types.EngineType;
+import com.drmangotea.tfmg.content.machinery.vat.base.registry.VatOperation;
 import com.simibubi.create.content.processing.recipe.HeatCondition;
 import net.createmod.catnip.lang.LangBuilder;
 import net.createmod.catnip.theme.Color;
@@ -256,8 +257,8 @@ public class TFMGTexts {
 
     // Vat Tooltips
     public static class Vat {
-        public static LangBuilder operation(String operationId) {
-            return TFMGLang.builder().space().space().space().translate("goggles.vat." + operationId.replace(":","."));
+        public static LangBuilder operation(VatOperation operationId) {
+            return TFMGLang.builder().space().space().space().translate("goggles.vat." + operationId.id().getNamespace() + "." + operationId.id().getPath());
         }
         public static LangBuilder notOperational() {
             return TFMGLang.text(" - ").add(TFMGLang.translate("goggles.not_operational").style(ChatFormatting.RED));

@@ -4,7 +4,6 @@ import com.drmangotea.tfmg.base.TFMGUtils;
 import com.drmangotea.tfmg.base.lang.TFMGTexts;
 import com.drmangotea.tfmg.config.TFMGConfigs;
 import com.drmangotea.tfmg.datagen.TFMGDamageSources;
-import com.drmangotea.tfmg.recipes.CokingRecipe;
 import com.drmangotea.tfmg.recipes.IndustrialBlastingRecipe;
 import com.drmangotea.tfmg.recipes.input.IndustrialBlastingRecipeInput;
 import com.drmangotea.tfmg.registry.TFMGBlockEntities;
@@ -27,11 +26,11 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.Clearable;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
-import net.minecraft.world.item.crafting.RecipeInput;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -43,15 +42,13 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
 import net.neoforged.neoforge.items.IItemHandlerModifiable;
 import net.neoforged.neoforge.items.wrapper.CombinedInvWrapper;
-import net.neoforged.neoforge.items.wrapper.RecipeWrapper;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.Random;
 
 import static net.minecraft.world.level.block.HorizontalDirectionalBlock.FACING;
 
-public class BlastFurnaceOutputBlockEntity extends SmartBlockEntity implements IHaveGoggleInformation {
+public class BlastFurnaceOutputBlockEntity extends SmartBlockEntity implements IHaveGoggleInformation, Clearable {
 
     public SmartInventory inputInventory;
     public SmartInventory fluxInventory;
@@ -385,5 +382,11 @@ public class BlastFurnaceOutputBlockEntity extends SmartBlockEntity implements I
         super.destroy();
         ItemHelper.dropContents(level, worldPosition, inputInventory);
         ItemHelper.dropContents(level, worldPosition, fluxInventory);
+    }
+
+    @Override
+    public void clearContent() {
+        this.inputInventory.clearContent();
+        this.fluxInventory.clearContent();
     }
 }

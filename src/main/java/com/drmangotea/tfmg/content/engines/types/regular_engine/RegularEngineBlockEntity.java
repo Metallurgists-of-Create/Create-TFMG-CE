@@ -323,10 +323,8 @@ public class RegularEngineBlockEntity extends AbstractSmallEngineBlockEntity {
 
     @Override
     public void destroy() {
-        if (level == null || level.isClientSide) {
-            return;
-        }
-        ItemHelper.dropContents(level, getBlockPos(), pistonInventory);
+        super.destroy();
+        ItemHelper.dropContents(level, worldPosition, pistonInventory);
     }
 
     @Override
@@ -402,5 +400,11 @@ public class RegularEngineBlockEntity extends AbstractSmallEngineBlockEntity {
         TFMGUtils.createFluidTooltip(this,tooltip);
 
         return true;
+    }
+
+    @Override
+    public void clearContent() {
+        super.clearContent();
+        this.pistonInventory.clearContent();
     }
 }

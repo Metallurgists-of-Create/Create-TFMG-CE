@@ -67,9 +67,11 @@ public class ConcreteHoseBlockEntity extends KineticBlockEntity {
             TooltipHelper.addHint(tooltip, "hint.hose_pulley");
         return addToGoggleTooltip;
     }
+
     public float getInterpolatedOffset(float pt) {
-        return offset.getValue(pt);
+        return Math.max(offset.getValue(pt), 3 / 16f);
     }
+
     @Override
     public void addBehaviours(List<BlockEntityBehaviour> behaviours) {
         filler = new ConcreteFillingBehavior(this);
@@ -112,6 +114,8 @@ public class ConcreteHoseBlockEntity extends KineticBlockEntity {
     @Override
     public void tick() {
         super.tick();
+        if (level == null) return;
+        level.invalidateCapabilities(getBlockPos());
         float newOffset = offset.getValue() + getMovementSpeed();
         if (newOffset < 0) {
             newOffset = 0;
