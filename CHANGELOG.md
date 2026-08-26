@@ -30,6 +30,8 @@ Contributors:<br>
   - Vats now use `VatOperation` for VAT machine IDs.
   - Vats now use `Pressure` instead of relying on an `int`.
   - `VatMachineRecipe$Builder` now has `pressure(int)` and `heatLevel(int)`.
+- Electricity:
+  - Removed `getPos()[long]` in IElectric in favour of `getPos()[BlockPos]`
 
 
 ### New Translations:
