@@ -1,8 +1,6 @@
-# Create: TFMG Community Edition 1.2.4b
+# Create: TFMG Community Edition 1.2.4c
 ## Rant:
-Something something version idk :3
-
-This patch fixes some recipes, a weird texture and a dupe bug
+bleh
 
 Contributors:<br>
 @pouffy @wolfieboy09 @ShallowAssumption @pepagg
@@ -11,21 +9,25 @@ Contributors:<br>
 
 ## Changelog:
 ### Bug Fixes:
-- IElectric now updates when the power state changes (power/voltage usage/generation) which fixes Creative Generators not updating the network.
-- Fixed Blast Furnace not being able to finish recipes.
-- Fixed Distillation Controller not detecting heat properly.
-- Fixed names of the Layered Galena textures.
-- Fixed a duplication bug related to Sable.
 
 ### Changes:
-- Distillation
-  - The amount drained now matches recipe input amount.
-  - The amount filled now matches the recipe result amount.
-  - Added a delay between processes based on the heat level of the tank.
-- Added ponder for the Winding Machine.
-
+- Coke Oven
+  - Now hides progress when no recipe is being processed
+- Ponders
+  - Added ponders for the following:
+    - Regular Engine Assembly
+    - Turbine Engine Assembly
+    - Radial Engine Assembly
+- Vat
+  - `ChemicalVatCategory` now uses a dynamic barometer needle to display pressure
 
 ### API Changes:
+- Created `TFMGClientConfig`
+  - Created `UIConfig`
+- Vat
+  - Vats now use `VatOperation` for VAT machine IDs
+  - Vats now use `Pressure` instead of relying on an `int`
+  - `VatMachineRecipe$Builder` now has `pressure(int)` and `heatLevel(int)`
 
 
 ### New Translations:
