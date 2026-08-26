@@ -9,6 +9,7 @@ import com.drmangotea.tfmg.content.electricity.connection.cables.CableConnection
 import com.drmangotea.tfmg.content.electricity.connection.cables.CableConnectorBlockEntity;
 import com.drmangotea.tfmg.registry.TFMGDataComponents;
 import com.drmangotea.tfmg.registry.TFMGItems;
+import com.simibubi.create.content.kinetics.deployer.DeployerFakePlayer;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -104,11 +105,14 @@ public class SpoolItem extends Item {
             return InteractionResult.PASS;
 
         if (level.getBlockEntity(pos) instanceof WindingMachineBlockEntity be) {
+            if (player instanceof DeployerFakePlayer && stack.is(TFMGItems.EMPTY_SPOOL))
+                return InteractionResult.PASS;
+
             ItemStack oldSpool = ItemStack.EMPTY;
             if (!be.getSpool().isEmpty()) {
                 oldSpool = be.getSpool();
             }
-            be.setSpool(context.getItemInHand());
+            be.setSpool(stack);
             player.setItemInHand(context.getHand(), oldSpool);
             be.sendData();
             be.setChanged();
