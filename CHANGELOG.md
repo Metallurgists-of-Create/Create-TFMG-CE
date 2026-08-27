@@ -23,15 +23,17 @@ Contributors:<br>
   - `ChemicalVatCategory` now uses a dynamic barometer needle to display pressure.
 
 ### API Changes:
-- Created VAT operation registry.
+- Created VAT operation registry
 - Created `TFMGClientConfig`
   - Created `UIConfig`
 - Vat:
-  - Vats now use `VatOperation` for VAT machine IDs.
-  - Vats now use `Pressure` instead of relying on an `int`.
-  - `VatMachineRecipe$Builder` now has `pressure(int)` and `heatLevel(int)`.
+  - Vats now use `VatOperation` for VAT machine IDs
+  - Vats now use `Pressure` instead of relying on an `int`
+  - `VatMachineRecipe$Builder` now has `pressure(int)` and `heatLevel(int)`
+  - `VatMachineRecipe` now uses correct builders
+  - `VatRecipeParams` now have default values (datagen kept throwing NPE)
 - Electricity:
-  - Removed `getPos()[long]` in IElectric in favour of `getPos()[BlockPos]`
+  - Removed `getPos()[long]` in `IElectric` in favour of `getPos()[BlockPos]`
 
 
 ### New Translations:
