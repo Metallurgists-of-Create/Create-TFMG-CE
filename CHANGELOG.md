@@ -33,6 +33,8 @@ Contributors:<br>
   - `VatMachineRecipe$Builder` now has `pressure(int)` and `heatLevel(int)`
   - `VatMachineRecipe` now uses correct builders
   - `VatRecipeParams` now have default values (datagen kept throwing NPE)
+  - Vat goggle information now shows recipe progress
+  - Fixed bug where recipe would get set to `null` causing recipes to take longer
 - Electricity:
   - Removed `getPos()[long]` in `IElectric` in favour of `getPos()[BlockPos]`
 - Mixin `PipeAttachmentModelMixin#gatherModelData` no longer uses `@Overwrite`
