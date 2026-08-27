@@ -2,6 +2,8 @@ package com.drmangotea.tfmg.datagen.tags;
 
 import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.base.TFMGRegistrate;
+import com.drmangotea.tfmg.registry.TFMGBlockEntities;
+import com.drmangotea.tfmg.registry.TFMGBlocks;
 import com.drmangotea.tfmg.registry.TFMGItems;
 import com.drmangotea.tfmg.registry.TFMGTags;
 import com.simibubi.create.foundation.data.TagGen;
@@ -52,5 +54,10 @@ public class TFMGRegistrateTags {
 
         prov.tag(TFMGTags.Blocks.BLAST_FURNACE_MELTS.tag)
                 .add(Blocks.SNOW);
+
+        prov.tag(TFMGTags.Blocks.CARRYON_BLOCK_BLACKLIST.tag)
+                .add(TFMGBlocks.CAST_IRON_CHEMICAL_VAT.get())
+                .add(TFMGBlocks.STEEL_CHEMICAL_VAT.get())
+                .add(TFMGBlocks.FIREPROOF_CHEMICAL_VAT.get());
     }
 }

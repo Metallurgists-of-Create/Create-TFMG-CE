@@ -436,7 +436,6 @@ public class TFMGBlocks {
             .simpleItem()
             .register();
     //------------------VAT_MACHINES------------------//
-    @SuppressWarnings("'addLayer(java.util.function.Supplier<java.util.function.Supplier<net.minecraft.client.renderer.RenderType>>)' is deprecated and marked for removal ")
     public static final BlockEntry<VatBlock> STEEL_CHEMICAL_VAT =
             REGISTRATE.block("steel_chemical_vat", VatBlock::steel)
                     .initialProperties(SharedProperties::copperMetal)
@@ -451,6 +450,7 @@ public class TFMGBlocks {
                     .model(AssetLookup.customBlockItemModel("_", "block_single_window"))
                     .build()
                     .register();
+
     public static final BlockEntry<VatBlock> CAST_IRON_CHEMICAL_VAT =
             REGISTRATE.block("cast_iron_chemical_vat", VatBlock::cast_iron)
                     .initialProperties(SharedProperties::copperMetal)
@@ -465,6 +465,7 @@ public class TFMGBlocks {
                     .model(AssetLookup.customBlockItemModel("_", "block_single_window"))
                     .build()
                     .register();
+
     public static final BlockEntry<VatBlock> FIREPROOF_CHEMICAL_VAT =
             REGISTRATE.block("fireproof_chemical_vat", VatBlock::fireproof)
                     .initialProperties(SharedProperties::copperMetal)

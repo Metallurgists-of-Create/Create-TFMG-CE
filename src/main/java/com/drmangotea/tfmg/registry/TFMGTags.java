@@ -50,7 +50,8 @@ public class TFMGTags {
         STORAGE_BLOCKS_PLASTIC(COMMON, "storage_blocks/plastic"),
         STORAGE_BLOCKS_RAW_LITHIUM(COMMON, "storage_blocks/raw_lithium"),
         SURFACE_SCANNER_FINDABLE,
-        BLAST_FURNACE_MELTS
+        BLAST_FURNACE_MELTS,
+        CARRYON_BLOCK_BLACKLIST("carryon", "block_blacklist")
         ;
 
         public final TagKey<Block> tag;
