@@ -51,11 +51,7 @@ public class Electrode implements MultiUseAttachment<ElectrodeHolderBlockEntity>
 
     @Override
     public void renderInVat(ElectrodeHolderBlockEntity be, float partialTicks, PoseStack ms, MultiBufferSource buffer, int light, int overlay, @Nullable ItemRenderer itemRenderer) {
-        if (be.getLevel() == null)
-            return;
-        if (itemRenderer == null)
-            return;
-        if (be.inventory.isEmpty())
+        if (be.getLevel() == null || itemRenderer == null || be.inventory.isEmpty())
             return;
         ms.pushPose();
         ms.mulPose(Axis.XP.rotationDegrees(0));
