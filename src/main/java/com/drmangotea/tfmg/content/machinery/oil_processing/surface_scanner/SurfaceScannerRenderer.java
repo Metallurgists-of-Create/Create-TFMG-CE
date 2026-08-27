@@ -22,22 +22,20 @@ public class SurfaceScannerRenderer extends SafeBlockEntityRenderer<SurfaceScann
 		FACING_EAST  = new Quaternionf(0, 1, 0, 1).normalize(); //+x
 	
     public SurfaceScannerRenderer(BlockEntityRendererProvider.Context context) {}
-	
-	private Quaternionf getFacingQuat (SurfaceScannerBlockEntity be) {
-		//I feel like there should be a way to optimise this further, but it works -Shallow
-		Quaterniond q1 = SurfaceScannerSable.getSublevelRot(be).conjugate();
-		Quaternionf q = new Quaternionf(0, q1.y, 0, q1.w).normalize();
-		float
-			north = q.dot(FACING_NORTH),
-			west = q.dot(FACING_WEST),
-			south = q.dot(FACING_SOUTH),
-			east = q.dot(FACING_EAST);
-		float dot = Math.max(Math.max(north,west),Math.max(south,east));
-		if (dot == north) return FACING_NORTH;
-		if (dot == west) return FACING_WEST;
-		if (dot == south) return FACING_SOUTH;
-		if (dot == east) return FACING_EAST;
-		return FACING_NORTH;
+
+	private Quaternionf getFacingQuat(SurfaceScannerBlockEntity be) {
+		Quaterniond rot = SurfaceScannerSable.getSublevelRot(be);
+		double y = -rot.y;
+		double w = rot.w;
+		Quaternionf best = FACING_NORTH;
+		double bestDot = y * FACING_NORTH.y + w * FACING_NORTH.w;
+		double d = y * FACING_WEST.y + w * FACING_WEST.w;
+		if (d > bestDot) { bestDot = d; best = FACING_WEST; }
+		d = y * FACING_SOUTH.y + w * FACING_SOUTH.w;
+		if (d > bestDot) { bestDot = d; best = FACING_SOUTH; }
+		d = y * FACING_EAST.y + w * FACING_EAST.w;
+		if (d > bestDot) { best = FACING_EAST; }
+		return best;
 	}
 	
     @Override
@@ -47,13 +45,17 @@ public class SurfaceScannerRenderer extends SafeBlockEntityRenderer<SurfaceScann
         ms.pushPose();
 		ms.rotateAround(getFacingQuat(be), 0.5f, 0.5f, 0.5f);
   
-		for(int x = 0;x<5;x++) { for (int z = 0; z < 5; z++) { if(be.grid[x][z]) {
-			CachedBuffers.partial(TFMGPartialModels.SURFACE_SCANNER_LIGHT, blockState)
-				.translate((x - 2)*0.19, 0, (z - 2)*0.19)
-				.light(LightTexture.FULL_BRIGHT)
-				.color(255, 69, 96, 255) //#ff4560ff
-				.renderInto(ms, buffer);
-		} } }
+		for (int x = 0 ; x < 5; x++) {
+			for (int z = 0; z < 5; z++) {
+				if (be.grid[x][z]) {
+					CachedBuffers.partial(TFMGPartialModels.SURFACE_SCANNER_LIGHT, blockState)
+						.translate((x - 2)*0.19, 0, (z - 2)*0.19)
+						.light(LightTexture.FULL_BRIGHT)
+						.color(255, 69, 96, 255) //#ff4560ff
+						.renderInto(ms, buffer);
+				}
+			}
+		}
         ms.popPose();
     }
 }
