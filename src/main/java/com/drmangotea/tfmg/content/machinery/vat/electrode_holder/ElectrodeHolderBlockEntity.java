@@ -37,7 +37,7 @@ public class ElectrodeHolderBlockEntity extends ElectricBlockEntity implements I
             .whenContentsChanged(this::onInventoryChanged);
     public IItemHandlerModifiable itemCapability;
 
-    Electrode electrode = TFMGElectrodes.none.get();
+    Electrode electrode = TFMGElectrodes.NONE.get();
     public boolean updateVat = false;
 
     public ElectrodeHolderBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
@@ -57,7 +57,7 @@ public class ElectrodeHolderBlockEntity extends ElectricBlockEntity implements I
         sendData();
         setChanged();
         if (inventory.isEmpty()) {
-            this.electrode = TFMGElectrodes.none.get();
+            this.electrode = TFMGElectrodes.NONE.get();
             this.updateVat = true;
             return;
         }

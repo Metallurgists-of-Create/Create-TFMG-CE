@@ -138,6 +138,6 @@ public class Electrode implements MultiUseAttachment<ElectrodeHolderBlockEntity>
                 Stored::new
         );
 
-        public static final Stored NONE = new Stored(TFMGElectrodes.none);
+        public static final Stored NONE = new Stored(TFMGElectrodes.NONE);
     }
 }

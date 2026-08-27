@@ -161,15 +161,15 @@ public class TFMGItems {
                     .lang("N-Semiconductor").register(),
             UNFINISHED_ELECTROMAGNETIC_COIL = REGISTRATE.item("unfinished_electromagnetic_coil", Item::new).register(),
             COPPER_ELECTRODE = REGISTRATE.item("copper_electrode", Item::new)
-                    .properties(p -> p.component(TFMGDataComponents.ELECTRODE, new Electrode.Stored(TFMGElectrodes.copper)).stacksTo(1))
+                    .properties(p -> p.component(TFMGDataComponents.ELECTRODE, new Electrode.Stored(TFMGElectrodes.COPPER)).stacksTo(1))
                     .recipe((c, p) -> p.stonecutting(DataIngredient.tag(CommonMetal.COPPER.storageBlocks.items()), RecipeCategory.BUILDING_BLOCKS, c, 1))
                     .model((c, p) -> p.withExistingParent(c.getName(), TFMG.asResource("item/copper_electrode_model"))).register(),
             ZINC_ELECTRODE = REGISTRATE.item("zinc_electrode", Item::new)
-                    .properties(p -> p.component(TFMGDataComponents.ELECTRODE, new Electrode.Stored(TFMGElectrodes.zinc)).stacksTo(1))
+                    .properties(p -> p.component(TFMGDataComponents.ELECTRODE, new Electrode.Stored(TFMGElectrodes.ZINC)).stacksTo(1))
                     .recipe((c, p) -> p.stonecutting(DataIngredient.tag(CommonMetal.ZINC.storageBlocks.items()), RecipeCategory.BUILDING_BLOCKS, c, 1))
                     .model((c, p) -> p.withExistingParent(c.getName(), TFMG.asResource("item/zinc_electrode_model"))).register(),
             GRAPHITE_ELECTRODE = REGISTRATE.item("graphite_electrode", Item::new)
-                    .properties(p -> p.component(TFMGDataComponents.ELECTRODE, new Electrode.Stored(TFMGElectrodes.graphite)).stacksTo(1))
+                    .properties(p -> p.component(TFMGDataComponents.ELECTRODE, new Electrode.Stored(TFMGElectrodes.GRAPHITE)).stacksTo(1))
                     .recipe((c, p) -> p.stonecutting(DataIngredient.tag(Items.STORAGE_BLOCKS_COAL_COKE.tag), RecipeCategory.BUILDING_BLOCKS, c, 1))
                     .model((c, p) -> p.withExistingParent(c.getName(), TFMG.asResource("item/graphite_electrode_model"))).register(),
             UNFIRED_INSULATOR = REGISTRATE.item("unfired_insulator", Item::new)

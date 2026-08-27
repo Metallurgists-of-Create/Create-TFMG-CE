@@ -7,20 +7,19 @@ import com.drmangotea.tfmg.content.machinery.vat.electrode_holder.electrode.Elec
 import static com.drmangotea.tfmg.TFMG.REGISTRATE;
 
 public class TFMGElectrodes {
-
-    public static final ElectrodeEntry<Electrode> none = REGISTRATE.electrode("none", Electrode::new)
+    public static final ElectrodeEntry<Electrode> NONE = REGISTRATE.electrode("none", Electrode::new)
             .properties((p) -> p)
             .register();
 
-    public static final ElectrodeEntry<Electrode> copper = REGISTRATE.electrode("copper", Electrode::new)
+    public static final ElectrodeEntry<Electrode> COPPER = REGISTRATE.electrode("copper", Electrode::new)
             .properties((p) -> p.resistance(10).operationId(TFMGVatOperations.ELECTRODE))
             .register();
 
-    public static final ElectrodeEntry<Electrode> zinc = REGISTRATE.electrode("zinc", Electrode::new)
+    public static final ElectrodeEntry<Electrode> ZINC = REGISTRATE.electrode("zinc", Electrode::new)
             .properties((p) -> p.resistance(10).operationId(TFMGVatOperations.ELECTRODE))
             .register();
 
-    public static final ElectrodeEntry<ArcElectrode> graphite = REGISTRATE.electrode("graphite", ArcElectrode::new)
+    public static final ElectrodeEntry<ArcElectrode> GRAPHITE = REGISTRATE.electrode("graphite", ArcElectrode::new)
             .properties((p) -> p.resistance(300))
             .register();
 
