@@ -84,7 +84,9 @@ public class IndustrialBlastingRecipe extends ProcessingRecipe<IndustrialBlastin
     public boolean matches(IndustrialBlastingRecipeInput inv, Level worldIn) {
         if (inv.isEmpty())
             return false;
-        return ingredients.get(0).test(inv.input) && ingredients.get(1).test(inv.flux);
+        if (!ingredients.getFirst().test(inv.input))
+            return false;
+        return ingredients.size() < 2 || ingredients.get(1).test(inv.flux);
     }
 
     public static class Serializer<R extends IndustrialBlastingRecipe> implements RecipeSerializer<R> {
