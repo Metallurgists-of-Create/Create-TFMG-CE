@@ -26,8 +26,10 @@ import net.neoforged.neoforge.client.model.data.ModelData;
 import net.neoforged.neoforge.client.model.data.ModelProperty;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +38,7 @@ import static net.minecraft.world.level.block.PipeBlock.PROPERTY_BY_DIRECTION;
 
 @MethodsReturnNonnullByDefault
 @Mixin(PipeAttachmentModel.class)
-public class PipeAttachmentModelMixin extends BakedModelWrapperWithData {
+public abstract class PipeAttachmentModelMixin extends BakedModelWrapperWithData {
     @Unique
     private static final ModelProperty<TFMGPipeModelData> PIPE_PROPERTY = new ModelProperty<>();
 
@@ -44,13 +46,10 @@ public class PipeAttachmentModelMixin extends BakedModelWrapperWithData {
         super(template);
     }
 
-    //TODO: Find a way to do this without Overwrite
-    /**
-     * @author DrMangoTea
-     * @reason locked pipes
-     */
-    @Overwrite(remap = false)
-    protected ModelData.Builder gatherModelData(ModelData.Builder builder, BlockAndTintGetter world, BlockPos pos, BlockState state, ModelData blockEntityData) {
+    @Inject(method = "gatherModelData", at = @At("HEAD"), cancellable = true, remap = false)
+    private void tfmg$gatherModelData(ModelData.Builder builder, BlockAndTintGetter world, BlockPos pos,
+                                      BlockState state, ModelData blockEntityData,
+                                      CallbackInfoReturnable<ModelData.Builder> cir) {
         TFMGPipeModelData data = new TFMGPipeModelData();
         FluidTransportBehaviour transport = BlockEntityBehaviour.get(world, pos, FluidTransportBehaviour.TYPE);
         BracketedBlockEntityBehaviour bracket = BlockEntityBehaviour.get(world, pos, BracketedBlockEntityBehaviour.TYPE);
@@ -58,22 +57,23 @@ public class PipeAttachmentModelMixin extends BakedModelWrapperWithData {
         if (transport != null)
             for (Direction d : Iterate.directions) {
                 boolean shouldConnect = true;
-                if(world.getBlockState(pos.relative(d)).getBlock() instanceof FluidPipeBlock) {
-                    if(d.getAxis().isHorizontal())
+                if (world.getBlockState(pos.relative(d)).getBlock() instanceof FluidPipeBlock) {
+                    if (d.getAxis().isHorizontal())
                         shouldConnect = world.getBlockState(pos.relative(d)).getValue(PROPERTY_BY_DIRECTION.get(d.getOpposite()));
                 }
 
                 data.putAttachment(d, transport.getRenderedRimAttachment(world, pos, state, d));
 
-                if(!shouldConnect)
-                    if(state.getBlock() instanceof FluidPipeBlock)
-                        if(state.getValue(PROPERTY_BY_DIRECTION.get(d)))
+                if (!shouldConnect)
+                    if (state.getBlock() instanceof FluidPipeBlock)
+                        if (state.getValue(PROPERTY_BY_DIRECTION.get(d)))
                             data.putAttachment(d, AttachmentTypes.RIM);
             }
         if (bracket != null)
             data.putBracket(bracket.getBracket());
         data.setEncased(FluidPipeBlock.shouldDrawCasing(world, pos, state));
-        return builder.with(PIPE_PROPERTY, data);
+
+        cir.setReturnValue(builder.with(PIPE_PROPERTY, data));
     }
 
     @SuppressWarnings("deprecation")
