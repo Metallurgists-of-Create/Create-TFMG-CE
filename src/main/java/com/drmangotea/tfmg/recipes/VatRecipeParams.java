@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.function.Function;
 
 public class VatRecipeParams extends ProcessingRecipeParams {
-
     public static List<ResourceLocation> types = new ArrayList<>();
 
     static {
@@ -47,14 +46,14 @@ public class VatRecipeParams extends ProcessingRecipeParams {
     }));
     public static StreamCodec<RegistryFriendlyByteBuf, VatRecipeParams> STREAM_CODEC = streamCodec(VatRecipeParams::new);
 
-    public int min_size;
+    public int min_size = 1;
 
-    public int heat_level;
+    public int heat_level = 0;
 
-    public Pressure pressure;
+    public Pressure pressure = Pressure.EMPTY;
 
-    public List<VatOperation> machines;
-    public List<ResourceLocation> allowedVatTypes;
+    public List<VatOperation> machines = new ArrayList<>();
+    public List<ResourceLocation> allowedVatTypes = new ArrayList<>();
 
     protected final int getHeatLevel() {
         return heat_level;
@@ -63,7 +62,6 @@ public class VatRecipeParams extends ProcessingRecipeParams {
     protected final Pressure getPressure() {
         return pressure;
     }
-
 
     protected final int getMinSize() {
         return min_size;
