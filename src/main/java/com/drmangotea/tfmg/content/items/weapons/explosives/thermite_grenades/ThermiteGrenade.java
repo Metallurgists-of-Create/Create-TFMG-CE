@@ -1,14 +1,12 @@
 package com.drmangotea.tfmg.content.items.weapons.explosives.thermite_grenades;
 
 import com.drmangotea.tfmg.TFMG;
-import com.drmangotea.tfmg.base.spark.BlueSpark;
-import com.drmangotea.tfmg.base.spark.GreenSpark;
 import com.drmangotea.tfmg.base.spark.Spark;
 import com.drmangotea.tfmg.registry.TFMGEntityTypes;
 import com.drmangotea.tfmg.registry.TFMGItems;
+import com.tterrag.registrate.util.entry.EntityEntry;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.ThrowableItemProjectile;
@@ -20,13 +18,13 @@ import net.minecraft.world.phys.HitResult;
 public class ThermiteGrenade extends ThrowableItemProjectile {
     public final ChemicalColor flameColor;
 
-    public ThermiteGrenade(EntityType<? extends ThermiteGrenade> p_37391_, Level p_37392_) {
-        super(p_37391_, p_37392_);
-        this.flameColor =ChemicalColor.BLUE;
+    public ThermiteGrenade(EntityType<? extends ThermiteGrenade> type, Level level) {
+        super(type, level);
+        this.flameColor = ChemicalColor.BLUE;
     }
 
-    public ThermiteGrenade(Level p_37399_, LivingEntity p_37400_, ChemicalColor color,EntityType grenade) {
-        super(grenade, p_37400_, p_37399_);
+    public ThermiteGrenade(Level level, LivingEntity p_37400_, ChemicalColor color, EntityType type) {
+        super(type, p_37400_, level);
         this.flameColor = color;
     }
 
@@ -35,7 +33,6 @@ public class ThermiteGrenade extends ThrowableItemProjectile {
     }
 
     private ParticleOptions getParticle() {
-
         return ParticleTypes.FLAME;
     }
 
@@ -52,46 +49,34 @@ public class ThermiteGrenade extends ThrowableItemProjectile {
 
     protected void onHitEntity(EntityHitResult p_37404_) {
         super.onHitEntity(p_37404_);
-        Entity entity = p_37404_.getEntity();
-
     }
 
     protected void onHit(HitResult hitResult) {
         super.onHit(hitResult);
+		
+		Level level = level();
+		level.broadcastEntityEvent(this, (byte) 3);
+		
+		EntityEntry<? extends Spark> sparkType = switch (flameColor) {
+		    case BASE -> TFMGEntityTypes.SPARK;
+		    case GREEN -> TFMGEntityTypes.GREEN_SPARK;
+		    case BLUE -> TFMGEntityTypes.BLUE_SPARK;
+	    };
 
+		for (int i=0; i<20;i++){
+			float x= TFMG.RANDOM.nextFloat(360);
+			float y= TFMG.RANDOM.nextFloat(360);
+			float z= TFMG.RANDOM.nextFloat(360);
 
-
-            this.level().broadcastEntityEvent(this, (byte) 3);
-
-            for (int i=0; i<20;i++){
-                float x= TFMG.RANDOM.nextFloat(360);
-                float y= TFMG.RANDOM.nextFloat(360);
-                float z= TFMG.RANDOM.nextFloat(360);
-
-                if(flameColor==ChemicalColor.GREEN){
-                    GreenSpark spark = TFMGEntityTypes.GREEN_SPARK.create(level());
-
-
-
-                    spark.moveTo(this.getX(), this.getY()+1, this.getZ());
-                    spark.shootFromRotation( this,x,y,z,0.2f,1);
-                    this.level().addFreshEntity(spark);
-                }else
-                if(flameColor==ChemicalColor.BLUE){
-                    BlueSpark spark = TFMGEntityTypes.BLUE_SPARK.create(level());
-
-
-                    spark.moveTo(this.getX(), this.getY()+1, this.getZ());
-                    spark.shootFromRotation( this,x,y,z,0.2f,1);
-                    this.level().addFreshEntity(spark);
-                } else {
-                    Spark spark = TFMGEntityTypes.SPARK.create(level());
-                    spark.moveTo(this.getX(), this.getY()+1, this.getZ());
-                    spark.shootFromRotation( this,x,y,z,0.2f,1);
-                    this.level().addFreshEntity(spark);}
+			Spark spark = sparkType.create(level);
+			if (spark == null) continue;
+			spark.moveTo(this.getX(), this.getY()+1, this.getZ());
+			spark.shootFromRotation(this,x,y,z,0.2f,1);
+			level.addFreshEntity(spark);
         }
-            this.level().explode(this, this.getX(), this.getY(0.0625D), this.getZ(), 2.0F, Level.ExplosionInteraction.NONE);
-            this.discard();
+		
+		level.explode(this, this.getX(), this.getY(0.0625D), this.getZ(), 2.0F, Level.ExplosionInteraction.NONE);
+		this.discard();
     }
 
     @SuppressWarnings("unchecked")
@@ -105,5 +90,4 @@ public class ThermiteGrenade extends ThrowableItemProjectile {
         GREEN,
         BLUE
     }
-
 }

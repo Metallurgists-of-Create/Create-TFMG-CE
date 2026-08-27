@@ -1,4 +1,4 @@
-# Create: TFMG Community Edition 1.2.4c
+# Create: TFMG Community Edition 1.2.5
 ## Rant:
 bleh
 
@@ -10,6 +10,7 @@ Contributors:<br>
 ## Changelog:
 ### Bug Fixes:
 - Concrete Hoses now render correctly.
+- Blast Furnaces no longer crash the world with an index out of bounds.
 
 ### Changes:
 - Coke Oven:
