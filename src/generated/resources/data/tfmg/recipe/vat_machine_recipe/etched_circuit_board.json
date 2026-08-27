@@ -1,5 +1,10 @@
 {
   "type": "tfmg:vat_machine_recipe",
+  "allowed_vat_types": [
+    "tfmg:cast_iron_vat",
+    "tfmg:steel_vat",
+    "tfmg:firebrick_lined_vat"
+  ],
   "ingredients": [
     {
       "item": "tfmg:coated_circuit_board"
@@ -9,6 +14,9 @@
       "amount": 250,
       "fluid": "tfmg:sulfuric_acid"
     }
+  ],
+  "machines": [
+    "tfmg:mixing"
   ],
   "min_size": 1,
   "processing_time": 100,
