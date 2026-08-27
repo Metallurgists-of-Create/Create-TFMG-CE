@@ -9,7 +9,6 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 
 @Mixin(SlidingDoorBlockEntity.class)
 public interface SlidingDoorBlockEntityAccessor {
-
     @Accessor("animation")
     LerpedFloat tfmg$getAnimation();
 

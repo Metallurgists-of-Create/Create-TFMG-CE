@@ -11,10 +11,19 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ItemStack.class)
 public class ItemStackMixin {
-
     @Inject(method = "inventoryTick", at = @At("HEAD"))
-    public void inventoryTick(Level level, Entity entity, int inventorySlot, boolean isCurrentItem, CallbackInfo ci) {
-        ItemStack thisStack = (ItemStack) (Object) this;
-        TFMGRemapper.remapComponents(thisStack, level.registryAccess());
+    private void tfmg$remapComponents(Level level, Entity entity, int inventorySlot, boolean isCurrentItem, CallbackInfo ci) {
+        if (level.isClientSide()) {
+            return;
+        }
+
+        ItemStack stack = (ItemStack) (Object) this;
+
+        if (stack.isEmpty()) {
+            return;
+        }
+
+        TFMGRemapper.remapComponents(stack, level.registryAccess());
     }
 }
+

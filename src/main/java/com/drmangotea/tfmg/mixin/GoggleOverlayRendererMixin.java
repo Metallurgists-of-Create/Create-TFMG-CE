@@ -47,7 +47,6 @@ import java.util.Map;
 
 @Mixin(GoggleOverlayRenderer.class)
 public class GoggleOverlayRendererMixin {
-
     /**
      * handles multimeter tooltips
      */
@@ -58,7 +57,7 @@ public class GoggleOverlayRendererMixin {
     @Unique
     private static int tfmg$hoverTicks = 0;
 
-    @Inject(at = @At("HEAD"), method = "renderOverlay", cancellable = true, remap = false)
+    @Inject(at = @At("HEAD"), method = "renderOverlay", remap = false)
     private static void renderOverlay(GuiGraphics guiGraphics, DeltaTracker deltaTracker, CallbackInfo ci) {
         Minecraft mc = Minecraft.getInstance();
         ClientLevel world = mc.level;

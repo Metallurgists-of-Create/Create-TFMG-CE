@@ -17,7 +17,6 @@ public class UtilMixin {
     @Shadow
     private static Consumer<String> thePauser;
 
-
     @Shadow
     static final Logger LOGGER = LogUtils.getLogger();
 
@@ -43,7 +42,5 @@ public class UtilMixin {
         if (!flag) {
             thePauser.accept(message);
         }
-
     }
-
 }

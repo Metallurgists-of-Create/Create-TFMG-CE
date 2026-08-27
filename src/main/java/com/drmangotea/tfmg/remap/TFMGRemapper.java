@@ -24,7 +24,6 @@ import java.util.Optional;
 
 @EventBusSubscriber
 public class TFMGRemapper {
-
     /**
      * Remapped objects. Fairly straight forward.
      */
@@ -87,10 +86,11 @@ public class TFMGRemapper {
 
     public static void remapComponents(ItemStack stack, RegistryAccess registryAccess) {
         if (ComponentRemapper.engineCylinder(stack, registryAccess)) {
-            TFMG.LOGGER.info("[TFMG Remapper] Remapped old Engine Cylinder components");
+            TFMG.LOGGER.debug("[TFMG Remapper] Remapped old Engine Cylinder components");
         }
+
         if (ComponentRemapper.flamethrower(stack, registryAccess)) {
-            TFMG.LOGGER.info("[TFMG Remapper] Remapped old Flamethrower components");
+            TFMG.LOGGER.debug("[TFMG Remapper] Remapped old Flamethrower components");
         }
     }
 }

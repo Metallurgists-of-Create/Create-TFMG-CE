@@ -37,7 +37,6 @@ import static net.minecraft.world.level.block.PipeBlock.PROPERTY_BY_DIRECTION;
 @MethodsReturnNonnullByDefault
 @Mixin(PipeAttachmentModel.class)
 public class PipeAttachmentModelMixin extends BakedModelWrapperWithData {
-
     @Unique
     private static final ModelProperty<TFMGPipeModelData> PIPE_PROPERTY = new ModelProperty<>();
 
@@ -118,8 +117,4 @@ public class PipeAttachmentModelMixin extends BakedModelWrapperWithData {
             quads.addAll(AllPartialModels.FLUID_PIPE_CASING.get()
                     .getQuads(state, side, rand, data, renderType));
     }
-
-
-
-
 }

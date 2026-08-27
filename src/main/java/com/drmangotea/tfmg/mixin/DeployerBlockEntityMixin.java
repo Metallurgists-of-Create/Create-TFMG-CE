@@ -22,7 +22,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(value = DeployerBlockEntity.class, remap = false)
 public abstract class DeployerBlockEntityMixin extends KineticBlockEntity {
-
     @Shadow
     protected DeployerFakePlayer player;
 
@@ -35,10 +34,8 @@ public abstract class DeployerBlockEntityMixin extends KineticBlockEntity {
      */
     @Inject(method = "tick", at = @At("HEAD"))
     public void tick(CallbackInfo ci) {
-        if (level != null && level.isClientSide)
-            return;
-        if (player == null)
-            return;
+        if (level == null || player == null || level.isClientSide) return;
+
         Inventory inventory = player.getInventory();
         for (int i = 0; i < inventory.getContainerSize(); i++) {
             ItemStack item = inventory.getItem(i);

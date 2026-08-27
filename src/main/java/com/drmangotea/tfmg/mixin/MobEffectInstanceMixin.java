@@ -11,11 +11,10 @@ import org.spongepowered.asm.mixin.injection.At;
 
 @Mixin(MobEffectInstance.class)
 public class MobEffectInstanceMixin {
-
     @WrapOperation(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/effect/MobEffect;applyEffectTick(Lnet/minecraft/world/entity/LivingEntity;I)Z"))
     private boolean onEffectTick(MobEffect effect, LivingEntity entity, int amplifier, Operation<Boolean> original) {
         if (effect instanceof HellFireEffect hellfire) {
-            return hellfire.tick(entity, (MobEffectInstance)(Object)this);
+            return hellfire.tick(entity, (MobEffectInstance) (Object) this);
         }
         return original.call(effect, entity, amplifier);
     }
