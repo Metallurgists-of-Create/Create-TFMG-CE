@@ -35,7 +35,8 @@ Contributors:<br>
   - `VatRecipeParams` now have default values (datagen kept throwing NPE)
 - Electricity:
   - Removed `getPos()[long]` in `IElectric` in favour of `getPos()[BlockPos]`
-
+- Mixin `PipeAttachmentModelMixin#gatherModelData` no longer uses `@Overwrite`
+- Changed `TFMGRemapper` and `ComponentRemapper` a little
 
 ### New Translations:
 
