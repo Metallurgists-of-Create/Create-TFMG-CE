@@ -20,7 +20,7 @@ public class IndustrialBlastingRecipeParams extends ProcessingRecipeParams {
     }));
     public static StreamCodec<RegistryFriendlyByteBuf, IndustrialBlastingRecipeParams> STREAM_CODEC = streamCodec(IndustrialBlastingRecipeParams::new);
 
-    protected int hotAirUsage;
+    protected int hotAirUsage = 0;
 
     protected final int hotAirUsage() {
         return hotAirUsage;

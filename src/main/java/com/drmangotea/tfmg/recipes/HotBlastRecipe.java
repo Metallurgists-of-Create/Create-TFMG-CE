@@ -37,14 +37,14 @@ public class HotBlastRecipe extends StandardProcessingRecipe<RecipeWrapper> {
     }
 
     public FluidStack getPrimaryResult(){
-        return getFluidResults().get(0);
+        return getFluidResults().getFirst();
     }
     public FluidStack getSecondaryResult(){
         return getFluidResults().get(1);
     }
 
     public SizedFluidIngredient getPrimaryIngredient(){
-        return getFluidIngredients().get(0);
+        return getFluidIngredients().getFirst();
     }
     public SizedFluidIngredient getSecondaryIngredient(){
         return getFluidIngredients().get(1);

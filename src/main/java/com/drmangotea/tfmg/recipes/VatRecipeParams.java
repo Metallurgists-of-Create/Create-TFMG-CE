@@ -44,6 +44,7 @@ public class VatRecipeParams extends ProcessingRecipeParams {
         params.allowedVatTypes = allowed_vat_types;
         return params;
     }));
+
     public static StreamCodec<RegistryFriendlyByteBuf, VatRecipeParams> STREAM_CODEC = streamCodec(VatRecipeParams::new);
 
     public int min_size = 1;

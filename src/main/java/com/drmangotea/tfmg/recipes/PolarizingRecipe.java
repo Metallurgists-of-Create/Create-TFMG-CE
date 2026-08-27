@@ -50,7 +50,6 @@ public class PolarizingRecipe extends StandardProcessingRecipe<SingleRecipeInput
     
     @Override
     public void addRequiredMachines(Set<ItemLike> set) {
-
         set.add(TFMGBlocks.POLARIZER.get());
     }
     
@@ -63,6 +62,4 @@ public class PolarizingRecipe extends StandardProcessingRecipe<SingleRecipeInput
     public Supplier<Supplier<SequencedAssemblySubCategory>> getJEISubCategory() {
         return () -> PolarizingCategory.AssemblyPolarizing::new;
     }
-
-
 }
