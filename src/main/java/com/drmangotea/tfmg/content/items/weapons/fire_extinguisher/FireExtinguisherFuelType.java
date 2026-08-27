@@ -1,7 +1,6 @@
 package com.drmangotea.tfmg.content.items.weapons.fire_extinguisher;
 
 import com.drmangotea.tfmg.TFMGRegistries;
-import com.drmangotea.tfmg.content.items.weapons.flamethrover.FlamethrowerFuelType;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.simibubi.create.foundation.fluid.FluidHelper;

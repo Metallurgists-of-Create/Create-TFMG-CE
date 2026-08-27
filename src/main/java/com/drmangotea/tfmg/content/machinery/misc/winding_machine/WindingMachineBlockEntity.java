@@ -19,11 +19,14 @@ import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.NonNullList;
+import net.minecraft.core.component.DataComponentType;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.Clearable;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
@@ -31,6 +34,7 @@ import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.IItemHandlerModifiable;
+import net.neoforged.neoforge.items.ItemStackHandler;
 import net.neoforged.neoforge.items.wrapper.CombinedInvWrapper;
 import net.neoforged.neoforge.items.wrapper.RecipeWrapper;
 
@@ -111,8 +115,79 @@ public class WindingMachineBlockEntity extends KineticBlockEntity implements IHa
         spoolInventory.setStackInSlot(0, stack);
     }
 
+    public boolean hasAnySpool() {
+        return !getSpool().isEmpty() && getSpool().getItem() instanceof SpoolItem;
+    }
+
+    public boolean hasNonEmptySpool() {
+        return hasAnySpool() && getSpool().getOrDefault(TFMGDataComponents.SPOOL_AMOUNT, 0) > 0;
+    }
+
+    public ItemStack getInput() {
+        return inventory.getItem(0);
+    }
+
+    public void setInput(ItemStack stack) {
+        inventory.setStackInSlot(0, stack);
+    }
+
+    public ItemStack getOutput() {
+        return outputInventory.getItem(0);
+    }
+
+    public void setOutput(ItemStack stack) {
+        outputInventory.setStackInSlot(0, stack);
+    }
+
     public boolean isWindingIngredient(ItemStack stack) {
-        return !stack.isEmpty() && !(stack.getItem() instanceof SpoolItem);
+        if (stack.isEmpty() || stack.getItem() instanceof SpoolItem)
+            return false;
+
+        if (stack.is(TFMGItems.ELECTROMAGNETIC_COIL) || stack.is(TFMGBlocks.LARGE_COIL.asItem()) || stack.is(TFMGBlocks.RESISTOR.asItem()))
+            return true;
+
+        if (level == null)
+            return true; // ¯\_(ツ)_/¯
+
+        // TODO: define a tag instead of scanning all winding recipes?
+
+        RecipeType<WindingRecipe> type = TFMGRecipeTypes.WINDING.getType();
+        RecipeWrapper wrapper = new RecipeWrapper(new ItemStackHandler(NonNullList.of(stack)));
+        if (level.getRecipeManager().getRecipeFor(type, wrapper, level).isPresent())
+            return true;
+
+        if (SequencedAssemblyRecipe.getRecipe(level, stack, type, WindingRecipe.class).isPresent())
+            return true;
+
+        return false;
+    }
+
+    protected void depleteSpool() {
+        ItemStack spool = getSpool();
+        if (!(spool.getItem() instanceof SpoolItem) || spool.is(TFMGItems.EMPTY_SPOOL.get())) {
+            return;
+        }
+
+        int amount = spool.getOrDefault(TFMGDataComponents.SPOOL_AMOUNT, 0);
+        amount--;
+        if (amount > 0) {
+            spool.set(TFMGDataComponents.SPOOL_AMOUNT, amount);
+        } else {
+            setSpool(TFMGItems.EMPTY_SPOOL.asStack());
+            sendData();
+            setChanged();
+            depositEmptySpool();
+        }
+    }
+
+    protected void finishRecipe(ItemStack result) {
+        setInput(ItemStack.EMPTY);
+        setOutput(result);
+        recipe = null;
+        amountWinded = 0;
+
+        sendData();
+        setChanged();
     }
 
     public void findRecipe() {
@@ -132,7 +207,7 @@ public class WindingMachineBlockEntity extends KineticBlockEntity implements IHa
         }
         WindingRecipe windingRecipe = optional.get().value();
 
-        if (windingRecipe.getIngredient().test(inventory.getItem(0)) && outputInventory.isEmpty()) {
+        if (windingRecipe.getIngredient().test(getInput()) && outputInventory.isEmpty()) {
             recipe = windingRecipe;
         }
     }
@@ -203,76 +278,44 @@ public class WindingMachineBlockEntity extends KineticBlockEntity implements IHa
     }
 
     public void performRecipe() {
-        //Change these if you want. Just fallbacks if the component is null.
-        int defaultResistance = 0;
-        int defaultSpoolAmount = 0;
-        int defaultCoilTurns = 0;
         if (level == null) {
             return;
         }
 
-        if (getSpeed() == 0 || !outputInventory.isEmpty())
+        ItemStack input = getInput();
+
+        if (getSpeed() == 0 || input.isEmpty() || !outputInventory.isEmpty() || !hasNonEmptySpool())
             return;
 
-        //TODO: change whatever these two if statements are
-        if ((inventory.getItem(0).is(TFMGItems.ELECTROMAGNETIC_COIL.get()) || inventory.getItem(0).is(TFMGBlocks.LARGE_COIL.get().asItem())) && getSpool().is(TFMGItems.COPPER_SPOOL.get()) && getSpool().getOrDefault(TFMGDataComponents.SPOOL_AMOUNT, defaultSpoolAmount) > 0 && inventory.getItem(0).getOrDefault(TFMGDataComponents.COIL_TURNS, defaultCoilTurns) < turnPercentage.getValue() * 10) {
-            if(inventory.getItem(0).getOrDefault(TFMGDataComponents.COIL_TURNS, defaultCoilTurns) < turnPercentage.getValue() * 10){
-                getSpool().set(TFMGDataComponents.SPOOL_AMOUNT, getSpool().getOrDefault(TFMGDataComponents.SPOOL_AMOUNT, defaultSpoolAmount) - 1);
-                inventory.getItem(0).set(TFMGDataComponents.COIL_TURNS, inventory.getItem(0).getOrDefault(TFMGDataComponents.COIL_TURNS, defaultCoilTurns) + 1);
-                return;
-            }
+        SpoolItem specialRecipeSpool = null;
+        DataComponentType<Integer> specialRecipeComponent = null;
+        if (input.is(TFMGItems.ELECTROMAGNETIC_COIL.get()) || input.is(TFMGBlocks.LARGE_COIL.get().asItem())) {
+            specialRecipeSpool = TFMGItems.COPPER_SPOOL.get();
+            specialRecipeComponent = TFMGDataComponents.COIL_TURNS;
+        } else if (input.is(TFMGBlocks.RESISTOR.asItem())) {
+            specialRecipeSpool = TFMGItems.CONSTANTAN_SPOOL.get();
+            specialRecipeComponent = TFMGDataComponents.RESISTANCE;
         }
-        if(getSpool().has(TFMGDataComponents.SPOOL_AMOUNT))
-            if (inventory.getItem(0).is(TFMGBlocks.RESISTOR.asItem()) && getSpool().is(TFMGItems.CONSTANTAN_SPOOL.get()) && getSpool().getOrDefault(TFMGDataComponents.SPOOL_AMOUNT, defaultSpoolAmount) > 0 && inventory.getItem(0).getOrDefault(TFMGDataComponents.RESISTANCE, defaultResistance) < turnPercentage.getValue() * 10) {
-                if(inventory.getItem(0).getOrDefault(TFMGDataComponents.RESISTANCE, 0)< turnPercentage.getValue() * 10) {
-                    getSpool().set(TFMGDataComponents.SPOOL_AMOUNT, getSpool().getOrDefault(TFMGDataComponents.SPOOL_AMOUNT, defaultSpoolAmount) - 1);
-                    inventory.getItem(0).set(TFMGDataComponents.RESISTANCE, inventory.getItem(0).getOrDefault(TFMGDataComponents.RESISTANCE, defaultResistance) + 1);
-                    return;
-                }
+        
+        if (specialRecipeSpool != null && getSpool().is(specialRecipeSpool)) {
+            int amount = input.getOrDefault(specialRecipeComponent, 0);
+            if (amount >= turnPercentage.getValue() * 10) {
+                finishRecipe(input);
+            } else {
+                input.set(specialRecipeComponent, amount + 1);
+                depleteSpool();
             }
-
-        if(getSpool().has(TFMGDataComponents.SPOOL_AMOUNT))
-            if (getSpool().getOrDefault(TFMGDataComponents.SPOOL_AMOUNT, defaultSpoolAmount) == 0 && !getSpool().is(TFMGItems.EMPTY_SPOOL.get()) && getSpool().getItem() instanceof SpoolItem) {
-                setSpool(TFMGItems.EMPTY_SPOOL.asStack());
-                sendData();
-                setChanged();
-                depositEmptySpool();
-            }
-
-        if (recipe == null) {
+            return;
+        } else if (recipe == null) {
             return;
         }
 
         if (amountWinded >= recipe.getProcessingDuration()) {
             ItemStack result = recipe.rollResults(level.random).getFirst();
-
-            inventory.setStackInSlot(0, ItemStack.EMPTY);
-            outputInventory.setStackInSlot(0, result);
-            recipe = null;
-            amountWinded = 0;
-
-            sendData();
-            setChanged();
-        } else {
-            if (getSpool().isEmpty() || getSpool().is(TFMGItems.EMPTY_SPOOL.get())) {
-                return;
-            }
-            if (getSpool().getOrDefault(TFMGDataComponents.SPOOL_AMOUNT, defaultCoilTurns) > 0) {
-                if (recipe.getSpool().test(getSpool())) {
-                    getSpool().set(TFMGDataComponents.SPOOL_AMOUNT, getSpool().getOrDefault(TFMGDataComponents.SPOOL_AMOUNT, defaultCoilTurns) - 1);
-                    amountWinded++;
-                }
-            } else {
-                ItemStack result = recipe.rollResults(level.random).getFirst();
-
-                inventory.setStackInSlot(0, ItemStack.EMPTY);
-                outputInventory.setStackInSlot(0, result);
-                recipe = null;
-                amountWinded = 0;
-                sendData();
-                setChanged();
-            }
-
+            finishRecipe(result);
+        } else if (recipe.getSpool().test(getSpool())) {
+            amountWinded++;
+            depleteSpool();
         }
     }
 
@@ -319,7 +362,7 @@ public class WindingMachineBlockEntity extends KineticBlockEntity implements IHa
         for (int i = 0; i < handler.getSlots(); i++) {
             if (handler.getStackInSlot(i).isEmpty()) {
                 handler.insertItem(i, getSpool(), false);
-                spoolInventory.setStackInSlot(0, ItemStack.EMPTY);
+                setSpool(ItemStack.EMPTY);
                 sendData();
                 setChanged();
                 return;

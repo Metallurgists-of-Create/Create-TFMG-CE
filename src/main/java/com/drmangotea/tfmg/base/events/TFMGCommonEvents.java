@@ -45,9 +45,6 @@ import net.neoforged.neoforge.registries.NewRegistryEvent;
 
 @EventBusSubscriber
 public class TFMGCommonEvents {
-
-
-
     @SubscribeEvent
     public static void onUnloadWorld(LevelEvent.Unload event) {
         LevelAccessor world = event.getLevel();
@@ -69,9 +66,8 @@ public class TFMGCommonEvents {
 
     @EventBusSubscriber
     public static class ModBusEvents {
-        @net.neoforged.bus.api.SubscribeEvent
+        @SubscribeEvent
         public static void registerCapabilities(RegisterCapabilitiesEvent event) {
-
             AbstractSmallEngineBlockEntity.registerCapabilities(event);
             DistillationOutputBlockEntity.registerCapabilities(event);
             ConcreteHoseBlockEntity.registerCapabilities(event);
@@ -106,6 +102,7 @@ public class TFMGCommonEvents {
             event.register(TFMGRegistries.ELECTRODE_REGISTRY);
             event.register(TFMGRegistries.ENGINE_TYPE_REGISTRY);
             event.register(TFMGRegistries.MIXER_MODE_REGISTRY);
+            event.register(TFMGRegistries.VAT_OPERATION_REGISTRY);
         }
 
     }

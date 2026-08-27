@@ -6,6 +6,8 @@ import com.drmangotea.tfmg.content.electricity.connection.cable_type.CableType;
 import com.drmangotea.tfmg.content.electricity.connection.cable_type.CableTypeBuilder;
 import com.drmangotea.tfmg.content.engines.types.EngineType;
 import com.drmangotea.tfmg.content.engines.types.EngineTypeBuilder;
+import com.drmangotea.tfmg.content.machinery.vat.base.registry.VatOperation;
+import com.drmangotea.tfmg.content.machinery.vat.base.registry.VatOperationBuilder;
 import com.drmangotea.tfmg.content.machinery.vat.electrode_holder.electrode.Electrode;
 import com.drmangotea.tfmg.content.machinery.vat.electrode_holder.electrode.ElectrodeBuilder;
 import com.drmangotea.tfmg.content.machinery.vat.industrial_mixer.mode.MixerMode;
@@ -17,6 +19,7 @@ import com.simibubi.create.foundation.item.TooltipModifier;
 import com.tterrag.registrate.builders.FluidBuilder;
 import com.tterrag.registrate.util.nullness.NonNullFunction;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import org.jetbrains.annotations.Nullable;
 
@@ -133,6 +136,22 @@ public class TFMGRegistrate extends CreateRegistrate {
 
     public <T extends MixerMode, P> MixerModeBuilder<T, P> mixerMode(P parent, String name, NonNullFunction<MixerMode.Properties, T> factory) {
         return entry(name, callback -> MixerModeBuilder.create(this, parent, name, callback, factory));
+    }
+
+    public VatOperationBuilder<TFMGRegistrate> vatOperation(Function<ResourceLocation, VatOperation> factory) {
+        return vatOperation((TFMGRegistrate) self(), factory);
+    }
+
+    public VatOperationBuilder<TFMGRegistrate> vatOperation(String name, Function<ResourceLocation, VatOperation> factory) {
+        return vatOperation((TFMGRegistrate) self(), name, factory);
+    }
+
+    public <P> VatOperationBuilder<P> vatOperation(P parent, Function<ResourceLocation, VatOperation> factory) {
+        return vatOperation(parent, currentName(), factory);
+    }
+
+    public <P> VatOperationBuilder<P> vatOperation(P parent, String name, Function<ResourceLocation, VatOperation> factory) {
+        return entry(name, callback -> new VatOperationBuilder<>(this, parent, name, callback, factory));
     }
 
 }

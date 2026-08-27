@@ -9,12 +9,14 @@ import com.drmangotea.tfmg.base.lang.TFMGTexts;
 import com.drmangotea.tfmg.base.pressure.Pressure;
 import com.drmangotea.tfmg.base.pressure.behaviour.SmartPressureTankBehaviour;
 import com.drmangotea.tfmg.base.pressure.tank.SmartPressureTank;
+import com.drmangotea.tfmg.content.machinery.vat.base.registry.VatOperation;
 import com.drmangotea.tfmg.content.machinery.vat.compressor.CompressorBlockEntity;
 import com.drmangotea.tfmg.content.machinery.vat.freezer.FreezerBlockEntity;
 import com.drmangotea.tfmg.mixin.accessor.TankSegmentAccessor;
 import com.drmangotea.tfmg.recipes.VatMachineRecipe;
 import com.drmangotea.tfmg.registry.TFMGBlockEntities;
 import com.drmangotea.tfmg.registry.TFMGRecipeTypes;
+import com.drmangotea.tfmg.registry.TFMGVatOperations;
 import com.simibubi.create.api.boiler.BoilerHeater;
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.content.processing.recipe.HeatCondition;
@@ -110,7 +112,7 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
     int timer = 0;
     public VatMachineRecipe recipe;
     //machines
-    public Map<BlockPos, String> machineMap = new HashMap<>();
+    public Map<BlockPos, VatOperation> machineMap = new HashMap<>();
     public Map<BlockPos, Boolean> operationalMachinesMap = new HashMap<>();
     public boolean areMachinesValid = true;
     //processing data
@@ -347,12 +349,12 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
                 continue;
             BlockEntity blockEntity = level.getBlockEntity(machinePos);
             if (blockEntity instanceof IVatMachine vatMachine) {
-                String operationId = vatMachine.getOperationId();
-                if (operationId.isEmpty()) {
+                VatOperation operationId = vatMachine.getOperationId();
+                if (operationId.isNone()) {
                     operationalMachinesMap.remove(machinePos);
                     continue;
                 }
-                if (!operationId.equals(machineMap.get(machinePos))) {
+                if (!operationId.is(machineMap.get(machinePos))) {
                     machineMap.put(machinePos, operationId);
                     recipe = null;
                     notifyUpdate();
@@ -384,9 +386,9 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
                 continue;
             boolean doesntMatch = false;
 
-            List<String> activeMachines = new ArrayList<>(machineMap.values());
+            List<VatOperation> activeMachines = new ArrayList<>(machineMap.values());
             boolean machinesOk = true;
-            for (String requiredMachine : testedRecipe.machines) {
+            for (VatOperation requiredMachine : testedRecipe.machines) {
                 if (!activeMachines.remove(requiredMachine)) {
                     machinesOk = false;
                     break;
@@ -888,7 +890,7 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
         if (level == null)
             return;
 
-        Map<BlockPos, String> oldMachineMap = machineMap;
+        Map<BlockPos, VatOperation> oldMachineMap = machineMap;
         machineMap = new HashMap<>();
         efficiency = 1;
 
@@ -902,7 +904,7 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
                     BlockEntity blockEntity = level.getBlockEntity(pos);
 
                     if (blockEntity instanceof IVatMachine be) {
-                        if (be.getOperationId().isEmpty())
+                        if (be.getOperationId().equals(TFMGVatOperations.NONE.get()))
                             continue;
 
                         if (!isAtValidLocation(be.getPositionRequirement(), pos))
@@ -1191,20 +1193,9 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
             return super.createRenderBoundingBox();
     }
 
-
-    public void addMachineTooltip(String operationId, boolean isOperational, List<Component> tooltip) {
-        LangBuilder operation = TFMGTexts.Vat.operation(operationId);
-        if (!isOperational) {
-            operation.add(TFMGTexts.Vat.notOperational());
-        } else {
-            operation.add(TFMGTexts.Vat.operational());
-        }
-        operation.forGoggles(tooltip);
-    }
-
-    public void addMachineTooltip(Map<String, Couple<Integer>> countedMachines, List<Component> tooltip) {
-        for (Map.Entry<String, Couple<Integer>> entry : countedMachines.entrySet()) {
-            String operationId = entry.getKey();
+    public void addMachineTooltip(Map<VatOperation, Couple<Integer>> countedMachines, List<Component> tooltip) {
+        for (Map.Entry<VatOperation, Couple<Integer>> entry : countedMachines.entrySet()) {
+            VatOperation operationId = entry.getKey();
             LangBuilder operation = TFMGTexts.Vat.operation(operationId);
             Couple<Integer> counts = entry.getValue();
             boolean isOperational = counts.getSecond() > 0;
@@ -1234,8 +1225,8 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
         TFMGTexts.Vat.attachments()
                 .style(ChatFormatting.GRAY)
                 .forGoggles(tooltip);
-        Map<String, Couple<Integer>> countedMachines = new HashMap<>();
-        for (Map.Entry<BlockPos, String> machines : machineMap.entrySet()) {
+        Map<VatOperation, Couple<Integer>> countedMachines = new HashMap<>();
+        for (Map.Entry<BlockPos, VatOperation> machines : machineMap.entrySet()) {
             boolean operational = operationalMachinesMap.getOrDefault(machines.getKey(), true);
             countedMachines.compute(machines.getValue(), (k, v) -> v == null ? Couple.create(1, operational ? 1 : 0) : Couple.create(v.getFirst() + 1, v.getSecond() + (operational ? 1 : 0)));
             //addMachineTooltip(machines.getValue(), operational, tooltip);

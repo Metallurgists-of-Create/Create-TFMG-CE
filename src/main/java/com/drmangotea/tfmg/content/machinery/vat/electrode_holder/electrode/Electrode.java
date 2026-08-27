@@ -3,9 +3,11 @@ package com.drmangotea.tfmg.content.machinery.vat.electrode_holder.electrode;
 import com.drmangotea.tfmg.TFMGRegistries;
 import com.drmangotea.tfmg.content.machinery.vat.MultiUseAttachment;
 import com.drmangotea.tfmg.content.machinery.vat.base.VatBlockEntity;
+import com.drmangotea.tfmg.content.machinery.vat.base.registry.VatOperationEntry;
 import com.drmangotea.tfmg.content.machinery.vat.electrode_holder.ElectrodeHolderBlockEntity;
 import com.drmangotea.tfmg.registry.TFMGDataComponents;
 import com.drmangotea.tfmg.registry.TFMGElectrodes;
+import com.drmangotea.tfmg.registry.TFMGVatOperations;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import com.mojang.serialization.Codec;
@@ -31,7 +33,7 @@ public class Electrode implements MultiUseAttachment<ElectrodeHolderBlockEntity>
     private String descriptionId;
     private final ResourceLocation id;
     private final int resistance;
-    private final ResourceLocation operation;
+    private final VatOperationEntry operation;
 
     public Electrode(Properties properties) {
         this.id = properties.id;
@@ -43,7 +45,7 @@ public class Electrode implements MultiUseAttachment<ElectrodeHolderBlockEntity>
         return this.resistance;
     }
 
-    public ResourceLocation getOperation() {
+    public VatOperationEntry getOperation() {
         return this.operation;
     }
 
@@ -92,14 +94,14 @@ public class Electrode implements MultiUseAttachment<ElectrodeHolderBlockEntity>
         private final ResourceLocation id;
 
         int resistance = 0;
-        ResourceLocation operation = null;
+        VatOperationEntry operation = TFMGVatOperations.NONE;
 
         public Properties resistance(int resistance) {
             this.resistance = resistance;
             return this;
         }
 
-        public Properties operationId(ResourceLocation operation) {
+        public Properties operationId(VatOperationEntry operation) {
             this.operation = operation;
             return this;
         }
@@ -113,11 +115,10 @@ public class Electrode implements MultiUseAttachment<ElectrodeHolderBlockEntity>
 
         /**
          * This exists purely so Chemica can load as it references this when registering its electrode.
-         * @deprecated Use {@link Properties#operationId(ResourceLocation)} instead.
+         * @deprecated Use {@link Properties#operationId(VatOperationEntry)} instead.
          */
         @Deprecated(since = "1.2.4", forRemoval = true)
         public Properties operationId(String operation) {
-            this.operation = ResourceLocation.parse(operation);
             return this;
         }
 

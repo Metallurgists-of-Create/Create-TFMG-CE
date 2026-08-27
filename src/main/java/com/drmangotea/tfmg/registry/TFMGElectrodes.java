@@ -1,6 +1,5 @@
 package com.drmangotea.tfmg.registry;
 
-import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.content.machinery.vat.electrode_holder.electrode.ArcElectrode;
 import com.drmangotea.tfmg.content.machinery.vat.electrode_holder.electrode.Electrode;
 import com.drmangotea.tfmg.content.machinery.vat.electrode_holder.electrode.ElectrodeEntry;
@@ -14,11 +13,11 @@ public class TFMGElectrodes {
             .register();
 
     public static final ElectrodeEntry<Electrode> copper = REGISTRATE.electrode("copper", Electrode::new)
-            .properties((p) -> p.resistance(10).operationId(TFMG.asResource("electrode")))
+            .properties((p) -> p.resistance(10).operationId(TFMGVatOperations.ELECTRODE))
             .register();
 
     public static final ElectrodeEntry<Electrode> zinc = REGISTRATE.electrode("zinc", Electrode::new)
-            .properties((p) -> p.resistance(10).operationId(TFMG.asResource("electrode")))
+            .properties((p) -> p.resistance(10).operationId(TFMGVatOperations.ELECTRODE))
             .register();
 
     public static final ElectrodeEntry<ArcElectrode> graphite = REGISTRATE.electrode("graphite", ArcElectrode::new)

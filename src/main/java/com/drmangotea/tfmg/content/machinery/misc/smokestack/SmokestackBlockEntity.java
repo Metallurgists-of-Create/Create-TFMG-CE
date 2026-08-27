@@ -67,6 +67,7 @@ public class SmokestackBlockEntity extends SmartBlockEntity {
     protected void read(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {
         super.read(compound,registries , clientPacket);
         tankInventory.readFromNBT(registries,compound.getCompound("TankContent"));
+        smokeTimer = compound.getInt("Timer");
     }
 
     protected void onFluidStackChanged(FluidStack newFluidStack) {
@@ -98,7 +99,7 @@ public class SmokestackBlockEntity extends SmartBlockEntity {
             return;
 
         if (getBlockState().getValue(TOP)) {
-            tankInventory.drain(tankInventory.getSpace() < 1000 ? 50 : 10, IFluidHandler.FluidAction.EXECUTE);
+            tankInventory.drain(150, IFluidHandler.FluidAction.EXECUTE);
             smokeTimer = 40;
         }
 
@@ -113,7 +114,7 @@ public class SmokestackBlockEntity extends SmartBlockEntity {
     public void write(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {
         super.write(compound,registries , clientPacket);
         compound.put("TankContent", tankInventory.writeToNBT(registries,new CompoundTag()));
-        compound.putBoolean("Active", smokeTimer > 0);
+        compound.putInt("Timer", smokeTimer);
     }
 
 
