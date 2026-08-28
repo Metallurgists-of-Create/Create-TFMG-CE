@@ -10,7 +10,7 @@ import com.drmangotea.tfmg.config.TFMGConfigs;
 import com.drmangotea.tfmg.content.decoration.pipes.TFMGPipes;
 import com.drmangotea.tfmg.content.electricity.base.ElectricNetworkManager;
 import com.drmangotea.tfmg.content.items.weapons.explosives.thermite_grenades.fire.TFMGColoredFires;
-import com.drmangotea.tfmg.content.machinery.oil_processing.pumpjack.base.TestSavedDataManager;
+import com.drmangotea.tfmg.content.world.LevelDataHandler;
 import com.drmangotea.tfmg.datagen.TFMGDatagen;
 import com.drmangotea.tfmg.registry.*;
 import com.drmangotea.tfmg.worldgen.TFMGFeatures;
@@ -29,6 +29,7 @@ import net.neoforged.fml.ModLoadingContext;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.registries.RegisterEvent;
 import org.jetbrains.annotations.Contract;
 import org.slf4j.Logger;
@@ -42,8 +43,6 @@ public class TFMG {
     public static final String MOD_ID = "tfmg";
     public static final ElectricNetworkManager NETWORK_MANAGER = new ElectricNetworkManager();
     public static final Logger LOGGER = LogUtils.getLogger();
-
-    public static final TestSavedDataManager DEPOSITS = new TestSavedDataManager();
 
     public static final TFMGRegistrate REGISTRATE = TFMGRegistrate.create(MOD_ID)
             .setTooltipModifierFactory(item ->
@@ -82,6 +81,8 @@ public class TFMG {
         TFMGColoredFires.register(modEventBus);
         TFMGFeatures.register(modEventBus);
         TFMGMountedStorageTypes.register();
+
+        NeoForge.EVENT_BUS.register(LevelDataHandler.instance);
 
         modEventBus.addListener(TFMG::onRegister);
         TFMGPackets.register();

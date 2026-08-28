@@ -3,6 +3,7 @@ package com.drmangotea.tfmg.base.events;
 
 import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.TFMGRegistries;
+import com.drmangotea.tfmg.config.TFMGConfigs;
 import com.drmangotea.tfmg.content.decoration.tanks.TFMGFluidTankBlockEntity;
 import com.drmangotea.tfmg.content.decoration.tanks.steel.SteelTankBlockEntity;
 import com.drmangotea.tfmg.content.electricity.storage.AccumulatorBlockEntity;
@@ -30,6 +31,7 @@ import com.drmangotea.tfmg.content.machinery.oil_processing.pumpjack.base.Pumpja
 import com.drmangotea.tfmg.content.machinery.vat.base.VatBlockEntity;
 import com.drmangotea.tfmg.content.machinery.vat.electrode_holder.ElectrodeHolderBlockEntity;
 import com.drmangotea.tfmg.content.machinery.vat.industrial_mixer.IndustrialMixerBlockEntity;
+import com.drmangotea.tfmg.content.world.LevelDataHandler;
 import com.drmangotea.tfmg.registry.TFMGMobEffects;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
@@ -40,6 +42,7 @@ import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.event.OnDatapackSyncEvent;
 import net.neoforged.neoforge.event.entity.living.MobEffectEvent;
 import net.neoforged.neoforge.event.level.LevelEvent;
+import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import net.neoforged.neoforge.registries.NewRegistryEvent;
 
 
@@ -55,7 +58,6 @@ public class TFMGCommonEvents {
     public static void onLoadWorld(LevelEvent.Load event) {
         LevelAccessor world = event.getLevel();
         TFMG.NETWORK_MANAGER.onLoadWorld(world);
-        TFMG.DEPOSITS.levelLoaded(world);
     }
 
     @SubscribeEvent
@@ -117,6 +119,14 @@ public class TFMGCommonEvents {
             } else if (target.getRemainingFireTicks() < instance.getDuration()) {
                 target.setRemainingFireTicks(instance.getDuration());
             }
+        }
+    }
+
+    @SubscribeEvent
+    public static void serverTick(ServerTickEvent.Post event) {
+        if (event.getServer().isRunning()) {
+            if (TFMGConfigs.common().worldgen.infiniteDeposits.get()) return;
+            //event.getServer().getAllLevels().forEach(level -> LevelDataHandler.getFluidReservoirs(level).removeEmptyDeposits(level));
         }
     }
 }
