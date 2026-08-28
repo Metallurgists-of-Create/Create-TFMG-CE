@@ -8,7 +8,7 @@ import com.drmangotea.tfmg.content.machinery.vat.electrode_holder.electrode.Spar
 import static com.drmangotea.tfmg.TFMG.REGISTRATE;
 
 public class TFMGElectrodes {
-    public static final ElectrodeEntry<Electrode> NONE = REGISTRATE.electrode("none", SparkingElectrode::new)
+    public static final ElectrodeEntry<Electrode> NONE = REGISTRATE.electrode("none", Electrode::new)
             .properties((p) -> p)
             .register();
 
