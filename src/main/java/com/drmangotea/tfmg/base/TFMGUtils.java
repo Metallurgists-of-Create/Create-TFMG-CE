@@ -59,9 +59,9 @@ public class TFMGUtils {
         if (level.isClientSide && entity != null) level.broadcastEntityEvent(entity, (byte) 3);
 
         for (int i = 0; i < sparkAmount; i++) {
-            float x = TFMG.RANDOM.nextFloat(360);
-            float y = TFMG.RANDOM.nextFloat(360);
-            float z = TFMG.RANDOM.nextFloat(360);
+            float x = level.random.nextFloat() * 360;
+            float y = level.random.nextFloat() * 360;
+            float z = level.random.nextFloat() * 360;
             Spark spark = TFMGEntityTypes.SPARK.create(level);
             spark.moveTo(pos.getX(), pos.getY() + 1, pos.getZ());
 
@@ -133,9 +133,9 @@ public class TFMGUtils {
         if (level == null) return;
         RandomSource r = level.getRandom();
         for (int i = 0; i < r.nextInt(40); i++) {
-            float x = TFMG.RANDOM.nextFloat(2) - 1;
-            float y = TFMG.RANDOM.nextFloat(2) - 1;
-            float z = TFMG.RANDOM.nextFloat(2) - 1;
+            float x = level.random.nextFloat() * 2 - 1;
+            float y = level.random.nextFloat() * 2 - 1;
+            float z = level.random.nextFloat() * 2 - 1;
             level.addParticle(new ElectricSparkParticle.Data(), pos.getX() + 0.5f + x, pos.getY() + 0.5f + y, pos.getZ() + 0.5f + z, x, y, z);
         }
     }
@@ -144,9 +144,9 @@ public class TFMGUtils {
         if (level == null) return;
         RandomSource r = level.getRandom();
         for (int i = 0; i < r.nextInt(40); i++) {
-            float x = TFMG.RANDOM.nextFloat(2) - 1;
-            float y = TFMG.RANDOM.nextFloat(2) - 1;
-            float z = TFMG.RANDOM.nextFloat(2) - 1;
+            float x = level.random.nextFloat() * 2 - 1;
+            float y = level.random.nextFloat() * 2 - 1;
+            float z = level.random.nextFloat() * 2 - 1;
             level.addParticle(new ElectricSparkParticle.Data(), pos.x() + x, pos.y() + y, pos.z() + 0.5f + z, x, y, z);
         }
     }
