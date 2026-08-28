@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.function.Function;
 
 public class VatRecipeParams extends ProcessingRecipeParams {
-    public static List<ResourceLocation> types = new ArrayList<>();
+    public static final List<ResourceLocation> types = new ArrayList<>();
 
     static {
         types.add(TFMG.asResource("steel_vat"));
@@ -26,14 +26,11 @@ public class VatRecipeParams extends ProcessingRecipeParams {
         types.add(TFMG.asResource("firebrick_lined_vat"));
     }
 
-    public static MapCodec<VatRecipeParams> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+    public static final MapCodec<VatRecipeParams> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             codec(VatRecipeParams::new).forGetter(Function.identity()),
-            Codec.intRange(0, Integer.MAX_VALUE).optionalFieldOf("min_size", 0)
-                    .forGetter(VatRecipeParams::getMinSize),
-            Codec.INT.optionalFieldOf("heat_level", 0)
-                    .forGetter(VatRecipeParams::getHeatLevel),
-            Pressure.CODEC.optionalFieldOf("pressure", Pressure.EMPTY)
-                    .forGetter(VatRecipeParams::getPressure),
+            Codec.intRange(0, Integer.MAX_VALUE).optionalFieldOf("min_size", 0).forGetter(VatRecipeParams::getMinSize),
+            Codec.INT.optionalFieldOf("heat_level", 0).forGetter(VatRecipeParams::getHeatLevel),
+            Pressure.CODEC.optionalFieldOf("pressure", Pressure.EMPTY).forGetter(VatRecipeParams::getPressure),
             VatOperation.CODEC.listOf().optionalFieldOf("machines", new ArrayList<>()).forGetter(VatRecipeParams::getMachines),
             ResourceLocation.CODEC.listOf().optionalFieldOf("allowed_vat_types", types).forGetter(VatRecipeParams::getAllowedVatTypes)
     ).apply(instance, (params, min_size, heat_level,pressure, machines, allowed_vat_types) -> {
@@ -45,12 +42,10 @@ public class VatRecipeParams extends ProcessingRecipeParams {
         return params;
     }));
 
-    public static StreamCodec<RegistryFriendlyByteBuf, VatRecipeParams> STREAM_CODEC = streamCodec(VatRecipeParams::new);
+    public static final StreamCodec<RegistryFriendlyByteBuf, VatRecipeParams> STREAM_CODEC = streamCodec(VatRecipeParams::new);
 
     public int min_size = 1;
-
     public int heat_level = 0;
-
     public Pressure pressure = Pressure.EMPTY;
 
     public List<VatOperation> machines = new ArrayList<>();

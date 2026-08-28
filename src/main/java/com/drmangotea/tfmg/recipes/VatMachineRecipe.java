@@ -205,6 +205,5 @@ public class VatMachineRecipe extends ProcessingRecipe<RecipeInput, VatRecipePar
         public StreamCodec<RegistryFriendlyByteBuf, R> streamCodec() {
             return streamCodec;
         }
-
     }
 }
