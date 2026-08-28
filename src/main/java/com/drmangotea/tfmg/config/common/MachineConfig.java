@@ -48,7 +48,6 @@ public class MachineConfig extends ConfigBase {
     public final ConfigInt surfaceScannerScanDepth = i(-64, -512, "surfaceScannerScanDepth", Comments.surfaceScannerScanDepth);
 
     public final ConfigGroup polarizer = group(1, "polarizer", "Polarizer");
-    public final ConfigInt polarizerMinimumPower = i(2000, 1, "polarizerMinimumPower", Comments.polarizerMinimumPower);
     public final ConfigInt polarizerItemChargingRate = i(1000, 1, "polarizerItemChargingRate", Comments.polarizerItemChargingRate);
 
     public final ConfigGroup cokeOven = group(1, "coke_oven", "Coke Oven");
@@ -84,7 +83,6 @@ public class MachineConfig extends ConfigBase {
         static String surfaceScannerScanDepth = "Y level surface scanner scan at.";
         static String FEtoWattTickConversionRate = "How much Forge Energy is in one watt-tick.";
         static String polarizerItemChargingRate = "How much FE can polarizer charge per tick.";
-        static String polarizerMinimumPower = "The minimum power required for a Polarizer to operate.";
         static String engineLoudness = "Changes the volume of engines.";
         static String forgeEnergyConversionVoltage = "What voltage is created when FE is converted.";
 

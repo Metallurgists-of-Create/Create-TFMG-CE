@@ -19,7 +19,6 @@ import net.minecraft.world.level.Level;
 import java.util.List;
 
 public class VatMachineRecipe extends ProcessingRecipe<RecipeInput, VatRecipeParams> {
-
     public List<VatOperation> machines;
     public List<ResourceLocation> allowedVatTypes;
     public int minSize;

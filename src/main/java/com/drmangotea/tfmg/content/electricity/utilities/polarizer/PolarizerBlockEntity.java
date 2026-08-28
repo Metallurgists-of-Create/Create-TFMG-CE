@@ -29,12 +29,10 @@ import java.util.Optional;
 
 import static net.minecraft.world.level.block.HorizontalDirectionalBlock.FACING;
 
-
 public class PolarizerBlockEntity extends ElectricBlockEntity implements IHaveGoggleInformation, Clearable {
-    public SmartInventory inventory = new SmartInventory(1, this, 1, false)
-            .whenContentsChanged(this::onInventoryChanged);
+    public SmartInventory inventory = new SmartInventory(1, this, 1, false).whenContentsChanged(this::onInventoryChanged);
     public IItemHandlerModifiable itemCapability;
-
+    public PolarizingRecipe recipe;
     LerpedFloat angle = LerpedFloat.angular();
 
     public boolean chargeCapacitors = false;
@@ -63,12 +61,15 @@ public class PolarizerBlockEntity extends ElectricBlockEntity implements IHaveGo
         setChanged();
         if (inventory.isEmpty()) {
             chargeCapacitors = false;
+            recipe = null;
+            capacitorPercentage = 0;
             updateNextTick();
             return;
         }
         ItemStack itemStack = inventory.getItem(0);
         Optional<PolarizingRecipe> recipe = PolarizerCommons.getRecipe(this.level, itemStack).map(RecipeHolder::value);
         if (recipe.isPresent()) {
+            this.recipe = recipe.get();
             chargeCapacitors = true;
             updateNextTick();
             if (capacitorPercentage >= 200) {
@@ -76,6 +77,7 @@ public class PolarizerBlockEntity extends ElectricBlockEntity implements IHaveGo
             }
         } else {
             chargeCapacitors = false;
+            this.recipe = null;
             updateNextTick();
         }
     }
@@ -85,18 +87,16 @@ public class PolarizerBlockEntity extends ElectricBlockEntity implements IHaveGo
         return chargeCapacitors ? 30 : 0;
     }
 
-    //
     @Override
     public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
         TFMGTexts.header("polarizer").style(ChatFormatting.GRAY).forGoggles(tooltip, 1);
-        TFMGTexts.Multimeter.charge(capacitorPercentage/2f).forGoggles(tooltip);
-        if(getPowerUsage() < TFMGConfigs.common().machines.polarizerMinimumPower.get() && !inventory.isEmpty()){
-            TFMGTexts.Multimeter.notEnoughPower(TFMGConfigs.common().machines.polarizerMinimumPower.get()).forGoggles(tooltip, 1);
+        TFMGTexts.Multimeter.charge(Math.round(capacitorPercentage / 2f)).forGoggles(tooltip);
+        if (recipe != null && !inventory.isEmpty() && getPowerUsage() < recipe.energy) {
+            TFMGTexts.Multimeter.notEnoughPower(recipe.energy).forGoggles(tooltip, 1);
             return true;
         }
         return true;
     }
-
 
     @Override
     public void tick() {
@@ -108,11 +108,9 @@ public class PolarizerBlockEntity extends ElectricBlockEntity implements IHaveGo
             angle.tickChaser();
         }
 
-        if (getPowerUsage() >= 1000) {
-            if (chargeCapacitors) {
-                if (capacitorPercentage < 200) {
-                    capacitorPercentage++;
-                }
+        if (chargeCapacitors && recipe != null && getPowerUsage() >= recipe.energy) {
+            if (capacitorPercentage < 200) {
+                capacitorPercentage++;
             }
         }
 
@@ -124,8 +122,9 @@ public class PolarizerBlockEntity extends ElectricBlockEntity implements IHaveGo
     public void performRecipe(PolarizingRecipe recipe) {
         if (level == null) return;
         ItemStack stack = PolarizerCommons.assembleResult(level, getBlockPos().getCenter(), recipe);
-        inventory.setStackInSlot(0, stack);
+        this.recipe = null;
         capacitorPercentage = 0;
+        inventory.setStackInSlot(0, stack);
     }
 
     public int getItemChargingRate() {
@@ -142,7 +141,7 @@ public class PolarizerBlockEntity extends ElectricBlockEntity implements IHaveGo
 
     @Override
     protected void write(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {
-        super.write(compound,registries , clientPacket);
+        super.write(compound, registries, clientPacket);
         compound.put("Inventory", inventory.serializeNBT(registries));
         compound.putInt("CapacitorPercentage", capacitorPercentage);
         compound.putBoolean("ChargeCapacitors", chargeCapacitors);
@@ -150,8 +149,8 @@ public class PolarizerBlockEntity extends ElectricBlockEntity implements IHaveGo
 
     @Override
     protected void read(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {
-        super.read(compound,registries , clientPacket);
-        inventory.deserializeNBT(registries,compound.getCompound("Inventory"));
+        super.read(compound, registries, clientPacket);
+        inventory.deserializeNBT(registries, compound.getCompound("Inventory"));
         capacitorPercentage = compound.getInt("CapacitorPercentage");
         chargeCapacitors = compound.getBoolean("ChargeCapacitors");
     }

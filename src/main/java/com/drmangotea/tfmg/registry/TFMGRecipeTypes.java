@@ -35,9 +35,7 @@ public enum TFMGRecipeTypes implements IRecipeTypeInfo, StringRepresentable {
     WINDING(WindingRecipe::new),
     HOT_BLAST(HotBlastRecipe::new),
     VAT_MACHINE_RECIPE(VatMachineRecipe::new),
-    POLARIZING(PolarizingRecipe::new),
-
-    ;
+    POLARIZING(PolarizingRecipe::new);
 
 
     public static final Predicate<RecipeHolder<?>> CAN_BE_AUTOMATED = r -> !r.id()
@@ -75,8 +73,14 @@ public enum TFMGRecipeTypes implements IRecipeTypeInfo, StringRepresentable {
         this(() -> new IndustrialBlastingRecipe.Serializer<>(industrialBlastingFactory));
         isProcessingRecipe = true;
     }
+
     TFMGRecipeTypes(ProcessingRecipe.Factory<VatRecipeParams, ? extends VatMachineRecipe> vatRecipeFactory, byte... i) {
         this(() -> new VatMachineRecipe.Serializer<>(vatRecipeFactory));
+        isProcessingRecipe = true;
+    }
+
+    TFMGRecipeTypes(ProcessingRecipe.Factory<PolarizingRecipeParams, ? extends PolarizingRecipe> vatRecipeFactory, byte[]... i) {
+        this(() -> new PolarizingRecipe.Serializer<>(vatRecipeFactory));
         isProcessingRecipe = true;
     }
 
