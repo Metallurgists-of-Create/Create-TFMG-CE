@@ -76,6 +76,7 @@ public class TFMG {
         TFMGParticleTypes.register(modEventBus);
 
         TFMGDataComponents.register(modEventBus);
+        TFMGDataAttachments.register(modEventBus);
         TFMGMobEffects.register(modEventBus);
         TFMGRecipeTypes.register(modEventBus);
         TFMGColoredFires.register(modEventBus);

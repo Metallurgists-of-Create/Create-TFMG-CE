@@ -1,7 +1,9 @@
 package com.drmangotea.tfmg.worldgen.deposits;
 
 
+import com.drmangotea.tfmg.content.world.resevoir.FluidReservoir;
 import com.drmangotea.tfmg.registry.TFMGBlocks;
+import com.drmangotea.tfmg.registry.TFMGDataAttachments;
 import com.drmangotea.tfmg.registry.TFMGFluids;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
@@ -42,24 +44,27 @@ public class OilDepositFeature extends Feature<NoneFeatureConfiguration> {
     public void placeDeposit(BlockPos startingPos, WorldGenLevel level, RandomSource randomsource) {
         BlockPos pos = startingPos;
         setBlock(level, startingPos, TFMGBlocks.OIL_DEPOSIT.getDefaultState());
+        if (level.getChunk(startingPos).hasData(TFMGDataAttachments.FLUID_RESERVOIR)) {
+            FluidReservoir.addToReservoir(level.getLevel(), startingPos);
+        } else {
+            FluidReservoir.createReservoir(level.getLevel(), startingPos);
+        }
 
-
-        for (int i = 0; i < randomsource.nextInt(25); i++) {
+        int height = randomsource.nextIntBetweenInclusive(10, 25);
+        for (int i = 0; i < height; i++) {
             pos = pos.above();
 
             setBlock(level, pos, TFMGFluids.CRUDE_OIL.get().getSource().defaultFluidState().createLegacyBlock());
-
 
             Direction direction1 = Direction.getRandom(randomsource);
             if (direction1.getAxis().isHorizontal())
                 setBlock(level, pos.relative(direction1), TFMGFluids.CRUDE_OIL.get().getSource().defaultFluidState().createLegacyBlock());
 
-            if (i < 4) {
+            if (i < (height / 2)) {
                 Direction direction2 = Direction.getRandom(randomsource);
                 if (direction2.getAxis().isHorizontal())
                     setBlock(level, pos.relative(direction2), TFMGBlocks.FOSSILSTONE.getDefaultState());
             }
-
         }
     }
     

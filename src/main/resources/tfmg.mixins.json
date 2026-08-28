@@ -13,6 +13,7 @@
     "MobEffectInstanceMixin",
     "PipeAttachmentModelMixin",
     "UtilMixin",
+    "accessor.ChunkMapAccessor",
     "accessor.FluidTankBlockEntityAccessor",
     "accessor.FlywheelBlockEntityMixin",
     "accessor.SlidingDoorBlockEntityAccessor",

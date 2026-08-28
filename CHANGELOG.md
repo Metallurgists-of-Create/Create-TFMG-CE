@@ -22,6 +22,13 @@ Contributors:<br>
     - Radial Engine Assembly
 - Vat:
   - `ChemicalVatCategory` now uses a dynamic barometer needle to display pressure.
+- Oil Deposits:
+  - Oil Reserves now drain over time.
+  - Oil Reserves are now stored in a chunk attachment rather than level data.
+  - Oil Reserves are now created on deposit generation instead of on pumpjack assembly.
+  - Oil Deposit features now have a minimum height of 10 blocks.
+  - Fossilstone in deposits now starts at half the height instead of 4.
+  - Empty Oil Reserves now convert all contained deposits into Bedrock.
 
 ### API Changes:
 - Created VAT operation registry

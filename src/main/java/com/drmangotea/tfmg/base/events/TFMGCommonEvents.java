@@ -31,18 +31,23 @@ import com.drmangotea.tfmg.content.machinery.oil_processing.pumpjack.base.Pumpja
 import com.drmangotea.tfmg.content.machinery.vat.base.VatBlockEntity;
 import com.drmangotea.tfmg.content.machinery.vat.electrode_holder.ElectrodeHolderBlockEntity;
 import com.drmangotea.tfmg.content.machinery.vat.industrial_mixer.IndustrialMixerBlockEntity;
-import com.drmangotea.tfmg.content.world.LevelDataHandler;
+import com.drmangotea.tfmg.content.world.resevoir.FluidReservoir;
+import com.drmangotea.tfmg.mixin.accessor.ChunkMapAccessor;
+import com.drmangotea.tfmg.registry.TFMGDataAttachments;
 import com.drmangotea.tfmg.registry.TFMGMobEffects;
+import net.minecraft.server.level.ChunkHolder;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.chunk.LevelChunk;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.event.OnDatapackSyncEvent;
 import net.neoforged.neoforge.event.entity.living.MobEffectEvent;
 import net.neoforged.neoforge.event.level.LevelEvent;
-import net.neoforged.neoforge.event.tick.ServerTickEvent;
+import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import net.neoforged.neoforge.registries.NewRegistryEvent;
 
 
@@ -123,10 +128,25 @@ public class TFMGCommonEvents {
     }
 
     @SubscribeEvent
-    public static void serverTick(ServerTickEvent.Post event) {
-        if (event.getServer().isRunning()) {
-            if (TFMGConfigs.common().worldgen.infiniteDeposits.get()) return;
-            //event.getServer().getAllLevels().forEach(level -> LevelDataHandler.getFluidReservoirs(level).removeEmptyDeposits(level));
+    public static void levelTick(LevelTickEvent.Post event) {
+        if (event.getLevel() instanceof ServerLevel serverLevel) {
+            try {
+                for (ChunkHolder chunkHolder : ((ChunkMapAccessor) serverLevel.getChunkSource().chunkMap).getVisibleChunkMap().values()) {
+                    LevelChunk chunk = chunkHolder.getTickingChunk();
+                    if (chunk != null) {
+                        if (!TFMGConfigs.common().worldgen.infiniteDeposits.get()) {
+                            if (chunk.hasData(TFMGDataAttachments.FLUID_RESERVOIR)) {
+                                FluidReservoir reservoir = chunk.getData(TFMGDataAttachments.FLUID_RESERVOIR);
+                                if (reservoir.removeEmptyDeposits(serverLevel)) {
+                                    chunk.removeData(TFMGDataAttachments.FLUID_RESERVOIR);
+                                }
+                            }
+                        }
+                    }
+                }
+            } catch (Exception exception) {
+                TFMG.LOGGER.error("Error occurred while ticking fluid reservoirs.", exception);
+            }
         }
     }
 }

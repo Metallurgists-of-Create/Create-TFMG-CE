@@ -5,12 +5,8 @@ import com.drmangotea.tfmg.base.lang.TFMGTexts;
 import com.drmangotea.tfmg.config.TFMGConfigs;
 import com.drmangotea.tfmg.content.machinery.oil_processing.pumpjack.crank.PumpjackCrankBlockEntity;
 import com.drmangotea.tfmg.content.machinery.oil_processing.pumpjack.hammer.PumpjackBlockEntity;
-import com.drmangotea.tfmg.content.world.LevelDataHandler;
-import com.drmangotea.tfmg.content.world.resevoir.FluidReservoirs;
-import com.drmangotea.tfmg.registry.TFMGBlockEntities;
-import com.drmangotea.tfmg.registry.TFMGBlocks;
-import com.drmangotea.tfmg.registry.TFMGFluids;
-import com.drmangotea.tfmg.registry.TFMGTags;
+import com.drmangotea.tfmg.content.world.resevoir.FluidReservoir;
+import com.drmangotea.tfmg.registry.*;
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
@@ -20,7 +16,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -128,20 +123,18 @@ public class PumpjackBaseBlockEntity extends SmartBlockEntity implements IHaveGo
         if (deposit == null)
             return;
 
-        FluidReservoirs reservoirs = null;
-
-        if (level instanceof ServerLevel serverLevel) {
-            reservoirs = LevelDataHandler.getFluidReservoirs(serverLevel);
-            reservoirs.addDeposit(level, deposit);
-            reservoirs.setDirty();
-            sendData();
+        // Old chunks wouldn't have a proper reservoir
+        if (!level.getChunkAt(deposit).hasData(TFMGDataAttachments.FLUID_RESERVOIR)) {
+            if (level.getBlockState(deposit).is(TFMGBlocks.OIL_DEPOSIT.get())) {
+                FluidReservoir.createReservoir(level, deposit);
+            }
+            return;
         }
-
-        if (reservoirs == null) return;
+        FluidReservoir reservoir = level.getChunkAt(deposit).getData(TFMGDataAttachments.FLUID_RESERVOIR);
 
         if (tank.getFluidAmount() + miningRate > tank.getCapacity())
             return;
-        if (!TFMGConfigs.common().worldgen.infiniteDeposits.get() && reservoirs.getReservoirFor(deposit).isEmpty()) {
+        if (!TFMGConfigs.common().worldgen.infiniteDeposits.get() && reservoir.isEmpty()) {
             deposit = null;
             findDeposit();
             return;
@@ -157,12 +150,12 @@ public class PumpjackBaseBlockEntity extends SmartBlockEntity implements IHaveGo
         RandomSource randomSource = level.getRandom();
         //fix
         if (randomSource.nextInt((900000 / amountPumped) + 1) == 0) {
-            reservoirs.getReservoirFor(deposit).drain(1);
-            if (reservoirs.getReservoirFor(deposit).isEmpty()) {
+            reservoir.drain(1);
+            if (reservoir.isEmpty()) {
                 deposit = null;
                 findDeposit();
             }
-            reservoirs.setDirty();
+            level.getChunkAt(deposit).setData(TFMGDataAttachments.FLUID_RESERVOIR, reservoir);
         }
     }
 
