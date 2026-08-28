@@ -8,7 +8,6 @@ import com.drmangotea.tfmg.datagen.recipes.builder.VatRecipeGen;
 import com.drmangotea.tfmg.registry.TFMGFluids;
 import com.drmangotea.tfmg.registry.TFMGItems;
 import com.drmangotea.tfmg.registry.TFMGTags;
-import com.drmangotea.tfmg.registry.TFMGVatOperations;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;

@@ -1,6 +1,5 @@
 package com.drmangotea.tfmg.content.machinery.misc.exhaust;
 
-import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.base.TFMGUtils;
 import com.drmangotea.tfmg.registry.TFMGBlockEntities;
 import com.drmangotea.tfmg.registry.TFMGFluids;
@@ -28,7 +27,6 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
 
 import java.util.List;
-import java.util.Random;
 
 public class ExhaustBlockEntity extends SmartBlockEntity implements IHaveGoggleInformation {
     protected IFluidHandler fluidCapability;

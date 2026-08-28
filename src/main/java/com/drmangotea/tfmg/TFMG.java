@@ -1,10 +1,6 @@
 package com.drmangotea.tfmg;
 
-import com.drmangotea.tfmg.base.TFMGArmInteractionPoints;
-import com.drmangotea.tfmg.base.TFMGBoilerHeaters;
-import com.drmangotea.tfmg.base.TFMGContraptions;
-import com.drmangotea.tfmg.base.TFMGCreativeTabs;
-import com.drmangotea.tfmg.base.TFMGRegistrate;
+import com.drmangotea.tfmg.base.*;
 import com.drmangotea.tfmg.base.fluid.TFMGFluidInteractions;
 import com.drmangotea.tfmg.config.TFMGConfigs;
 import com.drmangotea.tfmg.content.decoration.pipes.TFMGPipes;

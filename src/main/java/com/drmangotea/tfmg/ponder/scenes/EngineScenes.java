@@ -3,7 +3,6 @@ package com.drmangotea.tfmg.ponder.scenes;
 import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.content.decoration.pipes.TFMGPipes;
 import com.drmangotea.tfmg.content.decoration.tanks.steel.SteelTankBlockEntity;
-import com.drmangotea.tfmg.content.engines.types.radial_engine.RadialEngineBlock;
 import com.drmangotea.tfmg.ponder.TFMGSceneBuilder;
 import com.drmangotea.tfmg.registry.TFMGBlocks;
 import com.drmangotea.tfmg.registry.TFMGFluids;
