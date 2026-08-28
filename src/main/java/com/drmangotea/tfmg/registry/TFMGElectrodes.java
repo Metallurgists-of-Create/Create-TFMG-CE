@@ -3,19 +3,20 @@ package com.drmangotea.tfmg.registry;
 import com.drmangotea.tfmg.content.machinery.vat.electrode_holder.electrode.ArcElectrode;
 import com.drmangotea.tfmg.content.machinery.vat.electrode_holder.electrode.Electrode;
 import com.drmangotea.tfmg.content.machinery.vat.electrode_holder.electrode.ElectrodeEntry;
+import com.drmangotea.tfmg.content.machinery.vat.electrode_holder.electrode.SparkingElectrode;
 
 import static com.drmangotea.tfmg.TFMG.REGISTRATE;
 
 public class TFMGElectrodes {
-    public static final ElectrodeEntry<Electrode> NONE = REGISTRATE.electrode("none", Electrode::new)
+    public static final ElectrodeEntry<Electrode> NONE = REGISTRATE.electrode("none", SparkingElectrode::new)
             .properties((p) -> p)
             .register();
 
-    public static final ElectrodeEntry<Electrode> COPPER = REGISTRATE.electrode("copper", Electrode::new)
+    public static final ElectrodeEntry<SparkingElectrode> COPPER = REGISTRATE.electrode("copper", SparkingElectrode::new)
             .properties((p) -> p.resistance(10).operationId(TFMGVatOperations.ELECTRODE))
             .register();
 
-    public static final ElectrodeEntry<Electrode> ZINC = REGISTRATE.electrode("zinc", Electrode::new)
+    public static final ElectrodeEntry<SparkingElectrode> ZINC = REGISTRATE.electrode("zinc", SparkingElectrode::new)
             .properties((p) -> p.resistance(10).operationId(TFMGVatOperations.ELECTRODE))
             .register();
 
