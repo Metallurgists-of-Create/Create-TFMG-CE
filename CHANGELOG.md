@@ -29,6 +29,8 @@ Contributors:<br>
   - Oil Deposit features now have a minimum height of 10 blocks.
   - Fossilstone in deposits now starts at half the height instead of 4.
   - Empty Oil Reserves now convert all contained deposits into Bedrock.
+- Polarizer
+  - Goggle info rounds item charge (This helps prevent flickering of the tooltip)
 
 ### API Changes:
 - Created VAT operation registry
@@ -46,6 +48,11 @@ Contributors:<br>
   - Removed `getPos()[long]` in `IElectric` in favour of `getPos()[BlockPos]`
 - Mixin `PipeAttachmentModelMixin#gatherModelData` no longer uses `@Overwrite`
 - Changed `TFMGRemapper` and `ComponentRemapper` a little
+- Polarizer
+  - Energy defaults to `2000` (2kW) 
+  - Polarizing recipes now have `energy` as a field to specify required amount
+  - `PolarizingRecipe` now has an `energy` field
+  - Data gen can specify amount of energy
 
 ### New Translations:
 
