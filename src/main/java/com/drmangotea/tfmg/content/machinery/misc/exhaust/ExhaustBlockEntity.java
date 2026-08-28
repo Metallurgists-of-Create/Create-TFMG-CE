@@ -1,6 +1,5 @@
 package com.drmangotea.tfmg.content.machinery.misc.exhaust;
 
-
 import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.base.TFMGUtils;
 import com.drmangotea.tfmg.registry.TFMGBlockEntities;
@@ -17,6 +16,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -30,14 +30,12 @@ import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
 import java.util.List;
 import java.util.Random;
 
-@SuppressWarnings("removal")
 public class ExhaustBlockEntity extends SmartBlockEntity implements IHaveGoggleInformation {
-
     protected IFluidHandler fluidCapability;
     public FluidTank tankInventory;
 
-    public boolean spawnsSmoke=false;
-    public int smokeTimer=0;
+    public boolean spawnsSmoke = false;
+    public int smokeTimer = 0;
 
     public ExhaustBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
@@ -85,24 +83,24 @@ public class ExhaustBlockEntity extends SmartBlockEntity implements IHaveGoggleI
             smokeTimer--;
         } else spawnsSmoke = false;
 
-        switch (direction) {
-            case UP -> {if(spawnsSmoke) makeParticles(level, this.getBlockPos(), 0);}
-            case DOWN -> {if(spawnsSmoke) makeParticles(level, this.getBlockPos(), 1);}
-            case NORTH -> {if(spawnsSmoke) makeParticles(level, this.getBlockPos(), 2);}
-            case SOUTH -> {if(spawnsSmoke) makeParticles(level, this.getBlockPos(), 3);}
-            case EAST -> {if(spawnsSmoke) makeParticles(level, this.getBlockPos(), 4);}
-            case WEST -> {if(spawnsSmoke) makeParticles(level, this.getBlockPos(), 5);}
+        if (spawnsSmoke) {
+            switch (direction) {
+                case UP -> makeParticles(level, this.getBlockPos(), 0);
+                case DOWN -> makeParticles(level, this.getBlockPos(), 1);
+                case NORTH -> makeParticles(level, this.getBlockPos(), 2);
+                case SOUTH -> makeParticles(level, this.getBlockPos(), 3);
+                case WEST -> makeParticles(level, this.getBlockPos(), 4);
+                case EAST -> makeParticles(level, this.getBlockPos(), 5);
+            }
         }
 
-        if(tankInventory.getFluidAmount() > 0) {
+        if (tankInventory.getFluidAmount() > 0) {
             smokeTimer = 100;
             spawnsSmoke = true;
             tankInventory.drain(100, IFluidHandler.FluidAction.EXECUTE);
         }
 
     }
-
-
 
     @Override
     protected void read(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {
@@ -126,40 +124,27 @@ public class ExhaustBlockEntity extends SmartBlockEntity implements IHaveGoggleI
             center = subLevel.logicalPose().transformPosition(center);
         }
 
-        Random random = TFMG.RANDOM;
-        int shouldSpawnSmoke = random.nextInt(7);
-        if(shouldSpawnSmoke == 0) {
-            if(particleRotation==0)
-                level.addParticle(ParticleTypes.CAMPFIRE_SIGNAL_SMOKE, center.x + random.nextFloat(0.3f), center.y + 1, center.z + random.nextFloat(0.3f), 0.0D, 0.08D, 0.0D);
-            if(particleRotation==1)
-                level.addParticle(ParticleTypes.CAMPFIRE_SIGNAL_SMOKE, center.x + random.nextFloat(1), center.y, center.z + random.nextFloat(1), 0.0D, 0.08D, 0.0D);
-            if(particleRotation==2)
-                level.addParticle(ParticleTypes.CAMPFIRE_SIGNAL_SMOKE, center.x + random.nextFloat(1), center.y + random.nextFloat(1), center.z, 0.0D, 0.08D, 0.0D);
-            if(particleRotation==3)
-                level.addParticle(ParticleTypes.CAMPFIRE_SIGNAL_SMOKE, center.x + random.nextFloat(1), center.y + random.nextFloat(1), center.z + 1, 0.0D, 0.08D, 0.0D);
-            if(particleRotation==4)
-                level.addParticle(ParticleTypes.CAMPFIRE_SIGNAL_SMOKE, center.x + 1, center.y + random.nextFloat(1), center.z + random.nextFloat(1), 0.0D, 0.08D, 0.0D);
-            if(particleRotation==5)
-                level.addParticle(ParticleTypes.CAMPFIRE_SIGNAL_SMOKE, center.x, center.y + random.nextFloat(1), center.z + random.nextFloat(1), 0.0D, 0.08D, 0.0D);
+        RandomSource random = level.getRandom();
+        if (random.nextInt(7) != 0) return;
+
+        double offX, offY, offZ;
+        switch (particleRotation) {
+            case 0 -> { offX = random.nextFloat() * 0.3f; offY = 1;                    offZ = random.nextFloat() * 0.3f; }
+            case 1 -> { offX = random.nextFloat();        offY = 0;                    offZ = random.nextFloat();        }
+            case 2 -> { offX = random.nextFloat();        offY = random.nextFloat();   offZ = 0;                        }
+            case 3 -> { offX = random.nextFloat();        offY = random.nextFloat();   offZ = 1;                        }
+            case 4 -> { offX = 1;                         offY = random.nextFloat();   offZ = random.nextFloat();        }
+            case 5 -> { offX = 0;                         offY = random.nextFloat();   offZ = random.nextFloat();        }
+            default -> { return; }
         }
 
+        level.addParticle(ParticleTypes.CAMPFIRE_SIGNAL_SMOKE,
+                center.x + offX, center.y + offY, center.z + offZ,
+                0.0D, 0.08D, 0.0D);
     }
-
-    //@Nonnull
-    //@Override
-    //public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
-//
-    //    if (cap == ForgeCapabilities.FLUID_HANDLER)
-    //        return fluidCapability.cast();
-    //    return super.getCapability(cap, side);
-    //}
-
-
 
     @Override
     public void addBehaviours(List<BlockEntityBehaviour> behaviours) {}
-
-
 
 }
 
