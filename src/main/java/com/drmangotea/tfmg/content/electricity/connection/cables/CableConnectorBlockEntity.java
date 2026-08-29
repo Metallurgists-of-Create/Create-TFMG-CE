@@ -4,12 +4,14 @@ import com.drmangotea.tfmg.base.TFMGUtils;
 import com.drmangotea.tfmg.config.TFMGConfigs;
 import com.drmangotea.tfmg.content.electricity.base.ElectricBlockEntity;
 import com.drmangotea.tfmg.content.electricity.base.IElectric;
+import com.drmangotea.tfmg.content.electricity.base.NetworkUpdatePacket;
 import com.drmangotea.tfmg.content.machinery.misc.winding_machine.SpoolItem;
 import com.drmangotea.tfmg.registry.TFMGBlocks;
 import com.simibubi.create.api.equipment.goggles.IHaveHoveringInformation;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import net.createmod.catnip.animation.AnimationTickHolder;
 import net.createmod.catnip.math.VecHelper;
+import net.createmod.catnip.platform.CatnipServices;
 import net.createmod.catnip.theme.Color;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -17,9 +19,11 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -45,6 +49,7 @@ public class CableConnectorBlockEntity extends ElectricBlockEntity implements IH
     public List<CableConnection> connections = new ArrayList<>();
     public boolean removeWiresNextTick = false;
     private boolean updateConnections = false;
+    private boolean alreadyEmpty = false;
 
     public CableConnectorBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
@@ -202,6 +207,17 @@ public class CableConnectorBlockEntity extends ElectricBlockEntity implements IH
             removeConnection();
             updateNextTick();
             removeWiresNextTick = false;
+        }
+        if (connections.isEmpty() && !alreadyEmpty) {
+            alreadyEmpty = true;
+            onRemoved();
+            if (level instanceof ServerLevel serverLevel)
+                CatnipServices.NETWORK.sendToClientsTrackingChunk(serverLevel, new ChunkPos(getPos()), new NetworkUpdatePacket(getPos()));
+            setChanged();
+            sendStuff();
+        }
+        if (!connections.isEmpty() && alreadyEmpty) {
+            alreadyEmpty = false;
         }
     }
 

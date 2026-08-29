@@ -38,7 +38,9 @@ public class DistillationOutputBlockEntity extends SmartBlockEntity implements I
 
     public ScrollOptionBehaviour<DistillationOutputMode> mode;
 
-    public final FluidTank tank = new SmartFluidTank(8000,this::onFluidStackChanged);
+    public final FluidTank tank = new SmartFluidTank(8000, this::onFluidStackChanged);
+
+
     public DistillationOutputBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
         fluidCapability = tank;
@@ -52,13 +54,16 @@ public class DistillationOutputBlockEntity extends SmartBlockEntity implements I
     }
 
     protected void onFluidStackChanged(FluidStack newFluidStack) {
-        if (!hasLevel())
-            return;
-        if (!level.isClientSide) {
-            setChanged();
-            sendData();
-        }
+        setChanged();
+        sendData();
     }
+
+    @Override
+    public void lazyTick() {
+        super.lazyTick();
+        level.invalidateCapabilities(getBlockPos());
+    }
+
     public static void registerCapabilities(RegisterCapabilitiesEvent event) {
         event.registerBlockEntity(
                 Capabilities.FluidHandler.BLOCK,
@@ -69,17 +74,15 @@ public class DistillationOutputBlockEntity extends SmartBlockEntity implements I
     @Override
     protected void read(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {
         super.read(compound,registries , clientPacket);
-
         tank.readFromNBT(registries,compound.getCompound("TankContent"));
-
     }
 
     @Override
     public void write(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {
         super.write(compound,registries,clientPacket);
         compound.put("TankContent", tank.writeToNBT(registries,new CompoundTag()));
-
     }
+
     @Override
     public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
         return containedFluidTooltip(tooltip, isPlayerSneaking, fluidCapability);
