@@ -238,16 +238,14 @@ public class BlastFurnaceOutputBlockEntity extends SmartBlockEntity implements I
                     return;
                 }
                 if (tuyere != null && !extractedAir) {
-                    int simulated = tuyere.tank.drain(new FluidStack(FluidHelper.convertToStill(TFMGFluids.HOT_AIR.get()), recipe.hotAirUsage), IFluidHandler.FluidAction.SIMULATE).getAmount();
+                    int simulated = tuyere.tank.forceDrain(recipe.hotAirUsage, IFluidHandler.FluidAction.SIMULATE).getAmount();
                     if (simulated < recipe.hotAirUsage)
                         return;
-                    tuyere.tank.drain(new FluidStack(FluidHelper.convertToStill(TFMGFluids.HOT_AIR.get()), recipe.hotAirUsage), IFluidHandler.FluidAction.EXECUTE);
+                    tuyere.tank.forceDrain(recipe.hotAirUsage, IFluidHandler.FluidAction.EXECUTE);
                     extractedAir = true;
                 }
-                if (!recipe.getGasByproduct().isEmpty()) {
-                    if (level.getBlockEntity(getBlockPos().relative(getBlockState().getValue(FACING).getOpposite()).above(multiblock.getSize())) instanceof BlastFurnaceHatchBlockEntity topHatch) {
-                        topHatch.tank.fill(recipe.getGasByproduct(), IFluidHandler.FluidAction.EXECUTE);
-                    }
+                if (!recipe.getGasByproduct().isEmpty() && multiblock.getTopHatchBlockEntity() != null) {
+                    multiblock.getTopHatchBlockEntity().tank.forceFill(recipe.getGasByproduct(), IFluidHandler.FluidAction.EXECUTE);
                 }
                 if (level.isClientSide())
                     makeParticles();
@@ -295,6 +293,11 @@ public class BlastFurnaceOutputBlockEntity extends SmartBlockEntity implements I
         this.multiblock.evaluate();
         onContentsChanged();
         collectItems();
+
+        var topHatch = this.multiblock.getTopHatchBlockEntity();
+        if (topHatch != null) {
+            topHatch.fillFurnace(this);
+        }
     }
 
     @Override
@@ -326,7 +329,7 @@ public class BlastFurnaceOutputBlockEntity extends SmartBlockEntity implements I
 
         ItemStack itemStack = items.getFirst().getItem();
 
-        for (int i = 0; i < 64; i++) {
+        for (int i = 1; i <= itemStack.getCount(); i++) {
             if (itemStack.isEmpty())
                 return;
             if (itemStack.is(TFMGTags.Items.BLAST_FURNACE_FUEL.tag) && fuel < STORAGE_SPACE) {
