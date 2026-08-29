@@ -127,7 +127,6 @@ public class BlastFurnaceMultiblock {
                     BlockType wall = wallType(checkedPos);
                     BlockType support = supportType(checkedPos);
                     if (checkedPos.getX() == middlePos.getX() ^ checkedPos.getZ() == middlePos.getZ()) {
-                        master.getLevel().addParticle(DustParticleOptions.REDSTONE, checkedPos.getX() + 0.5, checkedPos.getY() + 0.5, checkedPos.getZ() + 0.5, 0, 0, 0);
                         if (!(i == 0 && master.getLevel().getBlockState(checkedPos).is(TFMGBlocks.BLAST_FURNACE_OUTPUT.get()))) {
                             if (!wall.valid()) {
                                 break;
