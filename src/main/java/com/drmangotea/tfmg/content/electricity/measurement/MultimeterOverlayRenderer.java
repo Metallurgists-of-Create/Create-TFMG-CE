@@ -99,7 +99,7 @@ public class MultimeterOverlayRenderer {
         if(!isElectricBlock)
             return;
 
-        ItemStack item = TFMGItems.MULTIMETER.asStack();
+        ItemStack multimeterItem = TFMGItems.MULTIMETER.asStack();
         List<Component> tooltip = new ArrayList<>();
 
         // The block entity is responsible for making it's own Tooltip.
@@ -144,16 +144,16 @@ public class MultimeterOverlayRenderer {
             colorBorderBot.scaleAlpha(fade);
         }
 
-        // Add a multimeter below the goggles to indicate both items are being utilised
+        // Add a multimeter to indicate both items are being utilised
         if (wearingGoggles) {
-            GuiGameElement.of(item)
+            GuiGameElement.of(multimeterItem)
                     .at(posX + 10, posY, 450)
                     .render(graphics);
             poseStack.popPose();
             return;
         }
 
-        GuiGameElement.of(item)
+        GuiGameElement.of(multimeterItem)
                 .at(posX + 10, posY - 16, 450)
                 .render(graphics);
 
