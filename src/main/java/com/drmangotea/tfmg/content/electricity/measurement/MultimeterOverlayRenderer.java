@@ -6,6 +6,7 @@ import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.api.equipment.goggles.IProxyHoveringInformation;
 import com.simibubi.create.content.equipment.goggles.GogglesItem;
+import com.simibubi.create.content.equipment.goggles.GoggleOverlayRenderer;
 import com.simibubi.create.compat.Mods;
 import com.simibubi.create.foundation.blockEntity.behaviour.ValueBox;
 import com.simibubi.create.foundation.gui.RemovedGuiUtils;
@@ -83,8 +84,7 @@ public class MultimeterOverlayRenderer {
             return;
         }
 
-        if (GogglesItem.isWearingGoggles(mc.player))
-            return;
+        boolean wearingGoggles = GogglesItem.isWearingGoggles(mc.player);
 
         hoverTicks++;
         lastHovered = pos;
@@ -129,7 +129,8 @@ public class MultimeterOverlayRenderer {
         posX = Math.min(posX, width - tooltipTextWidth - 20);
         posY = Math.min(posY, height - tooltipHeight - 20);
 
-        float fade = Mth.clamp((hoverTicks + deltaTracker.getGameTimeDeltaPartialTick(false)) / 24f, 0, 1);
+        int animationTicks = wearingGoggles ? GoggleOverlayRenderer.hoverTicks : hoverTicks;
+        float fade = Mth.clamp((animationTicks + deltaTracker.getGameTimeDeltaPartialTick(false)) / 24f, 0, 1);
         Boolean useCustom = cfg.overlayCustomColor.get();
         Color colorBackground = useCustom ? new Color(cfg.overlayBackgroundColor.get())
                 : BoxElement.COLOR_VANILLA_BACKGROUND.scaleAlpha(.75f);
@@ -141,6 +142,15 @@ public class MultimeterOverlayRenderer {
             colorBackground.scaleAlpha(fade);
             colorBorderTop.scaleAlpha(fade);
             colorBorderBot.scaleAlpha(fade);
+        }
+
+        // Add a multimeter below the goggles to indicate both items are being utilised
+        if (wearingGoggles) {
+            GuiGameElement.of(item)
+                    .at(posX + 10, posY, 450)
+                    .render(graphics);
+            poseStack.popPose();
+            return;
         }
 
         GuiGameElement.of(item)
