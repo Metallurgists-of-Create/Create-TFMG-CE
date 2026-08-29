@@ -29,8 +29,13 @@ Contributors:<br>
   - Oil Deposit features now have a minimum height of 10 blocks.
   - Fossilstone in deposits now starts at half the height instead of 4.
   - Empty Oil Reserves now convert all contained deposits into Bedrock.
-- Polarizer
+- Polarizer:
   - Goggle info rounds item charge (This helps prevent flickering of the tooltip)
+- Blast Furnace:
+  - Top Hatch is now evaluated with the rest of the multiblock.
+  - Top Hatch now directly inserts items instead of dropping them.
+  - Top hatch now properly saves its inventory.
+  - Blast Furnace Hatches now limit certain inventories based on their place in the multiblock.
 
 ### API Changes:
 - Created VAT operation registry

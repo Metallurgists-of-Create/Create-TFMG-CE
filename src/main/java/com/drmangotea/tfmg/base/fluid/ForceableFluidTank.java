@@ -31,6 +31,16 @@ public class ForceableFluidTank extends SmartFluidTank {
         return this;
     }
 
+    public ForceableFluidTank allowExtraction() {
+        this.extractionAllowed = true;
+        return this;
+    }
+
+    public ForceableFluidTank allowInsertion() {
+        this.insertionAllowed = true;
+        return this;
+    }
+
     public ForceableFluidTank withValidator(Predicate<FluidStack> validator) {
         this.validator = validator;
         return this;

@@ -465,6 +465,10 @@ public class EngineScenes {
         scene.configureBasePlate(0, 0, 7);
         scene.showBasePlate();
 
+        scene.overlay().showText(30)
+                .placeNearTarget()
+                .text("Work In Progress");
+        scene.idle(40);
     }
 
     public static void turbineEngineOperation(SceneBuilder builder, SceneBuildingUtil util) {
