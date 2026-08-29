@@ -7,9 +7,12 @@ import com.drmangotea.tfmg.base.lang.TFMGTexts;
 import com.drmangotea.tfmg.content.electricity.connection.CableHubBlockEntity;
 import com.drmangotea.tfmg.content.electricity.connection.cables.CableConnection;
 import com.drmangotea.tfmg.content.electricity.connection.cables.CableConnectorBlockEntity;
+import com.drmangotea.tfmg.content.electricity.measurement.MultimeterItem;
 import com.drmangotea.tfmg.content.electricity.network.large_switch.LargeSwitchBlockEntity;
 import com.drmangotea.tfmg.content.electricity.network.transformer.large.LargeTransformerBlockEntity;
+import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import net.createmod.catnip.platform.CatnipServices;
+import net.minecraft.client.Minecraft;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -30,7 +33,7 @@ import java.util.function.Consumer;
 /**
  * data and actions for electric blocks
  */
-public interface IElectric {
+public interface IElectric extends IHaveGoggleInformation {
 
     /**
      * block's world position
@@ -144,6 +147,7 @@ public interface IElectric {
         if (oldEnergyGiven != getData().energyGiven) {
             updateNextTick();
         }
+
         if (getData().tickUntilConnectFE >= 0) {
             getData().tickUntilConnectFE--;
         }
@@ -156,10 +160,12 @@ public interface IElectric {
             getOrCreateElectricNetwork().checkForLoops(getPos());
             getData().checkForLoopsNextTick = false;
         }
+
         if (getData().connectNextTick) {
             onPlaced();
             getData().connectNextTick = false;
         }
+
         if (getData().updateNextTick) {
             updateNetwork();
             getData().updateNextTick = false;
@@ -364,45 +370,68 @@ public interface IElectric {
     }
 
     /**
-     * the multimeter tooltip
+     * Adds Multimeter Tooltip to UI
+     */
+    @Override
+    default boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
+        if (Minecraft.getInstance().player == null
+                || !MultimeterItem.isHeldByPlayer(Minecraft.getInstance().player))
+            return false;
+        return makeMultimeterTooltip(tooltip, isPlayerSneaking);
+    }
+
+    /**
+     * Populates the Multimeter Tooltip from the IElectrics' Data
+     * @param tooltip The Tooltip to Populate
+     * @param isPlayerSneaking Whether the Player is Sneaking
+     * @return Whether the Tooltip should be displayed
      */
     default boolean makeMultimeterTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
-        TFMGTexts.header("multimeter").style(ChatFormatting.WHITE)
+        TFMGTexts.header("multimeter").style(ChatFormatting.GRAY)
                 .forGoggles(tooltip);
 
+        // Warn about overvoltage/undercurrent
         if (getMaxVoltage() != 0 && getMaxVoltage() * 0.8f < getData().getVoltage())
             TFMGLang.translate("multimeter.approaching_overvoltage").add(TFMGLang.text("(" + TFMGUtils.formatUnits(getMaxVoltage(), "V" + ")"))).style(ChatFormatting.RED).forGoggles(tooltip);
         if (getMaxCurrent() != 0 && getMaxCurrent() * 0.8f < getCurrent())
             TFMGLang.translate("multimeter.approaching_overcurrent").add(TFMGLang.text("(" + TFMGUtils.formatUnits(getMaxCurrent(), "A" + ")"))).style(ChatFormatting.RED).forGoggles(tooltip);
 
-
+        // Warn the player that network is overloaded
         if (getData().notEnoughPower) TFMGTexts.Multimeter.notEnoughPower().forGoggles(tooltip, 1);
 
+        // Populate voltage generated, power generated
         if (voltageGeneration() > 0) {
             TFMGTexts.Multimeter.powerGenerated(powerGeneration()).forGoggles(tooltip, 1);
             TFMGTexts.Multimeter.voltageGenerated(voltageGeneration()).forGoggles(tooltip, 1);
             TFMGTexts.Multimeter.separator().forGoggles(tooltip);
         }
+
+        // Display Resistance, Voltage and Current
         if (resistance() != 0&&!(this instanceof CableConnectorBlockEntity)&&!(this instanceof CableHubBlockEntity))
             TFMGTexts.Multimeter.resistance(voltageGeneration() > 0 ? getGeneratorResistance() : resistance()).forGoggles(tooltip, 1);
         TFMGTexts.Multimeter.voltage(getData().getVoltage()).forGoggles(tooltip, 1);
         TFMGTexts.Multimeter.current(resistance() == 0 ? getData().highestCurrent : getCurrent()).forGoggles(tooltip, 1);
+
+        // How much power is this IElectric using?
         if (resistance() != 0)
             TFMGTexts.Multimeter.power(getPowerUsage()).forGoggles(tooltip, 1);
 
+        // How much power is this IElectric giving to the network, if it is taking power at all?
         if (getData().energyGiven > 0) {
             TFMGTexts.Multimeter.sendingFE(getData().energyGiven).forGoggles(tooltip, 1);
         }
+
+        // How much power is this IElectric taking from the network, if it is taking power at all?
         if (getData().energyTakenPerTick > 0) {
             TFMGTexts.Multimeter.takingFE(getData().energyTakenPerTick).forGoggles(tooltip, 1);
         }
 
+        // If the player is sneaking, add total network generation and consumption
         if (isPlayerSneaking) {
             TFMGTexts.Multimeter.separator().forGoggles(tooltip);
             TFMGTexts.Multimeter.networkGeneration(getNetworkPowerGeneration()).forGoggles(tooltip, 1);
             TFMGTexts.Multimeter.networkConsumption(getNetworkPowerUsage()).forGoggles(tooltip, 1);
         }
-
 
         return true;
     }

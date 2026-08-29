@@ -1,11 +1,11 @@
 package com.drmangotea.tfmg.content.electricity.measurement;
 
-import com.drmangotea.tfmg.base.lang.TFMGLang;
 import com.drmangotea.tfmg.content.electricity.base.IElectric;
 import com.drmangotea.tfmg.registry.TFMGItems;
 import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.api.equipment.goggles.IProxyHoveringInformation;
+import com.simibubi.create.content.equipment.goggles.GogglesItem;
 import com.simibubi.create.compat.Mods;
 import com.simibubi.create.foundation.blockEntity.behaviour.ValueBox;
 import com.simibubi.create.foundation.gui.RemovedGuiUtils;
@@ -42,8 +42,8 @@ import java.util.List;
 import java.util.Map;
 
 public class MultimeterOverlayRenderer {
-    public static final LayeredDraw.Layer OVERLAY = MultimeterOverlayRenderer::renderOverlay;
 
+    public static final LayeredDraw.Layer OVERLAY = MultimeterOverlayRenderer::renderOverlay;
     private static final Map<Object, OutlineEntry> outlines = Outliner.getInstance().getOutlines();
 
     public static int hoverTicks = 0;
@@ -53,8 +53,12 @@ public class MultimeterOverlayRenderer {
         Minecraft mc = Minecraft.getInstance();
         int width = graphics.guiWidth();
         int height = graphics.guiHeight();
-        if (mc.options.hideGui || mc.gameMode.getPlayerMode() == GameType.SPECTATOR)
+
+        // If the player is a spectator, or he hides the GUI, do not render the overlay.
+        if (mc.options.hideGui || mc.gameMode.getPlayerMode() == GameType.SPECTATOR) {
             return;
+        }
+
         HitResult objectMouseOver = mc.hitResult;
         if (!(objectMouseOver instanceof BlockHitResult result)) {
             lastHovered = null;
@@ -73,6 +77,15 @@ public class MultimeterOverlayRenderer {
         ClientLevel world = mc.level;
         BlockPos pos = result.getBlockPos();
 
+        if (!MultimeterItem.isHeldByPlayer(mc.player)) {
+            lastHovered = null;
+            hoverTicks = 0;
+            return;
+        }
+
+        if (GogglesItem.isWearingGoggles(mc.player))
+            return;
+
         hoverTicks++;
         lastHovered = pos;
 
@@ -86,12 +99,10 @@ public class MultimeterOverlayRenderer {
         if(!isElectricBlock)
             return;
 
-
-
         ItemStack item = TFMGItems.MULTIMETER.asStack();
         List<Component> tooltip = new ArrayList<>();
-        tooltip.add(TFMGLang.number(1).component());
 
+        // The block entity is responsible for making it's own Tooltip.
 		((IElectric)be).makeMultimeterTooltip(tooltip,isShifting);
 
 

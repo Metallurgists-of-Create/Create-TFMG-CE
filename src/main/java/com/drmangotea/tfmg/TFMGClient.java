@@ -3,6 +3,7 @@ package com.drmangotea.tfmg;
 import com.drmangotea.tfmg.content.items.weapons.advanced_potato_cannon.AdvancedPotatoCannonRenderHandler;
 import com.drmangotea.tfmg.content.items.weapons.flamethrover.FlamethrowerRenderHandler;
 import com.drmangotea.tfmg.content.items.weapons.quad_potato_cannon.QuadPotatoCannonRenderHandler;
+import com.drmangotea.tfmg.base.events.TFMGClientEvents;
 import com.drmangotea.tfmg.ponder.TFMGPonderPlugin;
 import com.drmangotea.tfmg.registry.TFMGDataComponents;
 import com.drmangotea.tfmg.registry.TFMGItems;
@@ -35,6 +36,7 @@ public class TFMGClient {
 
         modEventBus.addListener(TFMGClient::clientInit);
         modEventBus.addListener(TFMGParticleTypes::registerFactories);
+        modEventBus.addListener(TFMGClientEvents::registerGuiOverlays);
 
         QUAD_POTATO_CANNON_RENDER_HANDLER.registerListeners(neoEventBus);
         ADVANCED_POTATO_CANNON_RENDER_HANDLER.registerListeners(neoEventBus);
