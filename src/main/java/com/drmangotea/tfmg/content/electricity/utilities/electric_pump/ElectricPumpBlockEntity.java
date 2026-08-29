@@ -17,6 +17,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -239,6 +240,13 @@ public class ElectricPumpBlockEntity extends PumpBlockEntity implements IElectri
         super.tick();
         tickElectricity();
 
+    }
+
+    @Override
+    public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
+        boolean added = super.addToGoggleTooltip(tooltip, isPlayerSneaking);
+        boolean electricAdded = IElectric.super.addToGoggleTooltip(tooltip, isPlayerSneaking);
+        return added || electricAdded;
     }
 
 

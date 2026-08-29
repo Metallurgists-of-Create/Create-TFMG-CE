@@ -33,6 +33,7 @@ import com.drmangotea.tfmg.content.machinery.vat.industrial_mixer.mode.MixerMode
 import com.drmangotea.tfmg.registry.TFMGTags.Items;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllTags;
+import com.simibubi.create.foundation.item.ItemDescription;
 import com.simibubi.create.content.processing.sequenced.SequencedAssemblyItem;
 import com.simibubi.create.foundation.data.AssetLookup;
 import com.simibubi.create.foundation.data.CreateRegistrate;
@@ -254,10 +255,10 @@ public class TFMGItems {
                     .properties(p -> p.stacksTo(1))
                     .register();
 
-    public static final Map<String, ItemEntry<MultimeterItem>> MULTIMETERS = multimeters();
-
     public static final ItemEntry<MultimeterItem> MULTIMETER = REGISTRATE.item("multimeter", MultimeterItem::new)
             .register();
+
+    public static final Map<String, ItemEntry<MultimeterItem>> MULTIMETERS = multimeters();
 
     public static final ItemEntry<SequencedAssemblyItem>
             UNFINISHED_POTENTIOMETER = sequencedIngredient("unfinished_potentiometer", "block/potentiometer/unfinished"),
@@ -471,9 +472,10 @@ public class TFMGItems {
         Map<String, ItemEntry<MultimeterItem>> map = new HashMap<>();
 
         for (String color : COLORS) {
-
-            map.put(color, REGISTRATE.item(color + "_multimeter", MultimeterItem::new)
-                    .register());
+            ItemEntry<MultimeterItem> multimeter = REGISTRATE.item(color + "_multimeter", MultimeterItem::new)
+                    .onRegister(item -> ItemDescription.referKey(item, () -> MULTIMETER))
+                    .register();
+            map.put(color, multimeter);
         }
 
         return map;

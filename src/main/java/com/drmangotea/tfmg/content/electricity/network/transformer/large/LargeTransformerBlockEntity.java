@@ -230,7 +230,7 @@ public class LargeTransformerBlockEntity extends KineticElectricBlockEntity {
         };
 
         TFMGTexts.CommonMachines.state(stateKey).color(0x69c9c5).forGoggles(tooltip);
-        TFMGTexts.Multimeter.transformerRatio(turnRatio);
+        TFMGTexts.Multimeter.transformerRatio(turnRatio).forGoggles(tooltip, 1);
 
         super.makeMultimeterTooltip(tooltip, isPlayerSneaking);
         return true;

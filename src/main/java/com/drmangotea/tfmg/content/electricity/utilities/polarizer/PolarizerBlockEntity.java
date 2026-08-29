@@ -3,6 +3,7 @@ package com.drmangotea.tfmg.content.electricity.utilities.polarizer;
 import com.drmangotea.tfmg.base.lang.TFMGTexts;
 import com.drmangotea.tfmg.config.TFMGConfigs;
 import com.drmangotea.tfmg.content.electricity.base.ElectricBlockEntity;
+import com.drmangotea.tfmg.content.electricity.measurement.MultimeterItem;
 import com.drmangotea.tfmg.recipes.PolarizingRecipe;
 import com.drmangotea.tfmg.registry.TFMGBlockEntities;
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
@@ -11,6 +12,7 @@ import com.simibubi.create.foundation.item.SmartInventory;
 import net.createmod.catnip.animation.LerpedFloat;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -93,8 +95,10 @@ public class PolarizerBlockEntity extends ElectricBlockEntity implements IHaveGo
         TFMGTexts.Multimeter.charge(Math.round(capacitorPercentage / 2f)).forGoggles(tooltip);
         if (recipe != null && !inventory.isEmpty() && getPowerUsage() < recipe.energy) {
             TFMGTexts.Multimeter.notEnoughPower(recipe.energy).forGoggles(tooltip, 1);
-            return true;
         }
+        if (Minecraft.getInstance().player != null
+                && MultimeterItem.isHeldByPlayer(Minecraft.getInstance().player))
+            makeMultimeterTooltip(tooltip, isPlayerSneaking);
         return true;
     }
 
