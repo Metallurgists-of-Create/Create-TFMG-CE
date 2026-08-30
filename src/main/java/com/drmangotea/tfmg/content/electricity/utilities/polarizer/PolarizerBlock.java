@@ -57,10 +57,14 @@ public class PolarizerBlock extends TFMGHorizontalDirectionalBlock implements IB
                 && !stack.isEmpty()
                 && be.outputInventory.getStackInSlot(0).isEmpty()
                 && PolarizerCommons.getRecipe(level, stack).isPresent()) {
-            ItemStack heldCopy = player.getItemInHand(hand).copy();
-            heldCopy.setCount(1);
-            be.inventory.insertItem(0, heldCopy, false);
-            player.getItemInHand(hand).shrink(1);
+            if (!level.isClientSide) {
+                ItemStack held = player.getItemInHand(hand);
+                ItemStack toInsert = held.copyWithCount(1);
+                be.inventory.insertItem(0, toInsert, false);
+                held.shrink(1);
+                be.sendData();
+                be.setChanged();
+            }
             return ItemInteractionResult.SUCCESS;
         }
 
