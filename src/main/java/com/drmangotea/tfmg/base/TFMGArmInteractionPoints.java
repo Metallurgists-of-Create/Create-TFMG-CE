@@ -68,14 +68,10 @@ public class TFMGArmInteractionPoints {
             if (!(level.getBlockEntity(pos) instanceof PolarizerBlockEntity machine))
                 return stack;
 
-            if (!machine.inventory.isEmpty())
+            if (!machine.inventory.isEmpty() || !machine.outputInventory.isEmpty())
                 return stack;
 
-            if (!simulate) {
-                machine.inventory.insertItem(0, stack, false);
-            }
-
-            return ItemStack.EMPTY;
+            return machine.inventory.insertItem(0, stack, simulate);
         }
 
         @Override

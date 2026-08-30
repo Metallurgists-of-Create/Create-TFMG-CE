@@ -221,6 +221,11 @@ public class PolarizerBlockEntity extends ElectricBlockEntity implements IHaveGo
         }
 
         @Override
+        public @NotNull ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
+            return be.outputInventory.isEmpty() ? super.insertItem(slot, stack, simulate) : stack;
+        }
+
+        @Override
         public @NotNull ItemStack extractItem(int slot, int amount, boolean simulate) {
             if (be.capacitorPercentage > 0 && be.capacitorPercentage < 200) {
                 return ItemStack.EMPTY;
