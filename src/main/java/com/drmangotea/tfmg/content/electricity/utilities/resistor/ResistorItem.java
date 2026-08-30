@@ -16,18 +16,17 @@ import java.util.List;
 
 @ParametersAreNonnullByDefault
 public class ResistorItem extends Item {
-    public ResistorItem(Properties p_40566_) {
-        super(p_40566_);
+    public ResistorItem(Properties p) {
+        super(p);
     }
 
-    @Override
-    @OnlyIn(Dist.CLIENT)
+    @Override @OnlyIn(Dist.CLIENT)
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
-        tooltip.add(TFMGLang.translateDirect("tooltip.resistor", stack.get(TFMGDataComponents.RESISTANCE)==null?0:stack.get(TFMGDataComponents.RESISTANCE)).append("Ω")
-                .withStyle(ChatFormatting.GREEN)
+        tooltip.add(TFMGLang
+			.translateDirect("tooltip.resistor", stack.getOrDefault(TFMGDataComponents.RESISTANCE,0))
+			.append("Ω")
+			.withStyle(ChatFormatting.GREEN)
         );
         super.appendHoverText(stack, context, tooltip, flag);
     }
-
-
 }

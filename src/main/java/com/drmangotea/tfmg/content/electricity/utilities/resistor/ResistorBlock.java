@@ -22,6 +22,7 @@ import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
+import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Collections;
 import java.util.List;
@@ -29,20 +30,21 @@ import java.util.List;
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 public class ResistorBlock extends WallMountBlock implements IBE<ResistorBlockEntity> {
-    public ResistorBlock(Properties p_49795_) {
-        super(p_49795_);
+    public ResistorBlock(Properties p) {
+        super(p);
     }
 
     @Override
-    public void setPlacedBy(Level level, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack) {
+    public void setPlacedBy(Level level, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
         super.setPlacedBy(level, pos, state, placer, stack);
         withBlockEntityDo(level, pos, be -> be.setResistance(stack));
     }
 
     @Override
-    public List<ItemStack> getDrops(BlockState p_287732_, LootParams.Builder p_287596_) {
+    public List<ItemStack> getDrops(BlockState state, LootParams.Builder params) {
         return Collections.emptyList();
     }
+	
     @Override
     public boolean onDestroyedByPlayer(BlockState state, Level level, BlockPos pos, Player player, boolean willHarvest, FluidState fluid) {
         if(!player.isCreative()&&level.getBlockEntity(pos) instanceof ResistorBlockEntity be) {
@@ -57,8 +59,8 @@ public class ResistorBlock extends WallMountBlock implements IBE<ResistorBlockEn
 
     //
     @Override
-    public VoxelShape getShape(BlockState p_60555_, BlockGetter p_60556_, BlockPos p_60557_, CollisionContext p_60558_) {
-        return TFMGShapes.RESISTOR.get(p_60555_.getValue(FACING));
+    public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        return TFMGShapes.RESISTOR.get(state.getValue(FACING));
     }
 
     @Override

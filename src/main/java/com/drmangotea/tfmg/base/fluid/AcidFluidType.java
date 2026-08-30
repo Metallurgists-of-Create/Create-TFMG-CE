@@ -15,14 +15,17 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.fluids.FluidStack;
 import org.joml.Vector3f;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.function.Supplier;
 
+@ParametersAreNonnullByDefault
 public class AcidFluidType extends AllFluids.TintedFluidType {
 
    // public static DamageSource damageSourceAcid = new DamageSource("tfmg.acid");
     public AcidFluidType(Properties properties, ResourceLocation stillTexture, ResourceLocation flowingTexture) {
         super(properties, stillTexture, flowingTexture);
     }
+
     private Vector3f fogColor;
     private Supplier<Float> fogDistance;
 
@@ -34,6 +37,7 @@ public class AcidFluidType extends AllFluids.TintedFluidType {
             return fluidType;
         };
     }
+
     @Override
     protected Vector3f getCustomFogColor() {
         return fogColor;
@@ -48,20 +52,16 @@ public class AcidFluidType extends AllFluids.TintedFluidType {
     protected int getTintColor(FluidStack stack) {
         return NO_TINT;
     }
+
     @Override
     public int getTintColor(FluidState state, BlockAndTintGetter world, BlockPos pos) {
         return 0x00ffffff;
     }
 
-
     @Override
     public boolean move(FluidState state, LivingEntity entity, Vec3 movementVector, double gravity) {
-
         if(TFMG.RANDOM.nextInt(2) == 0)
             entity.hurt(TFMGDamageSources.acid(entity.level()),2);
-
         return false;
     }
-
-
 }
