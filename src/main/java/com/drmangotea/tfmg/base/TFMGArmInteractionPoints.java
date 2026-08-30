@@ -59,6 +59,11 @@ public class TFMGArmInteractionPoints {
         }
 
         @Override
+        public int getSlotCount(ArmBlockEntity armBlockEntity) {
+            return 1;
+        }
+
+        @Override
         public ItemStack insert(ArmBlockEntity armBlockEntity, ItemStack stack, boolean simulate) {
             if (!(level.getBlockEntity(pos) instanceof PolarizerBlockEntity machine))
                 return stack;
@@ -73,19 +78,25 @@ public class TFMGArmInteractionPoints {
             return ItemStack.EMPTY;
         }
 
-        //TODO - figure out why the item goes to the void when taken out
         @Override
-        public ItemStack extract(ArmBlockEntity armBlockEntity, int slot, boolean simulate) {
+        public ItemStack extract(ArmBlockEntity armBlockEntity, int slot, int amount, boolean simulate) {
             if (!(level.getBlockEntity(pos) instanceof PolarizerBlockEntity machine))
                 return ItemStack.EMPTY;
 
             ItemStack stack = machine.getOutputItem();
+            if (stack.isEmpty())
+                return ItemStack.EMPTY;
+
+            ItemStack extracted = stack.copy();
+            extracted.setCount(Math.min(amount, stack.getCount()));
 
             if (!simulate) {
-                machine.outputInventory.setStackInSlot(0, ItemStack.EMPTY);
+                ItemStack remaining = stack.copy();
+                remaining.shrink(extracted.getCount());
+                machine.outputInventory.setStackInSlot(0, remaining);
             }
 
-            return stack;
+            return extracted;
         }
     }
 
