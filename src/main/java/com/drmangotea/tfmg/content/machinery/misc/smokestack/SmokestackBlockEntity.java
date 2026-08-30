@@ -89,6 +89,7 @@ public class SmokestackBlockEntity extends SmartBlockEntity {
     public void tick() {
         super.tick();
         if (level == null) return;
+        //TODO: invalidate caps correctly
         level.invalidateCapabilities(getBlockPos());
         if (smokeTimer > 0) {
             makeParticles(level, getBlockPos());

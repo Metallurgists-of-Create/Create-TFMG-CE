@@ -97,6 +97,7 @@ public class AirIntakeBlockEntity extends KineticBlockEntity implements IWrencha
     public void tick(){
         super.tick();
         if (level == null) return;
+        //TODO: invalidate caps correctly
         level.invalidateCapabilities(getBlockPos());
 
         if (!level.isClientSide) {

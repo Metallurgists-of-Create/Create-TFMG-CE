@@ -72,6 +72,7 @@ public class ExhaustBlockEntity extends SmartBlockEntity implements IHaveGoggleI
     public void tick() {
         super.tick();
         if (level == null) return;
+        //TODO: invalidate caps correctly
         level.invalidateCapabilities(getBlockPos());
 
         Direction direction = this.getBlockState().getValue(ExhaustBlock.FACING);

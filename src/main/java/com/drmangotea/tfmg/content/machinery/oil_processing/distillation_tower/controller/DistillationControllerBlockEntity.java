@@ -147,6 +147,7 @@ public class DistillationControllerBlockEntity extends SmartBlockEntity implemen
     public void tick() {
         super.tick();
         if (level == null) return;
+        //TODO: invalidate caps correctly
         level.invalidateCapabilities(getBlockPos());
         this.outputs.forEach(out -> asOutput(out, (be) -> {
             if (level != null) {

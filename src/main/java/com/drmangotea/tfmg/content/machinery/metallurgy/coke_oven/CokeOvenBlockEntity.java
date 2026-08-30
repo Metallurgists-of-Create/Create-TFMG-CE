@@ -110,6 +110,7 @@ public class CokeOvenBlockEntity extends SmartBlockEntity implements IHaveGoggle
     public void tick() {
         super.tick();
         if (level == null) return;
+        //TODO: invalidate caps correctly
         level.invalidateCapabilities(getBlockPos());
 
         tickRecipe();

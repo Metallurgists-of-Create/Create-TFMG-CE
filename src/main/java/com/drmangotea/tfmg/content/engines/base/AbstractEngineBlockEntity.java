@@ -86,6 +86,7 @@ public abstract class AbstractEngineBlockEntity extends KineticElectricBlockEnti
     @Override
     public void tick() {
         if (level == null) return;
+        //TODO: invalidate caps correctly
         level.invalidateCapabilities(getBlockPos());
         if (signalChanged) {
             signalChanged = false;
