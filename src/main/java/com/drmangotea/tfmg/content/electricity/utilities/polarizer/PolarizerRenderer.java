@@ -24,29 +24,33 @@ public class PolarizerRenderer extends SafeBlockEntityRenderer<PolarizerBlockEnt
 	public PolarizerRenderer(BlockEntityRendererProvider.Context context) {}
 
 	@Override
-	protected void renderSafe(PolarizerBlockEntity be, float partialTicks, PoseStack ms, MultiBufferSource buffer,
-							  int light, int overlay) {
+	protected void renderSafe(PolarizerBlockEntity be, float partialTicks, PoseStack ms, MultiBufferSource buffer, int light, int overlay) {
 		BlockState blockState = be.getBlockState();
 		VertexConsumer vb = buffer.getBuffer(RenderType.solid());
-		CachedBuffers.partial(TFMGPartialModels.POLARIZER_DIAL,blockState)
+		CachedBuffers.partial(TFMGPartialModels.POLARIZER_DIAL, blockState)
 				.center()
-				.rotateYDegrees(blockState.getValue(FACING).getAxis() == Direction.Axis.Z ? Math.abs(blockState.getValue(FACING).toYRot() - 180) : blockState.getValue(FACING).toYRot())
+				.rotateYDegrees(blockState.getValue(FACING).getAxis() == Direction.Axis.Z
+						? Math.abs(blockState.getValue(FACING).toYRot() - 180)
+						: blockState.getValue(FACING).toYRot())
 				.translateY(-0.025f)
 				.rotateZDegrees(be.angle.getValue(partialTicks))
 				.translateX(0.05f)
 				.uncenter()
 				.renderInto(ms, vb);
-		ItemStack heldItem = be.inventory.getItem(0);
-		if (heldItem.isEmpty())
+
+		ItemStack inventoryItem = be.inventory.getItem(0);
+		ItemStack outputItem = be.getOutputItem();
+
+		if (inventoryItem.isEmpty() && outputItem.isEmpty()) {
 			return;
+		}
 
-		ItemRenderer itemRenderer = Minecraft.getInstance()
-			.getItemRenderer();
+		ItemStack toRender = inventoryItem.isEmpty() ? outputItem : inventoryItem;
 
-        ms.pushPose();
+		ItemRenderer itemRenderer = Minecraft.getInstance().getItemRenderer();
+		boolean blockItem = itemRenderer.getModel(toRender, be.getLevel(), null, 0).isGui3d();
 
-		boolean blockItem = itemRenderer.getModel(heldItem, null, null, 0)
-				.isGui3d();
+		ms.pushPose();
 
 		TransformStack.of(ms)
 				.center()
@@ -55,7 +59,7 @@ public class PolarizerRenderer extends SafeBlockEntityRenderer<PolarizerBlockEnt
 				.rotateXDegrees(90)
 				.scale(blockItem ? .5f : .375f);
 
-		itemRenderer.renderStatic(heldItem, ItemDisplayContext.FIXED, light, overlay, ms, buffer,be.getLevel(), 0);
+		itemRenderer.renderStatic(toRender, ItemDisplayContext.FIXED, light, overlay, ms, buffer, be.getLevel(), 0);
 
 		ms.popPose();
 	}

@@ -48,6 +48,7 @@ public class MachineConfig extends ConfigBase {
     public final ConfigInt surfaceScannerScanDepth = i(-64, -512, "surfaceScannerScanDepth", Comments.surfaceScannerScanDepth);
 
     public final ConfigGroup polarizer = group(1, "polarizer", "Polarizer");
+    @Deprecated(forRemoval = true, since = "1.2.5-community")
     public final ConfigInt polarizerItemChargingRate = i(1000, 1, "polarizerItemChargingRate", Comments.polarizerItemChargingRate);
 
     public final ConfigGroup cokeOven = group(1, "coke_oven", "Coke Oven");

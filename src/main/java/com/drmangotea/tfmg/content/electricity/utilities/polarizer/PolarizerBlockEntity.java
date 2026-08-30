@@ -26,6 +26,7 @@ import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.items.IItemHandlerModifiable;
 import net.neoforged.neoforge.items.wrapper.CombinedInvWrapper;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Optional;
@@ -33,7 +34,7 @@ import java.util.Optional;
 import static net.minecraft.world.level.block.HorizontalDirectionalBlock.FACING;
 
 public class PolarizerBlockEntity extends ElectricBlockEntity implements IHaveGoggleInformation, Clearable {
-    public SmartInventory inventory = new SmartInventory(1, this, 1, false).forbidExtraction().whenContentsChanged(this::onInventoryChanged);
+    public SmartInventory inventory = new LetMeKeepMyItemSmartInventory(1, this).forbidExtraction().whenContentsChanged(this::onInventoryChanged);
     public SmartInventory outputInventory = new SmartInventory(1, this, 1, false).forbidInsertion().whenContentsChanged(this::onInventoryChanged);
 
     public IItemHandlerModifiable itemCapability;
@@ -46,6 +47,14 @@ public class PolarizerBlockEntity extends ElectricBlockEntity implements IHaveGo
     public PolarizerBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
         itemCapability = new CombinedInvWrapper(inventory, outputInventory);
+    }
+
+    public ItemStack getInputItem() {
+        return inventory.getStackInSlot(0);
+    }
+
+    public ItemStack getOutputItem() {
+        return outputInventory.getStackInSlot(0);
     }
 
     public static void registerCapabilities(RegisterCapabilitiesEvent event) {
@@ -62,8 +71,10 @@ public class PolarizerBlockEntity extends ElectricBlockEntity implements IHaveGo
     }
 
     public void onInventoryChanged(int count) {
+        if (level == null) return;
         sendData();
         setChanged();
+        level.invalidateCapabilities(this.getPos());
         if (inventory.isEmpty()) {
             chargeCapacitors = false;
             recipe = null;
@@ -118,12 +129,12 @@ public class PolarizerBlockEntity extends ElectricBlockEntity implements IHaveGo
         if (level.isClientSide) {
             angle.chase(180 * (capacitorPercentage / 200f), 0.2f, LerpedFloat.Chaser.EXP);
             angle.tickChaser();
+            return;
         }
 
-        if (chargeCapacitors && recipe != null && getPowerUsage() >= recipe.energy) {
-            if (capacitorPercentage < 200) {
-                capacitorPercentage++;
-            }
+        if (chargeCapacitors && recipe != null && getPowerUsage() >= recipe.energy && capacitorPercentage < 200) {
+            capacitorPercentage++;
+            sendData();
         }
 
         if (chargeCapacitors && recipe != null && capacitorPercentage >= 200) {
@@ -134,27 +145,35 @@ public class PolarizerBlockEntity extends ElectricBlockEntity implements IHaveGo
     private boolean canFitOutput(PolarizingRecipe recipe) {
         if (level == null) return false;
         ItemStack simulatedResult = PolarizerCommons.assembleResult(level, getBlockPos().getCenter(), recipe);
-        ItemStack remainder = outputInventory.insertItem(0, simulatedResult, true);
-        return remainder.isEmpty();
+        ItemStack current = outputInventory.getStackInSlot(0);
+        if (current.isEmpty()) return true;
+        if (!ItemStack.isSameItemSameComponents(current, simulatedResult)) return false;
+        return current.getCount() + simulatedResult.getCount() > current.getMaxStackSize();
     }
 
     public void performRecipe(PolarizingRecipe recipe) {
-        if (level == null) return;
+        if (level == null || !canFitOutput(recipe)) return;
 
         ItemStack result = PolarizerCommons.assembleResult(level, getBlockPos().getCenter(), recipe);
 
-        ItemStack remainder = outputInventory.insertItem(0, result, true);
-        if (!remainder.isEmpty()) {
-            return;
-        }
-        outputInventory.insertItem(0, result, false);
-
-        inventory.extractItem(0, inventory.getStackInSlot(0).getCount(), false);
-
+        inventory.setStackInSlot(0, ItemStack.EMPTY);
         this.recipe = null;
         capacitorPercentage = 0;
+
+        ItemStack current = outputInventory.getStackInSlot(0);
+        if (current.isEmpty()) {
+            outputInventory.setStackInSlot(0, result);
+        } else {
+            ItemStack merged = current.copy();
+            merged.grow(result.getCount());
+            outputInventory.setStackInSlot(0, merged);
+        }
+
+        sendData();
+        setChanged();
     }
 
+    @Deprecated
     public int getItemChargingRate() {
         return TFMGConfigs.common().machines.polarizerItemChargingRate.get();
     }
@@ -191,5 +210,22 @@ public class PolarizerBlockEntity extends ElectricBlockEntity implements IHaveGo
     public void clearContent() {
         this.inventory.clearContent();
         this.outputInventory.clearContent();
+    }
+
+    private static class LetMeKeepMyItemSmartInventory extends SmartInventory {
+        private final PolarizerBlockEntity be;
+
+        public LetMeKeepMyItemSmartInventory(int slots, PolarizerBlockEntity be) {
+            super(slots, be, 1, false);
+            this.be = be;
+        }
+
+        @Override
+        public @NotNull ItemStack extractItem(int slot, int amount, boolean simulate) {
+            if (be.capacitorPercentage > 0 && be.capacitorPercentage < 200) {
+                return ItemStack.EMPTY;
+            }
+            return super.extractItem(slot, amount, simulate);
+        }
     }
 }
