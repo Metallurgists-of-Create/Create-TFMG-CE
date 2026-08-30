@@ -1,6 +1,5 @@
 package com.drmangotea.tfmg.content.electricity.utilities.resistor;
 
-
 import com.drmangotea.tfmg.base.lang.TFMGLang;
 import com.drmangotea.tfmg.registry.TFMGDataComponents;
 import net.minecraft.ChatFormatting;
@@ -17,17 +16,16 @@ import java.util.List;
 
 @ParametersAreNonnullByDefault
 public class ResistorBlockItem extends BlockItem {
-    public ResistorBlockItem(Block p_40565_, Properties p_40566_) {
-        super(p_40565_, p_40566_);
+    public ResistorBlockItem(Block b, Properties p) {
+        super(b, p);
     }
 
-    @Override
-    @OnlyIn(Dist.CLIENT)
+    @Override @OnlyIn(Dist.CLIENT)
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
-
-
-        tooltip.add(TFMGLang.translateDirect("tooltip.resistor", stack.get(TFMGDataComponents.RESISTANCE) == null ? 0 : stack.get(TFMGDataComponents.RESISTANCE)).append("Ω")
-                .withStyle(ChatFormatting.GREEN)
+        tooltip.add(TFMGLang
+			.translateDirect("tooltip.resistor", stack.getOrDefault(TFMGDataComponents.RESISTANCE, 0))
+			.append("Ω")
+			.withStyle(ChatFormatting.GREEN)
         );
         super.appendHoverText(stack, context, tooltip, flag);
     }

@@ -24,16 +24,15 @@ public class ResistorBlockEntity extends ElectricBlockEntity {
         return direction == getBlockState().getValue(FACING).getOpposite();
     }
 
-
-
     @Override
     public float resistance() {
         return resistance;
     }
 
-    public void setResistance(ItemStack stack){
-        if(stack.get(TFMGDataComponents.RESISTANCE)!=null)
-            this.resistance = stack.get(TFMGDataComponents.RESISTANCE);
+    public void setResistance(ItemStack stack) {
+		var resistance = stack.get(TFMGDataComponents.RESISTANCE);
+        if(resistance!=null)
+            this.resistance = resistance;
     }
 
     @Override
