@@ -3,7 +3,7 @@
   <h1>Create: TFMG Community Edition</h1>
   <a href="https://www.curseforge.com/minecraft/mc-mods/tfmg-community-edition"><picture><source srcset="https://img.shields.io/badge/CurseForge-202830?style=for-the-badge&logo=curseforge" media="(prefers-color-scheme: dark)"><img src="https://img.shields.io/badge/CurseForge-white?style=for-the-badge&logo=curseforge" alt="CurseForge"></picture></a>
   <a href="https://modrinth.com/mod/tfmg-community-edition"><picture><source srcset="https://img.shields.io/badge/Modrinth-202830?style=for-the-badge&logo=modrinth" media="(prefers-color-scheme: dark)"><img src="https://img.shields.io/badge/Modrinth-white?style=for-the-badge&logo=modrinth" alt="Modrinth"></picture></a>
-  <a href="https://discord.gg/HCRF9PYdSy"><picture><source srcset="https://img.shields.io/badge/Discord-202830?style=for-the-badge&logo=discord" media="(prefers-color-scheme: dark)"><img src="https://img.shields.io/badge/Discord-white?style=for-the-badge&logo=discord" alt="Discord"></picture></a>
+  <a href="https://discord.gg/4yx2D6XRKf"><picture><source srcset="https://img.shields.io/badge/Discord-202830?style=for-the-badge&logo=discord" media="(prefers-color-scheme: dark)"><img src="https://img.shields.io/badge/Discord-white?style=for-the-badge&logo=discord" alt="Discord"></picture></a>
   <br>
   <a href="https://github.com/Metallurgists-of-Create/Create-TFMG-CE/graphs/contributors"><picture><img alt="GitHub contributors" src="https://img.shields.io/github/contributors/Metallurgists-of-Create/Create-TFMG-CE"></picture></a>
   <a href="https://github.com/Metallurgists-of-Create/Create-TFMG-CE/stargazers"><picture><img alt="Stars" src="https://img.shields.io/github/stars/Metallurgists-of-Create/Create-TFMG-CE?style=flat"></picture></a>
