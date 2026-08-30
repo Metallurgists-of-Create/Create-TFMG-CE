@@ -4,6 +4,7 @@ import com.drmangotea.tfmg.content.items.weapons.advanced_potato_cannon.Advanced
 import com.drmangotea.tfmg.content.items.weapons.flamethrover.FlamethrowerRenderHandler;
 import com.drmangotea.tfmg.content.items.weapons.quad_potato_cannon.QuadPotatoCannonRenderHandler;
 import com.drmangotea.tfmg.base.events.TFMGClientEvents;
+import com.drmangotea.tfmg.content.machinery.vat.base.registry.VatCategoryEvent;
 import com.drmangotea.tfmg.ponder.TFMGPonderPlugin;
 import com.drmangotea.tfmg.registry.TFMGDataComponents;
 import com.drmangotea.tfmg.registry.TFMGItems;
@@ -12,6 +13,7 @@ import net.createmod.ponder.foundation.PonderIndex;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.ModLoader;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
@@ -45,6 +47,7 @@ public class TFMGClient {
     public static void clientInit(final FMLClientSetupEvent event) {
         PonderIndex.addPlugin(new TFMGPonderPlugin());
         registerModelPredicates();
+        ModLoader.postEvent(new VatCategoryEvent());
     }
 
     public static void registerModelPredicates() {

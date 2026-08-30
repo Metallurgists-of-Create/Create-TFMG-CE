@@ -4,6 +4,7 @@ import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.base.lang.TFMGLang;
 import com.drmangotea.tfmg.base.pressure.Pressure;
 import com.drmangotea.tfmg.config.TFMGConfigs;
+import com.drmangotea.tfmg.content.machinery.vat.base.registry.VatCategoryEvent;
 import com.drmangotea.tfmg.content.machinery.vat.base.registry.VatOperation;
 import com.drmangotea.tfmg.recipes.VatMachineRecipe;
 import com.drmangotea.tfmg.registry.TFMGGuiTextures;
@@ -114,11 +115,17 @@ public class ChemicalVatCategory extends CreateRecipeCategory<VatMachineRecipe> 
     }
 
     public void draw(VatMachineRecipe recipe, IRecipeSlotsView iRecipeSlotsView, GuiGraphics graphics, double mouseX, double mouseY) {
-        List<VatOperation> machines = recipe.machines;
         List<ResourceLocation> allowedVatTypes = recipe.allowedVatTypes;
         TFMGGuiTextures.VAT.render(graphics, 0, 24);
-        drawVatTypes(allowedVatTypes, graphics);
-        drawSprites(machines, graphics);
+        VatCategoryEvent.drawVatTypes(allowedVatTypes, graphics, mouseX, mouseY);
+
+        List<VatOperation> alreadyHandled = new ArrayList<>();
+
+        for (VatOperation operation : recipe.machines) {
+            if (alreadyHandled.contains(operation)) continue;
+            VatCategoryEvent.drawOperation(operation, recipe, graphics, mouseX, mouseY);
+            alreadyHandled.add(operation);
+        }
 
         renderPressure(recipe.pressure, graphics);
 
@@ -176,42 +183,14 @@ public class ChemicalVatCategory extends CreateRecipeCategory<VatMachineRecipe> 
                     .withColor(colour));
         }
 
+        List<VatOperation> alreadyHandled = new ArrayList<>();
 
-        List<VatOperation> machines = recipe.machines;
+        for (VatOperation operation : recipe.machines) {
+            if (alreadyHandled.contains(operation)) continue;
+            VatCategoryEvent.addDescriptor(operation, recipe, tooltip::add, mouseX, mouseY);
+            alreadyHandled.add(operation);
+        }
 
-        if (machines.contains(TFMGVatOperations.MIXING.get())) {
-            if (mouseY > -3 && mouseY < 60 && mouseX > 43 && mouseX < 67) {
-                tooltip.add(TFMGLang.translate("recipe.vat.mixing").component()
-                        .withColor(PonderPalette.INPUT.getColor()));
-            }
-        }
-        if (machines.contains(TFMGVatOperations.CENTRIFUGE.get())) {
-            if (mouseY > -3 && mouseY < 60 && mouseX > 43 && mouseX < 67) {
-                tooltip.add(TFMGLang.translate("recipe.vat.centrifuge").component()
-                        .withColor(PonderPalette.INPUT.getColor()));
-            }
-        }
-        if (machines.contains(TFMGVatOperations.ELECTRODE.get())) {
-            boolean xCheck = mouseX > 11 && mouseX < 35 || mouseX > 75 && mouseX < 99;
-            if (mouseY > -3 && mouseY < 60 && xCheck) {
-                tooltip.add(TFMGLang.translate("recipe.vat.electrode").component()
-                        .withColor(PonderPalette.INPUT.getColor()));
-            }
-        }
-        if (machines.contains(TFMGVatOperations.GRAPHITE_ELECTRODE.get())) {
-            if (mouseY > -3 && mouseY < 60 && mouseX > 11 && mouseX < 99) {
-                tooltip.add(TFMGLang.translate("recipe.vat.graphite_electrode").component()
-                        .withColor(PonderPalette.INPUT.getColor()));
-            }
-        }
-        //Chemica fix
-        if (machines.contains(new VatOperation(TFMG.asResource("chemica:electrode")))) {
-            boolean xCheck = mouseX > 11 && mouseX < 35 || mouseX > 75 && mouseX < 99;
-            if (mouseY > -3 && mouseY < 60 && xCheck) {
-                tooltip.add(Component.translatable("chemica.recipe.vat.platinum_electrode")
-                        .withColor(PonderPalette.INPUT.getColor()));
-            }
-        }
         return tooltip;
     }
 
@@ -292,34 +271,6 @@ public class ChemicalVatCategory extends CreateRecipeCategory<VatMachineRecipe> 
     }
 
     private void drawSprites(List<VatOperation> machines, GuiGraphics graphics) {
-        if (machines.contains(TFMGVatOperations.MIXING.get())) {
-            TFMGGuiTextures.VAT_MACHINE.render(graphics, 55 - 12, 0);
-            TFMGGuiTextures.MIXER.render(graphics, 55 - 19, 32);
-        }
-        if (machines.contains(TFMGVatOperations.CENTRIFUGE.get())) {
-            TFMGGuiTextures.VAT_MACHINE.render(graphics, 55 - 12, 0);
-            TFMGGuiTextures.CENTRIFUGE.render(graphics, 55 - 12, 32);
-        }
-        if (machines.contains(TFMGVatOperations.ELECTRODE.get())) {
-            TFMGGuiTextures.VAT_MACHINE.render(graphics, 55 - 12 - 32, 0);
-            TFMGGuiTextures.VAT_MACHINE.render(graphics, 55 - 12 + 32, 0);
-            TFMGGuiTextures.ELECTRODE.render(graphics, 55 - 3 - 32, 32);
-            TFMGGuiTextures.ELECTRODE.render(graphics, 55 - 3 + 32, 32);
-        }
-        if (machines.contains(TFMGVatOperations.GRAPHITE_ELECTRODE.get())) {
-            TFMGGuiTextures.VAT_MACHINE.render(graphics, 55 - 12 - 32, 0);
-            TFMGGuiTextures.VAT_MACHINE.render(graphics, 55 - 12 + 32, 0);
-            TFMGGuiTextures.VAT_MACHINE.render(graphics, 55 - 12, 0);
-            TFMGGuiTextures.GRAPHITE_ELECTRODE.render(graphics, 55 - 4 - 32, 32);
-            TFMGGuiTextures.GRAPHITE_ELECTRODE.render(graphics, 55 - 4 + 32, 32);
-            TFMGGuiTextures.GRAPHITE_ELECTRODE.render(graphics, 55 - 4, 32);
-        }
-        //Chemica fix
-        if (machines.contains(new VatOperation(TFMG.asResource("chemica:electrode")))) {
-            TFMGGuiTextures.VAT_MACHINE.render(graphics, 11, 0);
-            TFMGGuiTextures.VAT_MACHINE.render(graphics, 75, 0);
-            TFMGGuiTextures.PLATINUM_ELECTRODE.render(graphics, 19, 32);
-            TFMGGuiTextures.PLATINUM_ELECTRODE.render(graphics, 83, 32);
-        }
+
     }
 }
