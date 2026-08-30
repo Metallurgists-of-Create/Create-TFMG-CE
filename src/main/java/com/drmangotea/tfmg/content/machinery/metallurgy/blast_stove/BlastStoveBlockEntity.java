@@ -297,6 +297,7 @@ public class BlastStoveBlockEntity extends SmartBlockEntity implements IHaveGogg
         primaryCapability = handlerForPrimaryCapability();
         secondaryCapability = handlerForSecondaryCapability();
 		if (level == null) return;
+        //TODO: invalidate caps correctly
 		level.invalidateCapabilities(getBlockPos());
     }
 

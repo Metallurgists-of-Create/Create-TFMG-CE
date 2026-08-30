@@ -115,6 +115,7 @@ public class ConcreteHoseBlockEntity extends KineticBlockEntity {
     public void tick() {
         super.tick();
         if (level == null) return;
+        //TODO: invalidate caps correctly
         level.invalidateCapabilities(getBlockPos());
         float newOffset = offset.getValue() + getMovementSpeed();
         if (newOffset < 0) {
