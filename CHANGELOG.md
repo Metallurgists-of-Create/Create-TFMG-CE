@@ -18,7 +18,6 @@ Contributors:<br>
 - Ponders:
   - Added ponders for the following:
     - Regular Engine Assembly
-    - Turbine Engine Assembly
     - Radial Engine Assembly
 - Vat:
   - `ChemicalVatCategory` now uses a dynamic barometer needle to display pressure.
