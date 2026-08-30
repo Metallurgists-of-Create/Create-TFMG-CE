@@ -39,7 +39,6 @@ public class InputOutputTankWrapper implements IFluidHandler {
 	public int fill(FluidStack resource, FluidAction action) {
 		if (resource.isEmpty())
 			return 0;
-		
 		return input.fill(resource, action);
 	}
 	
@@ -47,7 +46,6 @@ public class InputOutputTankWrapper implements IFluidHandler {
 	public FluidStack drain(FluidStack resource, FluidAction action) {
 		if (resource.isEmpty())
 			return resource;
-			
 		return output.drain(resource, action);
 	}
 	

@@ -10,30 +10,35 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
 import net.neoforged.neoforge.fluids.BaseFlowingFluid;
 
+import javax.annotation.ParametersAreNonnullByDefault;
+
+@ParametersAreNonnullByDefault
 public class ConcreteFluid extends BaseFlowingFluid {
+
     protected ConcreteFluid(Properties properties) {
         super(properties);
     }
+
     @Override
-    public boolean isSource(FluidState p_76140_) {
+    public boolean isSource(FluidState state) {
         return true;
     }
+
     @Override
-    public int getAmount(FluidState p_164509_) {
+    public int getAmount(FluidState state) {
         return 8;
     }
-    @Override
-    public void randomTick(Level level, BlockPos pos, FluidState p_230574_, RandomSource randomSource) {
 
+    @Override
+    public void randomTick(Level level, BlockPos pos, FluidState state, RandomSource randomSource) {
         if(!(level.getBlockState(pos).getBlock() instanceof LiquidBlock))
             return;
-
         int random = randomSource.nextInt(7) ;
-        if(random==2) {
-
+        if(random == 2) {
             level.setBlock(pos, TFMGBlocks.CONCRETE.block.get().defaultBlockState(), 3);
         }
     }
+
     protected boolean isRandomlyTicking() {
         return true;
     }
@@ -43,16 +48,16 @@ public class ConcreteFluid extends BaseFlowingFluid {
             super(properties);
         }
 
-        protected void createFluidStateDefinition(StateDefinition.Builder<Fluid, FluidState> p_76260_) {
-            super.createFluidStateDefinition(p_76260_);
-            p_76260_.add(LEVEL);
+        protected void createFluidStateDefinition(StateDefinition.Builder<Fluid, FluidState> stateBuilder) {
+            super.createFluidStateDefinition(stateBuilder);
+            stateBuilder.add(LEVEL);
         }
 
-        public int getAmount(FluidState p_76264_) {
-            return p_76264_.getValue(LEVEL);
+        public int getAmount(FluidState state) {
+            return state.getValue(LEVEL);
         }
 
-        public boolean isSource(FluidState p_76262_) {
+        public boolean isSource(FluidState state) {
             return false;
         }
     }
@@ -60,14 +65,6 @@ public class ConcreteFluid extends BaseFlowingFluid {
     public static class Source extends ConcreteFluid {
         public Source(Properties properties) {
             super(properties);
-        }
-
-        public int getAmount(FluidState p_76269_) {
-            return 8;
-        }
-
-        public boolean isSource(FluidState p_76267_) {
-            return true;
         }
     }
 }
