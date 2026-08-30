@@ -58,7 +58,6 @@ public class TFMGClientEvents {
 		onTick(false);
 	}
 
-
 	public static void onTick(boolean isPreEvent) {
 		if (!isGameActive())
 			return;
@@ -67,13 +66,12 @@ public class TFMGClientEvents {
 		TFMGClient.ADVANCED_POTATO_CANNON_RENDER_HANDLER.tick();
 		TFMGClient.FLAMETHROWER_RENDER_HANDLER.tick();
 
-
-
 		TransformerBlockEntity.tickOutliner();
 		CableConnectorBlockEntity.tickOutliner();
 
 		ScrewdriverItem.clientTick();
 	}
+
 	@SubscribeEvent
 	public static void PlayerLoggedOut(PlayerEvent.PlayerLoggedOutEvent event) {
 		Player player = event.getEntity();
@@ -82,11 +80,10 @@ public class TFMGClientEvents {
 			player.getPersistentData().remove("IsUsingEngineController");
 	}
 
-	//@SubscribeEvent
 	public static void registerGuiOverlays(RegisterGuiLayersEvent event) {
 		event.registerAbove(VanillaGuiLayers.HOTBAR, TFMG.asResource("multimeter_info"), MultimeterOverlayRenderer.OVERLAY);
-
 	}
+
 	protected static boolean isGameActive() {
 		return !(Minecraft.getInstance().level == null || Minecraft.getInstance().player == null);
 	}
