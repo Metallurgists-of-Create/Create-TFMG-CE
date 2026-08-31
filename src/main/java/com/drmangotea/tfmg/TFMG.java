@@ -118,10 +118,9 @@ public class TFMG {
 
     @Contract("_ -> new")
     public static ResourceLocation asResource(String path) {
-        if (path.contains(":")) {
-            return ResourceLocation.tryParse(path);
-        }
-        return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
+        return path.contains(":")
+                ? ResourceLocation.tryParse(path)
+                : ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
     }
 
     public static TFMGRegistrate registrate() {
