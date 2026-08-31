@@ -12,8 +12,8 @@ import com.drmangotea.tfmg.content.electricity.network.large_switch.LargeSwitchB
 import com.drmangotea.tfmg.content.electricity.network.transformer.large.LargeTransformerBlockEntity;
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import net.createmod.catnip.platform.CatnipServices;
-import net.minecraft.client.Minecraft;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;

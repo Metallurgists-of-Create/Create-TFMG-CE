@@ -1,7 +1,6 @@
 package com.drmangotea.tfmg.content.electricity.utilities.polarizer;
 
 import com.drmangotea.tfmg.base.lang.TFMGTexts;
-import com.drmangotea.tfmg.config.TFMGConfigs;
 import com.drmangotea.tfmg.content.electricity.base.ElectricBlockEntity;
 import com.drmangotea.tfmg.content.electricity.measurement.MultimeterItem;
 import com.drmangotea.tfmg.recipes.PolarizingRecipe;
@@ -172,7 +171,7 @@ public class PolarizerBlockEntity extends ElectricBlockEntity implements IHaveGo
         sendData();
         setChanged();
     }
-    
+
     public int getItemChargingRate() {
         return this.recipe == null ? 0 : this.recipe.energy;
     }

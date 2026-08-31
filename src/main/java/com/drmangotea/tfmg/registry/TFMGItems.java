@@ -33,11 +33,11 @@ import com.drmangotea.tfmg.content.machinery.vat.industrial_mixer.mode.MixerMode
 import com.drmangotea.tfmg.registry.TFMGTags.Items;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllTags;
-import com.simibubi.create.foundation.item.ItemDescription;
 import com.simibubi.create.content.processing.sequenced.SequencedAssemblyItem;
 import com.simibubi.create.foundation.data.AssetLookup;
 import com.simibubi.create.foundation.data.CreateRegistrate;
 import com.simibubi.create.foundation.data.recipe.CommonMetal;
+import com.simibubi.create.foundation.item.ItemDescription;
 import com.tterrag.registrate.builders.ItemBuilder;
 import com.tterrag.registrate.providers.DataGenContext;
 import com.tterrag.registrate.providers.RegistrateRecipeProvider;
