@@ -53,6 +53,8 @@ public abstract class AbstractEngineBlockEntity extends KineticElectricBlockEnti
     //
     public boolean drainFuel = true;
 
+    protected boolean updateCapability;
+
 
     public AbstractEngineBlockEntity(BlockEntityType<?> typeIn, BlockPos pos, BlockState state) {
         super(typeIn, pos, state);
@@ -60,7 +62,7 @@ public abstract class AbstractEngineBlockEntity extends KineticElectricBlockEnti
         fuelTank = new EngineFluidTank(8000, false, true, f -> tankUpdated(f, true), TFMGTags.Fluids.AIR.tag);
         exhaustTank = new EngineFluidTank(8000, true, false, f -> tankUpdated(f, false));
         fluidCapability = new CombinedTankWrapper(fuelTank, exhaustTank);
-
+        updateCapability = false;
         refreshCapability();
     }
 
@@ -86,13 +88,15 @@ public abstract class AbstractEngineBlockEntity extends KineticElectricBlockEnti
     @Override
     public void tick() {
         if (level == null) return;
-        //TODO: invalidate caps correctly
-        level.invalidateCapabilities(getBlockPos());
         if (signalChanged) {
             signalChanged = false;
             analogSignalChanged();
         }
         super.tick();
+        if (updateCapability) {
+            updateCapability = false;
+            refreshCapability();
+        }
     }
 
     public void tankUpdated(FluidStack stack, boolean fuelTank) {
@@ -234,7 +238,6 @@ public abstract class AbstractEngineBlockEntity extends KineticElectricBlockEnti
     @Override
     protected void read(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {
         super.read(compound, registries, clientPacket);
-
         reverse = compound.getBoolean("Reverse");
         signal = compound.getInt("Signal") + 1;
         if (hasEngineController())
@@ -243,11 +246,16 @@ public abstract class AbstractEngineBlockEntity extends KineticElectricBlockEnti
         fuelTank.readFromNBT(registries, compound.getCompound("FuelTank"));
         exhaustTank.readFromNBT(registries, compound.getCompound("ExhaustTank"));
 
+        updateCapability = true;
 
         updateRotation();
         updateGeneratedRotation();
+    }
 
-
+    @Override
+    public void invalidate() {
+        super.invalidate();
+        invalidateCapabilities();
     }
 
     @Override

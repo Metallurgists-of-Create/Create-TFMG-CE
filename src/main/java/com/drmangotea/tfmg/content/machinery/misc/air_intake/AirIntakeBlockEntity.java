@@ -53,6 +53,8 @@ public class AirIntakeBlockEntity extends KineticBlockEntity implements IWrencha
     protected FluidTank tankInventory;
     protected IFluidHandler fluidCapability;
 
+    protected boolean updateCapability;
+
     private BlockPos capabilityController;
     private boolean capabilityResolved = false;
     private int syncedDiameter = -1;
@@ -66,6 +68,8 @@ public class AirIntakeBlockEntity extends KineticBlockEntity implements IWrencha
         super(typeIn, pos, state);
         tankInventory = createInventory();
         fluidCapability = tankInventory;
+        updateCapability = false;
+        refreshCapability();
     }
 
     public static void registerCapabilities(RegisterCapabilitiesEvent event) {
@@ -97,8 +101,6 @@ public class AirIntakeBlockEntity extends KineticBlockEntity implements IWrencha
     public void tick(){
         super.tick();
         if (level == null) return;
-        //TODO: invalidate caps correctly
-        level.invalidateCapabilities(getBlockPos());
 
         if (!level.isClientSide) {
             if (tankInventory.getFluidAmount() + Math.min(getProduction(), tankInventory.getSpace()) <= tankInventory.getCapacity()) {
@@ -198,6 +200,10 @@ public class AirIntakeBlockEntity extends KineticBlockEntity implements IWrencha
                     maxShaftSpeed = testedSpeed;
             }
         }
+        if (updateCapability) {
+            updateCapability = false;
+            refreshCapability();
+        }
         if (isUsedByController)
             return;
         if (diameter == 2){
@@ -238,6 +244,7 @@ public class AirIntakeBlockEntity extends KineticBlockEntity implements IWrencha
         } else
             handlerForCapability = tankInventory;
         fluidCapability = handlerForCapability;
+        invalidateCapabilities();
     }
 
     public int getPossibleDiameter() {
@@ -397,6 +404,8 @@ public class AirIntakeBlockEntity extends KineticBlockEntity implements IWrencha
         isUsedByController = compound.getBoolean("IsUsed");
         hasShaft = compound.getBoolean("HasShaft");
         tankInventory.readFromNBT(registries,compound.getCompound("TankContent"));
+
+        updateCapability = true;
     }
 
     @Override

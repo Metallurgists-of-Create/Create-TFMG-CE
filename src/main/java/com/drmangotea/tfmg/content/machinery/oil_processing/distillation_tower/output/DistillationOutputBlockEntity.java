@@ -35,15 +35,16 @@ public class DistillationOutputBlockEntity extends SmartBlockEntity implements I
 
 
     protected IFluidHandler fluidCapability;
-
     public ScrollOptionBehaviour<DistillationOutputMode> mode;
-
     public final FluidTank tank = new SmartFluidTank(8000, this::onFluidStackChanged);
 
+    protected boolean updateCapability;
 
     public DistillationOutputBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
         fluidCapability = tank;
+        updateCapability = false;
+        refreshCapability();
     }
 
     @Override
@@ -59,9 +60,12 @@ public class DistillationOutputBlockEntity extends SmartBlockEntity implements I
     }
 
     @Override
-    public void lazyTick() {
-        super.lazyTick();
-        level.invalidateCapabilities(getBlockPos());
+    public void tick() {
+        super.tick();
+        if (updateCapability) {
+            updateCapability = false;
+            refreshCapability();
+        }
     }
 
     public static void registerCapabilities(RegisterCapabilitiesEvent event) {
@@ -75,6 +79,7 @@ public class DistillationOutputBlockEntity extends SmartBlockEntity implements I
     protected void read(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {
         super.read(compound,registries , clientPacket);
         tank.readFromNBT(registries,compound.getCompound("TankContent"));
+        updateCapability = true;
     }
 
     @Override
@@ -86,6 +91,17 @@ public class DistillationOutputBlockEntity extends SmartBlockEntity implements I
     @Override
     public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
         return containedFluidTooltip(tooltip, isPlayerSneaking, fluidCapability);
+    }
+
+    @Override
+    public void invalidate() {
+        super.invalidate();
+        invalidateCapabilities();
+    }
+
+    public void refreshCapability() {
+        fluidCapability = tank;
+        invalidateCapabilities();
     }
 
     public static class DistillationOutputValueBox extends ValueBoxTransform.Sided {

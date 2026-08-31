@@ -49,6 +49,8 @@ public class DistillationControllerBlockEntity extends SmartBlockEntity implemen
     protected IFluidHandler fluidCapability;
     public final FluidTank tank = new SmartFluidTank(8000, this::onFluidStackChanged);
 
+    protected boolean updateCapability;
+
     private final RecipeManager.CachedCheck<DistillationRecipeInput, DistillationRecipe> quickCheck;
 
     public boolean refreshOutputs = false;
@@ -61,6 +63,8 @@ public class DistillationControllerBlockEntity extends SmartBlockEntity implemen
         fluidCapability = tank;
         this.quickCheck = RecipeManager.createCheck(TFMGRecipeTypes.DISTILLATION.getType());
         refreshOutputs = true;
+        updateCapability = false;
+        refreshCapability();
     }
 
     public static void registerCapabilities(RegisterCapabilitiesEvent event) {
@@ -79,6 +83,17 @@ public class DistillationControllerBlockEntity extends SmartBlockEntity implemen
 
     @Override
     public void addBehaviours(List<BlockEntityBehaviour> behaviours) {
+    }
+
+    @Override
+    public void invalidate() {
+        super.invalidate();
+        invalidateCapabilities();
+    }
+
+    public void refreshCapability() {
+        fluidCapability = tank;
+        invalidateCapabilities();
     }
 
     public void manageDialRendering(){
@@ -147,13 +162,11 @@ public class DistillationControllerBlockEntity extends SmartBlockEntity implemen
     public void tick() {
         super.tick();
         if (level == null) return;
-        //TODO: invalidate caps correctly
-        level.invalidateCapabilities(getBlockPos());
-        this.outputs.forEach(out -> asOutput(out, (be) -> {
-            if (level != null) {
-                level.invalidateCapabilities(be.getBlockPos());
-            }
-        }));
+
+        if (updateCapability) {
+            updateCapability = false;
+            refreshCapability();
+        }
 
         if (refreshOutputs) {
             refreshOutputs();
@@ -257,6 +270,7 @@ public class DistillationControllerBlockEntity extends SmartBlockEntity implemen
             NbtUtils.readBlockPos(compound, "Output" + i).ifPresent(output -> outputs.add(output));
         }
         this.untilNextProcess = compound.getInt("UntilNextProcess");
+        updateCapability = true;
     }
 
     @Override

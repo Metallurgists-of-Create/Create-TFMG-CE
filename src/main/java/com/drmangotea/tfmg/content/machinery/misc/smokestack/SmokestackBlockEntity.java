@@ -27,25 +27,24 @@ import static com.drmangotea.tfmg.content.machinery.misc.smokestack.SmokestackBl
 
 public class SmokestackBlockEntity extends SmartBlockEntity {
 
-
     int smokeTimer = 0;
 
-
     public FluidTank tankInventory;
-
     protected IFluidHandler fluidCapability;
+
+    protected boolean updateCapability;
 
     public SmokestackBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
-
         tankInventory = new SmartFluidTank(8000, this::onFluidStackChanged) {
             @Override
             public boolean isFluidValid(FluidStack stack) {
                 return stack.getFluid().isSame(TFMGFluids.CARBON_DIOXIDE.getSource());
             }
         };
-
         fluidCapability = tankInventory;
+        updateCapability = false;
+        refreshCapability();
     }
 
     public static void registerCapabilities(RegisterCapabilitiesEvent event) {
@@ -59,8 +58,12 @@ public class SmokestackBlockEntity extends SmartBlockEntity {
     @Override
     public void invalidate() {
         super.invalidate();
+        invalidateCapabilities();
+    }
 
-       invalidateCapabilities();
+    public void refreshCapability() {
+        fluidCapability = tankInventory;
+        invalidateCapabilities();
     }
 
     @Override
@@ -68,6 +71,7 @@ public class SmokestackBlockEntity extends SmartBlockEntity {
         super.read(compound,registries , clientPacket);
         tankInventory.readFromNBT(registries,compound.getCompound("TankContent"));
         smokeTimer = compound.getInt("Timer");
+        updateCapability = true;
     }
 
     protected void onFluidStackChanged(FluidStack newFluidStack) {
@@ -89,11 +93,14 @@ public class SmokestackBlockEntity extends SmartBlockEntity {
     public void tick() {
         super.tick();
         if (level == null) return;
-        //TODO: invalidate caps correctly
-        level.invalidateCapabilities(getBlockPos());
         if (smokeTimer > 0) {
             makeParticles(level, getBlockPos());
             smokeTimer--;
+        }
+
+        if (updateCapability) {
+            updateCapability = false;
+            refreshCapability();
         }
 
         if (tankInventory.isEmpty())

@@ -3,6 +3,7 @@ package com.drmangotea.tfmg.ponder;
 import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.registry.TFMGBlocks;
 import com.drmangotea.tfmg.registry.TFMGItems;
+import com.simibubi.create.infrastructure.ponder.AllCreatePonderTags;
 import com.tterrag.registrate.util.entry.RegistryEntry;
 import net.createmod.catnip.registry.RegisteredObjectsHelper;
 import net.createmod.ponder.api.registration.PonderTagRegistrationHelper;
@@ -62,6 +63,9 @@ public class TFMGPonderTags {
                 .description("Chemical vat and machines that expand it")
                 .register();
 
+        HELPER.addToTag(AllCreatePonderTags.ARM_TARGETS)
+                .add(TFMGBlocks.WINDING_MACHINE)
+                .add(TFMGBlocks.POLARIZER);
 
         HELPER.addToTag(OIL_PROCESSING)
                 .add(TFMGBlocks.STEEL_DISTILLATION_CONTROLLER)

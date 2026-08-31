@@ -48,6 +48,10 @@ public class MachineConfig extends ConfigBase {
     public final ConfigInt surfaceScannerScanDepth = i(-64, -512, "surfaceScannerScanDepth", Comments.surfaceScannerScanDepth);
 
     public final ConfigGroup polarizer = group(1, "polarizer", "Polarizer");
+
+    /**
+     * @deprecated Polarizer charging rate is now defined by the recipe.
+     */
     @Deprecated(forRemoval = true, since = "1.2.5-community")
     public final ConfigInt polarizerItemChargingRate = i(1000, 1, "polarizerItemChargingRate", Comments.polarizerItemChargingRate);
 
