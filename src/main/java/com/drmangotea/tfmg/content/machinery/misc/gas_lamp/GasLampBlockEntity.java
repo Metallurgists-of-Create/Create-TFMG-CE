@@ -23,13 +23,18 @@ import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
 import java.util.List;
 
 public class GasLampBlockEntity extends SmartBlockEntity implements IHaveGoggleInformation {
-
+    protected IFluidHandler fluidCapability;
     public FluidTank tankInventory;
     public int lightTimer = 0;
+
+    protected boolean updateCapability;
 
     public GasLampBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
         tankInventory = createInventory();
+        fluidCapability = tankInventory;
+        updateCapability = false;
+        refreshCapability();
     }
 
     protected SmartFluidTank createInventory() {
@@ -46,7 +51,7 @@ public class GasLampBlockEntity extends SmartBlockEntity implements IHaveGoggleI
         event.registerBlockEntity(
                 Capabilities.FluidHandler.BLOCK,
                 TFMGBlockEntities.GAS_LAMP.get(),
-                (be, context) -> be.tankInventory
+                (be, context) -> be.fluidCapability
         );
     }
     @Override
@@ -70,8 +75,11 @@ public class GasLampBlockEntity extends SmartBlockEntity implements IHaveGoggleI
     public void tick() {
         super.tick();
         if (level == null) return;
-        //TODO: invalidate caps correctly
-        level.invalidateCapabilities(getBlockPos());
+
+        if (updateCapability) {
+            updateCapability = false;
+            refreshCapability();
+        }
 
         if (tankInventory.isEmpty() || !tankInventory.isFluidValid(tankInventory.getFluid())) {
             level.setBlock(getBlockPos(), this.getBlockState()
@@ -97,6 +105,7 @@ public class GasLampBlockEntity extends SmartBlockEntity implements IHaveGoggleI
     protected void read(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {
         super.read(compound,registries , clientPacket);
         tankInventory.readFromNBT(registries,compound.getCompound("TankContent"));
+        updateCapability = true;
     }
 
     @Override
@@ -109,4 +118,8 @@ public class GasLampBlockEntity extends SmartBlockEntity implements IHaveGoggleI
     public void addBehaviours(List<BlockEntityBehaviour> behaviours) {
     }
 
+    public void refreshCapability() {
+        fluidCapability = tankInventory;
+        invalidateCapabilities();
+    }
 }

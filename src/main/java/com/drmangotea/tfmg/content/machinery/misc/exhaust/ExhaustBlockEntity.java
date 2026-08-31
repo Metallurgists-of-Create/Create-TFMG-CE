@@ -35,12 +35,16 @@ public class ExhaustBlockEntity extends SmartBlockEntity implements IHaveGoggleI
     public boolean spawnsSmoke = false;
     public int smokeTimer = 0;
 
+    protected boolean updateCapability;
+
     public ExhaustBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
         tankInventory = createInventory();
         fluidCapability = tankInventory;
-
+        updateCapability = false;
+        refreshCapability();
     }
+
     public static void registerCapabilities(RegisterCapabilitiesEvent event) {
         event.registerBlockEntity(
                 Capabilities.FluidHandler.BLOCK,
@@ -72,8 +76,6 @@ public class ExhaustBlockEntity extends SmartBlockEntity implements IHaveGoggleI
     public void tick() {
         super.tick();
         if (level == null) return;
-        //TODO: invalidate caps correctly
-        level.invalidateCapabilities(getBlockPos());
 
         Direction direction = this.getBlockState().getValue(ExhaustBlock.FACING);
 
@@ -99,6 +101,10 @@ public class ExhaustBlockEntity extends SmartBlockEntity implements IHaveGoggleI
             tankInventory.drain(100, IFluidHandler.FluidAction.EXECUTE);
         }
 
+        if (updateCapability) {
+            updateCapability = false;
+            refreshCapability();
+        }
     }
 
     @Override
@@ -106,6 +112,8 @@ public class ExhaustBlockEntity extends SmartBlockEntity implements IHaveGoggleI
         super.read(compound,registries , clientPacket);
         tankInventory.readFromNBT(registries,compound.getCompound("TankContent"));
         smokeTimer = compound.getInt("Timer");
+
+        updateCapability = true;
     }
 
     @Override
@@ -145,5 +153,15 @@ public class ExhaustBlockEntity extends SmartBlockEntity implements IHaveGoggleI
     @Override
     public void addBehaviours(List<BlockEntityBehaviour> behaviours) {}
 
+    @Override
+    public void invalidate() {
+        super.invalidate();
+        invalidateCapabilities();
+    }
+
+    public void refreshCapability() {
+        fluidCapability = tankInventory;
+        invalidateCapabilities();
+    }
 }
 

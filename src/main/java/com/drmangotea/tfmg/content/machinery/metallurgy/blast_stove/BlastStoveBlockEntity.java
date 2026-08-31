@@ -55,6 +55,7 @@ public class BlastStoveBlockEntity extends SmartBlockEntity implements IHaveGogg
     protected BlockPos controller;
     protected BlockPos lastKnownPos;
     public boolean updateConnectivity;
+    protected boolean updateCapability;
     private static final Object HotBlastRecipesKey = new Object();
     private static final int SYNC_RATE = 8;
 	private HotBlastRecipe recipe;
@@ -62,8 +63,6 @@ public class BlastStoveBlockEntity extends SmartBlockEntity implements IHaveGogg
     protected boolean queuedSync;
 	protected int height = 1, width = 1;
     public int timer = 0;
-
-    public boolean refreshCapability;
 
     public BlastStoveBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
@@ -77,6 +76,7 @@ public class BlastStoveBlockEntity extends SmartBlockEntity implements IHaveGogg
         secondaryCapability = new InputOutputTankWrapper(secondaryOutputInventory, primaryInputInventory);
 		updateConnectivity = false;
 		recipe = null;
+        updateCapability = false;
         refreshCapability();
     }
 
@@ -105,13 +105,12 @@ public class BlastStoveBlockEntity extends SmartBlockEntity implements IHaveGogg
     @Override
 	public void tick() {
         super.tick();
-
-        if (refreshCapability) {
-            refreshCapability = false;
+		if (level == null) return;
+        if (updateCapability) {
+            updateCapability = false;
             refreshCapability();
         }
 
-		if (level == null) return;
 		if(!(level.isClientSide && !isVirtual()) &&
 			isController() &&
 			!primaryInputInventory.isEmpty() &&
@@ -136,7 +135,6 @@ public class BlastStoveBlockEntity extends SmartBlockEntity implements IHaveGogg
 					timer = 0;
 				} else { timer++; }
 			}
-			refreshCapability = true;
         }
 
         if (syncCooldown > 0) {
@@ -144,6 +142,8 @@ public class BlastStoveBlockEntity extends SmartBlockEntity implements IHaveGogg
             if (syncCooldown == 0 && queuedSync)
                 sendData();
         }
+
+
 
         if (lastKnownPos == null)
             lastKnownPos = getBlockPos();
@@ -160,8 +160,8 @@ public class BlastStoveBlockEntity extends SmartBlockEntity implements IHaveGogg
     public void lazyTick() {
         super.lazyTick();
 		updateRecipe();
-		refreshCapability = true;
         updateConnectivity = true;
+        updateCapability = true;
     }
 	
 	public int getTotalTankSize() {
@@ -296,9 +296,7 @@ public class BlastStoveBlockEntity extends SmartBlockEntity implements IHaveGogg
     public void refreshCapability() {
         primaryCapability = handlerForPrimaryCapability();
         secondaryCapability = handlerForSecondaryCapability();
-		if (level == null) return;
-        //TODO: invalidate caps correctly
-		level.invalidateCapabilities(getBlockPos());
+        invalidateCapabilities();
     }
 
     private IFluidHandler handlerForPrimaryCapability() {
@@ -353,11 +351,11 @@ public class BlastStoveBlockEntity extends SmartBlockEntity implements IHaveGogg
             secondaryInputInventory.readFromNBT(registries, compound.getCompound("secondaryInputInventory"));
             if (primaryOutputInventory.getSpace() < 0)
                 primaryOutputInventory.drain(-primaryOutputInventory.getSpace(), IFluidHandler.FluidAction.EXECUTE);
+
+            updateCapability = true;
         }
 
         timer = compound.getInt("Timer");
-
-        refreshCapability = true;
 
         if (!clientPacket)
             return;
