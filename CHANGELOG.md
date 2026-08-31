@@ -30,9 +30,9 @@ Contributors:<br>
   - Fossilstone in deposits now starts at half the height instead of 4.
   - Empty Oil Reserves now convert all contained deposits into Bedrock.
 - Polarizer:
-  - Goggle info rounds item charge (This helps prevent flickering of the tooltip)
-  - Mechanical arms can now insert and extract items
-  - Particles now show when a recipe is completed
+  - Goggle info rounds item charge (This helps prevent flickering of the tooltip).
+  - Mechanical arms can now insert and extract items.
+  - Particles now show when a recipe is completed.
 - Blast Furnace:
   - Top Hatch is now evaluated with the rest of the multiblock.
   - Top Hatch now directly inserts items instead of dropping them.
@@ -49,7 +49,7 @@ Contributors:<br>
   - Vats now use `Pressure` instead of relying on an `int`.
   - `VatMachineRecipe$Builder` now has `pressure(int)` and `heatLevel(int)`.
   - `VatMachineRecipe` now uses correct builders.
-  - `VatRecipeParams` now have default values (datagen kept throwing NPE)
+  - `VatRecipeParams` now have default values (datagen kept throwing NPE).
   - Vat goggle information now shows recipe progress.
   - Fixed bug where recipe would get set to `null` causing recipes to take longer.
   - JEI rendering for Vat Operations, Vat Operation Tooltips & Vat Types is now handled through the `VatCategoryEvent` client event.
