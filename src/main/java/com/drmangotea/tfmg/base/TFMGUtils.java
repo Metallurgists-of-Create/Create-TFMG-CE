@@ -18,6 +18,7 @@ import net.createmod.catnip.theme.Color;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
@@ -214,8 +215,7 @@ public class TFMGUtils {
         }
 
         if (handler.getTanks() > 1) {
-            if (isEmpty)
-                tooltip.remove(tooltip.size() - 1);
+            if (isEmpty) tooltip.removeLast();
             return true;
         }
 
