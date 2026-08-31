@@ -35,6 +35,10 @@ import java.util.Random;
 
 @Mod(TFMG.MOD_ID)
 public class TFMG {
+    /**
+     * Use another {@link Random} from things like a <code>Level</code> or anything else.
+     * Use this as last resort if needed or more so random stuff.
+     */
     public static final Random RANDOM = new Random();
     public static final String MOD_ID = "tfmg";
     public static final ElectricNetworkManager NETWORK_MANAGER = new ElectricNetworkManager();
