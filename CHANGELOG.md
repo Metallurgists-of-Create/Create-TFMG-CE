@@ -53,6 +53,7 @@ Contributors:<br>
   - Vat goggle information now shows recipe progress.
   - Fixed bug where recipe would get set to `null` causing recipes to take longer.
   - JEI rendering for Vat Operations, Vat Operation Tooltips & Vat Types is now handled through the `VatCategoryEvent` client event.
+  - `drawVatTypes` & `drawSprites` in `ChemicalVatCategory` are now deprecated for removal.
 - Electricity:
   - Removed `getPos()[long]` in `IElectric` in favour of `getPos()[BlockPos]`.
 - Mixin `PipeAttachmentModelMixin#gatherModelData` no longer uses `@Overwrite`.
