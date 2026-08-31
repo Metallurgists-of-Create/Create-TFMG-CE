@@ -30,6 +30,7 @@ Contributors:<br>
   - Empty Oil Reserves now convert all contained deposits into Bedrock.
 - Polarizer:
   - Goggle info rounds item charge (This helps prevent flickering of the tooltip)
+  - Mechanical arms can now insert and extract items
 - Blast Furnace:
   - Top Hatch is now evaluated with the rest of the multiblock.
   - Top Hatch now directly inserts items instead of dropping them.
@@ -38,6 +39,7 @@ Contributors:<br>
 
 ### API Changes:
 - Created VAT operation registry
+- Marked `MachineConfig$polarizerItemChargingRate` as marked for removal
 - Created `TFMGClientConfig`
   - Created `UIConfig`
 - Vat:
@@ -57,6 +59,8 @@ Contributors:<br>
   - Polarizing recipes now have `energy` as a field to specify required amount
   - `PolarizingRecipe` now has an `energy` field
   - Data gen can specify amount of energy
+  - Polarizers now have an output inventory
+  - Mark `PolarizerBlockEntity#getItemChargingRate` as `Deprecated`
 
 ### New Translations:
 

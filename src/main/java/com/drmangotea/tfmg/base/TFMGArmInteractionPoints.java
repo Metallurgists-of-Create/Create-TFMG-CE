@@ -1,6 +1,7 @@
 package com.drmangotea.tfmg.base;
 
 import com.drmangotea.tfmg.TFMG;
+import com.drmangotea.tfmg.content.electricity.utilities.polarizer.PolarizerBlockEntity;
 import com.drmangotea.tfmg.content.machinery.misc.winding_machine.SpoolItem;
 import com.drmangotea.tfmg.content.machinery.misc.winding_machine.WindingMachineBlockEntity;
 import com.drmangotea.tfmg.registry.TFMGBlocks;
@@ -17,6 +18,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Supplier;
 
@@ -24,10 +26,10 @@ import static net.minecraft.world.level.block.state.properties.BlockStatePropert
 
 public class TFMGArmInteractionPoints {
     // TODO:
-    //  - Polarizer
     //  - Casting Basin
     public static final Holder.Reference<ArmInteractionPointType>
-        WINDING_MACHINE = register("winding_machine", WindingMachineType::new);
+        WINDING_MACHINE = register("winding_machine", WindingMachineType::new),
+        POLARIZER_MACHINE = register("polarizer", PolarizerMachineType::new);
 
     private static Holder.Reference<ArmInteractionPointType> register(String name, Supplier<? extends ArmInteractionPointType> factory) {
 		return Registry.registerForHolder(
@@ -38,6 +40,67 @@ public class TFMGArmInteractionPoints {
     }
 
     public static void prepare() {}
+
+    public static class PolarizerMachineType extends ArmInteractionPointType {
+        @Override
+        public boolean canCreatePoint(Level level, BlockPos pos, BlockState state) {
+            return TFMGBlocks.POLARIZER.has(state);
+        }
+
+        @Override
+        public @Nullable ArmInteractionPoint createPoint(Level level, BlockPos pos, BlockState state) {
+            return new PolarizerMachinePoint(this, level, pos, state);
+        }
+    }
+
+    public static class PolarizerMachinePoint extends ArmInteractionPoint {
+        public PolarizerMachinePoint(ArmInteractionPointType type, Level level, BlockPos pos, BlockState state) {
+            super(type, level, pos, state);
+        }
+
+        @Override
+        public int getSlotCount(ArmBlockEntity armBlockEntity) {
+            return 1;
+        }
+
+        //TODO get it to place it at the metal contacts
+//        @Override
+//        protected Vec3 getInteractionPositionVector() {
+//
+//        }
+
+        @Override
+        public ItemStack insert(ArmBlockEntity armBlockEntity, ItemStack stack, boolean simulate) {
+            if (!(level.getBlockEntity(pos) instanceof PolarizerBlockEntity machine))
+                return stack;
+
+            if (!machine.inventory.isEmpty() || !machine.outputInventory.isEmpty())
+                return stack;
+
+            return machine.inventory.insertItem(0, stack, simulate);
+        }
+
+        @Override
+        public ItemStack extract(ArmBlockEntity armBlockEntity, int slot, int amount, boolean simulate) {
+            if (!(level.getBlockEntity(pos) instanceof PolarizerBlockEntity machine))
+                return ItemStack.EMPTY;
+
+            ItemStack stack = machine.getOutputItem();
+            if (stack.isEmpty())
+                return ItemStack.EMPTY;
+
+            ItemStack extracted = stack.copy();
+            extracted.setCount(Math.min(amount, stack.getCount()));
+
+            if (!simulate) {
+                ItemStack remaining = stack.copy();
+                remaining.shrink(extracted.getCount());
+                machine.outputInventory.setStackInSlot(0, remaining);
+            }
+
+            return extracted;
+        }
+    }
 
     public static class WindingMachineType extends ArmInteractionPointType {
         @Override

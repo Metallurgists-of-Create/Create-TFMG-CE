@@ -31,19 +31,43 @@ public class PolarizerBlock extends TFMGHorizontalDirectionalBlock implements IB
 
     @Override
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
-        if(level.getBlockEntity(pos) instanceof PolarizerBlockEntity be){
-            if (!TFMGUtils.returnItemToInventory(be.inventory, 0, player, hand)) {
-                if(be.inventory.isEmpty() && !stack.isEmpty()) {
-                    ItemStack heldCopy = player.getItemInHand(hand).copy();
-                    heldCopy.setCount(1);
-                    be.inventory.insertItem(0, heldCopy, false);
-                    player.getItemInHand(hand).shrink(1);
-                    return ItemInteractionResult.SUCCESS;
-                }
-            } else {
-                return ItemInteractionResult.SUCCESS;
-            }
+        if (!(level.getBlockEntity(pos) instanceof PolarizerBlockEntity be)) {
+            return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         }
+
+        ItemStack output = be.outputInventory.getStackInSlot(0);
+        if (!output.isEmpty()) {
+            if (!level.isClientSide) {
+                ItemStack extracted = output.copy();
+                be.outputInventory.setStackInSlot(0, ItemStack.EMPTY);
+                if (!player.getInventory().add(extracted)) {
+                    player.drop(extracted, false);
+                }
+                be.sendData();
+                be.setChanged();
+            }
+            return ItemInteractionResult.SUCCESS;
+        }
+
+        if (be.capacitorPercentage > 0 || TFMGUtils.returnItemToInventory(be.inventory, 0, player, hand)) {
+            return ItemInteractionResult.SUCCESS;
+        }
+
+        if (be.inventory.isEmpty()
+                && !stack.isEmpty()
+                && be.outputInventory.getStackInSlot(0).isEmpty()
+                && PolarizerCommons.getRecipe(level, stack).isPresent()) {
+            if (!level.isClientSide) {
+                ItemStack held = player.getItemInHand(hand);
+                ItemStack toInsert = held.copyWithCount(1);
+                be.inventory.insertItem(0, toInsert, false);
+                held.shrink(1);
+                be.sendData();
+                be.setChanged();
+            }
+            return ItemInteractionResult.SUCCESS;
+        }
+
         return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
     }
 
