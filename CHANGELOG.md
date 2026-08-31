@@ -32,6 +32,7 @@ Contributors:<br>
 - Polarizer:
   - Goggle info rounds item charge (This helps prevent flickering of the tooltip)
   - Mechanical arms can now insert and extract items
+  - Particles now show when a recipe is completed
 - Blast Furnace:
   - Top Hatch is now evaluated with the rest of the multiblock.
   - Top Hatch now directly inserts items instead of dropping them.
