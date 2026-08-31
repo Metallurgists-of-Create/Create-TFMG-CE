@@ -6,6 +6,7 @@ import com.drmangotea.tfmg.base.pressure.Pressure;
 import com.drmangotea.tfmg.config.TFMGConfigs;
 import com.drmangotea.tfmg.content.machinery.vat.base.registry.VatCategoryEvent;
 import com.drmangotea.tfmg.content.machinery.vat.base.registry.VatOperation;
+import com.drmangotea.tfmg.content.machinery.vat.base.registry.functions.DrawableVatType;
 import com.drmangotea.tfmg.recipes.VatMachineRecipe;
 import com.drmangotea.tfmg.registry.TFMGGuiTextures;
 import com.drmangotea.tfmg.registry.TFMGVatOperations;
@@ -261,15 +262,15 @@ public class ChemicalVatCategory extends CreateRecipeCategory<VatMachineRecipe> 
         }
     }
 
-    private void drawVatTypes(List<ResourceLocation> allowedVatTypes, GuiGraphics graphics) {
-        if (allowedVatTypes.contains(TFMG.asResource("firebrick_lined_vat")) && allowedVatTypes.size() == 1) {
-            TFMGGuiTextures.FIREPROOF_BRICK_OVERLAY.render(graphics, 55 - 48, 32);
-        }
-        if (allowedVatTypes.contains(TFMG.asResource("cast_iron_vat")) && allowedVatTypes.size() == 1) {
-            TFMGGuiTextures.CAST_IRON_VAT_OVERLAY.render(graphics, 0, 24);
-        }
-    }
-
+    /**
+     * @deprecated Use {@link VatCategoryEvent#addDrawableVatType(ResourceLocation, DrawableVatType)} instead
+     */
+    @Deprecated(forRemoval = true, since = "1.2.5")
+    private void drawVatTypes(List<ResourceLocation> allowedVatTypes, GuiGraphics graphics) {}
+    /**
+     * @deprecated Use {@link VatCategoryEvent#drawOperation(VatOperation, VatMachineRecipe, GuiGraphics, double, double)} instead
+     */
+    @Deprecated(forRemoval = true, since = "1.2.5")
     private void drawSprites(List<VatOperation> machines, GuiGraphics graphics) {
 
     }
