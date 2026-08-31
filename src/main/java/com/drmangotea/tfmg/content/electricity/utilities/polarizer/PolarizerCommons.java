@@ -1,6 +1,6 @@
 package com.drmangotea.tfmg.content.electricity.utilities.polarizer;
 
-import com.drmangotea.tfmg.base.TFMGUtils;
+import com.drmangotea.tfmg.base.spark.ElectricitySparkPacket;
 import com.drmangotea.tfmg.recipes.PolarizingRecipe;
 import com.drmangotea.tfmg.registry.TFMGRecipeTypes;
 import com.simibubi.create.content.processing.sequenced.SequencedAssemblyRecipe;
@@ -32,7 +32,7 @@ public class PolarizerCommons {
     public static ItemStack assembleResult(Level level, Vec3 pos, PolarizingRecipe recipe) {
         if (level == null) return ItemStack.EMPTY;
         ItemStack result = recipe.getRollableResults().getFirst().rollOutput(level.random);
-        TFMGUtils.spawnElectricParticles(level, pos);
+        ElectricitySparkPacket.send(level, pos);
         return result;
     }
 }

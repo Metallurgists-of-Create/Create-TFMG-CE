@@ -153,7 +153,7 @@ public class PolarizerBlockEntity extends ElectricBlockEntity implements IHaveGo
     public void performRecipe(PolarizingRecipe recipe) {
         if (level == null || !canFitOutput(recipe)) return;
 
-        ItemStack result = PolarizerCommons.assembleResult(level, getBlockPos().getCenter(), recipe);
+        ItemStack result = PolarizerCommons.assembleResult(level, getBlockPos().getCenter().add(0, 7/16f, 0), recipe);
 
         inventory.setStackInSlot(0, ItemStack.EMPTY);
         this.recipe = null;

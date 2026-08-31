@@ -3,6 +3,7 @@ package com.drmangotea.tfmg.base;
 import com.drmangotea.tfmg.TFMGRegistries;
 import com.drmangotea.tfmg.base.lang.TFMGLang;
 import com.drmangotea.tfmg.base.lang.TFMGTexts;
+import com.drmangotea.tfmg.base.spark.ElectricSparkParticle;
 import com.drmangotea.tfmg.base.spark.Spark;
 import com.drmangotea.tfmg.content.electricity.connection.cable_type.CableType;
 import com.drmangotea.tfmg.content.machinery.vat.electrode_holder.electrode.Electrode;
@@ -17,7 +18,7 @@ import net.createmod.catnip.theme.Color;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -129,11 +130,12 @@ public class TFMGUtils {
         return s;
     }
 
+    @Deprecated(forRemoval = true, since = "1.2.5")
     public static void spawnElectricParticles(Level level, BlockPos pos) {
         spawnElectricParticles(level, new Vec3(pos.getX(), pos.getY(), pos.getZ()));
     }
 
-    //TODO - Use ElectricSparkParticle instead and change some values
+    @Deprecated(forRemoval = true, since = "1.2.5")
     public static void spawnElectricParticles(Level level, Vec3 pos) {
         if (!(level instanceof ServerLevel serverLevel)) {
             return;
@@ -146,8 +148,10 @@ public class TFMGUtils {
             double y = (r.nextDouble() - 0.5) * 0.02;
             double z = (r.nextDouble() - 0.5) * 0.02;
 
+            ParticleOptions data = new ElectricSparkParticle.Data();
+
             serverLevel.sendParticles(
-                    ParticleTypes.END_ROD,
+                    data,
                     pos.x,
                     pos.y + 0.5,
                     pos.z,
