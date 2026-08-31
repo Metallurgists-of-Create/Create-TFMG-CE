@@ -81,7 +81,7 @@ public interface IElectric extends IHaveGoggleInformation {
      */
     default void onPlaced() {
         if (getLevelAccessor() instanceof ServerLevel serverLevel)
-            CatnipServices.NETWORK.sendToClientsTrackingChunk(serverLevel, new ChunkPos(getPos().asLong()), new ConnectNeighborsPacket(getPos()));
+            CatnipServices.NETWORK.sendToClientsTrackingChunk(serverLevel, new ChunkPos(getPos()), new ConnectNeighborsPacket(getPos()));
         ElectricalNetwork network = TFMG.NETWORK_MANAGER.getOrCreateNetworkFor(this);
         setNetwork(getPos().asLong());
         getData().electricalNetworkId = getPos().asLong();
@@ -276,7 +276,7 @@ public interface IElectric extends IHaveGoggleInformation {
 
             this.blockFail();
             if (getLevelAccessor() instanceof ServerLevel serverLevel)
-                CatnipServices.NETWORK.sendToClientsTrackingChunk(serverLevel, new ChunkPos(getPos().asLong()), new ElectricalBlockFailPacket(getPos()));
+                CatnipServices.NETWORK.sendToClientsTrackingChunk(serverLevel, new ChunkPos(getPos()), new ElectricalBlockFailPacket(getPos()));
             getData().failTimer = 0;
             sendStuff();
         } else if ((getData().voltage > getMaxVoltage() && getMaxVoltage() > 0) || (getCurrent() > getMaxCurrent() && getMaxCurrent() > 0) || ((getData().highestCurrent > getMaxCurrent() && getMaxCurrent() > 0) && isCable())) {
@@ -346,20 +346,20 @@ public interface IElectric extends IHaveGoggleInformation {
     /**
      * tells blocks when the network doesn't have enough power
      */
-    default void updateUnpowered(List<Long> alreadyChecked) {
-        alreadyChecked.add(getPos().asLong());
+    default void updateUnpowered(List<BlockPos> alreadyChecked) {
+        alreadyChecked.add(getPos());
         updateNextTick();
 
         if (this instanceof CableConnectorBlockEntity connectorBE) {
             for (CableConnection connection : connectorBE.connections) {
-                if (getLevelAccessor().getBlockEntity(connection.pos1().equals(getPos()) ? connection.pos2() : connection.pos1()) instanceof CableConnectorBlockEntity be2 && !alreadyChecked.contains(be2.getBlockPos().asLong())) {
+                if (getLevelAccessor().getBlockEntity(connection.pos1().equals(getPos()) ? connection.pos2() : connection.pos1()) instanceof CableConnectorBlockEntity be2 && !alreadyChecked.contains(be2.getBlockPos())) {
                     be2.updateUnpowered(alreadyChecked);
                 }
             }
         }
 
         for (Direction direction : Direction.values()) {
-            if (getLevelAccessor().getBlockEntity(getPos().relative(direction)) instanceof IElectric be && !alreadyChecked.contains(be.getPos().asLong())) {
+            if (getLevelAccessor().getBlockEntity(getPos().relative(direction)) instanceof IElectric be && !alreadyChecked.contains(be.getPos())) {
                 be.updateUnpowered(alreadyChecked);
             }
         }
@@ -643,13 +643,9 @@ public interface IElectric extends IHaveGoggleInformation {
     }
 
     default void updateNetwork() {
-
-        //getLevelAccessor().setBlock(getBlockPos().above(2), Blocks.DIAMOND_BLOCK.defaultBlockState(), 2);
-
-        //TFMG.LOGGER.debug("ahoj");
         getOrCreateElectricNetwork().updateNetwork();
         if (getLevelAccessor() instanceof ServerLevel serverLevel)
-            CatnipServices.NETWORK.sendToClientsTrackingChunk(serverLevel, new ChunkPos(getPos().asLong()), new NetworkUpdatePacket(getPos()));
+            CatnipServices.NETWORK.sendToClientsTrackingChunk(serverLevel, new ChunkPos(getPos()), new NetworkUpdatePacket(getPos()));
         sendStuff();
     }
 
