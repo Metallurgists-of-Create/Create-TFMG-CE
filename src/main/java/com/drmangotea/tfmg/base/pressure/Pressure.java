@@ -35,13 +35,14 @@ public class Pressure {
         return new Pressure(tag.getInt("Pressure"));
     }
 
-    public static final Codec<Pressure> CODEC =  RecordCodecBuilder.create(inst -> inst.group(
-            Codec.INT.fieldOf("kpa").forGetter(Pressure::getValue)
-    ).apply(inst, Pressure::new));
+    public static final Codec<Pressure> CODEC = Codec.INT.xmap(
+            Pressure::new,
+            Pressure::getValue
+    );
 
-    public static final StreamCodec<ByteBuf, Pressure> STREAM_CODEC = StreamCodec.composite(
-            ByteBufCodecs.INT, Pressure::getValue,
-            Pressure::new
+    public static final StreamCodec<ByteBuf, Pressure> STREAM_CODEC = ByteBufCodecs.INT.map(
+            Pressure::new,
+            Pressure::getValue
     );
 
     public Pressure copy() {
