@@ -1,6 +1,5 @@
 package com.drmangotea.tfmg.base.spark;
 
-
 import com.drmangotea.tfmg.registry.TFMGParticleTypes;
 import com.simibubi.create.content.equipment.bell.BasicParticleData;
 import com.simibubi.create.content.equipment.bell.CustomRotationParticle;
@@ -9,6 +8,7 @@ import net.minecraft.client.particle.SpriteSet;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
 
+//TODO - Fix clients disconnecting when doing ServerLevel#sendParticles (bad data)
 public class ElectricSparkParticle extends CustomRotationParticle {
 
 	private final SpriteSet animatedSprite;
@@ -19,8 +19,6 @@ public class ElectricSparkParticle extends CustomRotationParticle {
 	protected int loopFrames = 16;
 	protected int endFrames = 20;
 	protected int totalFrames = 53;
-
-
 
 	public ElectricSparkParticle(ClientLevel worldIn, double x, double y, double z, double vx, double vy, double vz,
                                  SpriteSet spriteSet, ParticleOptions data) {

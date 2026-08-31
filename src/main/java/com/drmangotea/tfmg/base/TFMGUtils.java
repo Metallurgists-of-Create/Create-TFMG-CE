@@ -3,7 +3,6 @@ package com.drmangotea.tfmg.base;
 import com.drmangotea.tfmg.TFMGRegistries;
 import com.drmangotea.tfmg.base.lang.TFMGLang;
 import com.drmangotea.tfmg.base.lang.TFMGTexts;
-import com.drmangotea.tfmg.base.spark.ElectricSparkParticle;
 import com.drmangotea.tfmg.base.spark.Spark;
 import com.drmangotea.tfmg.content.electricity.connection.cable_type.CableType;
 import com.drmangotea.tfmg.content.machinery.vat.electrode_holder.electrode.Electrode;
@@ -134,6 +133,7 @@ public class TFMGUtils {
         spawnElectricParticles(level, new Vec3(pos.getX(), pos.getY(), pos.getZ()));
     }
 
+    //TODO - Use ElectricSparkParticle instead and change some values
     public static void spawnElectricParticles(Level level, Vec3 pos) {
         if (!(level instanceof ServerLevel serverLevel)) {
             return;
