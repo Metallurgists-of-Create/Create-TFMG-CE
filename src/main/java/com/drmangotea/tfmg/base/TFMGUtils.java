@@ -21,6 +21,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
@@ -130,33 +131,41 @@ public class TFMGUtils {
     }
 
     public static void spawnElectricParticles(Level level, BlockPos pos) {
-        if (level == null) return;
-        RandomSource r = level.getRandom();
-        for (int i = 0; i < r.nextInt(40); i++) {
-            float x = level.random.nextFloat() * 2 - 1;
-            float y = level.random.nextFloat() * 2 - 1;
-            float z = level.random.nextFloat() * 2 - 1;
-            level.addParticle(new ElectricSparkParticle.Data(), pos.getX() + 0.5f + x, pos.getY() + 0.5f + y, pos.getZ() + 0.5f + z, x, y, z);
-        }
+        spawnElectricParticles(level, new Vec3(pos.getX(), pos.getY(), pos.getZ()));
     }
 
     public static void spawnElectricParticles(Level level, Vec3 pos) {
-        if (level == null) return;
-        RandomSource r = level.getRandom();
+        if (!(level instanceof ServerLevel serverLevel)) {
+            return;
+        }
+
+        RandomSource r = serverLevel.getRandom();
+
         for (int i = 0; i < r.nextInt(40); i++) {
-            float x = level.random.nextFloat() * 2 - 1;
-            float y = level.random.nextFloat() * 2 - 1;
-            float z = level.random.nextFloat() * 2 - 1;
-            level.addParticle(new ElectricSparkParticle.Data(), pos.x() + x, pos.y() + y, pos.z() + 0.5f + z, x, y, z);
+            double x = (r.nextDouble() - 0.5) * 0.02;
+            double y = (r.nextDouble() - 0.5) * 0.02;
+            double z = (r.nextDouble() - 0.5) * 0.02;
+
+            serverLevel.sendParticles(
+                    ParticleTypes.END_ROD,
+                    pos.x,
+                    pos.y + 0.5,
+                    pos.z,
+                    1,
+                    x,
+                    y,
+                    z,
+                    0.02
+            );
         }
     }
 
-    public static float getDistance(BlockPos pos1, BlockPos pos2, boolean _2D) {
+    public static float getDistance(BlockPos pos1, BlockPos pos2, boolean is2d) {
         float x = Math.abs(pos1.getX() - pos2.getX());
         float y = Math.abs(pos1.getY() - pos2.getY());
         float z = Math.abs(pos1.getZ() - pos2.getZ());
 
-        return (float) Math.sqrt(x * x + z * z + (_2D?0:y*y));
+        return (float) Math.sqrt(x * x + z * z + (is2d ? 0: y * y));
     }
 	
 	//for Sable stuff:
@@ -181,10 +190,7 @@ public class TFMGUtils {
 
         IFluidHandler handler = be.getLevel().getCapability(Capabilities.FluidHandler.BLOCK, be.getBlockPos(), null);
 
-        if (handler == null)
-            return false;
-
-        if (handler.getTanks() == 0)
+        if (handler == null || handler.getTanks() == 0)
             return false;
 
         LangBuilder mb = CreateLang.translate("generic.unit.millibuckets");
@@ -255,7 +261,7 @@ public class TFMGUtils {
             isEmpty = false;
         }
         if (handler.getSlots() > 1) {
-            if (isEmpty) tooltip.remove(tooltip.size() - 1);
+            if (isEmpty) tooltip.removeLast();
             return true;
         }
         if (!isEmpty) return true;
@@ -315,6 +321,7 @@ public class TFMGUtils {
     }
 
     /// //////////////////////
+
     public static Electrode getElectrode(ResourceLocation key) {
         return TFMGRegistries.ELECTRODE_REGISTRY.get(key);
     }
