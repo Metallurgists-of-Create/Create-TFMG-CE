@@ -21,6 +21,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtOps;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.Clearable;
@@ -356,25 +358,35 @@ public class CokeOvenBlockEntity extends SmartBlockEntity implements IHaveGoggle
 
     @Override
     protected void write(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {
-        super.write(compound,registries , clientPacket);
+        super.write(compound, registries, clientPacket);
         compound.putInt("Timer", timer);
         compound.putInt("TotalTime", totalTime);
         compound.put("Inventory", inventory.serializeNBT(registries));
-        compound.put("PrimaryTankContent", primaryTank.writeToNBT(registries,new CompoundTag()));
-        compound.put("SecondaryTankContent", secondaryTank.writeToNBT(registries,new CompoundTag()));
-        compound.putLong("Controller", controller.asLong());
+        compound.put("PrimaryTankContent", primaryTank.writeToNBT(registries, new CompoundTag()));
+        compound.put("SecondaryTankContent", secondaryTank.writeToNBT(registries, new CompoundTag()));
+        compound.put("Controller", BlockPos.CODEC.encodeStart(NbtOps.INSTANCE, controller).getOrThrow());
     }
 
     @Override
     protected void read(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {
-        super.read(compound,registries , clientPacket);
+        super.read(compound, registries, clientPacket);
+
         timer = compound.getInt("Timer");
         totalTime = compound.getInt("TotalTime");
-        inventory.deserializeNBT(registries,compound.getCompound("Inventory"));
-        primaryTank.readFromNBT(registries,compound.getCompound("PrimaryTankContent"));
-        secondaryTank.readFromNBT(registries,compound.getCompound("SecondaryTankContent"));
-        controller = BlockPos.of(compound.getLong("Controller"));
+        inventory.deserializeNBT(registries, compound.getCompound("Inventory"));
+        primaryTank.readFromNBT(registries, compound.getCompound("PrimaryTankContent"));
+        secondaryTank.readFromNBT(registries, compound.getCompound("SecondaryTankContent"));
+
+        if (compound.contains("Controller", Tag.TAG_COMPOUND)) {
+            controller = BlockPos.CODEC.parse(NbtOps.INSTANCE, compound.get("Controller")).getOrThrow();
+
+        } else if (compound.contains("Controller", Tag.TAG_LONG)) {
+            controller = BlockPos.of(compound.getLong("Controller"));
+            compound.remove("Controller");
+            compound.put("Controller", BlockPos.CODEC.encodeStart(NbtOps.INSTANCE, controller).getOrThrow());
+        }
     }
+
 
     @Override
     public void clearContent() {
