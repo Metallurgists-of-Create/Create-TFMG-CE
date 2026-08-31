@@ -173,7 +173,8 @@ public class PolarizerBlockEntity extends ElectricBlockEntity implements IHaveGo
         setChanged();
     }
 
-    @Deprecated
+    // Is this really needed?
+    @Deprecated(forRemoval = true, since = "1.2.5-community")
     public int getItemChargingRate() {
         return TFMGConfigs.common().machines.polarizerItemChargingRate.get();
     }
