@@ -69,8 +69,5 @@ jobs:
         if: env.DISCORD_WEBHOOK != ''
         run: |
           while IFS= read -r f
-          do
-            name="$(echo ${f##*/} | sed 's/+/-/g')"
-            name="${name%.jar}-build.${{ github.run_number }}.jar"
-            curl -F "file=@\"$f\";filename=\"$name\"" $DISCORD_WEBHOOK
+            do curl -F "file=@\"$f\";filename=\"$(echo ${f##*/} | sed 's/+/-/g')\"" $DISCORD_WEBHOOK
           done <<< "${{ steps.find_jars.outputs.jars }}"
