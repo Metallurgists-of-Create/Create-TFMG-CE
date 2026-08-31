@@ -63,6 +63,12 @@ public class TFMGArmInteractionPoints {
             return 1;
         }
 
+        //TODO get it to place it at the metal contacts
+//        @Override
+//        protected Vec3 getInteractionPositionVector() {
+//
+//        }
+
         @Override
         public ItemStack insert(ArmBlockEntity armBlockEntity, ItemStack stack, boolean simulate) {
             if (!(level.getBlockEntity(pos) instanceof PolarizerBlockEntity machine))
