@@ -45,10 +45,7 @@ public class VatCategoryEvent extends Event implements IModBusEvent {
         if (vatTypes.isEmpty()) return;
         //TODO: Slowly shift between valid types
         ResourceLocation currentType = vatTypes.stream().filter(RENDERED_VAT_TYPES::containsKey).findFirst().orElse(null);
-        DrawableVatType drawable = vatTypes.stream().filter(RENDERED_VAT_TYPES::containsKey).findFirst().map(RENDERED_VAT_TYPES::get).orElse(null);
-        if (drawable != null) {
-            drawable.draw(currentType, graphics, mouseX, mouseY);
-        }
+        vatTypes.stream().filter(RENDERED_VAT_TYPES::containsKey).findFirst().map(RENDERED_VAT_TYPES::get).ifPresent(drawable -> drawable.draw(currentType, graphics, mouseX, mouseY));
     }
 
     public static void addDescriptor(VatOperation operation, VatMachineRecipe recipe, Consumer<Component> tooltip, double mouseX, double mouseY) {
