@@ -140,7 +140,7 @@ public class WindingMachineBlockEntity extends KineticBlockEntity implements IHa
     }
 
     public boolean isWindingIngredient(ItemStack stack) {
-        //
+        // This may work?
         return stack.has(TFMGDataComponents.COIL_TURNS)
                 || stack.has(TFMGDataComponents.SPOOL_AMOUNT)
                 || stack.is(TFMGItems.ELECTROMAGNETIC_COIL)
