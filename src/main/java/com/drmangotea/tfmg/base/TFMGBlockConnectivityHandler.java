@@ -1,6 +1,5 @@
 package com.drmangotea.tfmg.base;
 
-import com.drmangotea.tfmg.TFMG;
 import com.simibubi.create.foundation.blockEntity.IMultiBlockEntityContainer;
 import net.createmod.catnip.data.Iterate;
 import net.minecraft.core.BlockPos;
@@ -78,12 +77,11 @@ public class TFMGBlockConnectivityHandler {
 				continue;
 			
 			visited.add(toCreate.getBlockPos());
-			tryToFormNewMulti(toCreate, size, cache);
+			assembleMultiWithSize(toCreate, size, cache);
 		}
-		cache.printHits();
 	}
 	
-	private static <T extends BlockEntity & IMultiBlockEntityContainer> void tryToFormNewMulti(
+	private static <T extends BlockEntity & IMultiBlockEntityContainer> void assembleMultiWithSize(
 		T be, Sizing size, SearchCache<T> cache
 	) {
 		if (!be.isController())
@@ -145,103 +143,94 @@ public class TFMGBlockConnectivityHandler {
 			return null;
 		BlockEntityType<?> type = be.getType();
 		BlockPos origin = be.getBlockPos();
+		Direction.Axis axis = be.getMainConnectionAxis();
+		
+		Block block = level.getBlockState(origin).getBlock();
 		
 		// optional fluid handling
 		FluidStack fluid = FluidStack.EMPTY;
 		if (be instanceof IMultiBlockEntityContainer.Fluid ifluid && ifluid.hasTank()) {
 			fluid = ifluid.getTank(0).getFluid();
 		}
-		Direction.Axis axis = be.getMainConnectionAxis();
 		
-		int bestWidth = 1;
-		int bestHeight = 1;
-		int bestAmount = 0;
-		for (int width = 1; width <= be.getMaxWidth(); width++) {
-			int[] search = multiSearch(be, type, origin, cache, axis, level, width, fluid);
-			int amount = search[0];
+		Sizing bestFit = new Sizing(0,0,0);
+		for (int width = 1; width <= be.getMaxWidth(); width++) {int height = 0;
 			
-			//verify volume
-			if (amount < bestAmount)
+			int maxLength = be.getMaxLength(axis, width);
+			
+			HeightSearch:
+			for (int Y = 0; Y < maxLength; Y++) {
+				for (int X = 0; X < width; X++) { for (int Z = 0; Z < width; Z++) {
+					BlockPos pos = switch (axis) {
+						case X -> origin.offset(Y, X, Z);
+						case Y -> origin.offset(X, Y, Z);
+						case Z -> origin.offset(X, Z, Y);
+					};
+					Optional<T> part = cache.getOrCache(type, level, pos);
+					if (part.isEmpty())
+						break HeightSearch;
+					
+					Block otherBlock = level.getBlockState(pos).getBlock();
+					if (!block.equals(otherBlock))
+						break HeightSearch;
+					
+					T controller = part.get();
+					if (!sizedAlignedBounded(controller, origin, axis, width, maxLength))
+						break HeightSearch;
+					
+					if (controller instanceof IMultiBlockEntityContainer.Fluid ifluidCon && ifluidCon.hasTank()) {
+						FluidStack otherFluid = ifluidCon.getFluid(0);
+						if (!fluid.isEmpty() && !otherFluid.isEmpty() && !FluidStack.isSameFluidSameComponents(fluid, otherFluid))
+							break HeightSearch;
+					}
+				} }
+				height++;
+			}
+			Sizing search = new Sizing(width, height);
+			
+			//test volume
+			if (search.volume < bestFit.volume)
 				continue;
-			bestWidth = width;
-			bestHeight = search[1];
-			bestAmount = amount;
+			bestFit = search;
 		}
-		return new Sizing(bestWidth, bestHeight, bestAmount);
+		return bestFit;
 	}
 	
-	private static <T extends BlockEntity & IMultiBlockEntityContainer> int[] multiSearch(
-		T be, BlockEntityType<?> type, BlockPos origin, SearchCache<T> cache, Direction.Axis axis, BlockGetter level, int width, FluidStack fluid
+	private static <T extends BlockEntity & IMultiBlockEntityContainer> boolean sizedAlignedBounded(
+		T controller, BlockPos origin, Direction.Axis axis, int width, int maxLength
 	) {
-		int amount = 0;
-		int height = 0;
+		BlockPos pos = controller.getBlockPos();
+		int otherWidth = controller.getWidth();
+		if (otherWidth > width)
+			return false;
+		if (otherWidth == width && controller.getHeight() == maxLength)
+			return false;
 		
-		Block b = level.getBlockState(origin).getBlock();
+		if (axis != controller.getMainConnectionAxis())
+			return false;
 		
-		int maxLength = be.getMaxLength(axis, width);
-		
-		Search:
-		for (int Y = 0; Y < maxLength; Y++) {
-			for (int X = 0; X < width; X++) { for (int Z = 0; Z < width; Z++) {
-				BlockPos pos = switch (axis) {
-					case X -> origin.offset(Y, X, Z);
-					case Y -> origin.offset(X, Y, Z);
-					case Z -> origin.offset(X, Z, Y);
-				};
-				Optional<T> part = cache.getOrCache(type, level, pos);
-				if (part.isEmpty())
-					break Search;
-				
-				Block otherBlock = level.getBlockState(pos).getBlock();
-				if (!b.equals(otherBlock))
-					break Search;
-				
-				T controller = part.get();
-				int otherWidth = controller.getWidth();
-				if (otherWidth > width)
-					break Search;
-				if (otherWidth == width && controller.getHeight() == maxLength)
-					break Search;
-				
-				if (axis != controller.getMainConnectionAxis())
-					break Search;
-				
-				BlockPos conPos = controller.getBlockPos();
-				if (!conPos.equals(origin)) {
-					if (axis == Direction.Axis.Y) { // vertical multi, like a FluidTank
-						if (conPos.getX() < origin.getX())
-							break Search;
-						if (conPos.getZ() < origin.getZ())
-							break Search;
-						if (conPos.getX() + otherWidth > origin.getX() + width)
-							break Search;
-						if (conPos.getZ() + otherWidth > origin.getZ() + width)
-							break Search;
-					} else { // horizontal multi, like an ItemVault
-						if (axis == Direction.Axis.Z && conPos.getX() < origin.getX())
-							break Search;
-						if (conPos.getY() < origin.getY())
-							break Search;
-						if (axis == Direction.Axis.X && conPos.getZ() < origin.getZ())
-							break Search;
-						if (axis == Direction.Axis.Z && conPos.getX() + otherWidth > origin.getX() + width)
-							break Search;
-						if (conPos.getY() + otherWidth > origin.getY() + width)
-							break Search;
-						if (axis == Direction.Axis.X && conPos.getZ() + otherWidth > origin.getZ() + width)
-							break Search;
-					}
-				}
-				if (controller instanceof IMultiBlockEntityContainer.Fluid ifluidCon && ifluidCon.hasTank()) {
-					FluidStack otherFluid = ifluidCon.getFluid(0);
-					if (!fluid.isEmpty() && !otherFluid.isEmpty() && !FluidStack.isSameFluidSameComponents(fluid, otherFluid))
-						break Search;
-				}
-			} }
-			amount += width * width;
-			height++;
+		if (!pos.equals(origin)) {
+			if (axis != Direction.Axis.Y) {
+				if (pos.getY() < origin.getY())
+					return false;
+				if (pos.getY() + otherWidth > origin.getY() + width)
+					return false;
+			}
+			if (axis != Direction.Axis.X) {
+				if (pos.getX() < origin.getX())
+					return false;
+				if (pos.getX() + otherWidth > origin.getX() + width)
+					return false;
+			}
+			if (axis != Direction.Axis.Z) {
+				if (pos.getZ() < origin.getZ())
+					return false;
+				if (pos.getZ() + otherWidth > origin.getZ() + width)
+					return false;
+			}
 		}
-		return new int[]{amount, height};
+		
+		return true;
 	}
 	
 	public static <T extends BlockEntity & IMultiBlockEntityContainer> void splitMulti(T be) {
@@ -351,7 +340,6 @@ public class TFMGBlockConnectivityHandler {
 	}
 	
 	private static class SearchCache<T extends BlockEntity & IMultiBlockEntityContainer> {
-		private int CacheAdds = 0, CacheHits = 0, CacheCalls = 0;
 		Map<BlockPos, Optional<T>> controllerMap;
 		
 		public SearchCache() {
@@ -359,23 +347,15 @@ public class TFMGBlockConnectivityHandler {
 		}
 		
 		void put(BlockPos pos, T target) {
-			CacheAdds++;
 			controllerMap.put(pos, Optional.of(target));
 		}
 		
 		void putEmpty(BlockPos pos) {
-			CacheAdds++;
 			controllerMap.put(pos, Optional.empty());
 		}
 		
-		void printHits () {
-			TFMG.LOGGER.info("Connectivity Cache:\n  Calls: {}\n  Adds: {}\n  Hits: {}", CacheCalls, CacheAdds, CacheHits);
-		}
-		
 		Optional<T> getOrCache(BlockEntityType<?> type, BlockGetter level, BlockPos pos) {
-			CacheCalls++;
 			if (controllerMap.containsKey(pos)) {
-				CacheHits++;
 				return controllerMap.get(pos);
 			}
 			
@@ -394,5 +374,7 @@ public class TFMGBlockConnectivityHandler {
 		}
 	}
 	
-	private record Sizing (int width, int height, int volume) {}
+	private record Sizing (int width, int height, int volume) {
+		public Sizing (int width, int height) {this(width, height, width*width*height);}
+	}
 }
