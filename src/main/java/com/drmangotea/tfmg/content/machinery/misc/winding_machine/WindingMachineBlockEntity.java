@@ -140,19 +140,12 @@ public class WindingMachineBlockEntity extends KineticBlockEntity implements IHa
     }
 
     public boolean isWindingIngredient(ItemStack stack) {
-        if (level == null || stack.isEmpty() || stack.getItem() instanceof SpoolItem)
-            return false;
-
-        if (stack.is(TFMGItems.ELECTROMAGNETIC_COIL) || stack.is(TFMGBlocks.LARGE_COIL.asItem()) || stack.is(TFMGBlocks.RESISTOR.asItem()))
-            return true;
-
-        // TODO: define a tag instead of scanning all winding recipes?
-        RecipeType<WindingRecipe> type = TFMGRecipeTypes.WINDING.getType();
-        RecipeWrapper wrapper = new RecipeWrapper(new ItemStackHandler(NonNullList.of(stack)));
-        if (level.getRecipeManager().getRecipeFor(type, wrapper, level).isPresent())
-            return true;
-
-        return SequencedAssemblyRecipe.getRecipe(level, stack, type, WindingRecipe.class).isPresent();
+        //
+        return stack.has(TFMGDataComponents.COIL_TURNS)
+                || stack.has(TFMGDataComponents.SPOOL_AMOUNT)
+                || stack.is(TFMGItems.ELECTROMAGNETIC_COIL)
+                || stack.is(TFMGBlocks.LARGE_COIL.asItem())
+                || stack.is(TFMGBlocks.RESISTOR.asItem());
     }
 
     protected void depleteSpool() {
