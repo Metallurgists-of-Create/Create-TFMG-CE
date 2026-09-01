@@ -4,7 +4,7 @@ import com.drmangotea.tfmg.base.events.TFMGClientEvents;
 import com.drmangotea.tfmg.content.items.weapons.advanced_potato_cannon.AdvancedPotatoCannonRenderHandler;
 import com.drmangotea.tfmg.content.items.weapons.flamethrover.FlamethrowerRenderHandler;
 import com.drmangotea.tfmg.content.items.weapons.quad_potato_cannon.QuadPotatoCannonRenderHandler;
-import com.drmangotea.tfmg.content.machinery.vat.base.registry.VatCategoryEvent;
+import com.drmangotea.tfmg.content.machinery.vat.base.registry.operations.VatCategoryEvent;
 import com.drmangotea.tfmg.ponder.TFMGPonderPlugin;
 import com.drmangotea.tfmg.registry.TFMGDataComponents;
 import com.drmangotea.tfmg.registry.TFMGItems;

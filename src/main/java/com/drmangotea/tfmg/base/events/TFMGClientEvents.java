@@ -10,8 +10,8 @@ import com.drmangotea.tfmg.content.electricity.network.transformer.small.Transfo
 import com.drmangotea.tfmg.content.items.ScrewdriverItem;
 import com.drmangotea.tfmg.content.items.weapons.advanced_potato_cannon.AdvancedPotatoCannonItemRenderer;
 import com.drmangotea.tfmg.content.items.weapons.quad_potato_cannon.QuadPotatoCannonItemRenderer;
-import com.drmangotea.tfmg.content.machinery.vat.base.registry.VatCategoryEvent;
-import com.drmangotea.tfmg.content.machinery.vat.base.registry.VatOperation;
+import com.drmangotea.tfmg.content.machinery.vat.base.registry.operations.VatCategoryEvent;
+import com.drmangotea.tfmg.content.machinery.vat.base.registry.operations.VatOperation;
 import com.drmangotea.tfmg.registry.TFMGDataComponents;
 import com.drmangotea.tfmg.registry.TFMGGuiTextures;
 import com.drmangotea.tfmg.registry.TFMGItems;

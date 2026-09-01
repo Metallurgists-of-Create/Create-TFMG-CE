@@ -1,11 +1,10 @@
 package com.drmangotea.tfmg.integration.jei.category;
 
-import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.base.lang.TFMGLang;
 import com.drmangotea.tfmg.base.pressure.Pressure;
 import com.drmangotea.tfmg.config.TFMGConfigs;
-import com.drmangotea.tfmg.content.machinery.vat.base.registry.VatCategoryEvent;
-import com.drmangotea.tfmg.content.machinery.vat.base.registry.VatOperation;
+import com.drmangotea.tfmg.content.machinery.vat.base.registry.operations.VatCategoryEvent;
+import com.drmangotea.tfmg.content.machinery.vat.base.registry.operations.VatOperation;
 import com.drmangotea.tfmg.content.machinery.vat.base.registry.functions.DrawableVatType;
 import com.drmangotea.tfmg.recipes.VatMachineRecipe;
 import com.drmangotea.tfmg.registry.TFMGGuiTextures;

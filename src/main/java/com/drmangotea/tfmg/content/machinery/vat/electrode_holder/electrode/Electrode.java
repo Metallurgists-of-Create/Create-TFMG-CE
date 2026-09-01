@@ -3,7 +3,7 @@ package com.drmangotea.tfmg.content.machinery.vat.electrode_holder.electrode;
 import com.drmangotea.tfmg.TFMGRegistries;
 import com.drmangotea.tfmg.content.machinery.vat.MultiUseAttachment;
 import com.drmangotea.tfmg.content.machinery.vat.base.VatBlockEntity;
-import com.drmangotea.tfmg.content.machinery.vat.base.registry.VatOperationEntry;
+import com.drmangotea.tfmg.content.machinery.vat.base.registry.operations.VatOperationEntry;
 import com.drmangotea.tfmg.content.machinery.vat.electrode_holder.ElectrodeHolderBlockEntity;
 import com.drmangotea.tfmg.registry.TFMGDataComponents;
 import com.drmangotea.tfmg.registry.TFMGElectrodes;

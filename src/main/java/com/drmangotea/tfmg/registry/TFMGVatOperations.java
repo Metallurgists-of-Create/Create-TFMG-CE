@@ -1,8 +1,8 @@
 package com.drmangotea.tfmg.registry;
 
 
-import com.drmangotea.tfmg.content.machinery.vat.base.registry.VatOperation;
-import com.drmangotea.tfmg.content.machinery.vat.base.registry.VatOperationEntry;
+import com.drmangotea.tfmg.content.machinery.vat.base.registry.operations.VatOperation;
+import com.drmangotea.tfmg.content.machinery.vat.base.registry.operations.VatOperationEntry;
 
 import static com.drmangotea.tfmg.TFMG.REGISTRATE;
 

@@ -2,7 +2,7 @@ package com.drmangotea.tfmg.base.lang;
 
 import com.drmangotea.tfmg.base.TFMGUtils;
 import com.drmangotea.tfmg.content.engines.types.EngineType;
-import com.drmangotea.tfmg.content.machinery.vat.base.registry.VatOperation;
+import com.drmangotea.tfmg.content.machinery.vat.base.registry.operations.VatOperation;
 import com.simibubi.create.content.processing.recipe.HeatCondition;
 import net.createmod.catnip.lang.LangBuilder;
 import net.createmod.catnip.theme.Color;

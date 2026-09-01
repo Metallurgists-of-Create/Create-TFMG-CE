@@ -10,7 +10,7 @@ import com.drmangotea.tfmg.base.lang.TFMGTexts;
 import com.drmangotea.tfmg.base.pressure.Pressure;
 import com.drmangotea.tfmg.base.pressure.behaviour.SmartPressureTankBehaviour;
 import com.drmangotea.tfmg.base.pressure.tank.SmartPressureTank;
-import com.drmangotea.tfmg.content.machinery.vat.base.registry.VatOperation;
+import com.drmangotea.tfmg.content.machinery.vat.base.registry.operations.VatOperation;
 import com.drmangotea.tfmg.content.machinery.vat.compressor.CompressorBlockEntity;
 import com.drmangotea.tfmg.content.machinery.vat.freezer.FreezerBlockEntity;
 import com.drmangotea.tfmg.mixin.accessor.TankSegmentAccessor;

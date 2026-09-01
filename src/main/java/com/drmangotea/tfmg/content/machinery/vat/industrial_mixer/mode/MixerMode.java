@@ -3,7 +3,7 @@ package com.drmangotea.tfmg.content.machinery.vat.industrial_mixer.mode;
 import com.drmangotea.tfmg.TFMGRegistries;
 import com.drmangotea.tfmg.content.machinery.vat.MultiUseAttachment;
 import com.drmangotea.tfmg.content.machinery.vat.base.VatBlockEntity;
-import com.drmangotea.tfmg.content.machinery.vat.base.registry.VatOperationEntry;
+import com.drmangotea.tfmg.content.machinery.vat.base.registry.operations.VatOperationEntry;
 import com.drmangotea.tfmg.content.machinery.vat.industrial_mixer.IndustrialMixerBlockEntity;
 import com.drmangotea.tfmg.registry.TFMGMixerModes;
 import com.drmangotea.tfmg.registry.TFMGVatOperations;

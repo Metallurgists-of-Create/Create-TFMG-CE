@@ -2,7 +2,7 @@ package com.drmangotea.tfmg.content.machinery.vat;
 
 import com.drmangotea.tfmg.content.machinery.vat.base.IVatMachine;
 import com.drmangotea.tfmg.content.machinery.vat.base.VatBlockEntity;
-import com.drmangotea.tfmg.content.machinery.vat.base.registry.VatOperationEntry;
+import com.drmangotea.tfmg.content.machinery.vat.base.registry.operations.VatOperationEntry;
 import com.drmangotea.tfmg.registry.TFMGVatOperations;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.MultiBufferSource;

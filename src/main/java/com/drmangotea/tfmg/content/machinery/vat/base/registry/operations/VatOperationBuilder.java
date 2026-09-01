@@ -1,4 +1,4 @@
-package com.drmangotea.tfmg.content.machinery.vat.base.registry;
+package com.drmangotea.tfmg.content.machinery.vat.base.registry.operations;
 
 import com.drmangotea.tfmg.TFMGRegistries;
 import com.tterrag.registrate.AbstractRegistrate;
