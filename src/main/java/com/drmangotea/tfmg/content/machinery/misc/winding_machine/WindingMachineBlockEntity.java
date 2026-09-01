@@ -19,14 +19,12 @@ import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.Clearable;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
-import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
@@ -34,10 +32,11 @@ import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.IItemHandlerModifiable;
-import net.neoforged.neoforge.items.ItemStackHandler;
 import net.neoforged.neoforge.items.wrapper.CombinedInvWrapper;
 import net.neoforged.neoforge.items.wrapper.RecipeWrapper;
+import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 import java.util.Optional;
 
@@ -82,6 +81,7 @@ public class WindingMachineBlockEntity extends KineticBlockEntity implements IHa
                 Capabilities.ItemHandler.BLOCK,
                 TFMGBlockEntities.WINDING_MACHINE.get(),
                 (be, context) -> {
+                //TODO - Maybe change this?
                     if (context == be.getBlockState().getValue(HORIZONTAL_FACING))
                         return new CombinedInvWrapper(new InputSlotHandler(be), be.outputInventory, new SpoolSlotHandler(be));
                     return new CombinedInvWrapper(new InputSlotHandler(be), be.outputInventory);
@@ -363,6 +363,7 @@ public class WindingMachineBlockEntity extends KineticBlockEntity implements IHa
         this.spoolInventory.clearContent();
     }
 
+    @ParametersAreNonnullByDefault
     private record InputSlotHandler(WindingMachineBlockEntity be) implements IItemHandlerModifiable {
         @Override
         public void setStackInSlot(int slot, ItemStack stack) {
@@ -377,22 +378,15 @@ public class WindingMachineBlockEntity extends KineticBlockEntity implements IHa
         }
 
         @Override
-        public ItemStack getStackInSlot(int slot) {
+        public @NotNull ItemStack getStackInSlot(int slot) {
             return be.inventory.getStackInSlot(slot);
         }
 
         @Override
-        public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
-            if (stack.isEmpty())
-                return stack;
-
-            if (!be.outputInventory.isEmpty())
-                return stack;
-
-            if (!be.inventory.getStackInSlot(slot).isEmpty())
-                return stack;
-
-            if (!isItemValid(slot, stack))
+        public @NotNull ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
+            if (stack.isEmpty() || !(be.outputInventory.isEmpty()
+                    || be.inventory.getStackInSlot(slot).isEmpty()
+                    || isItemValid(slot, stack)))
                 return stack;
 
             if (!simulate) {
@@ -404,7 +398,7 @@ public class WindingMachineBlockEntity extends KineticBlockEntity implements IHa
         }
 
         @Override
-        public ItemStack extractItem(int slot, int amount, boolean simulate) {
+        public @NotNull ItemStack extractItem(int slot, int amount, boolean simulate) {
             return ItemStack.EMPTY;
         }
 
@@ -420,6 +414,7 @@ public class WindingMachineBlockEntity extends KineticBlockEntity implements IHa
     }
 
     @MethodsReturnNonnullByDefault
+    @ParametersAreNonnullByDefault
     private record SpoolSlotHandler(WindingMachineBlockEntity be) implements IItemHandlerModifiable {
 
         @Override
@@ -434,10 +429,9 @@ public class WindingMachineBlockEntity extends KineticBlockEntity implements IHa
 
             @Override
             public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
-                if (stack.isEmpty() || !(stack.getItem() instanceof SpoolItem))
+                if (!be.getSpool().isEmpty() || stack.isEmpty() || !(stack.getItem() instanceof SpoolItem))
                     return stack;
-                if (!be.getSpool().isEmpty())
-                    return stack;
+
                 if (!simulate) {
                     be.spoolInventory.setStackInSlot(slot, stack.copy());
                     be.onContentsChanged();
