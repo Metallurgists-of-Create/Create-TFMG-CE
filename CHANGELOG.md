@@ -64,7 +64,7 @@ Contributors:<br>
   - `PolarizingRecipe` now has an `energy` field.
   - Data gen can specify amount of energy.
   - Polarizers now have an output inventory.
-  - `PolarizerBlockEntity#getItemChargingRate` now uses recipe charge rate
+  - `PolarizerBlockEntity#getItemChargingRate` now uses recipe charge rate.
 
 ### New Translations:
 
