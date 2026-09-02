@@ -65,7 +65,8 @@ public class TFMGPonderTags {
 
         HELPER.addToTag(AllCreatePonderTags.ARM_TARGETS)
                 .add(TFMGBlocks.WINDING_MACHINE)
-                .add(TFMGBlocks.POLARIZER);
+                .add(TFMGBlocks.POLARIZER)
+                .add(TFMGBlocks.CASTING_BASIN);
 
         HELPER.addToTag(OIL_PROCESSING)
                 .add(TFMGBlocks.STEEL_DISTILLATION_CONTROLLER)

@@ -25,14 +25,13 @@ import java.util.function.Supplier;
 import static net.minecraft.world.level.block.state.properties.BlockStateProperties.HORIZONTAL_FACING;
 
 public class TFMGArmInteractionPoints {
-    // TODO:
-    //  - Casting Basin
     public static final Holder.Reference<ArmInteractionPointType>
         WINDING_MACHINE = register("winding_machine", WindingMachineType::new),
-        POLARIZER = register("polarizer", PolarizerType::new);
+        POLARIZER = register("polarizer", PolarizerType::new),
+        CASTING_BASIN = register("casting_basin", CastingBasinType::new);
 
     private static Holder.Reference<ArmInteractionPointType> register(String name, Supplier<? extends ArmInteractionPointType> factory) {
-		return Registry.registerForHolder(
+        return Registry.registerForHolder(
             CreateBuiltInRegistries.ARM_INTERACTION_POINT_TYPE,
             TFMG.asResource(name),
             factory.get()
@@ -40,6 +39,46 @@ public class TFMGArmInteractionPoints {
     }
 
     public static void prepare() {}
+
+    public static class CastingBasinType extends ArmInteractionPointType {
+        @Override
+        public boolean canCreatePoint(Level level, BlockPos pos, BlockState state) {
+            return TFMGBlocks.CASTING_BASIN.has(state);
+        }
+
+        @Override
+        public ArmInteractionPoint createPoint(Level level, BlockPos pos, BlockState state) {
+            return new CastingBasinPoint(this, level, pos, state);
+        }
+    }
+
+    public static class CastingBasinPoint extends ArmInteractionPoint {
+        public CastingBasinPoint(ArmInteractionPointType type, Level level, BlockPos pos, BlockState state) {
+            super(type, level, pos, state);
+            mode = Mode.TAKE;
+        }
+
+        @Override
+        public void cycleMode() {}
+
+        @Override
+        protected Vec3 getInteractionPositionVector() {
+            Direction facing = cachedState.getOptionalValue(HORIZONTAL_FACING).orElse(Direction.SOUTH);
+            Vec3 offset = Vec3.atLowerCornerOf(facing.getNormal()).with(Direction.Axis.Y, -1).scale(0.125);
+            return Vec3.atCenterOf(pos).add(offset);
+        }
+
+        @Override
+        public void updateCachedState() {
+            BlockState oldState = cachedState;
+            super.updateCachedState();
+            if (oldState != cachedState)
+                cachedAngles = null;
+        }
+
+        // Insertion never happens because this interaction point is locked to extraction mode.
+        // For extraction, the default behavior inherited from ArmInteractionPoint works fine.
+    }
 
     public static class PolarizerType extends ArmInteractionPointType {
         @Override
