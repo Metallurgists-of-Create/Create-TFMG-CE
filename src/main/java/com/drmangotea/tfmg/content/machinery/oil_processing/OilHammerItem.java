@@ -4,33 +4,36 @@ import com.drmangotea.tfmg.base.lang.TFMGLang;
 import com.drmangotea.tfmg.content.world.resevoir.FluidReservoir;
 import com.drmangotea.tfmg.registry.TFMGDataAttachments;
 import net.minecraft.ChatFormatting;
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.chunk.ChunkAccess;
+import javax.annotation.Nonnull;
 
 public class OilHammerItem extends Item {
-    public OilHammerItem(Properties p_41383_) {
-        super(p_41383_);
+    public OilHammerItem(Properties p) {
+        super(p);
     }
 
-    @Override
+    @Override @Nonnull
     public InteractionResult useOn(UseOnContext context) {
         Level level = context.getLevel();
-        BlockPos pos = context.getClickedPos();
+        ChunkAccess chunk = level.getChunk(context.getClickedPos());
         Player player = context.getPlayer();
 
-        if (!level.getChunk(pos).hasData(TFMGDataAttachments.FLUID_RESERVOIR)) {
+        if (!chunk.hasData(TFMGDataAttachments.FLUID_RESERVOIR)) {
             return InteractionResult.sidedSuccess(level.isClientSide());
         }
-        FluidReservoir reservoir = level.getChunk(pos).getData(TFMGDataAttachments.FLUID_RESERVOIR);
+        FluidReservoir reservoir = chunk.getData(TFMGDataAttachments.FLUID_RESERVOIR);
 
-        int oilReserves = reservoir.getReserves();
         if (level.isClientSide && player != null)
-            player.displayClientMessage(TFMGLang.translateDirect("oil_hammer.reserves", oilReserves)
-                    .withStyle(ChatFormatting.YELLOW), true);
+            player.displayClientMessage(TFMGLang
+				.translateDirect("oil_hammer.reserves", reservoir.getReserves())
+				.withStyle(ChatFormatting.YELLOW),
+				true
+			);
 
         return InteractionResult.SUCCESS;
     }
