@@ -87,6 +87,10 @@ public class MachineConfig extends ConfigBase {
         static String engineElectricPower = "Modifier of engine power generation in %.";
         static String surfaceScannerScanDepth = "Y level surface scanner scan at.";
         static String FEtoWattTickConversionRate = "How much Forge Energy is in one watt-tick.";
+        /**
+         * @deprecated Polarizer charging rate is now defined by the recipe.
+         */
+        @Deprecated(forRemoval = true, since = "1.2.5")
         static String polarizerItemChargingRate = "How much FE can polarizer charge per tick.";
         static String engineLoudness = "Changes the volume of engines.";
         static String forgeEnergyConversionVoltage = "What voltage is created when FE is converted.";
