@@ -4,6 +4,7 @@ import com.drmangotea.tfmg.base.TFMGBlockConnectivityHandler;
 import com.drmangotea.tfmg.registry.TFMGBlockEntities;
 import com.simibubi.create.content.fluids.tank.FluidTankBlockEntity;
 import com.simibubi.create.foundation.block.IBE;
+import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
@@ -25,12 +26,14 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 public class VatItem extends BlockItem {
     public VatItem(Block block, Properties properties) {
         super(block, properties);
     }
 
-    @Override @ParametersAreNonnullByDefault @Nonnull
+    @Override
     public InteractionResult place(BlockPlaceContext ctx) {
         InteractionResult initialResult = super.place(ctx);
         if (!initialResult.consumesAction())
@@ -39,7 +42,7 @@ public class VatItem extends BlockItem {
         return initialResult;
     }
 
-    @Override  @ParametersAreNonnullByDefault
+    @Override
     protected boolean updateCustomBlockEntityTag(BlockPos blockPos, Level level, @Nullable Player player, ItemStack itemStack, BlockState blockState) {
         MinecraftServer minecraftserver = level.getServer();
         if (minecraftserver == null)
@@ -125,6 +128,8 @@ public class VatItem extends BlockItem {
                 if (VatBlock.isVat(blockState))
                     continue;
                 BlockPlaceContext context = BlockPlaceContext.at(ctx, offsetPos, face);
+
+                // Why do we add a bool, call super#place, then remove it?
                 player.getPersistentData()
                         .putBoolean("SilenceTankSound", true);
                 super.place(context);
