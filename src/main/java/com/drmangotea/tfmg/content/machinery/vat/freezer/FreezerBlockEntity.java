@@ -46,11 +46,6 @@ public class FreezerBlockEntity extends ElectricBlockEntity implements IVatMachi
         return 400;
     }
 
-    @Override
-    public boolean hasElectricitySlot(Direction direction) {
-        return true;
-    }
-
     public boolean isOperational(){
         return getCurrent() >= TFMGConfigs.common().machines.freezerMinimumCurrent.get() && canWork();
     }
