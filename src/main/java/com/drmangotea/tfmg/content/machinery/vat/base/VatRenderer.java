@@ -22,18 +22,18 @@ public class VatRenderer extends SafeBlockEntityRenderer<VatBlockEntity> {
         if (!be.isController())
             return;
 
-        renderFluids(be, partialTicks, ms, bufferSource, light, overlay);
+        renderFluids(be, partialTicks, ms, bufferSource, light);
 
     }
 
-    protected float renderFluids(VatBlockEntity vat, float partialTicks, PoseStack ms, MultiBufferSource buffer, int light, int overlay) {
+    protected void renderFluids(VatBlockEntity vat, float partialTicks, PoseStack ms, MultiBufferSource buffer, int light) {
         SmartFluidTankBehaviour inputFluids = vat.getBehaviour(SmartFluidTankBehaviour.INPUT);
         SmartFluidTankBehaviour outputFluids = vat.getBehaviour(SmartFluidTankBehaviour.OUTPUT);
         SmartFluidTankBehaviour[] tanks = { inputFluids, outputFluids };
 
         float totalUnits = vat.getTotalFluidUnits(partialTicks);
         if (totalUnits < 1)
-            return 0;
+            return;
 
         float fluidLevel = Mth.clamp(totalUnits / vat.getTotalCapacity(), 0, 1);
 
@@ -42,10 +42,8 @@ public class VatRenderer extends SafeBlockEntityRenderer<VatBlockEntity> {
         float capHeight = 1 / 4f;
         float tankHullWidth = 1 / 16f + 1 / 128f;
 
-        float xMin = tankHullWidth;
-        float xMax = xMin + vat.width - 2 * tankHullWidth;
-        float zMin = tankHullWidth;
-        float zMax = zMin + vat.width - 2 * tankHullWidth;
+        float xMax = tankHullWidth + vat.width - 2 * tankHullWidth;
+        float zMax = tankHullWidth + vat.width - 2 * tankHullWidth;
 
         float level = 0;
 
@@ -62,14 +60,13 @@ public class VatRenderer extends SafeBlockEntityRenderer<VatBlockEntity> {
                 float yMin = capHeight + level;
                 float yMax = Math.min(yMin + (fluidLevel * (vat.height - (2 * capHeight))),vat.height);
 
-                NeoForgeCatnipServices.FLUID_RENDERER.renderFluidBox(renderedFluid, xMin, yMin, zMin, xMax, yMax, zMax,
+                NeoForgeCatnipServices.FLUID_RENDERER.renderFluidBox(renderedFluid, tankHullWidth, yMin, tankHullWidth, xMax, yMax, zMax,
                         buffer, ms, light, false, false);
 
                 level += yMax - yMin;
             }
         }
 
-        return level;
     }
 
     @Override
