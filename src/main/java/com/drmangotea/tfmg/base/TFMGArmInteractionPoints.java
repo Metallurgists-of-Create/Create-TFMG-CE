@@ -25,14 +25,13 @@ import java.util.function.Supplier;
 import static net.minecraft.world.level.block.state.properties.BlockStateProperties.HORIZONTAL_FACING;
 
 public class TFMGArmInteractionPoints {
-    // TODO:
-    //  - Casting Basin
     public static final Holder.Reference<ArmInteractionPointType>
         WINDING_MACHINE = register("winding_machine", WindingMachineType::new),
-        POLARIZER_MACHINE = register("polarizer", PolarizerMachineType::new);
+        POLARIZER = register("polarizer", PolarizerType::new),
+        CASTING_BASIN = register("casting_basin", CastingBasinType::new);
 
     private static Holder.Reference<ArmInteractionPointType> register(String name, Supplier<? extends ArmInteractionPointType> factory) {
-		return Registry.registerForHolder(
+        return Registry.registerForHolder(
             CreateBuiltInRegistries.ARM_INTERACTION_POINT_TYPE,
             TFMG.asResource(name),
             factory.get()
@@ -41,7 +40,47 @@ public class TFMGArmInteractionPoints {
 
     public static void prepare() {}
 
-    public static class PolarizerMachineType extends ArmInteractionPointType {
+    public static class CastingBasinType extends ArmInteractionPointType {
+        @Override
+        public boolean canCreatePoint(Level level, BlockPos pos, BlockState state) {
+            return TFMGBlocks.CASTING_BASIN.has(state);
+        }
+
+        @Override
+        public ArmInteractionPoint createPoint(Level level, BlockPos pos, BlockState state) {
+            return new CastingBasinPoint(this, level, pos, state);
+        }
+    }
+
+    public static class CastingBasinPoint extends ArmInteractionPoint {
+        public CastingBasinPoint(ArmInteractionPointType type, Level level, BlockPos pos, BlockState state) {
+            super(type, level, pos, state);
+            mode = Mode.TAKE;
+        }
+
+        @Override
+        public void cycleMode() {}
+
+        @Override
+        protected Vec3 getInteractionPositionVector() {
+            Direction facing = cachedState.getOptionalValue(HORIZONTAL_FACING).orElse(Direction.SOUTH);
+            Vec3 offset = Vec3.atLowerCornerOf(facing.getNormal()).with(Direction.Axis.Y, -1).scale(0.125);
+            return Vec3.atCenterOf(pos).add(offset);
+        }
+
+        @Override
+        public void updateCachedState() {
+            BlockState oldState = cachedState;
+            super.updateCachedState();
+            if (oldState != cachedState)
+                cachedAngles = null;
+        }
+
+        // Insertion never happens because this interaction point is locked to extraction mode.
+        // For extraction, the default behavior inherited from ArmInteractionPoint works fine.
+    }
+
+    public static class PolarizerType extends ArmInteractionPointType {
         @Override
         public boolean canCreatePoint(Level level, BlockPos pos, BlockState state) {
             return TFMGBlocks.POLARIZER.has(state);
@@ -49,12 +88,12 @@ public class TFMGArmInteractionPoints {
 
         @Override
         public @Nullable ArmInteractionPoint createPoint(Level level, BlockPos pos, BlockState state) {
-            return new PolarizerMachinePoint(this, level, pos, state);
+            return new PolarizerPoint(this, level, pos, state);
         }
     }
 
-    public static class PolarizerMachinePoint extends ArmInteractionPoint {
-        public PolarizerMachinePoint(ArmInteractionPointType type, Level level, BlockPos pos, BlockState state) {
+    public static class PolarizerPoint extends ArmInteractionPoint {
+        public PolarizerPoint(ArmInteractionPointType type, Level level, BlockPos pos, BlockState state) {
             super(type, level, pos, state);
         }
 
@@ -63,11 +102,10 @@ public class TFMGArmInteractionPoints {
             return 1;
         }
 
-        //TODO get it to place it at the metal contacts
-//        @Override
-//        protected Vec3 getInteractionPositionVector() {
-//
-//        }
+       @Override
+       protected Vec3 getInteractionPositionVector() {
+           return Vec3.atBottomCenterOf(pos).add(0, 1f, 0);
+       }
 
         @Override
         public ItemStack insert(ArmBlockEntity armBlockEntity, ItemStack stack, boolean simulate) {
@@ -85,20 +123,10 @@ public class TFMGArmInteractionPoints {
             if (!(level.getBlockEntity(pos) instanceof PolarizerBlockEntity machine))
                 return ItemStack.EMPTY;
 
-            ItemStack stack = machine.getOutputItem();
-            if (stack.isEmpty())
+            if (machine.outputInventory.isEmpty())
                 return ItemStack.EMPTY;
 
-            ItemStack extracted = stack.copy();
-            extracted.setCount(Math.min(amount, stack.getCount()));
-
-            if (!simulate) {
-                ItemStack remaining = stack.copy();
-                remaining.shrink(extracted.getCount());
-                machine.outputInventory.setStackInSlot(0, remaining);
-            }
-
-            return extracted;
+            return machine.outputInventory.extractItem(0, amount, simulate);
         }
     }
 

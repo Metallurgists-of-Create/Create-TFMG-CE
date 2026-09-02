@@ -25,6 +25,7 @@ import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeInput;
 import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.level.block.Blocks;
 
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -103,8 +104,8 @@ public class TFMGJei implements IModPlugin {
 
                 polarizing = builder(PolarizingRecipe.class)
                         .addTypedRecipes(TFMGRecipeTypes.POLARIZING)
-
                         .catalyst(TFMGBlocks.POLARIZER::get)
+                        .catalyst(() -> Blocks.LIGHTNING_ROD)
                         .itemIcon(TFMGBlocks.POLARIZER.get())
                         .emptyBackground(177, 53)
                         .build("polarizing", PolarizingCategory::new),
@@ -224,4 +225,3 @@ public class TFMGJei implements IModPlugin {
     }
 
 }
-
