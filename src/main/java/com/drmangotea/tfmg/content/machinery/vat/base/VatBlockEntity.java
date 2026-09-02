@@ -485,8 +485,6 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
     @Override
     public void tick() {
         super.tick();
-
-
         handleRecipe();
 
         if (isController() && level != null) {
@@ -726,9 +724,7 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
             int needed = stack.getCount();
             int placed = -1;
             for (int i = 0; i < slots; i++) {
-                if (simCount[i] == 0)
-                    continue;
-                if (!ItemStack.isSameItemSameComponents(simStack[i], stack))
+                if (simCount[i] == 0 || !ItemStack.isSameItemSameComponents(simStack[i], stack))
                     continue;
                 int max = simStack[i].getMaxStackSize();
                 if (simCount[i] + needed > max)
@@ -882,15 +878,10 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
 
     @SuppressWarnings("unchecked")
     @Override
+    @Nullable
     public VatBlockEntity getControllerBE() {
-        if (level == null)
-            return this;
-        if (isController())
-            return this;
-        BlockEntity blockEntity = level.getBlockEntity(controller);
-        if (blockEntity instanceof VatBlockEntity)
-            return (VatBlockEntity) blockEntity;
-        return null;
+        if (level == null || isController()) return this;
+        return level.getBlockEntity(controller) instanceof VatBlockEntity blockEntity ? blockEntity : null;
     }
 
     public void evaluate() {
@@ -1124,9 +1115,7 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
 
     @SuppressWarnings("unused")
     public void updateState() {
-        if (level == null)
-            return;
-        if (!isController())
+        if (level == null || !isController())
             return;
         for (int yOffset = 0; yOffset < height; yOffset++)
             for (int xOffset = 0; xOffset < width; xOffset++)
