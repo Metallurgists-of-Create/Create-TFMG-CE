@@ -52,7 +52,7 @@ public class MachineConfig extends ConfigBase {
     /**
      * @deprecated Polarizer charging rate is now defined by the recipe.
      */
-    @Deprecated(forRemoval = true, since = "1.2.5-community")
+    @Deprecated(forRemoval = true, since = "1.2.5")
     public final ConfigInt polarizerItemChargingRate = i(1000, 1, "polarizerItemChargingRate", Comments.polarizerItemChargingRate);
 
     public final ConfigGroup cokeOven = group(1, "coke_oven", "Coke Oven");
