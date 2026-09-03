@@ -295,7 +295,7 @@ public class TFMGBlockConnectivityHandler {
 			if (cache != null) cache.put(pos, partAt);
 		});
 		
-		if ((controller instanceof IMultiBlockEntityContainer.Inventory inv && inv.hasInventory())||
+		if ((controller instanceof IMultiBlockEntityContainer.Inventory inv && inv.hasInventory()) ||
 			(controller instanceof IMultiBlockEntityContainer.Fluid fluid && fluid.hasTank()))
 			level.invalidateCapabilities(controller.getBlockPos());
 	}
@@ -322,9 +322,7 @@ public class TFMGBlockConnectivityHandler {
 	
 	@Nullable @SuppressWarnings("unchecked")
 	private static <T extends BlockEntity & IMultiBlockEntityContainer> T checked(BlockEntity be) {
-		if (be instanceof IMultiBlockEntityContainer)
-			return (T) be;
-		return null;
+		return be instanceof IMultiBlockEntityContainer ? (T) be : null;
 	}
 	
 	private static void forEachPosition (BlockPos origin, Direction.Axis axis, int height, int width, Consumer<BlockPos> func) {
@@ -375,6 +373,8 @@ public class TFMGBlockConnectivityHandler {
 	}
 	
 	private record Sizing (int width, int height, int volume) {
-		public Sizing (int width, int height) {this(width, height, width*width*height);}
+		public Sizing(int width, int height) {
+			this(width, height, width * width * height);
+		}
 	}
 }
