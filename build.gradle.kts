@@ -134,6 +134,7 @@ dependencies {
 }
 
 val generateModMetadata by tasks.registering(ProcessResources::class) {
+    description = "You want a description IDEA? You get one! Leave me alone!!!"
     val replaceProperties = mapOf(
         "minecraft_version" to project.findProperty("minecraft_version") as String,
         "minecraft_version_range" to project.findProperty("minecraft_version_range") as String,
