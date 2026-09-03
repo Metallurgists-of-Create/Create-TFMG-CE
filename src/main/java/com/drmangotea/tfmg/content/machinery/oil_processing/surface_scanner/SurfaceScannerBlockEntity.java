@@ -5,7 +5,7 @@ import com.drmangotea.tfmg.base.lang.TFMGTexts;
 import com.drmangotea.tfmg.config.TFMGConfigs;
 import com.drmangotea.tfmg.content.machinery.misc.machine_input.MachineInputBlockEntity;
 import com.drmangotea.tfmg.integration.sable.SurfaceScannerSable;
-import com.drmangotea.tfmg.registry.TFMGTags;
+import com.drmangotea.tfmg.registry.TFMGDataAttachments;
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
@@ -17,7 +17,6 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkAccess;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Quaterniond;
 
@@ -43,23 +42,21 @@ public class SurfaceScannerBlockEntity extends SmartBlockEntity implements IHave
         if (level == null) return;
 
 		BlockPos actualPosition = SurfaceScannerSable.getActualPosition(this);
-		int scanDepth = TFMGConfigs.common().machines.surfaceScannerScanDepth.get();
 		ChunkPos chunkPos = level.getChunk(actualPosition).getPos();
 		
         for (int x = 0; x < 5; x++) { for (int z = 0; z < 5; z++) {
 			ChunkAccess chunk = level.getChunk(chunkPos.x + x - 2, chunkPos.z + z - 2);
-			BlockPos midpoint = chunk.getPos().getMiddleBlockPosition(scanDepth).north().west();
-			boolean oil = hasOil(chunk, midpoint);
+			boolean oil = chunk.hasData(TFMGDataAttachments.FLUID_RESERVOIR);
 			grid[x][z] = oil;
-			if (oil) {
-				if (nearestDeposit == null) {
-					nearestDeposit = midpoint;
-				} else {
-					if (nearestDeposit.equals(midpoint)) continue;
-					float currentDistance = TFMGUtils.getDistance(actualPosition, nearestDeposit, true);
-					float newDistance = TFMGUtils.getDistance(actualPosition, midpoint, true);
-					if (newDistance < currentDistance) nearestDeposit = midpoint;
-				}
+			if (!oil) continue;
+			BlockPos midpoint = chunk.getPos().getMiddleBlockPosition(0).north().west();
+			if (nearestDeposit == null) {
+				nearestDeposit = midpoint;
+			} else {
+				if (nearestDeposit.equals(midpoint)) continue;
+				float currentDistance = TFMGUtils.getDistance(actualPosition, nearestDeposit, true);
+				float newDistance = TFMGUtils.getDistance(actualPosition, midpoint, true);
+				if (newDistance < currentDistance) nearestDeposit = midpoint;
 			}
 		} }
     }
@@ -118,16 +115,6 @@ public class SurfaceScannerBlockEntity extends SmartBlockEntity implements IHave
 			nearestDeposit = null;
         }
     }
-
-    public boolean hasOil (ChunkAccess chunk, BlockPos midpoint) {
-        if (level == null) return false;
-        AABB checkedArea = new AABB(midpoint).inflate(7,0,7);
-        for (BlockState state : chunk.getBlockStates(checkedArea).toList()) {
-            if(state.is(TFMGTags.Blocks.SURFACE_SCANNER_FINDABLE.tag))
-				return true;
-        }
-        return false;
-    }
 	
 	public int getDirectionalSignal (Direction side) {
 		if (!operational()) return 0;
@@ -146,7 +133,7 @@ public class SurfaceScannerBlockEntity extends SmartBlockEntity implements IHave
 			return;
 		}
 		
-		Vec3 toNearest = Vec3.atCenterOf(actualPosition).subtract(Vec3.atCenterOf(nearestDeposit));
+		Vec3 toNearest = Vec3.atLowerCornerOf(actualPosition.subtract(nearestDeposit));
 		//2d distance:
 		double dist = Math.sqrt(toNearest.x()*toNearest.x() + toNearest.z()*toNearest.z());
 		//normalized vector towards nearest deposit:

@@ -45,7 +45,6 @@ public class MachineConfig extends ConfigBase {
 
     public final ConfigGroup surfaceScanner = group(1, "surface_scanner", "Surface Scanner");
     public final ConfigInt surfaceScannerMinimumRPM = i(64, 1, "surfaceScannerMinimumRPM", Comments.surfaceScannerMinimumRPM);
-    public final ConfigInt surfaceScannerScanDepth = i(-64, -512, "surfaceScannerScanDepth", Comments.surfaceScannerScanDepth);
 
     public final ConfigGroup polarizer = group(1, "polarizer", "Polarizer");
 
