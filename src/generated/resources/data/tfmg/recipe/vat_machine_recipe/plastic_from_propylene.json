@@ -17,6 +17,7 @@
     "tfmg:mixing"
   ],
   "min_size": 1,
+  "processing_time": 30,
   "results": [
     {
       "amount": 500,

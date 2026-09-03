@@ -20,7 +20,7 @@
     "tfmg:graphite_electrode"
   ],
   "min_size": 9,
-  "processing_time": 20,
+  "processing_time": 40,
   "results": [
     {
       "chance": 0.9,
