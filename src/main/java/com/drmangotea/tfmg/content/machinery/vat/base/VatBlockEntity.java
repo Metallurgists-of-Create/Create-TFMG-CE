@@ -312,8 +312,8 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
                     }
                 }
             }
-            targetSpeed = Math.min(targetSpeed, 64f);
-            visualSpeed.chase(targetSpeed * .09f, .2f, LerpedFloat.Chaser.EXP);
+            // Cap speed at 64 rpm so people can actually see items
+            visualSpeed.chase(Math.min(targetSpeed, 64f) * .09f, .2f, LerpedFloat.Chaser.EXP);
         }
     }
 
