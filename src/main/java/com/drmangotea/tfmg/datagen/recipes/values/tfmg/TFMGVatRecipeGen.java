@@ -2,21 +2,16 @@ package com.drmangotea.tfmg.datagen.recipes.values.tfmg;
 
 
 import com.drmangotea.tfmg.TFMG;
-import com.drmangotea.tfmg.base.pressure.Pressure;
-import com.drmangotea.tfmg.content.machinery.vat.base.registry.operations.VatOperation;
 import com.drmangotea.tfmg.datagen.recipes.builder.VatRecipeGen;
 import com.drmangotea.tfmg.registry.TFMGFluids;
 import com.drmangotea.tfmg.registry.TFMGItems;
 import com.drmangotea.tfmg.registry.TFMGTags;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.material.Fluids;
 import net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 import static com.drmangotea.tfmg.datagen.recipes.TFMGRecipeProvider.F.*;
@@ -36,8 +31,9 @@ public class TFMGVatRecipeGen extends VatRecipeGen {
             .require(Fluids.WATER, 250)
             .output(TFMGFluids.LIQUID_CONCRETE.get(), 32000)
             .allowAllVatTypes()
+            .duration(10)
             .mixing()
-        ),
+    ),
 
         ARC_FURNACE_STEEL = create("arc_furnace_steel", b -> b
                 .require(crushedRawIron())
@@ -46,7 +42,7 @@ public class TFMGVatRecipeGen extends VatRecipeGen {
                 .output(0.9f, TFMGItems.COAL_COKE_DUST)
                 .output(TFMGFluids.MOLTEN_STEEL.get(), 144)
                 .output(TFMGFluids.MOLTEN_SLAG.get(), 288)
-                .duration(20)
+                .duration(40)
                 .allowFirebrickLinedVat()
                 .minSize(9)
                 .arcBlasting()
@@ -55,7 +51,7 @@ public class TFMGVatRecipeGen extends VatRecipeGen {
         NEON = create("neon", b -> b
                 .require(TFMGFluids.AIR.get(), 1000)
                 .output(TFMGFluids.NEON.get(), 1)
-                .duration(10)
+                .duration(20)
                 .centrifuge()
                 .allowAllVatTypes()
         ),
@@ -67,6 +63,7 @@ public class TFMGVatRecipeGen extends VatRecipeGen {
                 .require(sulfurDust())
                 .require(nitrateDust())
                 .output(sulfuricAcid(), 500)
+                .duration(5)
                 .mixing()
                 .allowAllVatTypes()
         ),
@@ -77,6 +74,7 @@ public class TFMGVatRecipeGen extends VatRecipeGen {
                 .output(rubber())
                 .mixing()
                 .allowAllVatTypes()
+                .duration(40)
                 .heatLevel(2)
         ),
 
@@ -86,6 +84,7 @@ public class TFMGVatRecipeGen extends VatRecipeGen {
                 .output(propylene(), 250)
                 .mixing()
                 .allowAllVatTypes()
+                .duration(20)
                 .heatLevel(2)
         ),
 
@@ -94,6 +93,7 @@ public class TFMGVatRecipeGen extends VatRecipeGen {
                 .output(liquidPlastic(), 500)
                 .mixing()
                 .allowAllVatTypes()
+                .duration(30)
                 .heatLevel(2)
         ),
 
@@ -102,6 +102,7 @@ public class TFMGVatRecipeGen extends VatRecipeGen {
                 .output(liquidPlastic(), 500)
                 .mixing()
                 .allowAllVatTypes()
+                .duration(30)
                 .heatLevel(2)
         ),
 
@@ -149,36 +150,6 @@ public class TFMGVatRecipeGen extends VatRecipeGen {
                     //                .output(Items.STRING)
                     //        , mixing());
                     ;
-
-    public static class VatRecipeValues {
-        public List<VatOperation> machines;
-        public int minSize;
-        public int heat;
-        public Pressure pressure;
-        public List<ResourceLocation> allowedVatTypes;
-
-        public VatRecipeValues() {
-            machines = new ArrayList<>();
-            minSize = 1;
-            heat = 0;
-            pressure = Pressure.EMPTY;
-            allowedVatTypes = new ArrayList<>();
-            allowedVatTypes.add(TFMG.asResource("steel_vat"));
-            allowedVatTypes.add(TFMG.asResource("cast_iron_vat"));
-            allowedVatTypes.add(TFMG.asResource("firebrick_lined_vat"));
-        }
-
-        public VatRecipeValues heat(int heat) {
-            this.heat = heat;
-            return this;
-        }
-
-        public VatRecipeValues pressure(int kpa) {
-            this.pressure = Pressure.of(kpa);
-            return this;
-        }
-
-    }
 
     @Override
     public String getName() {
