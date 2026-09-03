@@ -21,7 +21,11 @@ Contributors:<br>
     - Regular Engine Assembly
     - Radial Engine Assembly
 - Vat:
+  -  Recipes now have durations to prevent instant making of stuff, and some modified
   - `ChemicalVatCategory` now uses a dynamic barometer needle to display pressure.
+  - Items now render inside vats
+    - Also spins with mixing and the centrifuge in the direction of rotation.
+  - Fluids no longer z-fight with the top of the vat.
 - Oil Deposits:
   - Oil Reserves now drain over time.
   - Oil Reserves are now stored in a chunk attachment rather than level data.
