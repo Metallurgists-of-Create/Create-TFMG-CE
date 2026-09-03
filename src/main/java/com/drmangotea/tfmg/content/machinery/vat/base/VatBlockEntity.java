@@ -13,6 +13,7 @@ import com.drmangotea.tfmg.base.pressure.tank.SmartPressureTank;
 import com.drmangotea.tfmg.content.machinery.vat.base.registry.operations.VatOperation;
 import com.drmangotea.tfmg.content.machinery.vat.compressor.CompressorBlockEntity;
 import com.drmangotea.tfmg.content.machinery.vat.freezer.FreezerBlockEntity;
+import com.drmangotea.tfmg.content.machinery.vat.industrial_mixer.IndustrialMixerBlockEntity;
 import com.drmangotea.tfmg.mixin.accessor.TankSegmentAccessor;
 import com.drmangotea.tfmg.recipes.VatMachineRecipe;
 import com.drmangotea.tfmg.registry.TFMGBlockEntities;
@@ -95,6 +96,8 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
     //rendering
     protected boolean forceFluidLevelUpdate;
     public LerpedFloat[] fluidLevel = new LerpedFloat[8];
+    public LerpedFloat visualSpeed = LerpedFloat.linear();
+    public float spinningAngle;
     protected int luminosity;
     //visual state data
     protected boolean window;
@@ -298,6 +301,19 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
                     tankNumber++;
                 }
             }
+
+            float targetSpeed = 0;
+            for (BlockPos pos : machineMap.keySet()) {
+                if (!operationalMachinesMap.getOrDefault(pos, true))
+                    continue;
+                if (level.getBlockEntity(pos) instanceof IndustrialMixerBlockEntity mixer) {
+                    if (mixer.getOperationId().is(TFMGVatOperations.MIXING.get()) || mixer.getOperationId().is(TFMGVatOperations.CENTRIFUGE.get())) {
+                        targetSpeed += Math.abs(mixer.getSpeed());
+                    }
+                }
+            }
+            targetSpeed = Math.min(targetSpeed, 64f);
+            visualSpeed.chase(targetSpeed * .09f, .2f, LerpedFloat.Chaser.EXP);
         }
     }
 
@@ -538,6 +554,7 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
         for (int i = 0; i < 8; i++) {
             fluidLevel[i].tickChaser();
         }
+        visualSpeed.tickChaser();
 
     }
 
