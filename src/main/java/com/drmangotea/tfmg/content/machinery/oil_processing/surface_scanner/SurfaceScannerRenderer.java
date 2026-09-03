@@ -41,7 +41,6 @@ public class SurfaceScannerRenderer extends SafeBlockEntityRenderer<SurfaceScann
     @Override
     protected void renderSafe(SurfaceScannerBlockEntity be, float partialTicks, PoseStack ms, MultiBufferSource bufferSource, int light, int overlay) {
         BlockState blockState = be.getBlockState();
-		VertexConsumer buffer = bufferSource.getBuffer(RenderTypes.additive());
         ms.pushPose();
 		ms.rotateAround(getFacingQuat(be), 0.5f, 0.5f, 0.5f);
   
@@ -52,7 +51,7 @@ public class SurfaceScannerRenderer extends SafeBlockEntityRenderer<SurfaceScann
 						.translate((x - 2)*0.19, 0, (z - 2)*0.19)
 						.light(LightTexture.FULL_BRIGHT)
 						.color(255, 69, 96, 255) //#ff4560ff
-						.renderInto(ms, buffer);
+						.renderInto(ms, bufferSource.getBuffer(RenderTypes.additive()));
 				}
 			}
 		}

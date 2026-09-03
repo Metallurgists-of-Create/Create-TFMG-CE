@@ -21,7 +21,7 @@ public class TrafficLightBlockEntity extends ElectricBlockEntity {
 
     public LerpedFloat glow = LerpedFloat.linear();
 
-    int light = 0;
+    LightPos light = LightPos.RED;
 
     public int timer = 180;
     public TrafficLightBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
@@ -72,11 +72,11 @@ public class TrafficLightBlockEntity extends ElectricBlockEntity {
         int halfTimer = timerLength.getValue() / 2;
 
         if(timer < halfTimer - Math.min(30, halfTimer / 4) && timer > Math.min(60, halfTimer / 4)) {
-            light = 0;
+            light = LightPos.GREEN;
         } else if (timer > halfTimer + Math.min(30, halfTimer / 4)) {
-            light = 2;
+            light = LightPos.RED;
         } else {
-            light = 1;
+            light = LightPos.AMBER;
         }
 
         if(timer == 0){
@@ -96,4 +96,19 @@ public class TrafficLightBlockEntity extends ElectricBlockEntity {
         super.write(compound,registries , clientPacket);
         compound.putInt("Timer", timer);
     }
+	
+	public enum LightPos {
+		GREEN(0x4CFF00, 0f),
+		AMBER(0xF78000, 0.3125f),
+		RED(0xE22B16, 0.625f),
+		;
+		
+		public final int color;
+		public final float offset;
+		
+		LightPos(int color, float offset) {
+			this.color = color;
+			this.offset = offset;
+		}
+	}
 }

@@ -30,9 +30,9 @@ public class TrafficLightRenderer extends SafeBlockEntityRenderer<TrafficLightBl
         if(be.getData().getVoltage()>0&&be.getPowerUsage()>0)
                 CachedBuffers.partialFacing(TFMGPartialModels.TRAFFIC_LIGHT, blockState, blockState.getValue(HorizontalDirectionalBlock.FACING).getOpposite())
                         .light((int) glow * 3 + 80)
-                        .color(be.light == 0 ? 0x4CFF00 : be.light == 1 ? 0xF78000 : 0xE22B16)
+                        .color(be.light.color)
                         .disableDiffuse()
-                        .translateY(be.light == 0 ? 0 : (float) (be.light == 1 ? 0.3125 : 0.625))
+                        .translateY(be.light.offset)
                         .renderInto(ms, buffer.getBuffer(RenderTypes.additive()));
 
 

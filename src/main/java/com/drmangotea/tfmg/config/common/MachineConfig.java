@@ -84,7 +84,6 @@ public class MachineConfig extends ConfigBase {
         static String engineFuelConsumption = "Modifier of engine fuel consumption in %.";
         static String enginePower = "Modifier of engine stress capacity in %.";
         static String engineElectricPower = "Modifier of engine power generation in %.";
-        static String surfaceScannerScanDepth = "Y level surface scanner scan at.";
         static String FEtoWattTickConversionRate = "How much Forge Energy is in one watt-tick.";
         /**
          * @deprecated Polarizer charging rate is now defined by the recipe.
