@@ -78,9 +78,7 @@ public class VatBlock extends Block implements IWrenchable, IBE<VatBlockEntity> 
     }
     @Override @ParametersAreNonnullByDefault
     public void onPlace(BlockState state, Level world, BlockPos pos, BlockState oldState, boolean moved) {
-        if (oldState.getBlock() == state.getBlock())
-            return;
-        if (moved)
+        if (oldState.getBlock() == state.getBlock() || moved)
             return;
 
         withBlockEntityDo(world, pos, VatBlockEntity::updateConnectivity);

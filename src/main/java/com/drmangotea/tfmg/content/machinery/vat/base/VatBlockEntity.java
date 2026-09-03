@@ -123,7 +123,6 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
     float efficiency = 1;
     int heatLevel = 0;
     Pressure pressure = Pressure.EMPTY;
-    HeatCondition heatCondition = HeatCondition.NONE;
     private static final Object vatRecipeKey = new Object();
 
     public VatBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
@@ -210,9 +209,7 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
     }
 
     public int getProgressPercentage() {
-        if (recipeDuration <= 0)
-            return -1;
-        return Math.min(100, (int) (100f * timer / recipeDuration));
+        return recipeDuration <= 0 ? -1 : Math.min(100, (int) (100f * timer / recipeDuration));
     }
 
     //goggle stuff
@@ -361,12 +358,6 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
 
         pressure = Pressure.of(newPressure);
 
-        if (heatLevel >= 2) {
-            heatCondition = HeatCondition.HEATED;
-        }
-        if (heatLevel >= 4) {
-            heatCondition = HeatCondition.SUPERHEATED;
-        }
         if (heatLevel != prevHeat || newPressure != prevPressure)
             notifyUpdate();
     }
@@ -424,15 +415,9 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
                     break;
                 }
             }
-            if (!machinesOk) {
-                continue;
-            }
-
-            if (!areMachinesValid) {
-                continue;
-            }
-
-            if (!testedRecipe.allowedVatTypes.contains(((VatBlock) getBlockState().getBlock()).vatType)) {
+            if (!machinesOk
+                    || !areMachinesValid
+                    || !testedRecipe.allowedVatTypes.contains(((VatBlock) getBlockState().getBlock()).vatType)) {
                 continue;
             }
 
@@ -485,10 +470,7 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
 
 
             //////////////////////////////////////////
-            if (doesntMatch)
-                continue;
-
-            if (!canFitAllOutputs(testedRecipe))
+            if (doesntMatch || !canFitAllOutputs(testedRecipe))
                 continue;
             ///////////////////////////////////////
 
@@ -1174,7 +1156,6 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
         IFluidHandler outputHandler = outputTank.getCapability();
         IFluidHandler inputHandler = inputTank.getCapability();
 
-
         if (inputHandler == null || outputHandler == null)
             return fluidCapability;
 
@@ -1342,8 +1323,6 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
 
         if (lastKnownPos != null)
             compound.put("LastKnownPos", NbtUtils.writeBlockPos(lastKnownPos));
-        if (!isController())
-            compound.put("Controller", NbtUtils.writeBlockPos(controller));
         if (isController()) {
             compound.putBoolean("Window", window);
             compound.putInt("Size", width);
@@ -1354,6 +1333,8 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
             compound.putInt("HeatLevel", heatLevel);
             compound.putInt("RecipeDuration", recipe != null ? recipe.getProcessingDuration() : 0);
             pressure.save(compound);
+        } else {
+            compound.put("Controller", NbtUtils.writeBlockPos(controller));
         }
         compound.putInt("Luminosity", luminosity);
         super.write(compound, registries, clientPacket);
@@ -1402,8 +1383,8 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
 
     @Override
     public void setExtraData(@Nullable Object data) {
-        if (data instanceof Boolean)
-            window = (boolean) data;
+        if (data instanceof Boolean bool)
+            window = bool;
     }
 
     @Override
@@ -1428,9 +1409,7 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
 
     @Override
     public int getMaxLength(Direction.Axis longAxis, int width) {
-        if (longAxis == Direction.Axis.Y)
-            return getMaxHeight();
-        return getMaxWidth();
+        return longAxis == Direction.Axis.Y ? getMaxHeight() : getMaxWidth();
     }
 
     @Override
