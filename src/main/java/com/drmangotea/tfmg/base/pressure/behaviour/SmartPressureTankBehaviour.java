@@ -4,7 +4,6 @@ import com.drmangotea.tfmg.base.capabilities.pressure.IPressureHandler;
 import com.drmangotea.tfmg.base.pressure.Pressure;
 import com.drmangotea.tfmg.base.pressure.tank.CombinedPressureTankWrapper;
 import com.drmangotea.tfmg.base.pressure.tank.SmartPressureTank;
-import com.drmangotea.tfmg.content.machinery.vat.base.VatBlockEntity;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BehaviourType;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
@@ -37,7 +36,7 @@ public class SmartPressureTankBehaviour extends BlockEntityBehaviour {
         super(be);
     }
 
-    public SmartPressureTankBehaviour(BehaviourType<SmartPressureTankBehaviour> type, VatBlockEntity be, int tanks, int tankCapacity) {
+    public SmartPressureTankBehaviour(BehaviourType<SmartPressureTankBehaviour> type, SmartBlockEntity be, int tanks, int tankCapacity) {
         super(be);
         insertionAllowed = true;
         extractionAllowed = true;
