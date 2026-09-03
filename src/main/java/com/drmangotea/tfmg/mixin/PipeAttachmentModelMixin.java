@@ -80,10 +80,7 @@ public abstract class PipeAttachmentModelMixin extends BakedModelWrapperWithData
     @Override
     public ChunkRenderTypeSet getRenderTypes(@NotNull BlockState state, @NotNull RandomSource rand, @NotNull ModelData data) {
         ChunkRenderTypeSet set = super.getRenderTypes(state, rand, data);
-        if (set.isEmpty()) {
-            return ItemBlockRenderTypes.getRenderLayers(state);
-        }
-        return set;
+        return set.isEmpty() ? ItemBlockRenderTypes.getRenderLayers(state) : set;
     }
 
     @Override

@@ -42,18 +42,18 @@ public abstract class DeployerBlockEntityMixin extends KineticBlockEntity {
             if (item.isEmpty())
                 continue;
             if (item.is(TFMGItems.LITHIUM_BLADE)) {
-                tfmg$decrementLithiumCharge(inventory, i, 1);
+                tfmg$decrementLithiumCharge(inventory, i);
             }
         }
     }
 
     @Unique
-    private void tfmg$decrementLithiumCharge(Inventory inventory, int slot, int amount) {
+    private void tfmg$decrementLithiumCharge(Inventory inventory, int slot) {
         ItemStack item = inventory.getItem(slot);
         if (item.isEmpty()) return;
         if (item.has(TFMGDataComponents.LITHIUM_BLADE_TIMER)) {
             if (item.getOrDefault(TFMGDataComponents.LITHIUM_BLADE_TIMER, 0) > 0) {
-                int toDecrement = Math.max(0, item.getOrDefault(TFMGDataComponents.LITHIUM_BLADE_TIMER, 0) - amount);
+                int toDecrement = Math.max(0, item.getOrDefault(TFMGDataComponents.LITHIUM_BLADE_TIMER, 0) - 1);
                 if (item.getOrDefault(TFMGDataComponents.LITHIUM_BLADE_TIMER, 0) - toDecrement > 0) {
                     item.set(DataComponents.ATTRIBUTE_MODIFIERS, AxeItem.createAttributes(TFMGTiers.STEEL, 3, -2.4F));
                 }

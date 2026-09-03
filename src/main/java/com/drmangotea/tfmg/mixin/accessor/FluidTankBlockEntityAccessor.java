@@ -8,7 +8,6 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 
 @Mixin(FluidTankBlockEntity.class)
 public interface FluidTankBlockEntityAccessor {
-
     @Accessor("luminosity")
     int tfmg$getLuminosity();
 
