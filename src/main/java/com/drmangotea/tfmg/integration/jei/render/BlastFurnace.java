@@ -11,9 +11,6 @@ import net.minecraft.world.level.block.state.properties.WallSide;
 import static net.minecraft.world.level.block.WallBlock.*;
 
 public class BlastFurnace extends AnimatedKinetics {
-
-
-
     public BlastFurnace() {}
 
     @Override
@@ -25,8 +22,6 @@ public class BlastFurnace extends AnimatedKinetics {
         matrixStack.mulPose(Axis.YP.rotationDegrees(22.5f));
         int scale =  23;
 
-
-
         blockElement(TFMGBlocks.BLAST_FURNACE_OUTPUT.getDefaultState())
                 .scale(scale)
                 .render(graphics);
@@ -35,26 +30,24 @@ public class BlastFurnace extends AnimatedKinetics {
                 .scale(scale)
                 .render(graphics);
 
-        for(int i = 0; i<4;i++) {
+        for(int i = 0; i < 4; i++) {
             if(i !=0)
                 blockElement(TFMGBlocks.FIREPROOF_BRICKS.getDefaultState())
                         .atLocal(0, -i, 0)
                         .scale(scale)
                         .render(graphics);
-            blockElement(TFMGBlocks.FIREPROOF_BRICKS.getDefaultState())
-                    .atLocal(0, -i, -2)
-                    .scale(scale)
-                    .render(graphics);
-            blockElement(TFMGBlocks.FIREPROOF_BRICKS.getDefaultState())
-                    .atLocal(-1, -i, -1)
-                    .scale(scale)
-                    .render(graphics);
-            blockElement(TFMGBlocks.FIREPROOF_BRICKS.getDefaultState())
-                    .atLocal(1, -i, -1)
-                    .scale(scale)
-                    .render(graphics);
-
-
+                blockElement(TFMGBlocks.FIREPROOF_BRICKS.getDefaultState())
+                        .atLocal(0, -i, -2)
+                        .scale(scale)
+                        .render(graphics);
+                blockElement(TFMGBlocks.FIREPROOF_BRICKS.getDefaultState())
+                        .atLocal(-1, -i, -1)
+                        .scale(scale)
+                        .render(graphics);
+                blockElement(TFMGBlocks.FIREPROOF_BRICKS.getDefaultState())
+                        .atLocal(1, -i, -1)
+                        .scale(scale)
+                        .render(graphics);
                 blockElement(TFMGBlocks.FIREPROOF_BRICK_REINFORCEMENT.getDefaultState().setValue(NORTH_WALL, WallSide.TALL).setValue(WEST_WALL, WallSide.TALL))
                         .atLocal(1, -i, 0)
                         .scale(scale)
@@ -74,7 +67,6 @@ public class BlastFurnace extends AnimatedKinetics {
 
 
         }
-
 
         matrixStack.scale(scale, -scale, scale);
         matrixStack.translate(0, -1.8, 0);

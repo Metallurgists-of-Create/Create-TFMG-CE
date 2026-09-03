@@ -27,11 +27,9 @@ public class PolarizingCategory extends CreateRecipeCategory<PolarizingRecipe> {
     }
 
     public void draw(PolarizingRecipe recipe, IRecipeSlotsView iRecipeSlotsView, GuiGraphics graphics, double mouseX, double mouseY) {
-
         AllGuiTextures.JEI_ARROW.render(graphics, 85, 32);
         AllGuiTextures.JEI_DOWN_ARROW.render(graphics, 43, 4);
         this.polarizer.draw(graphics, 48, 27);
-
     }
 
     public static class AssemblyPolarizing extends SequencedAssemblySubCategory {
@@ -41,12 +39,7 @@ public class PolarizingCategory extends CreateRecipeCategory<PolarizingRecipe> {
             super(25);
         }
 
-        public void setRecipe(IRecipeLayoutBuilder builder, SequencedRecipe<?> recipe, IFocusGroup focuses, int x) {
-
-        }
-
         public void draw(SequencedRecipe<?> recipe, GuiGraphics graphics, double mouseX, double mouseY, int index) {
-
             PoseStack ms = graphics.pose();
 
             ms.pushPose();

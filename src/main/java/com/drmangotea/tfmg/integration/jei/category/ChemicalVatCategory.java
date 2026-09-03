@@ -31,7 +31,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-//TODO Create system for addons to draw machines instead
 public class ChemicalVatCategory extends CreateRecipeCategory<VatMachineRecipe> {
     // Cheap way to do this
     private static final int[] PRESSURE_ANGLES = {

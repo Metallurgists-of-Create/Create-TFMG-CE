@@ -9,9 +9,6 @@ import com.simibubi.create.content.processing.burner.BlazeBurnerBlock;
 import net.minecraft.client.gui.GuiGraphics;
 
 public class CokeOven extends AnimatedKinetics {
-
-
-
     public CokeOven() {}
 
     @Override
@@ -23,7 +20,6 @@ public class CokeOven extends AnimatedKinetics {
         matrixStack.mulPose(Axis.YP.rotationDegrees(22.5f));
         int scale =  23;
         BlazeBurnerBlock.HeatLevel heatLevel = BlazeBurnerBlock.HeatLevel.SMOULDERING;
-
 
         blockElement(TFMGBlocks.COKE_OVEN.getDefaultState())
                 .scale(scale)
@@ -61,12 +57,8 @@ public class CokeOven extends AnimatedKinetics {
                 .scale(scale)
                 .render(graphics);
 
-
         matrixStack.scale(scale, -scale, scale);
         matrixStack.translate(0, -1.8, 0);
         matrixStack.popPose();
     }
-
-
-
 }

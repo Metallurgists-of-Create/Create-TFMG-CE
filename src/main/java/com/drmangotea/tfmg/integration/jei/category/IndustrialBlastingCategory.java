@@ -23,7 +23,6 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
 public class IndustrialBlastingCategory extends CreateRecipeCategory<IndustrialBlastingRecipe> {
-
     private final BlastFurnace blastFurnace = new BlastFurnace();
 
     public IndustrialBlastingCategory(Info<IndustrialBlastingRecipe> info) {
@@ -61,5 +60,4 @@ public class IndustrialBlastingCategory extends CreateRecipeCategory<IndustrialB
         AllGuiTextures.JEI_ARROW.render(graphics, 96, 121);
         AllGuiTextures.JEI_DOWN_ARROW.render(graphics, 45, 15);
     }
-
 }

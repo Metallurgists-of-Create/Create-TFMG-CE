@@ -15,7 +15,6 @@ public class Polarizer extends AnimatedKinetics {
     }
     
     public void draw(GuiGraphics graphics, int xOffset, int yOffset) {
-
         PoseStack matrixStack = graphics.pose();
 
         matrixStack.pushPose();

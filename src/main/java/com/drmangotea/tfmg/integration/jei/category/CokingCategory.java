@@ -17,7 +17,6 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
 public class CokingCategory extends CreateRecipeCategory<CokingRecipe> {
-
     private final CokeOven cokeOven = new CokeOven();
 
     public CokingCategory(Info<CokingRecipe> info) {

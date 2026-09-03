@@ -16,7 +16,6 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
 public class CastingCategory extends CreateRecipeCategory<CastingRecipe> {
-
     private final CastingSetup castingSetup = new CastingSetup();
 
     public CastingCategory(Info<CastingRecipe> info) {
@@ -40,5 +39,4 @@ public class CastingCategory extends CreateRecipeCategory<CastingRecipe> {
 
         AllGuiTextures.JEI_ARROW.render(graphics, 78, 23);
     }
-
 }

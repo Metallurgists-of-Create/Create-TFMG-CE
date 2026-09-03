@@ -13,7 +13,6 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
 public class DistillationCategory extends CreateRecipeCategory<DistillationRecipe> {
-
 	public DistillationCategory(Info<DistillationRecipe> info) {
 		super(info);
 	}
@@ -40,13 +39,13 @@ public class DistillationCategory extends CreateRecipeCategory<DistillationRecip
 		TFMGGuiTextures.DISTILLATION_TOWER_BOTTOM.render(graphics, 10, y);
 		AllGuiTextures.JEI_ARROW.render(graphics, 56, y);
 
-		for(int i = 0; i < (outputCount - 1); i++){
+		for (int i = 0; i < (outputCount - 1); i++){
 			y -= 24;
 			TFMGGuiTextures.DISTILLATION_TOWER_MIDDLE.render(graphics, 10, y);
 			AllGuiTextures.JEI_ARROW.render(graphics, 56, y);
 		}
+
 		y -= 12;
 		TFMGGuiTextures.DISTILLATION_TOWER_TOP.render(graphics, 10, y);
-
 	}
 }

@@ -17,7 +17,6 @@ public class WindingMachine extends AnimatedKinetics {
     }
 
     public void draw(GuiGraphics graphics, int xOffset, int yOffset, int coilColor, boolean shadow) {
-
         PoseStack matrixStack = graphics.pose();
 
         matrixStack.pushPose();
@@ -51,7 +50,6 @@ public class WindingMachine extends AnimatedKinetics {
 
         matrixStack.popPose();
     }
-
 
     @Override
     public void draw(GuiGraphics guiGraphics, int i, int i1) {

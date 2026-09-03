@@ -8,9 +8,6 @@ import com.simibubi.create.compat.jei.category.animations.AnimatedKinetics;
 import net.minecraft.client.gui.GuiGraphics;
 
 public class CastingSetup extends AnimatedKinetics {
-
-
-
     public CastingSetup() {}
 
     @Override
@@ -32,7 +29,4 @@ public class CastingSetup extends AnimatedKinetics {
 
         matrixStack.popPose();
     }
-
-
-
 }

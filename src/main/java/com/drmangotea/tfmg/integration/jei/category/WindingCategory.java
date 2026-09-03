@@ -63,7 +63,6 @@ public class WindingCategory extends CreateRecipeCategory<WindingRecipe> {
         }
 
         public void draw(SequencedRecipe<?> recipe, GuiGraphics graphics, double mouseX, double mouseY, int index) {
-
             PoseStack ms = graphics.pose();
 
             int coilColor = 0;
@@ -77,7 +76,6 @@ public class WindingCategory extends CreateRecipeCategory<WindingRecipe> {
             ms.scale(0.7F, 0.7F, 0.7F);
             this.windingMachine.draw(graphics, this.getWidth() / 2, 0,coilColor,false);
             ms.popPose();
-
         }
     }
 }

@@ -14,7 +14,6 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
 public class HotBlastCategory extends CreateRecipeCategory<HotBlastRecipe> {
-
     public HotBlastCategory(Info<HotBlastRecipe> info) {
         super(info);
     }
@@ -34,5 +33,4 @@ public class HotBlastCategory extends CreateRecipeCategory<HotBlastRecipe> {
         AllGuiTextures.JEI_ARROW.render(graphics, 56, 55);
         AllGuiTextures.JEI_ARROW.render(graphics, 56, 78);
     }
-
 }
