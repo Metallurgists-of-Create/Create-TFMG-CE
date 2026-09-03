@@ -27,15 +27,12 @@ import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 
 public class EngineScenes {
-
     public static void engines(SceneBuilder builder, SceneBuildingUtil util) {
         TFMGSceneBuilder scene = new TFMGSceneBuilder(builder);
         scene.title("engines", "Engines");
         scene.configureBasePlate(0, 0, 7);
 
-
         scene.showBasePlate();
-
 
         Selection engine = util.select().fromTo(3, 1, 3, 3, 1, 4);
         Selection engineFront = util.select().fromTo(3, 1, 2, 3, 1, 2);
@@ -50,7 +47,6 @@ public class EngineScenes {
         scene.world().setKineticSpeed(fuelTank, 70);
         scene.world().setKineticSpeed(exhaust, 70);
         scene.world().setKineticSpeed(cog, 70);
-
 
         ElementLink<WorldSectionElement> engineElement = scene.world().showIndependentSection(engine, Direction.DOWN);
         ElementLink<WorldSectionElement> engineFrontElement = scene.world().showIndependentSection(engineFront, Direction.DOWN);
@@ -84,12 +80,10 @@ public class EngineScenes {
                 .rightClick()
                 .withItem(new ItemStack(AllItems.EMPTY_SCHEMATIC.get()));
 
-
         scene.overlay().showText(50)
                 .attachKeyFrame()
                 .text("Engine configuration can be changed with a schematic");
         scene.idle(60);
-
 
         scene.overlay().showText(60)
                 .attachKeyFrame()
@@ -219,12 +213,10 @@ public class EngineScenes {
         scene.world().setKineticSpeed(oil, 80);
         scene.world().setKineticSpeed(engine, 128);
 
-
         scene.world().showIndependentSection(engine, Direction.DOWN);
         scene.world().showIndependentSection(input, Direction.DOWN);
         scene.world().showIndependentSection(exhaust, Direction.DOWN);
         ElementLink<WorldSectionElement> airElement = scene.world().showIndependentSection(air, Direction.DOWN);
-
 
         scene.world().moveSection(airElement, new Vec3(0d, 0d, -1d), 0);
 
@@ -247,7 +239,6 @@ public class EngineScenes {
                 .pointAt(util.vector().blockSurface(util.grid().at(2, 1, 3), Direction.WEST))
                 .placeNearTarget();
 
-
         scene.idle(50);
     }
 
@@ -259,20 +250,16 @@ public class EngineScenes {
 
         scene.showBasePlate();
 
-
         Selection engineSmall = util.select().fromTo(2, 1, 1, 2, 1, 1);
         Selection engineLarge = util.select().fromTo(1, 1, 1, 1, 1, 1);
         Selection engineLever = util.select().fromTo(3, 1, 0, 3, 1, 0);
-
 
         Selection inputPump = util.select().fromTo(3, 1, 2, 3, 1, 2);
         Selection input = util.select().fromTo(3, 1, 1, 3, 1, 1);
         Selection tank1 = util.select().fromTo(3, 1, 3, 3, 2, 3);
         Selection tank2 = util.select().fromTo(2, 1, 3, 2, 2, 3);
 
-
         scene.world().setKineticSpeed(engineSmall, 0);
-
 
         ElementLink<WorldSectionElement> engineElement = scene.world().showIndependentSectionImmediately(engineSmall);
         scene.overlay().showText(50)
@@ -281,7 +268,6 @@ public class EngineScenes {
                 .pointAt(util.vector().blockSurface(util.grid().at(4, 0, 4), Direction.WEST))
                 .placeNearTarget();
         scene.idle(100);
-
 
         scene.world().setKineticSpeed(inputPump, 80);
         ElementLink<WorldSectionElement> inputElement = scene.world().showIndependentSection(input, Direction.DOWN);
@@ -307,7 +293,6 @@ public class EngineScenes {
 
 
         scene.idle(80);
-
 
         ElementLink<WorldSectionElement> inputPumpElement = scene.world().showIndependentSection(inputPump, Direction.DOWN);
         ElementLink<WorldSectionElement> tankElement1 = scene.world().showIndependentSection(tank1, Direction.DOWN);

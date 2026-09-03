@@ -12,7 +12,6 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 public class OilScenes {
-
     public static void pumpjack(SceneBuilder builder, SceneBuildingUtil util) {
         CreateSceneBuilder scene = new CreateSceneBuilder(builder);
         scene.title("pumpjack", "Pumpjack");
@@ -47,7 +46,6 @@ public class OilScenes {
                 .attachKeyFrame()
                 .text("First step of mining oil is building industrial pipes from a deposit to the surface");
 
-
         ElementLink<WorldSectionElement> pipeElement = scene.world().showIndependentSection(pipes, Direction.SOUTH);
         scene.world().moveSection(pipeElement, new Vec3(0d, -4d, 2d), 0);
         scene.idle(25);
@@ -70,7 +68,6 @@ public class OilScenes {
                 .pointAt(util.vector().blockSurface(util.grid().at(3, 3, 2), Direction.WEST))
                 .placeNearTarget();
         scene.idle(70);
-
 
         ElementLink<WorldSectionElement> connectorElement = scene.world().showIndependentSection(hammerConnector, Direction.UP);
         ElementLink<WorldSectionElement> headElement = scene.world().showIndependentSection(hammerHead, Direction.UP);
@@ -135,7 +132,6 @@ public class OilScenes {
                 .placeNearTarget();
         scene.idle(70);
 
-
         scene.overlay().showText(50)
                 .attachKeyFrame()
                 .text("When a deposit is found, compass at the top will show the direction")
@@ -199,7 +195,5 @@ public class OilScenes {
                 .pointAt(util.vector().blockSurface(util.grid().at(2, 2, 3), Direction.WEST))
                 .placeNearTarget();
         scene.idle(80);
-
-
     }
 }

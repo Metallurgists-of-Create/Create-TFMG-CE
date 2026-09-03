@@ -27,7 +27,6 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import java.util.Random;
 
 public class MetallurgyScenes {
-
     public static void blastFurnace(SceneBuilder builder, SceneBuildingUtil util) {
         CreateSceneBuilder scene = new CreateSceneBuilder(builder);
         scene.title("blast_furnace", "Blast Furnace");
@@ -69,19 +68,14 @@ public class MetallurgyScenes {
                 .add(steelReinforcement1)
                 .add(steelReinforcement2)
                 .add(steelReinforcement3)
-                .add(steelReinforcement4)
-                ;
-
+                .add(steelReinforcement4);
 
         Selection pipes1 = util.select().fromTo(0, 1, 1, 4, 0, 1);
         Selection pipes2 = util.select().fromTo(5, 1, 0, 5, 3, 1);
         Selection pipes3 = util.select().fromTo(0, 1, 3, 0, 2, 3);
         Selection pipes = util.select().fromTo(1, 2, 3, 1, 2, 3).add(pipes1).add(pipes2).add(pipes3);
 
-
         scene.world().setKineticSpeed(pipes, 80);
-
-
 
         scene.world().showIndependentSection(output, Direction.DOWN);
         scene.overlay().showText(50)
@@ -94,7 +88,6 @@ public class MetallurgyScenes {
         scene.overlay().showText(60)
                 .attachKeyFrame()
                 .text("To build a blast furnace, make a cylinder of fireproof bricks around it with one blast furnace hatch in it");
-
 
         scene.world().showIndependentSection(furnace1, Direction.DOWN);
         scene.world().showIndependentSection(furnace2, Direction.DOWN);
@@ -185,7 +178,6 @@ public class MetallurgyScenes {
                 .pointAt(util.vector().blockSurface(util.grid().at(3, 6, 3), Direction.WEST))
                 .placeNearTarget();
         scene.idle(80);
-
     }
 
     public static void cokeOven(SceneBuilder builder, SceneBuildingUtil util) {
@@ -196,7 +188,6 @@ public class MetallurgyScenes {
 
         scene.showBasePlate();
 
-
         Selection cokeOvenMiddle = util.select().fromTo(3, 1, 2, 3, 3, 4);
 
         Selection cokeOvenRight = util.select().fromTo(4, 1, 2, 5, 3, 4);
@@ -204,9 +195,7 @@ public class MetallurgyScenes {
 
         Selection chutes = util.select().fromTo(2, 4, 3, 4, 4, 3);
         Selection exhaust = util.select().fromTo(2, 4, 2, 4, 4, 2)
-                .add(util.select().fromTo(0, 1, 2, 1, 5, 2))
-                ;
-
+                .add(util.select().fromTo(0, 1, 2, 1, 5, 2));
 
         Selection creosoteOutput = util.select().fromTo(0, 1, 5, 5, 5, 5);
 
@@ -215,7 +204,6 @@ public class MetallurgyScenes {
 
         scene.world().setKineticSpeed(creosoteOutput, 80);
         scene.world().setKineticSpeed(exhaust, 80);
-
 
         scene.world().showIndependentSection(cokeOvenMiddle, Direction.DOWN);
         scene.overlay().showText(70)
@@ -226,8 +214,6 @@ public class MetallurgyScenes {
 
         scene.idle(90);
 
-
-
         scene.world().showIndependentSection(cokeOvenRight, Direction.DOWN);
         scene.world().showIndependentSection(cokeOvenLeft, Direction.DOWN);
         scene.overlay().showText(70)
@@ -236,9 +222,7 @@ public class MetallurgyScenes {
                 .pointAt(util.vector().blockSurface(util.grid().at(1, 2, 2), Direction.WEST))
                 .placeNearTarget();
 
-
         scene.idle(30);
-
 
         scene.world().showIndependentSection(chutes, Direction.DOWN);
         scene.overlay().showText(70)
@@ -248,9 +232,7 @@ public class MetallurgyScenes {
         ElementLink<EntityElement> item = null;
         for (int i = 0; i < 3; i++) {
             scene.idle(10);
-
             for (int y = 0; y < 3; y++) {
-
                 item = scene.world().createItemEntity(util.vector().centerOf(2 + y, 6, 3), util.vector().of(0, 0, 0), coal);
             }
         }

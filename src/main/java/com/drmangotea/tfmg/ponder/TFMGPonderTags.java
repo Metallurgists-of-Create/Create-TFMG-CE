@@ -11,22 +11,18 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.ItemLike;
 
 public class TFMGPonderTags {
-
     public static final ResourceLocation
-
             OIL_PROCESSING = loc("oil_processing"),
             ENGINES = loc("engines"),
             METALLURGY = loc("metallurgy"),
             ELECTRIC_MACHINERY = loc("electric_machinery"),
-            CHEMICAL_VAT = loc("chemical_vat")
-                    ;
+            CHEMICAL_VAT = loc("chemical_vat");
 
     private static ResourceLocation loc(String id) {
         return TFMG.asResource(id);
     }
 
     public static void register(PonderTagRegistrationHelper<ResourceLocation> helper) {
-
         PonderTagRegistrationHelper<RegistryEntry<?,?>> HELPER = helper.withKeyFunction(RegistryEntry::getId);
 
         PonderTagRegistrationHelper<ItemLike> itemHelper = helper.withKeyFunction(
@@ -81,8 +77,7 @@ public class TFMGPonderTags {
                 .add(TFMGBlocks.PUMPJACK_HAMMER_PART)
                 .add(TFMGBlocks.LARGE_PUMPJACK_HAMMER_CONNECTOR)
                 .add(TFMGBlocks.LARGE_PUMPJACK_HAMMER_HEAD)
-                .add(TFMGBlocks.LARGE_PUMPJACK_HAMMER_PART)
-    ;
+                .add(TFMGBlocks.LARGE_PUMPJACK_HAMMER_PART);
 
         HELPER.addToTag(ENGINES)
                 .add(TFMGBlocks.REGULAR_ENGINE)
@@ -142,10 +137,6 @@ public class TFMGPonderTags {
                 .add(TFMGItems.ZINC_ELECTRODE)
                 .add(TFMGItems.GRAPHITE_ELECTRODE)
                 .add(TFMGItems.MIXER_BLADE)
-                .add(TFMGItems.CENTRIFUGE)
-        ;
-
-
+                .add(TFMGItems.CENTRIFUGE);
     }
-
 }

@@ -13,8 +13,6 @@ import net.createmod.ponder.api.registration.PonderSceneRegistrationHelper;
 import net.minecraft.resources.ResourceLocation;
 
 public class TFMGPonderScenes {
-
-
     public static void register(PonderSceneRegistrationHelper<ResourceLocation> helper) {
         PonderSceneRegistrationHelper<ItemProviderEntry<?,?>> HELPER = helper.withKeyFunction(RegistryEntry::getId);
 
@@ -64,11 +62,6 @@ public class TFMGPonderScenes {
                 .addStoryBoard("pumpjack", OilScenes::pumpjack, TFMGPonderTags.OIL_PROCESSING);
         HELPER.forComponents(TFMGBlocks.STEEL_DISTILLATION_CONTROLLER, TFMGBlocks.STEEL_DISTILLATION_OUTPUT)
                 .addStoryBoard("distillation_tower", OilScenes::distillationTower, TFMGPonderTags.OIL_PROCESSING);
-
-
-
-
-
 
         // Add our fluid manipulators to Create's ponder scenes
         HELPER.forComponents(

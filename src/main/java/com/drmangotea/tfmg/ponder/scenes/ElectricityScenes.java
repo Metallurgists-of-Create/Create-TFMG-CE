@@ -28,12 +28,10 @@ import net.minecraft.world.phys.Vec3;
 import static com.drmangotea.tfmg.datagen.recipes.TFMGRecipeProvider.F.lubricationOil;
 
 public class ElectricityScenes {
-
     public static void electricity(SceneBuilder builder, SceneBuildingUtil util) {
         CreateSceneBuilder scene = new CreateSceneBuilder(builder);
         scene.title("electricity", "Electricity");
         scene.showBasePlate();
-
 
         Selection generator = util.select().fromTo(5, 1, 4, 4, 1, 4);
 

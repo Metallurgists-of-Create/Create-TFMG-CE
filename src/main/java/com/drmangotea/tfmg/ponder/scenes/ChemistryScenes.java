@@ -13,8 +13,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 
 public class ChemistryScenes {
-
-
     public static void chemicalVat(SceneBuilder builder, SceneBuildingUtil util) {
         CreateSceneBuilder scene = new CreateSceneBuilder(builder);
         scene.title("chemical_vat", "Chemical Vat");
@@ -130,8 +128,5 @@ public class ChemistryScenes {
                 .text("3 graphite electrodes create a blast furnace");
 
         scene.idle(60);
-
     }
-
-
 }

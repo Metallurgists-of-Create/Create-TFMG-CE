@@ -8,7 +8,6 @@ import net.createmod.ponder.api.registration.SharedTextRegistrationHelper;
 import net.minecraft.resources.ResourceLocation;
 
 public class TFMGPonderPlugin implements PonderPlugin {
-
 	@Override
 	public String getModId() {
 		return TFMG.MOD_ID;
