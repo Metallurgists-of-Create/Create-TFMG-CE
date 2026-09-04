@@ -37,8 +37,8 @@ public class ElectricPumpBlockEntity extends PumpBlockEntity implements IElectri
         super(typeIn, pos, state);
         setLazyTickRate(10);
         data.connectNextTick = true;
-
     }
+	
     @Override
     public void addBehaviours(List<BlockEntityBehaviour> behaviours) {
         behaviours.add(new ElectricPumpTransferBehavior(this));
@@ -248,8 +248,6 @@ public class ElectricPumpBlockEntity extends PumpBlockEntity implements IElectri
         boolean electricAdded = IElectric.super.addToGoggleTooltip(tooltip, isPlayerSneaking);
         return added || electricAdded;
     }
-
-
 
     @Override
     protected void read(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {

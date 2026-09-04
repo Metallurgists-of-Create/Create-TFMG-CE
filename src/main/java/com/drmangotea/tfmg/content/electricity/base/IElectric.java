@@ -22,6 +22,8 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.energy.IEnergyStorage;
 
@@ -372,7 +374,7 @@ public interface IElectric extends IHaveGoggleInformation {
     /**
      * Adds Multimeter Tooltip to UI
      */
-    @Override
+    @Override @OnlyIn(Dist.CLIENT)
     default boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
         if (Minecraft.getInstance().player == null
                 || !MultimeterItem.isHeldByPlayer(Minecraft.getInstance().player))
