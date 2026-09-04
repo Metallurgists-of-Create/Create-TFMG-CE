@@ -3,7 +3,7 @@ loaderVersion = "${loader_version_range}"
 license = "${mod_license}"
 issueTrackerURL="https://github.com/Metallurgists-of-Create/Create-TFMG-CE/issues/"
 [[mods]]
-modId = "tfmg"
+modId = "${mod_id}"
 version = "${mod_version}"
 displayName = "${mod_name}"
 updateJSONURL="https://github.com/Metallurgists-of-Create/Create-TFMG-CE/raw/refs/heads/1.21.1/updates.json"
@@ -18,66 +18,66 @@ config = "${mod_id}.mixins.json"
 [[accessTransformers]]
 file="META-INF/accesstransformer.cfg"
 
-[[dependencies.tfmg]]
+[[dependencies."${mod_id}"]]
     modId = "neoforge"
     type = "required"
     versionRange = "${neo_version_range}"
     ordering = "NONE"
     side = "BOTH"
-[[dependencies.tfmg]]
+[[dependencies."${mod_id}"]]
     modId = "minecraft"
     type = "required"
     versionRange = "${minecraft_version_range}"
     ordering = "NONE"
     side = "BOTH"
-[[dependencies.tfmg]]
+[[dependencies."${mod_id}"]]
     modId = "create"
     type = "required"
     versionRange = "[6.0.6,)"
     side = "BOTH"
-[[dependencies.tfmg]]
+[[dependencies."${mod_id}"]]
     modId = "tfmgtweaks"
     type = "incompatible"
     reason = "TFMW adds mixins to fix bugs that we have already fixed ourselves."
     ordering="AFTER"
     side = "BOTH"
-[[dependencies.tfmg]]
+[[dependencies."${mod_id}"]]
     modId = "tfmgfixfuel"
     type = "incompatible"
     reason = "tfmgfixfuel adds mixins to fix bugs that we have already fixed ourselves."
     ordering="AFTER"
     side = "BOTH"
-[[dependencies.tfmg]]
+[[dependencies."${mod_id}"]]
     modId = "warvior_tfmg_pondus_fix"
     type = "incompatible"
     reason = "warvior_tfmg_pondus_fix adds mixins to fix bugs that we have already fixed ourselves."
     ordering="AFTER"
     side = "BOTH"
-[[dependencies.tfmg]]
+[[dependencies."${mod_id}"]]
     modId = "tfmgelectricalfix"
     type = "incompatible"
     reason = "tfmgelectricalfix adds mixins to fix bugs that we have already fixed ourselves."
     ordering="AFTER"
     side = "BOTH"
-[[dependencies.tfmg]]
+[[dependencies."${mod_id}"]]
     modId = "plastic_fix"
     type = "incompatible"
     reason = "plastic_fix is not needed anymore as the plastic sheet recipe has been fixed."
     ordering="AFTER"
     side = "BOTH"
-[[dependencies.tfmg]]
+[[dependencies."${mod_id}"]]
     modId = "fix_tfmgcontroller"
     type = "incompatible"
     reason = "fix_tfmgcontroller is not needed anymore as the engine controller does not exist anymore."
     ordering="AFTER"
     side = "BOTH"
-[[dependencies.tfmg]]
+[[dependencies."${mod_id}"]]
     modId = "sable_weighted_tfmg"
     type = "incompatible"
     reason = "sable_weighted_tfmg is not needed anymore as TFMG: CE now uses it's own weights."
     ordering="AFTER"
     side = "BOTH"
-[[dependencies.tfmg]]
+[[dependencies."${mod_id}"]]
     modId = "tfmg_liquid_fuel_compat"
     type = "incompatible"
     reason = "tfmg_liquid_fuel_compat is not needed anymore TFMG: CE now uses it's own fuel maps."
