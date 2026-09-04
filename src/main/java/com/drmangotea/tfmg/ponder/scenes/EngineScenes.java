@@ -1,6 +1,6 @@
 package com.drmangotea.tfmg.ponder.scenes;
 
-import com.drmangotea.tfmg.TFMG;
+import com.drmangotea.tfmg.base.TFMGUtils;
 import com.drmangotea.tfmg.content.decoration.pipes.TFMGPipes;
 import com.drmangotea.tfmg.content.decoration.tanks.steel.SteelTankBlockEntity;
 import com.drmangotea.tfmg.ponder.TFMGSceneBuilder;
@@ -20,12 +20,12 @@ import net.createmod.ponder.api.scene.SceneBuildingUtil;
 import net.createmod.ponder.api.scene.Selection;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 
+@SuppressWarnings("unused")
 public class EngineScenes {
     public static void engines(SceneBuilder builder, SceneBuildingUtil util) {
         TFMGSceneBuilder scene = new TFMGSceneBuilder(builder);
@@ -703,12 +703,10 @@ public class EngineScenes {
                 .text("It is a good idea to pump out any Carbon Dioxide into an Exhaust");
         scene.world().setKineticSpeed(exhaustPump, 32);
         scene.idle(10);
-        scene.effects().emitParticles(new Vec3(3.5, 2.5, 5.5), (world, x, y, z) -> {
-            int shouldSpawnSmoke = TFMG.RANDOM.nextInt(7);
-            if (shouldSpawnSmoke == 0) {
-                world.addParticle(ParticleTypes.CAMPFIRE_SIGNAL_SMOKE, x + TFMG.RANDOM.nextFloat(0.3f), y + 1, z + TFMG.RANDOM.nextFloat(0.3f), 0.0D, 0.08D, 0.0D);
-            }
-        }, 1, 120);
+        scene.effects().emitParticles(
+			new Vec3(3.5, 2.5, 5.5),
+			(world, x, y, z) -> TFMGUtils.spawnPonderExhaust(world, x, y, z, 0.3f), 1, 120
+		);
         scene.effects().indicateSuccess(util.grid().at(3, 1, 1));
         scene.world().setKineticSpeed(engineShaft, 128);
     }
@@ -813,12 +811,10 @@ public class EngineScenes {
                 .text("It is a good idea to pump out any Carbon Dioxide into an Exhaust");
         scene.world().setKineticSpeed(exhaustPump, 32);
         scene.idle(10);
-        scene.effects().emitParticles(new Vec3(3.5, 2.5, 5.5), (world, x, y, z) -> {
-            int shouldSpawnSmoke = TFMG.RANDOM.nextInt(7);
-            if (shouldSpawnSmoke == 0) {
-                world.addParticle(ParticleTypes.CAMPFIRE_SIGNAL_SMOKE, x + TFMG.RANDOM.nextFloat(0.3f), y + 1, z + TFMG.RANDOM.nextFloat(0.3f), 0.0D, 0.08D, 0.0D);
-            }
-        }, 1, 120);
+        scene.effects().emitParticles(
+			new Vec3(3.5, 2.5, 5.5),
+			(world, x, y, z) -> TFMGUtils.spawnPonderExhaust(world, x, y, z, 0.3f), 1, 120
+		);
         scene.effects().indicateSuccess(util.grid().at(3, 1, 1));
         scene.world().setKineticSpeed(engineShaft, 128);
     }

@@ -1,16 +1,14 @@
 package com.drmangotea.tfmg.content.machinery.misc.smokestack;
 
-import com.drmangotea.tfmg.TFMG;
+import com.drmangotea.tfmg.base.TFMGUtils;
+import com.drmangotea.tfmg.base.fluid.ForceableFluidTank;
 import com.drmangotea.tfmg.registry.TFMGBlockEntities;
 import com.drmangotea.tfmg.registry.TFMGFluids;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
-import com.simibubi.create.foundation.fluid.SmartFluidTank;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.capabilities.Capabilities;
@@ -20,7 +18,6 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
 
 import java.util.List;
-import java.util.Random;
 
 import static com.drmangotea.tfmg.content.machinery.misc.smokestack.SmokestackBlock.TOP;
 
@@ -36,12 +33,9 @@ public class SmokestackBlockEntity extends SmartBlockEntity {
 
     public SmokestackBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
-        tankInventory = new SmartFluidTank(8000, this::onFluidStackChanged) {
-            @Override
-            public boolean isFluidValid(FluidStack stack) {
-                return stack.getFluid().isSame(TFMGFluids.CARBON_DIOXIDE.getSource());
-            }
-        };
+        tankInventory = new ForceableFluidTank(8000, this::onFluidStackChanged)
+			.blockExtraction() //it makes no sense to extract from an exhaust
+			.withValidator((stack) -> stack.getFluid().isSame(TFMGFluids.CARBON_DIOXIDE.getSource()));
         fluidCapability = tankInventory;
         updateCapability = false;
         refreshCapability();
@@ -81,20 +75,12 @@ public class SmokestackBlockEntity extends SmartBlockEntity {
         sendData();
     }
 
-    public static void makeParticles(Level level, BlockPos pos) {
-        Random random = TFMG.RANDOM;
-        int shouldSpawnSmoke = random.nextInt(7);
-        if (shouldSpawnSmoke == 0) {
-            level.addParticle(ParticleTypes.CAMPFIRE_SIGNAL_SMOKE, pos.getX() + random.nextFloat(1), pos.getY() + 1, pos.getZ() + random.nextFloat(1), 0.0D, 0.08D, 0.0D);
-        }
-    }
-
     @Override
     public void tick() {
         super.tick();
         if (level == null) return;
         if (smokeTimer > 0) {
-            makeParticles(level, getBlockPos());
+			TFMGUtils.spawnSmokeParticles(level, getBlockPos());
             smokeTimer--;
         }
 

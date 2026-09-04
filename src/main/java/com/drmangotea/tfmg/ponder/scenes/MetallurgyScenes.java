@@ -1,6 +1,6 @@
 package com.drmangotea.tfmg.ponder.scenes;
 
-import com.drmangotea.tfmg.TFMG;
+import com.drmangotea.tfmg.base.TFMGUtils;
 import com.drmangotea.tfmg.content.decoration.tanks.steel.SteelTankBlockEntity;
 import com.drmangotea.tfmg.registry.TFMGBlocks;
 import com.drmangotea.tfmg.registry.TFMGFluids;
@@ -16,7 +16,6 @@ import net.createmod.ponder.api.scene.SceneBuildingUtil;
 import net.createmod.ponder.api.scene.Selection;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -24,8 +23,7 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 
-import java.util.Random;
-
+@SuppressWarnings("unused")
 public class MetallurgyScenes {
     public static void blastFurnace(SceneBuilder builder, SceneBuildingUtil util) {
         CreateSceneBuilder scene = new CreateSceneBuilder(builder);
@@ -356,13 +354,11 @@ public class MetallurgyScenes {
         scene.idle(20);
         scene.world().setKineticSpeed(smokestackPipe, 32);
         scene.idle(20);
-        Random random = TFMG.RANDOM;
-        scene.effects().emitParticles(new Vec3(6, 4, 4), (world, x, y, z) -> {
-            int shouldSpawnSmoke = random.nextInt(7);
-            if (shouldSpawnSmoke == 0) {
-                world.addParticle(ParticleTypes.CAMPFIRE_SIGNAL_SMOKE, x + random.nextFloat(1), y + 1, z + random.nextFloat(1), 0.0D, 0.08D, 0.0D);
-            }
-        }, 1, 120);
+        scene.effects().emitParticles(
+			new Vec3(6, 4, 4),
+			(world, x, y, z) -> TFMGUtils.spawnPonderExhaust(world, x, y, z, 1),
+			1, 120
+		);
         scene.idle(40);
     }
 }

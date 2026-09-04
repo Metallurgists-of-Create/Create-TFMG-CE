@@ -15,10 +15,12 @@ import com.simibubi.create.foundation.utility.CreateLang;
 import net.createmod.catnip.lang.LangBuilder;
 import net.createmod.catnip.outliner.Outliner;
 import net.createmod.catnip.theme.Color;
+import net.createmod.ponder.api.level.PonderLevel;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -163,6 +165,32 @@ public class TFMGUtils {
             );
         }
     }
+	
+	public static void spawnSmokeParticles(Level level, BlockPos pos) {
+		spawnSmokeParticles(level, Vec3.atLowerCornerOf(pos), 1);
+	}
+	
+	public static void spawnSmokeParticles(Level level, Vec3 pos, float spread) {
+		RandomSource random = level.getRandom();
+		if (random.nextInt(7) != 0) return;
+		spawnSmokeParticles(
+			level,
+			pos.x() + random.nextFloat() * spread,
+			pos.y() + 1,
+			pos.z() + random.nextFloat() * spread
+		);
+	}
+	
+	public static void spawnSmokeParticles(Level level, double x, double y, double z) {
+		level.addParticle(ParticleTypes.CAMPFIRE_SIGNAL_SMOKE, x, y, z, 0.0D, 0.08D, 0.0D);
+	}
+	
+	public static void spawnPonderExhaust(PonderLevel world, double x, double y, double z, float spread) {
+		RandomSource random = world.getRandom();
+		if (random.nextInt(7) == 0) {
+			spawnSmokeParticles(world, x + random.nextFloat()*spread, y + 1, z + random.nextFloat() * spread);
+		}
+	}
 
     public static float getDistance(BlockPos pos1, BlockPos pos2, boolean is2d) {
         float x = Math.abs(pos1.getX() - pos2.getX());

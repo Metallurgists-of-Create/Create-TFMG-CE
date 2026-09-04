@@ -12,6 +12,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 
 import net.neoforged.neoforge.common.ModConfigSpec;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
@@ -43,7 +44,7 @@ public class TFMGStress extends ConfigBase {
         builder.pop();
     }
 
-    @Override
+    @Override @NotNull
     public String getName() {
         return "stressValues.v" + VERSION;
     }
@@ -68,7 +69,7 @@ public class TFMGStress extends ConfigBase {
 
     public static <B extends Block, P> NonNullUnaryOperator<BlockBuilder<B, P>> setImpact(double value) {
         return builder -> {
-            assertFromCreate(builder);
+            assertFromTFMG(builder);
             ResourceLocation id = TFMG.asResource(builder.getName());
             DEFAULT_IMPACTS.put(id, value);
             return builder;
@@ -77,16 +78,16 @@ public class TFMGStress extends ConfigBase {
 
     public static <B extends Block, P> NonNullUnaryOperator<BlockBuilder<B, P>> setCapacity(double value) {
         return builder -> {
-            assertFromCreate(builder);
+            assertFromTFMG(builder);
             ResourceLocation id = TFMG.asResource(builder.getName());
             DEFAULT_CAPACITIES.put(id, value);
             return builder;
         };
     }
 
-    private static void assertFromCreate(BlockBuilder<?, ?> builder) {
+    private static void assertFromTFMG(BlockBuilder<?, ?> builder) {
         if (!builder.getOwner().getModid().equals(TFMG.MOD_ID)) {
-            throw new IllegalStateException("Skibidi Sigma Error");
+            throw new IllegalStateException("Attempted to apply TFMG Stress to non-TFMG block.");
         }
     }
 

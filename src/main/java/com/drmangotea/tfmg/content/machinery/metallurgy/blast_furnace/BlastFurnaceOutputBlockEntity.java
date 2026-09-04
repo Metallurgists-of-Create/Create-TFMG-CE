@@ -18,9 +18,7 @@ import com.simibubi.create.foundation.item.ItemHelper;
 import com.simibubi.create.foundation.item.SmartInventory;
 import net.createmod.catnip.animation.LerpedFloat;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
@@ -33,6 +31,7 @@ import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.fluids.FluidStack;
@@ -42,7 +41,6 @@ import net.neoforged.neoforge.items.IItemHandlerModifiable;
 import net.neoforged.neoforge.items.wrapper.CombinedInvWrapper;
 
 import java.util.List;
-import java.util.Random;
 
 import static net.minecraft.world.level.block.HorizontalDirectionalBlock.FACING;
 
@@ -262,13 +260,8 @@ public class BlastFurnaceOutputBlockEntity extends SmartBlockEntity implements I
     public void makeParticles() {
         if (level == null)
             return;
-        Random random = new Random();
-        Direction direction = getBlockState().getValue(FACING).getOpposite();
-        BlockPos pos = getBlockPos().above().relative(direction);
-        int shouldSpawnSmoke = random.nextInt(7);
-        if (shouldSpawnSmoke == 0) {
-            level.addParticle(ParticleTypes.CAMPFIRE_SIGNAL_SMOKE, pos.getX() + random.nextFloat(0.6f) + 0.2, pos.getY() + 1, pos.getZ() + random.nextFloat(0.6f) + 0.2, 0.0D, 0.08D, 0.0D);
-        }
+        BlockPos pos = getBlockPos().above().relative(getBlockState().getValue(FACING).getOpposite());
+		TFMGUtils.spawnSmokeParticles(level, Vec3.atLowerCornerWithOffset(pos, 0.2, 0, 0.2), 0.6f);
     }
 
     private boolean canProcess(IndustrialBlastingRecipe recipe) {

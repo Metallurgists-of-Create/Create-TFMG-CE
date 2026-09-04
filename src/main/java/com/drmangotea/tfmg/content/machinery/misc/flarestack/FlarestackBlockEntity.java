@@ -1,19 +1,18 @@
 package com.drmangotea.tfmg.content.machinery.misc.flarestack;
 
-
-import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.base.TFMGUtils;
+import com.drmangotea.tfmg.base.fluid.ForceableFluidTank;
 import com.drmangotea.tfmg.registry.TFMGBlockEntities;
 import com.drmangotea.tfmg.registry.TFMGTags;
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
-import com.simibubi.create.foundation.fluid.SmartFluidTank;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -24,27 +23,18 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
 
 import java.util.List;
-import java.util.Random;
 
 public class FlarestackBlockEntity extends SmartBlockEntity implements IHaveGoggleInformation {
-
     public FluidTank tankInventory;
     public int smokeTimer = 0;
 
-
     public FlarestackBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
-        tankInventory = createInventory();
-    }
-
-    protected SmartFluidTank createInventory() {
-        return new SmartFluidTank(2500, this::onFluidStackChanged) {
-            @Override
-            public boolean isFluidValid(FluidStack stack) {
-                return stack.getFluid().is(TFMGTags.Fluids.FLAMMABLE.tag)||
-                        stack.getFluid().is(TFMGTags.Fluids.FUEL.tag);
-            }
-        };
+        tankInventory = new ForceableFluidTank(2500, this::onFluidStackChanged)
+			.blockExtraction()
+			.withValidator(
+				(stack) ->  stack.getFluid().is(TFMGTags.Fluids.FLAMMABLE.tag)||stack.getFluid().is(TFMGTags.Fluids.FUEL.tag)
+			);
     }
 
     public static void registerCapabilities(RegisterCapabilitiesEvent event) {
@@ -95,19 +85,24 @@ public class FlarestackBlockEntity extends SmartBlockEntity implements IHaveGogg
             smokeTimer = 100;
             tankInventory.drain(25, IFluidHandler.FluidAction.EXECUTE);
         }
-
-
     }
 
     public static void makeParticles(Level level, BlockPos pos) {
-        Random random = TFMG.RANDOM;
-        int shouldSpawnSmoke = random.nextInt(7);
-        if(shouldSpawnSmoke==0) {
-            level.addParticle(ParticleTypes.CAMPFIRE_SIGNAL_SMOKE, pos.getX()  +random.nextFloat(1), pos.getY() + 1, pos.getZ()  +random.nextFloat(1), 0.0D, 0.08D, 0.0D);
-            level.addParticle(ParticleTypes.FLAME, pos.getX()  +random.nextFloat(1), pos.getY() + 1, pos.getZ()  +random.nextFloat(1), TFMG.RANDOM.nextDouble(0.28)-0.14D, 0.14D, TFMG.RANDOM.nextDouble(0.28)-0.14D);
-            level.addParticle(ParticleTypes.FLAME, pos.getX()  +random.nextFloat(1), pos.getY() + 1, pos.getZ()  +random.nextFloat(1), TFMG.RANDOM.nextDouble(0.28)-0.14D, 0.14D, TFMG.RANDOM.nextDouble(0.28)-0.14D);
-            level.addParticle(ParticleTypes.FLAME, pos.getX()  +random.nextFloat(1), pos.getY() + 1, pos.getZ()  +random.nextFloat(1), TFMG.RANDOM.nextDouble(0.28)-0.14D, 0.14D, TFMG.RANDOM.nextDouble(0.28)-0.14D);
-        }
+		TFMGUtils.spawnSmokeParticles(level, pos);
+		
+		RandomSource random = level.getRandom();
+		if (random.nextInt(7) != 0) return;
+		
+		makeFlameParticles(level, pos, random);
+		makeFlameParticles(level, pos, random);
+		makeFlameParticles(level, pos, random);
+	}
+	public static void makeFlameParticles(Level level, BlockPos pos, RandomSource random) {
+		level.addParticle(
+			ParticleTypes.FLAME,
+			pos.getX() + random.nextFloat(), pos.getY() + 1, pos.getZ() + random.nextFloat(),
+			random.nextDouble()*0.28D - 0.14D, 0.14D, random.nextDouble()*0.28D - 0.14D
+		);
     }
 
     @Override
