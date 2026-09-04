@@ -1395,9 +1395,8 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
 
     @Override
     public Object modifyExtraData(Object data) {
-        if (data instanceof Boolean windows) {
-            windows |= window;
-            return windows;
+        if (data instanceof Boolean) {
+            return window;
         }
         return data;
     }
