@@ -169,6 +169,7 @@ neoForge.ideSyncTask(generateModMetadata)
 
 
 java {
+    withJavadocJar()
     withSourcesJar()
 }
 
