@@ -34,7 +34,8 @@ Contributors:<br>
   - Fossilstone in deposits now starts at half the height instead of 4.
   - Empty Oil Reserves now convert all contained deposits into Bedrock.
 - Polarizer:
-  - Goggle info rounds item charge (This helps prevent flickering of the tooltip).
+  - Displays tooltip through the multimeter, not goggles.
+  - Tooltip rounds item charge (This helps prevent flickering).
   - Mechanical arms can now insert and extract items.
   - Particles now show when a recipe is completed.
 - Blast Furnace:
@@ -42,6 +43,7 @@ Contributors:<br>
   - Top Hatch now directly inserts items instead of dropping them.
   - Top hatch now properly saves its inventory.
   - Blast Furnace Hatches now limit certain inventories based on their place in the multiblock.
+- Multimeters are no longer incompatible with Goggles
 
 ### API Changes:
 - Created VAT operation registry.

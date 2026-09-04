@@ -63,7 +63,7 @@ public class HotFluidType extends TFMGFluids.SolidRenderedPlaceableFluidType {
         entity.setDeltaMovement(entity.getDeltaMovement().scale(0.6d));
         entity.setRemainingFireTicks(10);
 
-        if(TFMG.RANDOM.nextInt(30)==27)
+        if(entity.getRandom().nextInt(30)==27)
             entity.lavaHurt();
         return false;
     }

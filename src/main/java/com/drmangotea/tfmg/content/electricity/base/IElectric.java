@@ -62,8 +62,8 @@ public interface IElectric extends IHaveGoggleInformation {
      * @return block's network if valid, newly created network for this block otherwise
      */
     default ElectricalNetwork getOrCreateElectricNetwork() {
-        if (getLevelAccessor().getBlockEntity(BlockPos.of(getData().electricalNetworkId)) instanceof IElectric) {
-            return TFMG.NETWORK_MANAGER.getOrCreateNetworkFor((IElectric) getLevelAccessor().getBlockEntity(BlockPos.of(getData().electricalNetworkId)));
+        if (getLevelAccessor().getBlockEntity(BlockPos.of(getData().electricalNetworkId)) instanceof IElectric ie) {
+            return TFMG.NETWORK_MANAGER.getOrCreateNetworkFor(ie);
         } else {
             ElectricNetworkManager.networks.computeIfAbsent(getLevelAccessor(), lvl -> new HashMap<>()).remove(getData().electricalNetworkId);
             return TFMG.NETWORK_MANAGER.getOrCreateNetworkFor(this);
@@ -496,11 +496,10 @@ public interface IElectric extends IHaveGoggleInformation {
 
 
     default int getNetworkPowerGeneration() {
-        int power = 0;
+        float power = 0;
         for (IElectric member : getOrCreateElectricNetwork().members)
-
             power += member.powerGeneration();
-        return power;
+        return (int) power;
     }
 
     default void onNetworkChanged(int oldVoltage, float oldPower) {
@@ -523,7 +522,7 @@ public interface IElectric extends IHaveGoggleInformation {
     default float getGeneratorLoad() {
         if (getNetworkPowerUsage() == 0)
             return 0;
-        return (float) powerGeneration() / (float) getData().networkPowerGeneration * getNetworkPowerUsage();
+        return powerGeneration() / (float) getData().networkPowerGeneration * getNetworkPowerUsage();
     }
 
     default int getBlocksConnectedToNetworkCount(long id) {
@@ -637,7 +636,7 @@ public interface IElectric extends IHaveGoggleInformation {
 
 
     default float getCurrent() {
-        return getData().getVoltage() == 0 || resistance() == 0 ? 0 : ((float) getData().getVoltage() / (float) resistance());
+        return getData().getVoltage() == 0 || resistance() == 0 ? 0 : ((float) getData().getVoltage() / resistance());
     }
 
     default void updateNextTick() {
