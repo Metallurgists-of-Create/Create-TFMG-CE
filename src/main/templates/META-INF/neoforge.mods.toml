@@ -68,7 +68,7 @@ file="META-INF/accesstransformer.cfg"
 [[dependencies."${mod_id}"]]
     modId = "fix_tfmgcontroller"
     type = "incompatible"
-    reason = "fix_tfmgcontroller is not needed anymore as the plastic sheet recipe has been fixed."
+    reason = "fix_tfmgcontroller is not needed anymore as the engine controller does not exist anymore."
     ordering="AFTER"
     side = "BOTH"
 [[dependencies."${mod_id}"]]
