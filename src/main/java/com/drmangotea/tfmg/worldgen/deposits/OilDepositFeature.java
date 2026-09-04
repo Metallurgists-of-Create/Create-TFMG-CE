@@ -23,7 +23,6 @@ public class OilDepositFeature extends Feature<NoneFeatureConfiguration> {
 
     @Override
     public boolean place(FeaturePlaceContext<NoneFeatureConfiguration> context) {
-
         BlockPos startingPos = context.origin();
         WorldGenLevel level = context.level();
         BlockPos pos = startingPos;
@@ -37,7 +36,6 @@ public class OilDepositFeature extends Feature<NoneFeatureConfiguration> {
             pos = pos.north(randomsource.nextInt(40) - 20);
             pos = pos.west(randomsource.nextInt(40) - 20);
         }
-
         return true;
     }
 

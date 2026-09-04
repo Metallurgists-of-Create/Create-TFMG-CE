@@ -32,78 +32,39 @@ public class OilWellFeature extends Feature<NoneFeatureConfiguration> {
         BlockPos pos = startingPos;
         RandomSource randomsource = context.random();
 
-        ChunkGenerator chunkGenerator = context.chunkGenerator();
+        int height = level.getHeight(Heightmap.Types.WORLD_SURFACE_WG, pos.getX(), pos.getZ()) + 70 + randomsource.nextInt(12);
 
-        int height = level.getHeight(Heightmap.Types.WORLD_SURFACE_WG,pos.getX(),pos.getZ())+70+randomsource.nextInt(12);
-
-
-
-
-
-        for(int i = 0; i < height;i++){
-
-            if(i==0) {
+        for(int i = 0; i < height; i++) {
+            if(i == 0) {
                 level.setBlock(startingPos, TFMGBlocks.OIL_DEPOSIT.getDefaultState(), 2);
                 pos = pos.above();
                 continue;
             }
-
-
-
-//            if(randomsource.nextInt(10)==7) {
-
-
-
-            for(Direction direction : Iterate.directions){
-            if(randomsource.nextInt(3)==1)
-                if(direction.getAxis().isHorizontal()&&level.getBlockState(pos.relative(direction)).is(Blocks.STONE)){
+            for(Direction direction : Iterate.directions) {
+            if(randomsource.nextInt(3) == 1)
+                if(direction.getAxis().isHorizontal() && level.getBlockState(pos.relative(direction)).is(Blocks.STONE)) {
                     level.setBlock(pos.relative(direction), TFMGBlocks.FOSSILSTONE.getDefaultState(), 2);
                 }
-            //if(i<height-2)
-            //     if(direction.getAxis().isHorizontal()&&level.getBlockState(pos.relative(direction)).is(Blocks.AIR)){
-            //         level.setBlock(pos.relative(direction), TFMGFluids.CRUDE_OIL.getSource().getFlowing().defaultFluidState().createLegacyBlock(), 3);
-            //     }
-
             }
 
-            if(i==height-18){
+            if(i == height - 18){
                 AABB area = new AABB(pos).inflate(10);
-
-
-                for (BlockPos pos1 : BlockPos.betweenClosed(new BlockPos((int) area.minX, (int) area.minY, (int) area.minZ), new BlockPos((int) area.maxX, (int) area.maxY, (int) area.maxZ))) {
-
-                    if(randomsource.nextInt(10)==7){
-                        if(level.getFluidState(pos1).is(Fluids.WATER)||level.getBlockState(pos1).is(Tags.Blocks.SANDS)) {
-                            level.setBlock(pos1, TFMGFluids.CRUDE_OIL.getSource().getSource(true).createLegacyBlock(), 3);
-                            if(level.getBlockState(pos1).is(Tags.Blocks.SANDS))
-                                level.getBlockState(pos1).updateShape(Direction.NORTH,level.getBlockState(pos1),level,pos1,pos1);
+                for (BlockPos oilPos : BlockPos.betweenClosed(new BlockPos((int) area.minX, (int) area.minY, (int) area.minZ), new BlockPos((int) area.maxX, (int) area.maxY, (int) area.maxZ))) {
+                    if(randomsource.nextInt(10) == 7){
+                        if(level.getFluidState(oilPos).is(Fluids.WATER) || level.getBlockState(oilPos).is(Tags.Blocks.SANDS)) {
+                            level.setBlock(oilPos, TFMGFluids.CRUDE_OIL.getSource().getSource(true).createLegacyBlock(), 3);
+                            if(level.getBlockState(oilPos).is(Tags.Blocks.SANDS))
+                                level.getBlockState(oilPos).updateShape(Direction.NORTH, level.getBlockState(oilPos), level, oilPos, oilPos);
                         }
-
                     }
-
-
                 }
             }
-
 
             level.setBlock(pos, TFMGFluids.CRUDE_OIL.getSource().getSource(true).createLegacyBlock(), 3);
             level.getBlockState(pos).updateShape(Direction.NORTH,level.getBlockState(pos),level,pos,pos);
 
-
-
             pos = pos.above();
-
-
-
-
-
         }
-
-
-
-
-
-
         return true;
     }
 }

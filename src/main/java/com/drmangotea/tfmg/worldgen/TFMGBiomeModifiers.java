@@ -48,9 +48,9 @@ public class TFMGBiomeModifiers {
         Holder<PlacedFeature> striatedOresNether = featureLookup.getOrThrow(TFMGPlacedFeatures.TFMG_STRIATED_ORES_NETHER);
 
 
-        ctx.register(OIL_DEPOSIT,addOre(isOverworld,oilDeposit));
+        ctx.register(OIL_DEPOSIT,addOre(isOverworld, oilDeposit));
 
-        ctx.register(OIL_WELL,addOilWell(isDesert,oilWell));
+        ctx.register(OIL_WELL,addOilWell(isDesert, oilWell));
 
         ctx.register(LEAD_ORE, addOre(isOverworld, leadOre));
         ctx.register(NICKEL_ORE, addOre(isOverworld, nickelOre));
