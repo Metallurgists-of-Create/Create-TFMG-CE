@@ -506,8 +506,11 @@ public class PumpjackBlockEntity extends GeneratingKineticBlockEntity implements
         movedContraption.setAngle(angle);
         BlockState blockState = getBlockState();
         if (blockState.hasProperty(BlockStateProperties.FACING))
-            movedContraption.setRotationAxis(blockState.getValue(BlockStateProperties.FACING).getClockWise()
-                    .getAxis());
+            movedContraption.setRotationAxis(blockState
+				.getValue(BlockStateProperties.FACING)
+				.getClockWise()
+				.getAxis()
+			);
     }
 
     @Override

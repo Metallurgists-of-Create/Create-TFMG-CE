@@ -3,7 +3,6 @@ package com.drmangotea.tfmg.content.machinery.oil_processing.surface_scanner;
 import com.drmangotea.tfmg.integration.sable.SurfaceScannerSable;
 import com.drmangotea.tfmg.registry.TFMGPartialModels;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.simibubi.create.foundation.blockEntity.renderer.SafeBlockEntityRenderer;
 import com.simibubi.create.foundation.render.RenderTypes;
 import net.createmod.catnip.render.CachedBuffers;

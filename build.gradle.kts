@@ -131,6 +131,8 @@ dependencies {
     implementation("com.tterrag.registrate:Registrate:${property("registrate_version")}")
 
     runtimeOnly("me.djtheredstoner:DevAuth-neoforge:1.2.1")
+    runtimeOnly("maven.modrinth:lhGA9TYQ:1IiqEQGl") //architectury, for CPG
+    runtimeOnly("maven.modrinth:power-grid:ip4gJrgx") //Create: Power Grid 0.6.1
 }
 
 val generateModMetadata by tasks.registering(ProcessResources::class) {

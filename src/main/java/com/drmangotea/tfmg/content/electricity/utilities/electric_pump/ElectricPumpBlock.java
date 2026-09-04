@@ -15,8 +15,8 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
 
 public class ElectricPumpBlock extends PumpBlock  {
-    public ElectricPumpBlock(Properties p_i48415_1_) {
-        super(p_i48415_1_);
+    public ElectricPumpBlock(Properties p) {
+        super(p);
     }
 
     @Override
@@ -24,8 +24,7 @@ public class ElectricPumpBlock extends PumpBlock  {
         super.onPlace(pState, level, pos, pOldState, pIsMoving);
         withBlockEntityDo(level,pos, be->((ElectricPumpBlockEntity)be).onPlaced());
     }
-
-
+	
     @Override
     public @NotNull VoxelShape getShape(BlockState state, BlockGetter p_220053_2_, BlockPos p_220053_3_, CollisionContext p_220053_4_) {
         return TFMGShapes.ELECTRIC_PUMP.get(state.getValue(FACING));

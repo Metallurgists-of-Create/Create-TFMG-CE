@@ -137,9 +137,7 @@ import com.tterrag.registrate.util.entry.BlockEntityEntry;
 import static com.drmangotea.tfmg.TFMG.REGISTRATE;
 
 public class TFMGBlockEntities {
-
-
-    public static final BlockEntityEntry<DistillationOutputBlockEntity> DISTILLATION_OUTPUT = REGISTRATE
+	public static final BlockEntityEntry<DistillationOutputBlockEntity> DISTILLATION_OUTPUT = REGISTRATE
             .blockEntity("distillation_tower_output", DistillationOutputBlockEntity::new)
             .validBlocks(TFMGBlocks.STEEL_DISTILLATION_OUTPUT)
             .register();
@@ -681,8 +679,5 @@ public class TFMGBlockEntities {
             .renderer(() -> FluidValveRenderer::new)
             .register();
 
-    public static void init() {
-
-    }
-
+    public static void init() { }
 }

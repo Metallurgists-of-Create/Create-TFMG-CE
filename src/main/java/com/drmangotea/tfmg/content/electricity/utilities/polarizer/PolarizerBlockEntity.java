@@ -2,15 +2,12 @@ package com.drmangotea.tfmg.content.electricity.utilities.polarizer;
 
 import com.drmangotea.tfmg.base.lang.TFMGTexts;
 import com.drmangotea.tfmg.content.electricity.base.ElectricBlockEntity;
-import com.drmangotea.tfmg.content.electricity.measurement.MultimeterItem;
 import com.drmangotea.tfmg.recipes.PolarizingRecipe;
 import com.drmangotea.tfmg.registry.TFMGBlockEntities;
-import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.foundation.item.ItemHelper;
 import com.simibubi.create.foundation.item.SmartInventory;
 import net.createmod.catnip.animation.LerpedFloat;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -32,7 +29,7 @@ import java.util.Optional;
 
 import static net.minecraft.world.level.block.HorizontalDirectionalBlock.FACING;
 
-public class PolarizerBlockEntity extends ElectricBlockEntity implements IHaveGoggleInformation, Clearable {
+public class PolarizerBlockEntity extends ElectricBlockEntity implements Clearable {
     public SmartInventory inventory = new LetMeKeepMyItemSmartInventory(1, this).forbidExtraction().whenContentsChanged(this::onInventoryChanged);
     public SmartInventory outputInventory = new SmartInventory(1, this, 1, false).forbidInsertion().whenContentsChanged(this::onInventoryChanged);
 
@@ -103,7 +100,7 @@ public class PolarizerBlockEntity extends ElectricBlockEntity implements IHaveGo
     }
 
     @Override
-    public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
+    public boolean makeMultimeterTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
         TFMGTexts.header("polarizer").style(ChatFormatting.GRAY).forGoggles(tooltip, 1);
         TFMGTexts.Multimeter.charge(Math.round(capacitorPercentage / 2f)).forGoggles(tooltip);
         if (recipe != null && !inventory.isEmpty() && getPowerUsage() < recipe.energy) {
@@ -114,10 +111,8 @@ public class PolarizerBlockEntity extends ElectricBlockEntity implements IHaveGo
             TFMGTexts.header("outputFull").style(ChatFormatting.RED).forGoggles(tooltip, 1);
             return true;
         }
-        if (Minecraft.getInstance().player != null
-                && MultimeterItem.isHeldByPlayer(Minecraft.getInstance().player))
-            makeMultimeterTooltip(tooltip, isPlayerSneaking);
-        return true;
+        super.makeMultimeterTooltip(tooltip, isPlayerSneaking);
+		return true;
     }
 
     @Override
