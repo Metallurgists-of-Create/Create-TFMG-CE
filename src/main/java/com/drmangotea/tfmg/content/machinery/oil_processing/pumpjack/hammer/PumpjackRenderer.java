@@ -13,7 +13,9 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
 
-import static com.simibubi.create.content.kinetics.base.DirectionalKineticBlock.FACING;
+import javax.annotation.ParametersAreNonnullByDefault;
+
+import static com.drmangotea.tfmg.base.blocks.TFMGHorizontalDirectionalBlock.FACING;
 
 
 public class PumpjackRenderer extends KineticBlockEntityRenderer<PumpjackBlockEntity> {
@@ -22,210 +24,152 @@ public class PumpjackRenderer extends KineticBlockEntityRenderer<PumpjackBlockEn
     }
 
     @Override
-    protected void renderSafe(PumpjackBlockEntity be, float partialTicks, PoseStack ms, MultiBufferSource buffer,
-                              int light, int overlay) {
-
-        if(be.crank == null)
+    protected void renderSafe(
+		PumpjackBlockEntity be, float partialTicks, PoseStack ms, MultiBufferSource buffer, int light, int overlay
+	) {
+        if(be.crank == null || be.base == null || !be.running)
             return;
-        if(be.base == null)
-            return;
-        if(!be.running)
-            return;
-
-        renderPumpjackLink(
-                false,
-                ms,
-                buffer,
-                be
-        );
-        renderPumpjackLink(
-                true,
-                ms,
-                buffer,
-                be
-        );
-        renderFrontPumpjackLink(
-                ms,
-                buffer,
-                be
-        );
-        /////////////
+		
+		Direction direction = be.getBlockState().getValue(FACING);
+		int q = be.headAtFront ? 1 : -1;
+		
+		//sides
+		float hModifier = be.crank.heightModifier - be.crankConnectorDistance;
+		double height2 = Math.pow(be.crank.heightModifier, 2);
+		float x = getX(be.crank.crankRadius, be.crank.angle, height2, direction);
+		float y = (float) (be.connectorDistance*(1 - be.connectorDistance) - height2);
+		int dist = be.connectorDistance*q;
+		
+        renderPumpjackLink(false, ms, buffer, direction, q, x, y*q, hModifier, dist, be.crankConnectorDistance);
+        renderPumpjackLink(true, ms, buffer, direction, q, x, y*q, hModifier, dist, be.crankConnectorDistance);
+		
+		//front
+        renderFrontPumpjackLink(ms, buffer, direction, q, be.headBaseDistance, be);
     }
-    private void renderPumpjackLink(boolean second, PoseStack pMatrixStack, MultiBufferSource pBuffer, PumpjackBlockEntity be) {
-        pMatrixStack.pushPose();
-        Direction direction = be.getBlockState().getValue(FACING);
-      Vec3 vec3 = new Vec3(0,0,0);
-        int q = 1;
-        if(be.connectorAtFront)
-            q = -1;
-
-        float hModifier = 0;
-        float x=0;
-        float y=0;
-        if(be.crank!=null) {
-            hModifier = be.crank.heightModifier - be.crankConnectorDistance;
-            float linkLenght =    be.crankConnectorDistance;
-            if(direction == Direction.WEST) {
-                if ((be.crank.angle>0&&be.crank.angle < 90||be.crank.angle > 270)||(be.crank.angle<0&&be.crank.angle > -90||be.crank.angle < -270)) {
-                    x = (float) Math.sqrt(Math.pow(be.crank.crankRadius, 2) - Math.pow(be.crank.heightModifier, 2));
-               } else
-                   x = (float) -Math.sqrt(Math.pow(be.crank.crankRadius, 2) - Math.pow(be.crank.heightModifier, 2));
-                y = (float) (be.connectorDistance - Math.sqrt(Math.pow(be.connectorDistance, 2) - Math.pow(be.crank.heightModifier, 2)));
-            }
-            if(direction == Direction.EAST) {
-
-                if ((be.crank.angle>0&&be.crank.angle < 90||be.crank.angle > 270)||(be.crank.angle<0&&be.crank.angle > -90||be.crank.angle < -270)) {
-                    x = (float) Math.sqrt(Math.pow(be.crank.crankRadius, 2) - Math.pow(be.crank.heightModifier, 2));
-                } else
-                    x = (float) -Math.sqrt(Math.pow(be.crank.crankRadius, 2) - Math.pow(be.crank.heightModifier, 2));
-                y = (float) (be.connectorDistance - Math.sqrt(Math.pow(be.connectorDistance, 2) - Math.pow(be.crank.heightModifier, 2)));
-            }
-            if(direction == Direction.NORTH) {
-                if ((be.crank.angle > 90&&be.crank.angle < 270)||(be.crank.angle < -90&&be.crank.angle > -270)) {
-                    x = (float) Math.sqrt(Math.pow(be.crank.crankRadius, 2) - Math.pow(be.crank.heightModifier, 2));
-                  } else
-                      x = (float) -Math.sqrt(Math.pow(be.crank.crankRadius, 2) - Math.pow(be.crank.heightModifier, 2));
-                y = (float) (be.connectorDistance - Math.sqrt(Math.pow(be.connectorDistance, 2) - Math.pow(be.crank.heightModifier, 2)));
-            }
-            if(direction == Direction.SOUTH) {
-                if ((be.crank.angle > 90&&be.crank.angle < 270)||(be.crank.angle < -90&&be.crank.angle > -270)) {
-                    x = (float) Math.sqrt(Math.pow(be.crank.crankRadius, 2) - Math.pow(be.crank.heightModifier, 2));
-               } else
-                   x = (float) -Math.sqrt(Math.pow(be.crank.crankRadius, 2) - Math.pow(be.crank.heightModifier, 2));
-                y = (float) (be.connectorDistance - Math.sqrt(Math.pow(be.connectorDistance, 2) - Math.pow(be.crank.heightModifier, 2)));
-            }
-                vec3 = vec3.add(0,linkLenght,0);
-        }
-            x = x * q;
-            y = y * q;
-        if(direction==Direction.NORTH) {
-            pMatrixStack.translate(0, hModifier +1.5, (be.connectorDistance + (.5*q) + x)*q);
-            x = x * q;
-            vec3 =  vec3.add(0,0,-x+y);
-            if(second) {
-                pMatrixStack.translate(-1,0,0);
-            }
-            pMatrixStack.translate(1,0,0);
-        }
-        if(direction==Direction.SOUTH){
-            pMatrixStack.translate(0, hModifier+1.5, (-be.connectorDistance+(.5*q)+x)*q);
-            x = x * q;
-            vec3 = vec3.add(0,0,-x-y);
-
-            if(second) {
-                pMatrixStack.translate(1,0,0);
-            }
-        }
-        if(direction==Direction.WEST){
-            pMatrixStack.translate((be.connectorDistance+(.5*q)+x)*q, hModifier+1.5, 0);
-            x = x * q;
-            vec3 = vec3.add(-x-y,0,0);
-            if(second) {
-                pMatrixStack.translate(0,0,1);
-            }
-        }
-        if(direction==Direction.EAST){
-            pMatrixStack.translate((-be.connectorDistance+(.5*q)+x)*q, hModifier+1.5, 0);
-            x = x * q;
-            vec3 = vec3.add(-x+y,0,0);
-
-            if(second) {
-                pMatrixStack.translate(0,0,-1);
-            }
-
-            pMatrixStack.translate(0,0,1);
-        }
-        float f = (float)(vec3.x);
-        float f1 = (float)(vec3.y );
-        float f2 = (float)(vec3.z);
-        VertexConsumer vertexconsumer = pBuffer.getBuffer(RenderType.leash());
+	
+	private static float getX(float crankRadius, float angle, double height2, Direction direction) {
+		final double sqrt = Math.sqrt(Math.pow(crankRadius, 2) - height2);
+		return (float) switch (direction) {
+			case WEST, EAST -> {
+				if ((angle > 0 && angle < 90 || angle > 270) ||
+					(angle < 0 && angle > -90 || angle < -270)) {
+					yield sqrt;
+				} else {
+					yield -sqrt;
+				}
+			}
+			case NORTH, SOUTH -> {
+				if ((angle > 90 && angle < 270) || (angle < -90 && angle > -270)) {
+					yield sqrt;
+				} else {
+					yield -sqrt;
+				}
+			}
+			default -> 0f;
+		};
+	}
+	
+	@ParametersAreNonnullByDefault
+    private void renderPumpjackLink(
+		boolean second, PoseStack pMatrixStack, MultiBufferSource pBuffer,
+		Direction direction, int q, float x, float y, float hModifier, int dist, int crankDist
+	) {
+		pMatrixStack.pushPose();
+		
+		Vec3 vec3 = new Vec3(0, crankDist,0);
+  
+		switch (direction) {
+			case NORTH -> {
+				pMatrixStack.translate(second?0:1, hModifier + 1.5, dist + .5 + x);
+				vec3 = vec3.add(0, 0, -x + y);
+			}
+			case SOUTH -> {
+				pMatrixStack.translate(second?1:0, hModifier + 1.5, -dist + .5 + x);
+				vec3 = vec3.add(0, 0, -x*q - y);
+			}
+			case WEST -> {
+				pMatrixStack.translate(dist + .5 + x, hModifier + 1.5, second?1:0);
+				vec3 = vec3.add(-x - y, 0, 0);
+			}
+			case EAST -> {
+				pMatrixStack.translate(-dist + .5 + x, hModifier + 1.5, second?0:1);
+				vec3 = vec3.add(-x + y, 0, 0);
+			}
+		}
+		
         Matrix4f matrix4f = pMatrixStack.last().pose();
-        float f4 = (float) (Mth.fastInvSqrt(f * f + f2 * f2) * 0.025F / 2.0F);
-        float f5 = f2 * f4;
-        float f6 = f * f4;
-        int i =15;
-        int j = 15;
-        int k = 15;
-        int l = 15;
-        for(int i1 = 0; i1 <= 24; ++i1) {
-            addVertexPair(vertexconsumer, matrix4f, f, f1, f2, i, j, k, l, 0.025F, 0.025F, f5, f6, i1, false);
-        }
-        for(int j1 = 24; j1 >= 0; --j1) {
-            addVertexPair(vertexconsumer, matrix4f, f, f1, f2, i, j, k, l, 0.025F, 0.0F, f5, f6, j1, true);
-        }
+		renderLink(pBuffer, matrix4f, vec3);
         pMatrixStack.popPose();
     }
-    private void renderFrontPumpjackLink(PoseStack pMatrixStack, MultiBufferSource pBuffer, PumpjackBlockEntity be) {
+	
+	@ParametersAreNonnullByDefault
+	private void renderFrontPumpjackLink(
+		PoseStack pMatrixStack, MultiBufferSource pBuffer,
+		Direction direction, int q, float linkLength, PumpjackBlockEntity be
+	) {
         pMatrixStack.pushPose();
-        Direction direction = be.getBlockState().getValue(FACING);
-        Vec3 vec3 = new Vec3(0,0,0);
-        int q = -1;
-        int g = 0;
-        float hModifier= 0;
-        if(be.headAtFront) {
-            q = 1;
-        }else g = 1;
-        float y=0;
-        if(be.crank!=null) {
-            float linkLenght =    be.headBaseDistance;
-            hModifier = (float) (be.headDistance*Math.sin(Math.toRadians(be.angle)));
-            y = -0.01f;
-            vec3 = vec3.add(0,linkLenght,0);
-        }
-        hModifier = hModifier*q;
-        if(direction==Direction.NORTH) {
-            pMatrixStack.translate(0.5, -be.headBaseDistance+2, (-be.headDistance*q)+(.5*q)+g);
-            vec3 =  vec3.add(0,hModifier-0.3,+y);
-        }
-        if(direction==Direction.SOUTH){
-            pMatrixStack.translate(0.5, -be.headBaseDistance+2, (be.headDistance*q)+(.5*q)+g);
-            vec3 = vec3.add(0,-hModifier-0.3,-y);
-        }
-        if(direction==Direction.WEST){
-            pMatrixStack.translate((-be.headDistance*q)+(.5*q)+g, -be.headBaseDistance+2, 0.5);
-            vec3 = vec3.add(-y,-hModifier-0.3,0);
-        }
-        if(direction==Direction.EAST){
-            pMatrixStack.translate((be.headDistance*q)+(.5*q)+g, -be.headBaseDistance+2, 0.5);
-            vec3 = vec3.add(+y,hModifier-0.3,0);
-        }
-        float f = (float)(vec3.x);
-        float f1 = (float)(vec3.y );
-        float f2 = (float)(vec3.z);
-        VertexConsumer vertexconsumer = pBuffer.getBuffer(RenderType.leash());
-        Matrix4f matrix4f = pMatrixStack.last().pose();
-        float f4 = (float) (Mth.fastInvSqrt(f * f + f2 * f2) * 0.025F / 2.0F);
-        float f5 = f2 * f4;
-        float f6 = f * f4;
-        int i =15;
-        int j = 15;
-        int k = 15;
-        int l = 15;
-        for(int i1 = 0; i1 <= 24; ++i1) {
-            addVertexPair(vertexconsumer, matrix4f, f, f1, f2, i, j, k, l, 0.025F, 0.025F, f5, f6, i1, false);
-        }
-        for(int j1 = 24; j1 >= 0; --j1) {
-            addVertexPair(vertexconsumer, matrix4f, f, f1, f2, i, j, k, l, 0.025F, 0.0F, f5, f6, j1, true);
-        }
+        Vec3 vec3 = new Vec3(0,linkLength,0);
+        
+		float hModifier = (float) (be.headDistance*Math.sin(Math.toRadians(be.angle)));
+		
+		float y = -0.01f;
+		hModifier = hModifier*q;
+		
+		switch (direction) {
+			case NORTH -> {
+				pMatrixStack.translate(0.5, -linkLength + 2, -be.headDistance * q + .5);
+				vec3 = vec3.add(0, hModifier - 0.3, +y);
+			}
+			case SOUTH -> {
+				pMatrixStack.translate(0.5, -linkLength + 2, (be.headDistance * q) + .5);
+				vec3 = vec3.add(0, -hModifier - 0.3, -y);
+			}
+			case WEST -> {
+				pMatrixStack.translate((-be.headDistance * q) + .5, -linkLength + 2, 0.5);
+				vec3 = vec3.add(-y, -hModifier - 0.3, 0);
+			}
+			case EAST -> {
+				pMatrixStack.translate((be.headDistance * q) + .5, -linkLength + 2, 0.5);
+				vec3 = vec3.add(+y, hModifier - 0.3, 0);
+			}
+		}
+		
+		Matrix4f matrix4f = pMatrixStack.last().pose();
+		renderLink(pBuffer, matrix4f, vec3);
         pMatrixStack.popPose();
     }
-    private static void addVertexPair(VertexConsumer vertexConsumer, Matrix4f p_174309_, float p_174310_, float p_174311_, float p_174312_, int p_174313_, int p_174314_, int p_174315_, int p_174316_, float p_174317_, float p_174318_, float p_174319_, float p_174320_, int p_174321_, boolean p_174322_) {
-        float f = (float)p_174321_ / 24.0F;
-        int i = (int)Mth.lerp(f, (float)p_174313_, (float)p_174314_);
-        int j = (int)Mth.lerp(f, (float)p_174315_, (float)p_174316_);
-        int k = LightTexture.pack(i, j);
-        float f1 = p_174321_ % 2 == (p_174322_ ? 1 : 0) ? 0.7F : 1.0F;
-        float f2 = 0.1F * f1;
-        float f3 = 0.1F * f1;
-        float f4 = 0.1F * f1;
-        float f5 = p_174310_ * f;
-        float f6 = p_174311_ > 0.0F ? p_174311_ * f * f : p_174311_ - p_174311_ * (1.0F - f) * (1.0F - f);
-        float f7 = p_174312_ * f;
-        vertexConsumer.addVertex(p_174309_, f5 - p_174319_, f6 + p_174318_, f7 + p_174320_).setColor(f2, f3, f4, 1.0F).setLight(k);
-        vertexConsumer.addVertex(p_174309_, f5 + p_174319_, f6 + p_174317_ - p_174318_, f7 - p_174320_).setColor(f2, f3, f4, 1.0F).setLight(k);
-    }
-
-    @Override
+	
+	private static void renderLink(MultiBufferSource pBuffer, Matrix4f matrix, Vec3 vec3) {
+		double dist = Mth.invSqrt(vec3.x * vec3.x + vec3.z*vec3.z) * 0.0125F;
+		float dz = (float) (vec3.z * dist);
+		float dx = (float) (vec3.x * dist);
+		
+		VertexConsumer consumer = pBuffer.getBuffer(RenderType.leash());
+		float px = (float)(vec3.x);
+		float py = (float)(vec3.y);
+		float pz = (float)(vec3.z);
+		int light = LightTexture.pack(15, 15);
+		for(int i1 = 0; i1 <= 24; ++i1) {
+			float f = (float)i1 / 24.0F;
+			float f1 = i1 % 2 == 0 ? 0.07F : 0.1F;
+			float X = px * f;
+			float Y = py * f * (py > 0.0F ? f : 2 - f);
+			float Z = pz * f;
+			consumer.addVertex(matrix, X - dx, Y + 0.025F, Z + dz).setColor(f1, f1, f1, 1.0F).setLight(light);
+			consumer.addVertex(matrix, X + dx, Y + 0.025F - 0.025F, Z - dz).setColor(f1, f1, f1, 1.0F).setLight(light);
+		}
+		for(int j1 = 24; j1 >= 0; --j1) {
+			float f = (float)j1 / 24.0F;
+			float f1 = j1 % 2 == (1) ? 0.07F : 0.1F;
+			float X = px * f;
+			float Y = py * f * (py > 0.0F ? f : 2 - f);
+			float Z = pz * f;
+			consumer.addVertex(matrix, X - dx, Y, Z + dz).setColor(f1, f1, f1, 1.0F).setLight(light);
+			consumer.addVertex(matrix, X + dx, Y + 0.025F, Z - dz).setColor(f1, f1, f1, 1.0F).setLight(light);
+		}
+	}
+	
+	@Override
     protected BlockState getRenderedBlockState(PumpjackBlockEntity te) {
         return shaft(getRotationAxisOf(te));
     }

@@ -9,8 +9,9 @@ import net.minecraft.world.level.block.state.StateDefinition;
 
 public class TFMGHorizontalDirectionalBlock extends HorizontalDirectionalBlock {
     public static final MapCodec<TFMGHorizontalDirectionalBlock> CODEC = simpleCodec(TFMGHorizontalDirectionalBlock::new);
-    public TFMGHorizontalDirectionalBlock(Properties p_54120_) {
-        super(p_54120_);
+    
+	public TFMGHorizontalDirectionalBlock(Properties p) {
+        super(p);
     }
 
     @Override

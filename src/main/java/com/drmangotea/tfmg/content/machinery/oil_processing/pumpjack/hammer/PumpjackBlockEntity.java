@@ -9,7 +9,6 @@ import com.simibubi.create.content.contraptions.AbstractContraptionEntity;
 import com.simibubi.create.content.contraptions.AssemblyException;
 import com.simibubi.create.content.contraptions.ControlledContraptionEntity;
 import com.simibubi.create.content.contraptions.IDisplayAssemblyExceptions;
-import com.simibubi.create.content.contraptions.bearing.BearingBlock;
 import com.simibubi.create.content.contraptions.bearing.IBearingBlockEntity;
 import com.simibubi.create.content.kinetics.base.GeneratingKineticBlockEntity;
 import com.simibubi.create.content.kinetics.transmission.sequencer.SequencerInstructions;
@@ -22,7 +21,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Mth;
-import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -32,7 +30,6 @@ import net.minecraft.world.phys.AABB;
 import java.util.List;
 
 import static com.drmangotea.tfmg.content.machinery.oil_processing.pumpjack.hammer.PumpjackBlock.WIDE;
-import static net.minecraft.world.level.block.DirectionalBlock.FACING;
 
 public class PumpjackBlockEntity extends GeneratingKineticBlockEntity implements IBearingBlockEntity, IDisplayAssemblyExceptions {
     protected ControlledContraptionEntity movedContraption;
@@ -198,10 +195,9 @@ public class PumpjackBlockEntity extends GeneratingKineticBlockEntity implements
     }
 
     public void assemble() {
-        if (!(level.getBlockState(worldPosition)
-                .getBlock() instanceof BearingBlock))
+        if (!(level.getBlockState(worldPosition).getBlock() instanceof PumpjackBlock))
             return;
-        Direction direction = getBlockState().getValue(BearingBlock.FACING);
+        Direction direction = getBlockState().getValue(BlockStateProperties.HORIZONTAL_FACING);
         PumpjackContraption contraption = new PumpjackContraption(direction);
         try {
             if (!contraption.assemble(level, worldPosition))
@@ -214,9 +210,7 @@ public class PumpjackBlockEntity extends GeneratingKineticBlockEntity implements
             sendData();
             return;
         }
-        int q = 1;
-        if (direction.getAxis() == Direction.Axis.X)
-            q = -1;
+        int q = (direction.getAxis() == Direction.Axis.X)? -1 : 1;
         boolean canAssemble = true;
         boolean foundHead = false;
         boolean foundConnector = false;
@@ -272,8 +266,8 @@ public class PumpjackBlockEntity extends GeneratingKineticBlockEntity implements
         return level.getBlockState(pos).is(TFMGTags.Blocks.PUMPJACK_CONNECTOR.tag);
     }
 
-    private boolean findHeadAndConnector() {
-        Direction direction = getBlockState().getValue(FACING);
+    private void findHeadAndConnector() {
+        Direction direction = getBlockState().getValue(BlockStateProperties.HORIZONTAL_FACING);
         BlockPos checkedPos = this.getBlockPos().above();
         connectorPosition = null;
         headPosition = null;
@@ -281,7 +275,7 @@ public class PumpjackBlockEntity extends GeneratingKineticBlockEntity implements
             if (connectorPosition != null && headPosition != null
             ) {
                 sendData();
-                return true;
+                return;
             }
             if (i != 0)
                 if (isHead(checkedPos)) {
@@ -293,7 +287,7 @@ public class PumpjackBlockEntity extends GeneratingKineticBlockEntity implements
                 }
             if (i != 0)
                 if (isConnector(checkedPos)) {
-                    if (level.getBlockState(checkedPos).getValue(HorizontalDirectionalBlock.FACING).getAxis() == this.getBlockState().getValue(FACING).getAxis()) {
+                    if (level.getBlockState(checkedPos).getValue(BlockStateProperties.HORIZONTAL_FACING).getAxis() == this.getBlockState().getValue(BlockStateProperties.HORIZONTAL_FACING).getAxis()) {
                         connectorPosition = checkedPos;
                         connectorAtFront = true;
                         checkedPos = checkedPos.relative(direction);
@@ -304,7 +298,7 @@ public class PumpjackBlockEntity extends GeneratingKineticBlockEntity implements
             if (!isPart(checkedPos)) {
                 break;
             } else {
-                if (level.getBlockState(checkedPos).getValue(HorizontalDirectionalBlock.FACING).getAxis() != this.getBlockState().getValue(FACING).getAxis()) {
+                if (level.getBlockState(checkedPos).getValue(BlockStateProperties.HORIZONTAL_FACING).getAxis() != this.getBlockState().getValue(BlockStateProperties.HORIZONTAL_FACING).getAxis()) {
                     break;
                 }
             }
@@ -314,7 +308,7 @@ public class PumpjackBlockEntity extends GeneratingKineticBlockEntity implements
         for (int i = 0; i < 7; i++) {
             if (connectorPosition != null && headPosition != null) {
                 sendData();
-                return true;
+                return;
             }
             if (i != 0)
                 if (isHead(checkedPos)) {
@@ -326,7 +320,7 @@ public class PumpjackBlockEntity extends GeneratingKineticBlockEntity implements
                 }
             if (i != 0)
                 if (isConnector(checkedPos)) {
-                    if (level.getBlockState(checkedPos).getValue(HorizontalDirectionalBlock.FACING).getAxis() == this.getBlockState().getValue(FACING).getAxis()) {
+                    if (level.getBlockState(checkedPos).getValue(BlockStateProperties.HORIZONTAL_FACING).getAxis() == this.getBlockState().getValue(BlockStateProperties.HORIZONTAL_FACING).getAxis()) {
                         connectorPosition = checkedPos;
                         connectorAtFront = false;
                         checkedPos = checkedPos.relative(direction.getOpposite());
@@ -337,15 +331,14 @@ public class PumpjackBlockEntity extends GeneratingKineticBlockEntity implements
             if (!isPart(checkedPos)) {
                 break;
             } else {
-                if (level.getBlockState(checkedPos).getValue(HorizontalDirectionalBlock.FACING).getAxis() != this.getBlockState().getValue(FACING).getAxis()) {
+                if (level.getBlockState(checkedPos).getValue(BlockStateProperties.HORIZONTAL_FACING).getAxis() != this.getBlockState().getValue(BlockStateProperties.HORIZONTAL_FACING).getAxis()) {
                     break;
                 }
             }
             checkedPos = checkedPos.relative(direction.getOpposite());
         }
         sendData();
-        return false;
-    }
+	}
 
     public void disassemble() {
         if (!running && movedContraption == null)
@@ -371,16 +364,15 @@ public class PumpjackBlockEntity extends GeneratingKineticBlockEntity implements
     public void tick() {
         super.tick();
         if (level == null) return;
-        if (!isRunning())
-            findHeadAndConnector();
-        if (!isRunning() && isComplete() && !level.isClientSide) {
-            assemble();
-        }
-        if (base != null)
-            if (base.controllerHammer == null) {
-                if (isRunning())
-                    base.setControllerHammer(this);
-            }
+        if (!running)
+			findHeadAndConnector();
+		if (!running && isComplete() && !level.isClientSide) {
+			assemble();
+		}
+		if (base != null && base.controllerHammer == null) {
+			if (running)
+				base.setControllerHammer(this);
+		}
         boolean actuallyComplete = isComplete();
         if (actuallyComplete) {
             incompleteTimer = 0;
@@ -392,7 +384,7 @@ public class PumpjackBlockEntity extends GeneratingKineticBlockEntity implements
                 disassemble();
 
         setHolderSize();
-        Direction direction = getBlockState().getValue(BearingBlock.FACING);
+        Direction direction = getBlockState().getValue(BlockStateProperties.HORIZONTAL_FACING);
         if (connectorPosition != null) {
             if (direction.getAxis() == Direction.Axis.Z)
                 connectorDistance = Math.abs(getBlockPos().getZ() - connectorPosition.getZ());
@@ -428,12 +420,9 @@ public class PumpjackBlockEntity extends GeneratingKineticBlockEntity implements
         prevAngle = angle;
         if (level.isClientSide)
             clientAngleDiff /= 2;
-        if (
-                !level.isClientSide &&
-                        assembleNextTick) {
+        if (!level.isClientSide && assembleNextTick) {
             assembleNextTick = false;
-            if (running) {
-            } else {
+            if (!running) {
                 assemble();
             }
         }
@@ -470,12 +459,14 @@ public class PumpjackBlockEntity extends GeneratingKineticBlockEntity implements
     }
 
     private PumpjackCrankBlockEntity findCrank() {
+		if (level == null) return null;
+		
         BlockPos checkedPos = connectorPosition.below();
         for (int i = 0; i < 7; i++) {
-
-            if (level.getBlockEntity(checkedPos) instanceof PumpjackCrankBlockEntity)
-                if (level.getBlockState(checkedPos).getValue(HorizontalDirectionalBlock.FACING).getAxis() == this.getBlockState().getValue(FACING).getAxis())
-                    return (PumpjackCrankBlockEntity) level.getBlockEntity(checkedPos);
+	        if (level.getBlockEntity(checkedPos) instanceof PumpjackCrankBlockEntity crankBE)
+                if (level.getBlockState(checkedPos).getValue(BlockStateProperties.HORIZONTAL_FACING).getAxis()
+					        == this.getBlockState().getValue(BlockStateProperties.HORIZONTAL_FACING).getAxis()
+				) { return crankBE; }
             checkedPos = checkedPos.below();
         }
         return null;
@@ -505,13 +496,12 @@ public class PumpjackBlockEntity extends GeneratingKineticBlockEntity implements
             return;
         movedContraption.setAngle(angle);
         BlockState blockState = getBlockState();
-        if (blockState.hasProperty(BlockStateProperties.FACING)) {
-            Direction facing = blockState.getValue(BlockStateProperties.FACING);
-            Direction.Axis axis = facing.getAxis() == Direction.Axis.Y
-                    ? Direction.Axis.X
-                    : facing.getClockWise().getAxis();
-            movedContraption.setRotationAxis(axis);
-        }
+        if (blockState.hasProperty(BlockStateProperties.HORIZONTAL_FACING))
+            movedContraption.setRotationAxis(blockState
+				.getValue(BlockStateProperties.HORIZONTAL_FACING)
+				.getClockWise()
+				.getAxis()
+			);
     }
 
     @Override
@@ -519,7 +509,7 @@ public class PumpjackBlockEntity extends GeneratingKineticBlockEntity implements
         BlockState blockState = getBlockState();
         if (!(contraption.getContraption() instanceof PumpjackContraption))
             return;
-        if (!blockState.hasProperty(BearingBlock.FACING))
+        if (!blockState.hasProperty(BlockStateProperties.HORIZONTAL_FACING))
             return;
         this.movedContraption = contraption;
         setChanged();
