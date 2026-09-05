@@ -25,11 +25,7 @@ public class PumpjackRenderer extends KineticBlockEntityRenderer<PumpjackBlockEn
     protected void renderSafe(PumpjackBlockEntity be, float partialTicks, PoseStack ms, MultiBufferSource buffer,
                               int light, int overlay) {
 
-        if(be.crank == null)
-            return;
-        if(be.base == null)
-            return;
-        if(!be.running)
+        if(be.crank == null || be.base == null || !be.running)
             return;
 
         renderPumpjackLink(
