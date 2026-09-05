@@ -180,7 +180,7 @@ public class PumpjackBlockEntity extends GeneratingKineticBlockEntity implements
         float speed = convertToAngular(getSpeed());
         if (getSpeed() == 0)
             speed = 0;
-        if (level.isClientSide) {
+        if (level != null && level.isClientSide) {
             speed *= ServerSpeedProvider.get();
             speed += clientAngleDiff / 3f;
         }
@@ -496,7 +496,7 @@ public class PumpjackBlockEntity extends GeneratingKineticBlockEntity implements
     @Override
     public void lazyTick() {
         super.lazyTick();
-        if (movedContraption != null && !level.isClientSide)
+        if (movedContraption != null && level != null && !level.isClientSide)
             sendData();
     }
 
@@ -505,12 +505,13 @@ public class PumpjackBlockEntity extends GeneratingKineticBlockEntity implements
             return;
         movedContraption.setAngle(angle);
         BlockState blockState = getBlockState();
-        if (blockState.hasProperty(BlockStateProperties.FACING))
-            movedContraption.setRotationAxis(blockState
-				.getValue(BlockStateProperties.FACING)
-				.getClockWise()
-				.getAxis()
-			);
+        if (blockState.hasProperty(BlockStateProperties.FACING)) {
+            Direction facing = blockState.getValue(BlockStateProperties.FACING);
+            Direction.Axis axis = facing.getAxis() == Direction.Axis.Y
+                    ? Direction.Axis.X
+                    : facing.getClockWise().getAxis();
+            movedContraption.setRotationAxis(axis);
+        }
     }
 
     @Override
@@ -524,7 +525,7 @@ public class PumpjackBlockEntity extends GeneratingKineticBlockEntity implements
         setChanged();
         BlockPos anchor = worldPosition.above();
         movedContraption.setPos(anchor.getX(), anchor.getY(), anchor.getZ());
-        if (!level.isClientSide) {
+        if (level != null && !level.isClientSide) {
             this.running = true;
             sendData();
         }
@@ -532,7 +533,7 @@ public class PumpjackBlockEntity extends GeneratingKineticBlockEntity implements
 
     @Override
     public void onStall() {
-        if (!level.isClientSide)
+        if (level != null && !level.isClientSide)
             sendData();
     }
 
