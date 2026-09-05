@@ -61,7 +61,7 @@ public class BlastFurnaceHatchBlockEntity extends SmartBlockEntity implements IH
     }
 
     public void setTuyere() {
-        this.tank.allowInsertion().withValidator((stack) -> stack.is(TFMGFluids.HOT_AIR));
+        this.tank.allowInsertion().withValidator((stack) -> stack.is(TFMGTags.Fluids.HOT_AIR.tag));
         this.inputInventory.forbidExtraction().forbidInsertion();
         this.fluxInventory.forbidExtraction().forbidInsertion();
         this.fuelInventory.forbidExtraction().forbidInsertion();

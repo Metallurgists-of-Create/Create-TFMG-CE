@@ -125,6 +125,7 @@ public class TFMGTags {
         BLAST_STOVE_FUEL,
         AIR(COMMON),
         COOLING_FLUID(COMMON),
+        HOT_AIR,
 
         GASOLINE(COMMON),
         DIESEL(COMMON),

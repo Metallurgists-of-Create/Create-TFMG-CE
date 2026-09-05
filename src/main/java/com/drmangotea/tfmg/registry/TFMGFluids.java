@@ -41,7 +41,7 @@ public class TFMGFluids {
             NEON = gas("neon", 0xff9dede9),
             CARBON_DIOXIDE = gas("carbon_dioxide", 0xff525252),
             AIR = gas("air", 0xffdfe6e5, TFMGTags.Fluids.AIR.tag),
-            HOT_AIR = gas("hot_air", 0xffe8e1d5);
+            HOT_AIR = gas("hot_air", 0xffe8e1d5, TFMGTags.Fluids.HOT_AIR.tag);
 
 
     public static final FluidEntry<BaseFlowingFluid.Flowing>
