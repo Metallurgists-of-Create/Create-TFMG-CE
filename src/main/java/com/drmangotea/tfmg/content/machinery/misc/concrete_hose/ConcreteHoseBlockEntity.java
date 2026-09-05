@@ -23,7 +23,6 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import java.util.List;
 
 public class ConcreteHoseBlockEntity extends KineticBlockEntity {
-
     LerpedFloat offset;
     boolean isMoving;
 
@@ -118,8 +117,6 @@ public class ConcreteHoseBlockEntity extends KineticBlockEntity {
     public void tick() {
         super.tick();
         if (level == null) return;
-        //TODO: invalidate caps correctly
-        level.invalidateCapabilities(getBlockPos());
         float newOffset = offset.getValue() + getMovementSpeed();
         if (newOffset < 0) {
             newOffset = 0;
@@ -145,9 +142,7 @@ public class ConcreteHoseBlockEntity extends KineticBlockEntity {
     @Override
     public void lazyTick() {
         super.lazyTick();
-        if (level.isClientSide)
-            return;
-        if (isMoving)
+        if (isMoving || level == null || level.isClientSide)
             return;
 
         int ceil = (int) Math.ceil(offset.getValue() + getMovementSpeed());
