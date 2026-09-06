@@ -49,7 +49,19 @@ jobs:
           gradle-home-cache-includes: |
             caches
 
+      - name: Bump shared build number
+        id: buildnum
+        env:
+          GH_TOKEN: ${{ secrets.VARS_PAT }}
+        run: |
+          current=${{ vars.BUILD_NUMBER }}
+          next=$((current + 1))
+          gh variable set BUILD_NUMBER --repo ${{ github.repository }} --body "$next"
+          echo "build_number=$next" >> "$GITHUB_OUTPUT"
+
       - name: Build jar
+        env:
+          GITHUB_RUN_NUMBER: ${{ steps.buildnum.outputs.build_number }}
         run: ./gradlew build
 
       - name: Find jars

@@ -1,16 +1,21 @@
 name: CI & Deployment
 
 on:
-  push:
+  workflow_run:
+    workflows: [ "Build" ]
+    types: [ completed ]
     branches: [ "1.21.1" ]
   workflow_dispatch:
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
 
       - name: Setup Java
         uses: actions/setup-java@v4
@@ -28,4 +33,5 @@ jobs:
         env:
           KRYSTAL_MAVEN_USER: ${{ secrets.KRYSTAL_MAVEN_USER }}
           KRYSTAL_MAVEN_PASSWORD: ${{ secrets.KRYSTAL_MAVEN_TOKEN }}
+          GITHUB_RUN_NUMBER: ${{ vars.BUILD_NUMBER }}
         run: ./gradlew publishMavenJavaPublicationToKrystal-snapshot-mavenRepository
