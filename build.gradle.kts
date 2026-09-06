@@ -145,7 +145,7 @@ dependencies {
     implementation("mezz.jei:jei-${property("jei_minecraft_version")}-neoforge:${property("jei_version")}")
     implementation("com.tterrag.registrate:Registrate:${property("registrate_version")}")
 
-    implementation("dev.wolfieboy09.createliquidfuel:createliquidfuel:${property("minecraft_version")}-${property("clf_reburned_version")}") { isTransitive = false }
+    compileOnly("dev.wolfieboy09.createliquidfuel:createliquidfuel:${property("minecraft_version")}-${property("clf_reburned_version")}") { isTransitive = false }
 
     runtimeOnly("me.djtheredstoner:DevAuth-neoforge:1.2.1")
     runtimeOnly("maven.modrinth:lhGA9TYQ:1IiqEQGl") //architectury, for CPG
