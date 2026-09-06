@@ -1,6 +1,5 @@
 package com.drmangotea.tfmg.content.machinery.vat.base;
 
-import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.base.TFMGBlockConnectivityHandler;
 import com.drmangotea.tfmg.base.TFMGUtils;
 import com.drmangotea.tfmg.base.capabilities.TFMGCapabilities;
@@ -19,9 +18,9 @@ import com.drmangotea.tfmg.recipes.VatMachineRecipe;
 import com.drmangotea.tfmg.registry.TFMGBlockEntities;
 import com.drmangotea.tfmg.registry.TFMGRecipeTypes;
 import com.drmangotea.tfmg.registry.TFMGVatOperations;
+import com.drmangotea.tfmg.registry.TFMGVatTypes;
 import com.simibubi.create.api.boiler.BoilerHeater;
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
-import com.simibubi.create.content.processing.recipe.HeatCondition;
 import com.simibubi.create.content.processing.recipe.ProcessingOutput;
 import com.simibubi.create.foundation.blockEntity.IMultiBlockEntityContainer;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
@@ -418,7 +417,7 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
             }
             if (!machinesOk
                     || !areMachinesValid
-                    || !testedRecipe.allowedVatTypes.contains(((VatBlock) getBlockState().getBlock()).vatType)) {
+                    || (!testedRecipe.allowedVatTypes.isEmpty() && !testedRecipe.allowedVatTypes.contains(((VatBlock) getBlockState().getBlock()).getVatType()))) {
                 continue;
             }
 
@@ -1048,7 +1047,7 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
         if (be == null)
             return;
 
-        if (Objects.equals(((VatBlock) getBlockState().getBlock()).vatType, TFMG.asResource("firebrick_lined_vat")))
+        if (((VatBlock) getBlockState().getBlock()).getVatType().equals(TFMGVatTypes.FIREPROOF.get()))
             return;
 
         be.setWindows(!be.window);

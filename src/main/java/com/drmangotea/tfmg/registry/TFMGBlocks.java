@@ -173,8 +173,8 @@ import static com.simibubi.create.foundation.data.TagGen.*;
 
 @SuppressWarnings("removal")
 public class TFMGBlocks {
-
-
+    // I see no reason for this here
+    @Deprecated(since = "1.2.6", forRemoval = true)
     public static final String[] TFMG_DECOR_METALS = {"steel", "aluminum", "lead", "cast_iron"};
 
     static {
@@ -452,7 +452,7 @@ public class TFMGBlocks {
                     .register();
 
     public static final BlockEntry<VatBlock> CAST_IRON_CHEMICAL_VAT =
-            REGISTRATE.block("cast_iron_chemical_vat", VatBlock::cast_iron)
+            REGISTRATE.block("cast_iron_chemical_vat", VatBlock::castIron)
                     .initialProperties(SharedProperties::copperMetal)
                     .properties(p -> p.sound(SoundType.NETHERITE_BLOCK))
                     .properties(BlockBehaviour.Properties::noOcclusion)

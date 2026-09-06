@@ -110,6 +110,7 @@ public class TFMGCommonEvents {
             event.register(TFMGRegistries.ENGINE_TYPE_REGISTRY);
             event.register(TFMGRegistries.MIXER_MODE_REGISTRY);
             event.register(TFMGRegistries.VAT_OPERATION_REGISTRY);
+            event.register(TFMGRegistries.VAT_TYPE_REGISTRY);
         }
 
     }

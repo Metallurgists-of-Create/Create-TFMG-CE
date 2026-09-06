@@ -12,10 +12,7 @@ import com.drmangotea.tfmg.content.items.weapons.advanced_potato_cannon.Advanced
 import com.drmangotea.tfmg.content.items.weapons.quad_potato_cannon.QuadPotatoCannonItemRenderer;
 import com.drmangotea.tfmg.content.machinery.vat.base.registry.operations.VatCategoryEvent;
 import com.drmangotea.tfmg.content.machinery.vat.base.registry.operations.VatOperation;
-import com.drmangotea.tfmg.registry.TFMGDataComponents;
-import com.drmangotea.tfmg.registry.TFMGGuiTextures;
-import com.drmangotea.tfmg.registry.TFMGItems;
-import com.drmangotea.tfmg.registry.TFMGVatOperations;
+import com.drmangotea.tfmg.registry.*;
 import net.createmod.ponder.api.PonderPalette;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
@@ -167,8 +164,8 @@ public class TFMGClientEvents {
 				}
 			});
 
-			event.addDrawableVatType(TFMG.asResource("firebrick_lined_vat"), (vatType, graphics, mouseX, mouseY) -> TFMGGuiTextures.FIREPROOF_BRICK_OVERLAY.render(graphics, 55 - 48, 32));
-			event.addDrawableVatType(TFMG.asResource("cast_iron_vat"), (vatType, graphics, mouseX, mouseY) -> TFMGGuiTextures.CAST_IRON_VAT_OVERLAY.render(graphics, 0, 24));
+			event.addDrawableVatType(TFMGVatTypes.FIREPROOF.get(), (vatType, graphics, mouseX, mouseY) -> TFMGGuiTextures.FIREPROOF_BRICK_OVERLAY.render(graphics, 55 - 48, 32));
+			event.addDrawableVatType(TFMGVatTypes.CAST_IRON.get(), (vatType, graphics, mouseX, mouseY) -> TFMGGuiTextures.CAST_IRON_VAT_OVERLAY.render(graphics, 0, 24));
 		}
 	}
 }

@@ -4,13 +4,13 @@ package com.drmangotea.tfmg.datagen.recipes.values.tfmg;
 import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.base.pressure.Pressure;
 import com.drmangotea.tfmg.content.machinery.vat.base.registry.operations.VatOperation;
+import com.drmangotea.tfmg.content.machinery.vat.base.registry.types.VatType;
 import com.drmangotea.tfmg.datagen.recipes.builder.VatRecipeGen;
 import com.drmangotea.tfmg.registry.TFMGFluids;
 import com.drmangotea.tfmg.registry.TFMGItems;
 import com.drmangotea.tfmg.registry.TFMGTags;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.material.Fluids;
 import net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient;
@@ -47,7 +47,7 @@ public class TFMGVatRecipeGen extends VatRecipeGen {
                 .output(TFMGFluids.MOLTEN_STEEL.get(), 144)
                 .output(TFMGFluids.MOLTEN_SLAG.get(), 288)
                 .duration(20)
-                .allowFirebrickLinedVat()
+                .allowFireproof()
                 .minSize(9)
                 .arcBlasting()
         ),
@@ -160,7 +160,7 @@ public class TFMGVatRecipeGen extends VatRecipeGen {
         public int minSize;
         public int heat;
         public Pressure pressure;
-        public List<ResourceLocation> allowedVatTypes;
+        public List<VatType> allowedVatTypes;
 
         public VatRecipeValues() {
             machines = new ArrayList<>();
@@ -168,9 +168,9 @@ public class TFMGVatRecipeGen extends VatRecipeGen {
             heat = 0;
             pressure = Pressure.EMPTY;
             allowedVatTypes = new ArrayList<>();
-            allowedVatTypes.add(TFMG.asResource("steel_vat"));
-            allowedVatTypes.add(TFMG.asResource("cast_iron_vat"));
-            allowedVatTypes.add(TFMG.asResource("firebrick_lined_vat"));
+            allowedVatTypes.add(new VatType(TFMG.asResource("steel")));
+            allowedVatTypes.add(new VatType(TFMG.asResource("cast_iron")));
+            allowedVatTypes.add(new VatType(TFMG.asResource("fireproof")));
         }
 
         public VatRecipeValues heat(int heat) {

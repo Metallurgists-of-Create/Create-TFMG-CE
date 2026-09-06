@@ -1,14 +1,15 @@
 package com.drmangotea.tfmg.content.machinery.vat.base;
 
-import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.base.TFMGBlockConnectivityHandler;
 import com.drmangotea.tfmg.base.lang.TFMGLang;
+import com.drmangotea.tfmg.content.machinery.vat.base.registry.types.VatType;
+import com.drmangotea.tfmg.content.machinery.vat.base.registry.types.VatTypeEntry;
 import com.drmangotea.tfmg.registry.TFMGBlockEntities;
+import com.drmangotea.tfmg.registry.TFMGVatTypes;
 import com.simibubi.create.content.equipment.wrench.IWrenchable;
 import com.simibubi.create.foundation.block.IBE;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.InteractionResult;
@@ -37,28 +38,32 @@ import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 public class VatBlock extends Block implements IWrenchable, IBE<VatBlockEntity> {
-    public final ResourceLocation vatType;
+    public final VatTypeEntry vatType;
 
     public static final BooleanProperty TOP = BooleanProperty.create("top");
     public static final BooleanProperty BOTTOM = BooleanProperty.create("bottom");
     public static final EnumProperty<Shape> SHAPE = EnumProperty.create("shape", Shape.class);
 
     public static VatBlock steel(Properties properties){
-        return new VatBlock(properties, TFMG.asResource("steel_vat"));
+        return new VatBlock(properties, TFMGVatTypes.STEEL);
     }
-    public static VatBlock cast_iron(Properties properties){
-        return new VatBlock(properties, TFMG.asResource("cast_iron_vat"));
+    public static VatBlock castIron(Properties properties){
+        return new VatBlock(properties, TFMGVatTypes.CAST_IRON);
     }
     public static VatBlock fireproof(Properties properties){
-        return new VatBlock(properties, TFMG.asResource("firebrick_lined_vat"));
+        return new VatBlock(properties, TFMGVatTypes.FIREPROOF);
     }
 
-    public VatBlock(Properties properties, ResourceLocation vatType) {
+    public VatBlock(Properties properties, VatTypeEntry vatType) {
         super(properties);
         registerDefaultState(defaultBlockState().setValue(TOP, true)
                 .setValue(BOTTOM, true)
                 .setValue(SHAPE, Shape.PLAIN));
         this.vatType = vatType;
+    }
+
+    public VatType getVatType() {
+        return vatType.get();
     }
 
     public static boolean isVat(BlockState state) {

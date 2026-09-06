@@ -3,10 +3,13 @@ package com.drmangotea.tfmg.integration.jei.category;
 import com.drmangotea.tfmg.base.lang.TFMGLang;
 import com.drmangotea.tfmg.base.pressure.Pressure;
 import com.drmangotea.tfmg.config.TFMGConfigs;
+import com.drmangotea.tfmg.content.machinery.vat.base.registry.functions.DrawableVatType;
 import com.drmangotea.tfmg.content.machinery.vat.base.registry.operations.VatCategoryEvent;
 import com.drmangotea.tfmg.content.machinery.vat.base.registry.operations.VatOperation;
-import com.drmangotea.tfmg.content.machinery.vat.base.registry.functions.DrawableVatType;
+import com.drmangotea.tfmg.content.machinery.vat.base.registry.types.VatType;
+import com.drmangotea.tfmg.content.machinery.vat.base.registry.types.VatTypeEntry;
 import com.drmangotea.tfmg.recipes.VatMachineRecipe;
+import com.drmangotea.tfmg.recipes.VatRecipeParams;
 import com.drmangotea.tfmg.registry.TFMGGuiTextures;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
@@ -112,7 +115,7 @@ public class ChemicalVatCategory extends CreateRecipeCategory<VatMachineRecipe> 
     }
 
     public void draw(VatMachineRecipe recipe, IRecipeSlotsView iRecipeSlotsView, GuiGraphics graphics, double mouseX, double mouseY) {
-        List<ResourceLocation> allowedVatTypes = recipe.allowedVatTypes;
+        List<VatType> allowedVatTypes = recipe.allowedVatTypes.isEmpty() ? VatRecipeParams.allVatTypes() : recipe.allowedVatTypes;
         TFMGGuiTextures.VAT.render(graphics, 0, 24);
         VatCategoryEvent.drawVatTypes(allowedVatTypes, graphics, mouseX, mouseY);
 
@@ -259,7 +262,7 @@ public class ChemicalVatCategory extends CreateRecipeCategory<VatMachineRecipe> 
     }
 
     /**
-     * @deprecated Use {@link VatCategoryEvent#addDrawableVatType(ResourceLocation, DrawableVatType)} instead
+     * @deprecated Use {@link VatCategoryEvent#addDrawableVatType(VatTypeEntry, DrawableVatType)}  instead
      */
     @Deprecated(forRemoval = true, since = "1.2.5")
     private void drawVatTypes(List<ResourceLocation> allowedVatTypes, GuiGraphics graphics) {}

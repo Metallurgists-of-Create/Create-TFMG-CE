@@ -1,10 +1,11 @@
 package com.drmangotea.tfmg.recipes;
 
-import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.base.pressure.Pressure;
 import com.drmangotea.tfmg.content.machinery.vat.base.registry.operations.VatOperation;
+import com.drmangotea.tfmg.content.machinery.vat.base.registry.types.VatType;
 import com.drmangotea.tfmg.registry.TFMGRecipeTypes;
 import com.drmangotea.tfmg.registry.TFMGVatOperations;
+import com.drmangotea.tfmg.registry.TFMGVatTypes;
 import com.mojang.serialization.MapCodec;
 import com.simibubi.create.content.processing.recipe.ProcessingRecipe;
 import com.simibubi.create.content.processing.recipe.ProcessingRecipeBuilder;
@@ -20,7 +21,7 @@ import java.util.List;
 
 public class VatMachineRecipe extends ProcessingRecipe<RecipeInput, VatRecipeParams> {
     public List<VatOperation> machines;
-    public List<ResourceLocation> allowedVatTypes;
+    public List<VatType> allowedVatTypes;
     public int minSize;
     public int heatLevel;
     public Pressure pressure;
@@ -147,40 +148,41 @@ public class VatMachineRecipe extends ProcessingRecipe<RecipeInput, VatRecipePar
             return this;
         }
 
+        /**
+         * This only supports built in vat types
+         */
         public VatMachineRecipe.Builder<R> allowAllVatTypes() {
-            params.allowedVatTypes.add(TFMG.asResource("cast_iron_vat"));
-            params.allowedVatTypes.add(TFMG.asResource("steel_vat"));
-            params.allowedVatTypes.add(TFMG.asResource("firebrick_lined_vat"));
+            params.allowedVatTypes.clear();
             return this;
         }
 
         public VatMachineRecipe.Builder<R> allowNonCastIron() {
-            params.allowedVatTypes.add(TFMG.asResource("steel_vat"));
-            params.allowedVatTypes.add(TFMG.asResource("firebrick_lined_vat"));
+            params.allowedVatTypes.add(TFMGVatTypes.STEEL.get());
+            params.allowedVatTypes.add(TFMGVatTypes.FIREPROOF.get());
             return this;
         }
 
-        public VatMachineRecipe.Builder<R> allowSteelVat() {
-            params.allowedVatTypes.add(TFMG.asResource("steel_vat"));
+        public VatMachineRecipe.Builder<R> allowSteel() {
+            params.allowedVatTypes.add(TFMGVatTypes.STEEL.get());
             return this;
         }
 
-        public VatMachineRecipe.Builder<R> allowCastIronVat() {
-            params.allowedVatTypes.add(TFMG.asResource("cast_iron_vat"));
+        public VatMachineRecipe.Builder<R> allowCastIron() {
+            params.allowedVatTypes.add(TFMGVatTypes.CAST_IRON.get());
             return this;
         }
 
-        public VatMachineRecipe.Builder<R> allowFirebrickLinedVat() {
-            params.allowedVatTypes.add(TFMG.asResource("firebrick_lined_vat"));
+        public VatMachineRecipe.Builder<R> allowFireproof() {
+            params.allowedVatTypes.add(TFMGVatTypes.FIREPROOF.get());
             return this;
         }
 
-        public VatMachineRecipe.Builder<R> allowTypes(List<ResourceLocation> types) {
+        public VatMachineRecipe.Builder<R> allowTypes(List<VatType> types) {
             params.allowedVatTypes.addAll(types);
             return this;
         }
 
-        public VatMachineRecipe.Builder<R> allowType(ResourceLocation type) {
+        public VatMachineRecipe.Builder<R> allowType(VatType type) {
             params.allowedVatTypes.add(type);
             return this;
         }

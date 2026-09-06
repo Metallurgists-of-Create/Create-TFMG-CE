@@ -58,6 +58,7 @@ public class TFMG {
         TFMGElectrodes.init();
         TFMGMixerModes.init();
         TFMGVatOperations.init();
+        TFMGVatTypes.init();
         TFMGCableTypes.init();
         TFMGEngineTypes.init();
         TFMGDisplaySources.init();

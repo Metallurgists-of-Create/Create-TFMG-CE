@@ -8,6 +8,8 @@ import com.drmangotea.tfmg.content.engines.types.EngineType;
 import com.drmangotea.tfmg.content.engines.types.EngineTypeBuilder;
 import com.drmangotea.tfmg.content.machinery.vat.base.registry.operations.VatOperation;
 import com.drmangotea.tfmg.content.machinery.vat.base.registry.operations.VatOperationBuilder;
+import com.drmangotea.tfmg.content.machinery.vat.base.registry.types.VatType;
+import com.drmangotea.tfmg.content.machinery.vat.base.registry.types.VatTypeBuilder;
 import com.drmangotea.tfmg.content.machinery.vat.electrode_holder.electrode.Electrode;
 import com.drmangotea.tfmg.content.machinery.vat.electrode_holder.electrode.ElectrodeBuilder;
 import com.drmangotea.tfmg.content.machinery.vat.industrial_mixer.mode.MixerMode;
@@ -154,4 +156,19 @@ public class TFMGRegistrate extends CreateRegistrate {
         return entry(name, callback -> new VatOperationBuilder<>(this, parent, name, callback, factory));
     }
 
+    public VatTypeBuilder<TFMGRegistrate> vatType(Function<ResourceLocation, VatType> factory) {
+        return vatType((TFMGRegistrate) self(), factory);
+    }
+
+    public VatTypeBuilder<TFMGRegistrate> vatType(String name, Function<ResourceLocation, VatType> factory) {
+        return vatType((TFMGRegistrate) self(), name, factory);
+    }
+
+    public <P> VatTypeBuilder<P> vatType(P parent, Function<ResourceLocation, VatType> factory) {
+        return vatType(parent, currentName(), factory);
+    }
+
+    public <P> VatTypeBuilder<P> vatType(P parent, String name, Function<ResourceLocation, VatType> factory) {
+        return entry(name, callback -> new VatTypeBuilder<>(this, parent, name, callback, factory));
+    }
 }
