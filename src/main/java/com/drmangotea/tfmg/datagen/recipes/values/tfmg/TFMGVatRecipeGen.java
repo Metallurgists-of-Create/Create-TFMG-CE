@@ -68,6 +68,7 @@ public class TFMGVatRecipeGen extends VatRecipeGen {
                 .require(nitrateDust())
                 .output(sulfuricAcid(), 500)
                 .mixing()
+                .duration(5)
                 .allowAllVatTypes()
         ),
 
@@ -77,6 +78,7 @@ public class TFMGVatRecipeGen extends VatRecipeGen {
                 .output(rubber())
                 .mixing()
                 .allowAllVatTypes()
+                .duration(40)
                 .heatLevel(2)
         ),
 
@@ -85,6 +87,7 @@ public class TFMGVatRecipeGen extends VatRecipeGen {
                 .output(ethylene(), 250)
                 .output(propylene(), 250)
                 .mixing()
+                .duration(20)
                 .allowAllVatTypes()
                 .heatLevel(2)
         ),
@@ -94,6 +97,7 @@ public class TFMGVatRecipeGen extends VatRecipeGen {
                 .output(liquidPlastic(), 500)
                 .mixing()
                 .allowAllVatTypes()
+                .duration(30)
                 .heatLevel(2)
         ),
 
@@ -101,6 +105,7 @@ public class TFMGVatRecipeGen extends VatRecipeGen {
                 .require(SizedFluidIngredient.of(propylene(), 500))
                 .output(liquidPlastic(), 500)
                 .mixing()
+                .duration(30)
                 .allowAllVatTypes()
                 .heatLevel(2)
         ),
