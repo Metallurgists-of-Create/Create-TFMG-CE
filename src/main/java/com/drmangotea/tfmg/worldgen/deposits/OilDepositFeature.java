@@ -11,14 +11,15 @@ import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
 
 
 public class OilDepositFeature extends Feature<NoneFeatureConfiguration> {
-    public OilDepositFeature(Codec<NoneFeatureConfiguration> p_65786_) {
-        super(p_65786_);
+    public OilDepositFeature(Codec<NoneFeatureConfiguration> codec) {
+        super(codec);
     }
 
     @Override
@@ -42,10 +43,12 @@ public class OilDepositFeature extends Feature<NoneFeatureConfiguration> {
     public void placeDeposit(BlockPos startingPos, WorldGenLevel level, RandomSource randomsource) {
         BlockPos pos = startingPos;
         setBlock(level, startingPos, TFMGBlocks.OIL_DEPOSIT.getDefaultState());
-        if (level.getChunk(startingPos).hasData(TFMGDataAttachments.FLUID_RESERVOIR)) {
-            FluidReservoir.addToReservoir(level.getLevel(), startingPos);
+		//resevoir handling
+		ChunkAccess chunk = level.getChunk(startingPos);
+        if (chunk.hasData(TFMGDataAttachments.FLUID_RESERVOIR)) {
+            FluidReservoir.addToReservoir(chunk, startingPos);
         } else {
-            FluidReservoir.createReservoir(level.getLevel(), startingPos);
+            FluidReservoir.createReservoir(chunk, startingPos, level.getRandom());
         }
 
         int height = randomsource.nextIntBetweenInclusive(10, 25);
@@ -66,11 +69,7 @@ public class OilDepositFeature extends Feature<NoneFeatureConfiguration> {
         }
     }
     
-    
     public static void setBlock(WorldGenLevel level,BlockPos pos, BlockState state){
-
-
-        
-        level.setBlock (pos,state,2);
+        level.setBlock(pos,state,2);
     }
 }

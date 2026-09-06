@@ -126,7 +126,7 @@ public class PumpjackBaseBlockEntity extends SmartBlockEntity implements IHaveGo
         // Old chunks wouldn't have a proper reservoir
         if (!level.getChunkAt(deposit).hasData(TFMGDataAttachments.FLUID_RESERVOIR)) {
             if (level.getBlockState(deposit).is(TFMGBlocks.OIL_DEPOSIT.get())) {
-                FluidReservoir.createReservoir(level, deposit);
+                FluidReservoir.createReservoir(level.getChunkAt(deposit), deposit, level.getRandom());
             }
             return;
         }

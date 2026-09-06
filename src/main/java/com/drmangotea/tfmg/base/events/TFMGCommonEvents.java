@@ -134,15 +134,13 @@ public class TFMGCommonEvents {
             try {
                 for (ChunkHolder chunkHolder : ((ChunkMapAccessor) serverLevel.getChunkSource().chunkMap).getVisibleChunkMap().values()) {
                     LevelChunk chunk = chunkHolder.getTickingChunk();
-                    if (chunk != null) {
-                        if (!TFMGConfigs.common().worldGen.infiniteDeposits.get()) {
-                            if (chunk.hasData(TFMGDataAttachments.FLUID_RESERVOIR)) {
-                                FluidReservoir reservoir = chunk.getData(TFMGDataAttachments.FLUID_RESERVOIR);
-                                if (reservoir.removeEmptyDeposits(serverLevel)) {
-                                    chunk.removeData(TFMGDataAttachments.FLUID_RESERVOIR);
-                                }
-                            }
-                        }
+                    if (chunk != null && !TFMGConfigs.common().worldGen.infiniteDeposits.get() &&
+						chunk.hasData(TFMGDataAttachments.FLUID_RESERVOIR)
+					) {
+						FluidReservoir reservoir = chunk.getData(TFMGDataAttachments.FLUID_RESERVOIR);
+						if (reservoir.removeEmptyDeposits(serverLevel)) {
+							chunk.removeData(TFMGDataAttachments.FLUID_RESERVOIR);
+						}
                     }
                 }
             } catch (Exception exception) {
