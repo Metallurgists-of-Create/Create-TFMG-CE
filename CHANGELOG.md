@@ -45,6 +45,12 @@ Contributors:<br>
   - Blast Furnace Hatches now limit certain inventories based on their place in the multiblock.
 - Multimeters are no longer incompatible with Goggles
 - Added support for `Create: Liquid Fuels Reburned`
+- World Generation:
+  - "tfmg:striated_ores_overworld" has been removed.
+  - "tfmg:striated_ores_nether" has been removed.
+  - Split striated ore features into individual features.
+  - All features now have a config-toggle for enabling/disabling.
+  - Added "tfmg:config_boolean" placement modifier.
 
 ### API Changes:
 - Created VAT operation registry.

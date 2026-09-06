@@ -27,8 +27,12 @@ public class TFMGConfiguredFeatures {
             LEAD_ORE = key("lead_ore"),
             NICKEL_ORE = key("nickel_ore"),
             LITHIUM_ORE = key("lithium_ore"),
-            TFMG_STRIATED_ORES_OVERWORLD = key("tfmg_striated_ores_overworld"),
-            TFMG_STRIATED_ORES_NETHER = key("tfmg_striated_ores_nether");
+            BAUXITE = key("bauxite"),
+            GALENA = key("galena"),
+            LIGNITE = key("lignite"),
+            FIRECLAY = key("fireclay"),
+            SULFUR = key("sulfur"),
+            NETHER_FIRECLAY = key("nether_fireclay");
 
     private static ResourceKey<ConfiguredFeature<?, ?>> key(String name) {
         return ResourceKey.create(Registries.CONFIGURED_FEATURE, TFMG.asResource(name));
@@ -67,21 +71,12 @@ public class TFMGConfiguredFeatures {
         register(ctx, NICKEL_ORE, Feature.ORE, new OreConfiguration(nickelTargetStates, 10));
         register(ctx, LITHIUM_ORE, Feature.ORE, new OreConfiguration(lithiumTargetStates, 7));
 
-        List<LayerPattern> overworldLayerPatterns = List.of(
-                TFMGLayeredPatterns.BAUXITE.get(),
-                TFMGLayeredPatterns.GALENA.get(),
-                TFMGLayeredPatterns.LIGNITE.get(),
-                TFMGLayeredPatterns.FIRECLAY.get()
+        register(ctx, BAUXITE, AllFeatures.LAYERED_ORE.get(), new LayeredOreConfiguration(List.of(TFMGLayeredPatterns.BAUXITE.get()), 32, 0));
+        register(ctx, GALENA, AllFeatures.LAYERED_ORE.get(), new LayeredOreConfiguration(List.of(TFMGLayeredPatterns.GALENA.get()), 32, 0));
+        register(ctx, LIGNITE, AllFeatures.LAYERED_ORE.get(), new LayeredOreConfiguration(List.of(TFMGLayeredPatterns.LIGNITE.get()), 32, 0));
+        register(ctx, FIRECLAY, AllFeatures.LAYERED_ORE.get(), new LayeredOreConfiguration(List.of(TFMGLayeredPatterns.FIRECLAY.get()), 32, 0));
 
-        );
-
-        register(ctx, TFMG_STRIATED_ORES_OVERWORLD, AllFeatures.LAYERED_ORE.get(), new LayeredOreConfiguration(overworldLayerPatterns, 32, 0));
-
-        List<LayerPattern> netherLayerPatterns = List.of(
-                TFMGLayeredPatterns.SULFUR.get(),
-                TFMGLayeredPatterns.FIRECLAY_NETHER.get()
-        );
-
-        register(ctx, TFMG_STRIATED_ORES_NETHER, AllFeatures.LAYERED_ORE.get(), new LayeredOreConfiguration(netherLayerPatterns, 32, 0));
+        register(ctx, SULFUR, AllFeatures.LAYERED_ORE.get(), new LayeredOreConfiguration(List.of(TFMGLayeredPatterns.SULFUR.get()), 32, 0));
+        register(ctx, NETHER_FIRECLAY, AllFeatures.LAYERED_ORE.get(), new LayeredOreConfiguration(List.of(TFMGLayeredPatterns.FIRECLAY_NETHER.get()), 32, 0));
     }
 }

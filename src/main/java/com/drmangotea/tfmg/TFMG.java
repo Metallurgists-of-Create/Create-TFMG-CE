@@ -75,7 +75,7 @@ public class TFMG {
         TFMGPaletteBlocks.init();
 
         TFMGParticleTypes.register(modEventBus);
-
+        TFMGPlacementModifiers.register(modEventBus);
         TFMGDataComponents.register(modEventBus);
         TFMGDataAttachments.register(modEventBus);
         TFMGMobEffects.register(modEventBus);

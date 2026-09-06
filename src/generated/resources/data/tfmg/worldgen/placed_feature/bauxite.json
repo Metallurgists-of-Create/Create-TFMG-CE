@@ -1,9 +1,9 @@
 {
-  "feature": "tfmg:oil_well",
+  "feature": "tfmg:bauxite",
   "placement": [
     {
       "type": "minecraft:rarity_filter",
-      "chance": 500
+      "chance": 18
     },
     {
       "type": "minecraft:in_square"
@@ -13,17 +13,17 @@
       "height": {
         "type": "minecraft:uniform",
         "max_inclusive": {
-          "absolute": -64
+          "absolute": 70
         },
         "min_inclusive": {
-          "absolute": -64
+          "absolute": -30
         }
       }
     },
     {
       "type": "tfmg:config_boolean",
       "enabled_when": true,
-      "option": "tfmg:oil_wells"
+      "option": "tfmg:bauxite"
     }
   ]
 }

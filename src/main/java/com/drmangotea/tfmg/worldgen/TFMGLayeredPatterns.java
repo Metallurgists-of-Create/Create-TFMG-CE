@@ -17,7 +17,6 @@ public class TFMGLayeredPatterns {
             .layer(l -> l.weight(1).block(AllPaletteStoneTypes.ANDESITE.getBaseBlock()))
             .build();
 
-
     public static final NonNullSupplier<LayerPattern> LIGNITE = () -> LayerPattern.builder()
             .layer(l -> l.weight(1).passiveBlock())
             .layer(l -> l.weight(2).block(TFMGBlocks.LIGNITE.get()).size(1, 3))
@@ -33,7 +32,6 @@ public class TFMGLayeredPatterns {
             .layer(l -> l.weight(1).blocks(Blocks.DRIPSTONE_BLOCK, Blocks.SMOOTH_BASALT))
             .layer(l -> l.weight(1).block(AllPaletteStoneTypes.DEEPSLATE.getBaseBlock()))
             .build();
-
 
     public static final NonNullSupplier<LayerPattern> FIRECLAY = () -> LayerPattern.builder()
             .layer(l -> l.weight(2).passiveBlock())

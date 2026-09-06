@@ -135,7 +135,7 @@ public class TFMGCommonEvents {
                 for (ChunkHolder chunkHolder : ((ChunkMapAccessor) serverLevel.getChunkSource().chunkMap).getVisibleChunkMap().values()) {
                     LevelChunk chunk = chunkHolder.getTickingChunk();
                     if (chunk != null) {
-                        if (!TFMGConfigs.common().worldgen.infiniteDeposits.get()) {
+                        if (!TFMGConfigs.common().worldGen.infiniteDeposits.get()) {
                             if (chunk.hasData(TFMGDataAttachments.FLUID_RESERVOIR)) {
                                 FluidReservoir reservoir = chunk.getData(TFMGDataAttachments.FLUID_RESERVOIR);
                                 if (reservoir.removeEmptyDeposits(serverLevel)) {

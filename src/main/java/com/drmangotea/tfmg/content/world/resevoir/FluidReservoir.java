@@ -32,7 +32,7 @@ public class FluidReservoir {
 
     public static void createReservoir(Level level, BlockPos origin) {
         FluidReservoir reservoir = new FluidReservoir(origin);
-        reservoir.setReserves(level.getRandom().nextInt(1000, TFMGConfigs.common().worldgen.depositMaxReserves.get()));
+        reservoir.setReserves(level.getRandom().nextInt(1000, TFMGConfigs.common().worldGen.depositMaxReserves.get()));
         level.getChunk(origin).setData(TFMGDataAttachments.FLUID_RESERVOIR, reservoir);
     }
 
