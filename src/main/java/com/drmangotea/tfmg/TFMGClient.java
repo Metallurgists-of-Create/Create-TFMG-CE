@@ -20,7 +20,6 @@ import net.neoforged.neoforge.common.NeoForge;
 
 @Mod(value = TFMG.MOD_ID, dist = Dist.CLIENT)
 public class TFMGClient {
-
     /**
      * does not work, too bad!
      */
