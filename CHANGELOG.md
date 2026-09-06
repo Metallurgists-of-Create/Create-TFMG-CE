@@ -44,6 +44,7 @@ Contributors:<br>
   - Top hatch now properly saves its inventory.
   - Blast Furnace Hatches now limit certain inventories based on their place in the multiblock.
 - Multimeters are no longer incompatible with Goggles
+- Added support for `Create: Liquid Fuels Reburned`
 
 ### API Changes:
 - Created VAT operation registry.
