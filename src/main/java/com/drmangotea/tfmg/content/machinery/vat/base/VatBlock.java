@@ -1,5 +1,7 @@
 package com.drmangotea.tfmg.content.machinery.vat.base;
 
+import com.drmangotea.tfmg.TFMG;
+import com.drmangotea.tfmg.TFMGRegistries;
 import com.drmangotea.tfmg.base.TFMGBlockConnectivityHandler;
 import com.drmangotea.tfmg.base.lang.TFMGLang;
 import com.drmangotea.tfmg.content.machinery.vat.base.registry.types.VatType;
@@ -10,6 +12,7 @@ import com.simibubi.create.content.equipment.wrench.IWrenchable;
 import com.simibubi.create.foundation.block.IBE;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.InteractionResult;
@@ -32,6 +35,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.neoforge.common.util.DeferredSoundType;
+import net.neoforged.neoforge.registries.DeferredHolder;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -60,6 +64,18 @@ public class VatBlock extends Block implements IWrenchable, IBE<VatBlockEntity> 
                 .setValue(BOTTOM, true)
                 .setValue(SHAPE, Shape.PLAIN));
         this.vatType = vatType;
+    }
+
+    /**
+     * Use {@link VatBlock(Properties, VatTypeEntry)} instead.
+     */
+    @Deprecated(since = "1.2.5", forRemoval = true)
+    public VatBlock(Properties properties, ResourceLocation vatTypeId) {
+        super(properties);
+        registerDefaultState(defaultBlockState().setValue(TOP, true)
+                .setValue(BOTTOM, true)
+                .setValue(SHAPE, Shape.PLAIN));
+        this.vatType = new VatTypeEntry(TFMG.REGISTRATE, DeferredHolder.create(TFMGRegistries.VAT_TYPE, vatTypeId));
     }
 
     public VatType getVatType() {
