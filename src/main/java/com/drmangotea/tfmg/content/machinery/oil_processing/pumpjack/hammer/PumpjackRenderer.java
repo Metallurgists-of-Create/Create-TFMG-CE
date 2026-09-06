@@ -45,8 +45,8 @@ public class PumpjackRenderer extends KineticBlockEntityRenderer<PumpjackBlockEn
                 buffer,
                 be
         );
-        /////////////
     }
+
     private void renderPumpjackLink(boolean second, PoseStack pMatrixStack, MultiBufferSource pBuffer, PumpjackBlockEntity be) {
         pMatrixStack.pushPose();
         Direction direction = be.getBlockState().getValue(FACING);
@@ -60,7 +60,7 @@ public class PumpjackRenderer extends KineticBlockEntityRenderer<PumpjackBlockEn
         float y=0;
         if(be.crank!=null) {
             hModifier = be.crank.heightModifier - be.crankConnectorDistance;
-            float linkLenght =    be.crankConnectorDistance;
+            float linkLenght = be.crankConnectorDistance;
             if(direction == Direction.WEST) {
                 if ((be.crank.angle>0&&be.crank.angle < 90||be.crank.angle > 270)||(be.crank.angle<0&&be.crank.angle > -90||be.crank.angle < -270)) {
                     x = (float) Math.sqrt(Math.pow(be.crank.crankRadius, 2) - Math.pow(be.crank.heightModifier, 2));
@@ -160,10 +160,10 @@ public class PumpjackRenderer extends KineticBlockEntityRenderer<PumpjackBlockEn
         float hModifier= 0;
         if(be.headAtFront) {
             q = 1;
-        }else g = 1;
+        } else g = 1;
         float y=0;
-        if(be.crank!=null) {
-            float linkLenght =    be.headBaseDistance;
+        if(be.crank != null) {
+            float linkLenght = be.headBaseDistance;
             hModifier = (float) (be.headDistance*Math.sin(Math.toRadians(be.angle)));
             y = -0.01f;
             vec3 = vec3.add(0,linkLenght,0);
