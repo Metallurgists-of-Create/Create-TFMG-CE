@@ -59,6 +59,16 @@ jobs:
           gh variable set BUILD_NUMBER --repo ${{ github.repository }} --body "$next"
           echo "build_number=$next" >> "$GITHUB_OUTPUT"
 
+      - name: Save build number for downstream workflows
+        run: echo "${{ steps.buildnum.outputs.build_number }}" > build_number.txt
+
+      - name: Upload build number artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-number
+          path: build_number.txt
+          retention-days: 1
+
       - name: Build jar
         env:
           GITHUB_RUN_NUMBER: ${{ steps.buildnum.outputs.build_number }}
