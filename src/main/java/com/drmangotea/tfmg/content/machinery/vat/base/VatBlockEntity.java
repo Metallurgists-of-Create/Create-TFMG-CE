@@ -29,6 +29,7 @@ import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour
 import com.simibubi.create.foundation.blockEntity.behaviour.fluid.SmartFluidTankBehaviour;
 import com.simibubi.create.foundation.fluid.CombinedTankWrapper;
 import com.simibubi.create.foundation.fluid.SmartFluidTank;
+import com.simibubi.create.foundation.item.ItemHelper;
 import com.simibubi.create.foundation.item.SmartInventory;
 import com.simibubi.create.foundation.recipe.RecipeConditions;
 import com.simibubi.create.foundation.recipe.RecipeFinder;
@@ -1184,6 +1185,14 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
     @Override
     public BlockPos getController() {
         return isController() ? worldPosition : controller;
+    }
+
+    @Override
+    public void destroy() {
+        super.destroy();
+        if (isController() || controller == null) {
+            ItemHelper.dropContents(level, worldPosition, itemCapability);
+        }
     }
 
     @Override

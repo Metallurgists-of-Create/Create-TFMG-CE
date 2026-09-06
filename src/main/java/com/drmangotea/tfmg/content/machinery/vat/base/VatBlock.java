@@ -119,12 +119,12 @@ public class VatBlock extends Block implements IWrenchable, IBE<VatBlockEntity> 
     }
 
     @Override @ParametersAreNonnullByDefault
-    public void onRemove(BlockState state, Level world, BlockPos pos, BlockState newState, boolean isMoving) {
+    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
         if (state.hasBlockEntity() && (state.getBlock() != newState.getBlock() || !newState.hasBlockEntity())) {
-            BlockEntity be = world.getBlockEntity(pos);
+            BlockEntity be = level.getBlockEntity(pos);
             if (!(be instanceof VatBlockEntity tankBE))
                 return;
-            world.removeBlockEntity(pos);
+            IBE.onRemove(state, level, pos, newState);
 			TFMGBlockConnectivityHandler.splitMulti(tankBE);
         }
     }
