@@ -195,7 +195,7 @@ public class PumpjackBlockEntity extends GeneratingKineticBlockEntity implements
     }
 
     public void assemble() {
-        if (!(level.getBlockState(worldPosition).getBlock() instanceof PumpjackBlock))
+        if (!(getBlockState().getBlock() instanceof PumpjackBlock)) //is this even necessary, though?
             return;
         Direction direction = getBlockState().getValue(BlockStateProperties.HORIZONTAL_FACING);
         PumpjackContraption contraption = new PumpjackContraption(direction);
@@ -219,10 +219,9 @@ public class PumpjackBlockEntity extends GeneratingKineticBlockEntity implements
             if (block.state().is(TFMGTags.Blocks.PUMPJACK_HEAD.tag)) {
                 foundHead = true;
                 if (block.pos().getX() != headLocalPos.getX() ||
-                        block.pos().getY() != q * headLocalPos.getY() ||
-                        block.pos().getZ() != q * headLocalPos.getZ())
-                    canAssemble = false;
-
+                    block.pos().getY() != q * headLocalPos.getY() ||
+                    block.pos().getZ() != q * headLocalPos.getZ()
+				) { canAssemble = false; }
             }
         }
         BlockPos connectorLocalPos = connectorPosition.subtract(getBlockPos().above());

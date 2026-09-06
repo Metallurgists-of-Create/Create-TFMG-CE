@@ -12,22 +12,26 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-public class PumpjackHammerConnectorBlock extends HorizontalDirectionalBlock {
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
 
-    public PumpjackHammerConnectorBlock(Properties pProperties) {
+public class PumpjackHammerConnectorBlock extends HorizontalDirectionalBlock {
+	public static final MapCodec<PumpjackHammerConnectorBlock> CODEC = simpleCodec(PumpjackHammerConnectorBlock::new);
+	
+	public PumpjackHammerConnectorBlock(Properties pProperties) {
         super(pProperties);
     }
-    public static final MapCodec<PumpjackHammerConnectorBlock> CODEC = simpleCodec(PumpjackHammerConnectorBlock::new);
-    @Override
+    
+	@Override
     protected MapCodec<? extends HorizontalDirectionalBlock> codec() {
         return CODEC;
     }
 
-    @Override
+    @Override @Nonnull @ParametersAreNonnullByDefault
     public VoxelShape getShape(BlockState pState, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
-
         return TFMGShapes.PUMPJACK_HAMMER_PART.get(pState.getValue(FACING).getClockWise());
     }
+	
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> pBuilder) {
         super.createBlockStateDefinition(pBuilder.add(FACING));
@@ -36,6 +40,4 @@ public class PumpjackHammerConnectorBlock extends HorizontalDirectionalBlock {
     public BlockState getStateForPlacement(BlockPlaceContext pContext) {
         return this.defaultBlockState().setValue(FACING, pContext.getHorizontalDirection().getOpposite());
     }
-
-
 }

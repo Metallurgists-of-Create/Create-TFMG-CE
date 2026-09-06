@@ -10,15 +10,16 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-public class LargePumpjackHammerConnectorBlock extends PumpjackHammerConnectorBlock {
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
 
+public class LargePumpjackHammerConnectorBlock extends PumpjackHammerConnectorBlock {
     public LargePumpjackHammerConnectorBlock(Properties pProperties) {
         super(pProperties);
     }
-    @Override
+    
+	@Override @Nonnull @ParametersAreNonnullByDefault
     public VoxelShape getShape(BlockState pState, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
-
         return TFMGShapes.FULL;
     }
-
 }

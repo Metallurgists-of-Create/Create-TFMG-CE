@@ -36,7 +36,6 @@ public class PumpjackBaseBlockEntity extends SmartBlockEntity implements IHaveGo
     public FluidTank tank;
     public BlockPos deposit;
 
-
     public PumpjackBaseBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
         tank = createInventory();
@@ -182,7 +181,6 @@ public class PumpjackBaseBlockEntity extends SmartBlockEntity implements IHaveGo
     }
 
     @Override
-    @SuppressWarnings("removal")
     public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
         TFMGTexts.header("pumpjack").forGoggles(tooltip);
         if (deposit == null) {
@@ -201,18 +199,7 @@ public class PumpjackBaseBlockEntity extends SmartBlockEntity implements IHaveGo
 
     @Override
     public void write(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {
-
         compound.put("TankContent", tank.writeToNBT(registries,new CompoundTag()));
         super.write(compound,registries , clientPacket);
     }
-
-
-    //@Nonnull
-    //@Override
-    //@SuppressWarnings("removal")
-    //public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, Direction side) {
-    //    if (cap == ForgeCapabilities.FLUID_HANDLER)
-    //        return fluidCapability.cast();
-    //    return super.getCapability(cap, side);
-    //}
 }
