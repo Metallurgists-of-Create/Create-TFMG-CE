@@ -12,7 +12,7 @@ base {
 val ci = System.getenv("CI") != null && System.getenv("CI").toBoolean()
 val release = System.getenv("RELEASE") != null && System.getenv("RELEASE").toBoolean()
 val webhook = ci && !release
-val buildNumber: String? = System.getenv("GITHUB_RUN_NUMBER")
+val buildNumber: String? = System.getenv("MOD_BUILD_NUMBER")
 
 version = "${property("minecraft_version")}-${property("mod_version")}${if (webhook) "-build.${buildNumber}" else ""}"
 group = "${property("mod_group_id")}"
