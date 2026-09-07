@@ -1,6 +1,5 @@
 package com.drmangotea.tfmg.content.world.resevoir;
 
-import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.config.TFMGConfigs;
 import com.drmangotea.tfmg.registry.TFMGDataAttachments;
 import com.mojang.serialization.Codec;
@@ -88,12 +87,9 @@ public class FluidReservoir {
         return new ArrayList<>(this.deposits);
     }
 
-    public boolean removeEmptyDeposits(Level level) {
-        if (this.isEmpty()) {
-            TFMG.LOGGER.debug("EPIC REMOVAL");
-            this.deposits.forEach((pos) -> level.setBlockAndUpdate(pos, Blocks.BEDROCK.defaultBlockState()));
-            return true;
-        }
-        return false;
-    }
+    public void removeEmptyDeposits(Level level) {
+        if (!this.isEmpty()) return; //just in case
+		
+		this.deposits.forEach((pos) -> level.setBlockAndUpdate(pos, Blocks.BEDROCK.defaultBlockState()));
+	}
 }
