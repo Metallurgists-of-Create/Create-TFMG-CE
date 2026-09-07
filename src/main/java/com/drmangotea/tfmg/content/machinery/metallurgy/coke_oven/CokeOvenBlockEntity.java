@@ -1,6 +1,7 @@
 package com.drmangotea.tfmg.content.machinery.metallurgy.coke_oven;
 
 import com.drmangotea.tfmg.base.TFMGUtils;
+import com.drmangotea.tfmg.base.fluid.ForceableFluidTank;
 import com.drmangotea.tfmg.base.lang.TFMGTexts;
 import com.drmangotea.tfmg.config.TFMGConfigs;
 import com.drmangotea.tfmg.recipes.CokingRecipe;
@@ -10,7 +11,6 @@ import com.drmangotea.tfmg.registry.TFMGRecipeTypes;
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
-import com.simibubi.create.foundation.fluid.SmartFluidTank;
 import com.simibubi.create.foundation.item.ItemHelper;
 import com.simibubi.create.foundation.item.SmartInventory;
 import net.createmod.catnip.animation.LerpedFloat;
@@ -21,7 +21,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtOps;
+import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -71,8 +71,8 @@ public class CokeOvenBlockEntity extends SmartBlockEntity implements IHaveGoggle
         inventory = new SmartInventory(1, this)
                 .withMaxStackSize(64)
                 .whenContentsChanged(i->this.onContentsChanged());
-        primaryTank = new SmartFluidTank(8000, this::onFluidChanged);
-        secondaryTank = new SmartFluidTank(8000, this::onFluidChanged);
+        primaryTank = new ForceableFluidTank(8000, this::onFluidChanged).blockInsertion();
+        secondaryTank = new ForceableFluidTank(8000, this::onFluidChanged).blockInsertion();
         itemCapability = inventory;
         primaryFluidCapability =  primaryTank;
         secondaryFluidCapability = secondaryTank;
@@ -291,6 +291,7 @@ public class CokeOvenBlockEntity extends SmartBlockEntity implements IHaveGoggle
             }
         }
     }
+	
     public void onPlaced(){
         createNextTick = true;
         updateOvenBlocks();
@@ -368,7 +369,7 @@ public class CokeOvenBlockEntity extends SmartBlockEntity implements IHaveGoggle
         compound.put("Inventory", inventory.serializeNBT(registries));
         compound.put("PrimaryTankContent", primaryTank.writeToNBT(registries, new CompoundTag()));
         compound.put("SecondaryTankContent", secondaryTank.writeToNBT(registries, new CompoundTag()));
-        compound.put("Controller", BlockPos.CODEC.encodeStart(NbtOps.INSTANCE, controller).getOrThrow());
+        compound.put("Controller", NbtUtils.writeBlockPos(controller));
     }
 
     @Override
@@ -381,11 +382,9 @@ public class CokeOvenBlockEntity extends SmartBlockEntity implements IHaveGoggle
         secondaryTank.readFromNBT(registries, compound.getCompound("SecondaryTankContent"));
 
         if (compound.contains("Controller", Tag.TAG_COMPOUND)) {
-            controller = BlockPos.CODEC.parse(NbtOps.INSTANCE, compound.get("Controller")).getOrThrow();
+            controller = NbtUtils.readBlockPos(compound, "Controller").orElseThrow();
         } else if (compound.contains("Controller", Tag.TAG_LONG)) {
             controller = BlockPos.of(compound.getLong("Controller"));
-            compound.remove("Controller");
-            compound.put("Controller", BlockPos.CODEC.encodeStart(NbtOps.INSTANCE, controller).getOrThrow());
         }
 
         updateCapability = true;
