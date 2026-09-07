@@ -8,11 +8,12 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 
 public class TFMGDirectionalBlock extends DirectionalBlock {
-
     public TFMGDirectionalBlock(Properties p_54120_) {
         super(p_54120_);
     }
+
     public static final MapCodec<TFMGDirectionalBlock> CODEC = simpleCodec(TFMGDirectionalBlock::new);
+
     @Override
     protected MapCodec<? extends DirectionalBlock> codec() {
         return CODEC;
@@ -26,5 +27,4 @@ public class TFMGDirectionalBlock extends DirectionalBlock {
     public BlockState getStateForPlacement(BlockPlaceContext pContext) {
         return this.defaultBlockState().setValue(FACING, pContext.getNearestLookingDirection().getOpposite());
     }
-
 }
