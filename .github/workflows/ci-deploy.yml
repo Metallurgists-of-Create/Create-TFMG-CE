@@ -32,27 +32,13 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      - name: Download build number from triggering run
-        id: download_buildnum
-        if: github.event_name == 'workflow_run'
-        uses: actions/download-artifact@v4
-        with:
-          name: build-number
-          run-id: ${{ github.event.workflow_run.id }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Resolve build number
+      - name: Get build number
         id: buildnum
-        run: |
-          if [ -f build_number.txt ]; then
-            echo "build_number=$(cat build_number.txt)" >> "$GITHUB_OUTPUT"
-          else
-            echo "build_number=${{ vars.BUILD_NUMBER }}" >> "$GITHUB_OUTPUT"
-          fi
+        run: echo "build_number=${{ vars.BUILD_NUMBER }}" >> "$GITHUB_OUTPUT"
 
       - name: Publish to Snapshots Maven
         env:
           KRYSTAL_MAVEN_USER: ${{ secrets.KRYSTAL_MAVEN_USER }}
           KRYSTAL_MAVEN_PASSWORD: ${{ secrets.KRYSTAL_MAVEN_TOKEN }}
-          GITHUB_RUN_NUMBER: ${{ steps.buildnum.outputs.build_number }}
+          MOD_BUILD_NUMBER: ${{ steps.buildnum.outputs.build_number }}
         run: ./gradlew publishMavenJavaPublicationToKrystal-snapshot-mavenRepository
