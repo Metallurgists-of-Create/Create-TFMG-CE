@@ -202,17 +202,19 @@ public class CokeOvenBlockEntity extends SmartBlockEntity implements IHaveGoggle
                 .forGoggles(tooltip);
 
         CokeOvenBlockEntity controllerOven = getController();
-        if(controllerOven != null) {
-            double progress = ((double) controllerOven.timer / controllerOven.totalTime) * 100;
-            if (controllerOven.totalTime == -1 || controllerOven.timer == 0)
-                progress = 0;
-            if (controllerOven.totalTime != -1)
-                TFMGTexts.progress(TFMGTexts.percent(progress))
-                        .style(ChatFormatting.GOLD)
-                        .forGoggles(tooltip);
-        }
-
-        TFMGUtils.createStorageTooltip(this, tooltip);
+		if (controllerOven == null) return false;
+		
+		double progress = ((double) controllerOven.timer / controllerOven.totalTime) * 100;
+		if (controllerOven.totalTime == -1 || controllerOven.timer == 0)
+			progress = 0;
+		if (controllerOven.totalTime != -1)
+			TFMGTexts.progress(TFMGTexts.percent(progress))
+					.style(ChatFormatting.GOLD)
+					.forGoggles(tooltip);
+		
+		TFMGUtils.createFluidTooltip(tooltip, controllerOven.secondaryFluidCapability, controllerOven.primaryFluidCapability);
+		//TFMGUtils.createItemTooltip(this, tooltip);
+		TFMGUtils.createItemTooltip(tooltip, controllerOven.inventory);
         return true;
     }
 

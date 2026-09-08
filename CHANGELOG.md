@@ -55,6 +55,15 @@ Contributors:<br>
 ### API Changes:
 - Created VAT operation registry.
 - Marked `MachineConfig$polarizerItemChargingRate` as marked for removal.
+- TFMGUtils changes
+  - deprecations:
+    - `createStorageTooltip (BlockEntity, List<Component>)`
+    - `createFluidTooltip (BlockEntity, List<Component>)`
+    - `createItemTooltip (BlockEntity, List<Component>)`
+  - Replaced by tooltip generators not dependant on a capability lookup:
+    - `createFluidTooltip (List<Component>, IFluidHanlder...)`
+    - `createItemTooltip (List<Component>, IItemHandler)`
+  -
 - Created `TFMGClientConfig`
   - Created `UIConfig`.
 - Vat:
