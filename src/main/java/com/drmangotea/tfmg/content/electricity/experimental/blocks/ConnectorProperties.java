@@ -9,13 +9,11 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.phys.Vec3;
 
 public class ConnectorProperties extends ElectricalProperties {
-    public ConnectorProperties(long pos1) {
-        super(pos1);
+    public ConnectorProperties(BlockPos pos) {
+        super(pos);
 
-        BlockPos pos = BlockPos.of(position);
         nodes.add(new ConnectingElectricalNode(position,0,0, new Vec3(0,1,0)));
     }
-    
 
 
     @Override

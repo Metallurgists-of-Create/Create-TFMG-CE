@@ -13,9 +13,8 @@ import java.util.List;
 public class DebugResistorProperties extends DirectionalElectricalProperties {
 
 
-    public DebugResistorProperties(long pos, Direction direction) {
-        super(pos,direction);
-        BlockPos pos1 = BlockPos.of(position);
+    public DebugResistorProperties(BlockPos pos, Direction direction) {
+        super(pos, direction);
         ConnectingElectricalNode node1 = new ConnectingElectricalNode(position, 0, 0, getRotation(this.direction).getFirst());
         ConnectingElectricalNode node2 = new ConnectingElectricalNode(position, 0, 1, getRotation(this.direction).get(1));
         nodes.add(node1);

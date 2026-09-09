@@ -5,15 +5,11 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 
 public interface IRealisticElectric {
-
-
-
-
     default ElectricalProperties getProperties() {
         return new ElectricalProperties(this.getPos());
     }
 
-    long getPos();
+    BlockPos getPos();
 
     default void updateNetwork(BlockPos pos) {
 

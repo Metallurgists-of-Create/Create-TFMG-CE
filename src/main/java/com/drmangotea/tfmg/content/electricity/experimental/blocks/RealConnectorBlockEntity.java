@@ -35,8 +35,8 @@ public class RealConnectorBlockEntity extends SmartBlockEntity implements IReali
     }
 
     @Override
-    public long getPos() {
-        return getBlockPos().asLong();
+    public BlockPos getPos() {
+        return getBlockPos();
     }
 
     @Override

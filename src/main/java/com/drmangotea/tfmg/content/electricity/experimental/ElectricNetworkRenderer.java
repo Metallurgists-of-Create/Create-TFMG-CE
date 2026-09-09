@@ -62,18 +62,15 @@ public class ElectricNetworkRenderer {
         for (WireConnection connection : network.connections) {
             renderWire(
 				TFMGPartialModels.CABLE,
-				connection.node1().getPosition().add(Vec3.atLowerCornerOf(BlockPos.of(connection.node1().pos))),
-				connection.node2().getPosition().add(Vec3.atLowerCornerOf(BlockPos.of(connection.node2().pos))),
+				connection.node1().getPosition().add(Vec3.atLowerCornerOf(connection.node1().pos)),
+				connection.node2().getPosition().add(Vec3.atLowerCornerOf(connection.node2().pos)),
 				camera, ms, vc, player, false
 			);
         }
     }
 
     public static void renderWire(PartialModel model, Vec3 pos1, Vec3 pos2, Camera camera, PoseStack ms, VertexConsumer vc, Player player, boolean debug) {
-
-        double cameraX = camera.getPosition().x;
-        double cameraY = camera.getPosition().y;
-        double cameraZ = camera.getPosition().z;
+		Vec3 cameraInverse = Vec3.ZERO.subtract(camera.getPosition());
 
         int cableRenderDistance = 64;
 
@@ -94,33 +91,30 @@ public class ElectricNetworkRenderer {
 
         //
         int segmentCount = (int) ((length * 16) / 4) + 1;
+		
+		DoubleUnaryOperator curveFunction   = x -> 0.2f * x * ((x / segmentCount) - 1);
+		DoubleUnaryOperator curveDerivative = x -> 0.2f * ((2 * x / segmentCount) - 1);
 
-            if (!(vec1.distanceTo(player.getEyePosition()) > cableRenderDistance) || !(v.distanceTo(player.getEyePosition()) > cableRenderDistance))
-                for (int i = 0; i < segmentCount; i++) {
-
-                    float count = segmentCount / 5f;
-                    float middle = count / 2f;
-                    DoubleUnaryOperator curveFunction = x -> (float) (Math.pow((x * 0.2f) - middle, 2) * (1f / count) - (0.25f * count));
-                    float angle = (float) Math.toDegrees(Math.atan(derive(curveFunction, 1e-5).applyAsDouble(i)));
-                    ms.pushPose();
-
-
-                    // CachedBuffers.partial(i % 2 == 0 ? model : TFMGPartialModels.CABLE_FUNNY, air)
-
-                    CachedBuffers.partial(model, air)
-                            .translate(-cameraX, -cameraY, -cameraZ)
-                            .translate(vec1)
-                            .light(600)
-                            .translate(0.5f, 0.5f, 0.5f)
-                            .rotate(yaw, Direction.Axis.Y)
-                            .rotate(-pitch, Direction.Axis.X)
-                            .translateY((float) curveFunction.applyAsDouble(i) * 0.25f)
-                            .translate(0, 0, i * (4 / 16f))
-                            .rotateDegrees(-angle, Direction.Axis.X)
-                            .translate(-0.5f, -0.5f, -0.5f)
-                            .renderInto(ms, vc);
-
-                }
+		if ((vec1.distanceTo(player.getEyePosition()) > cableRenderDistance) && (v.distanceTo(player.getEyePosition()) > cableRenderDistance))
+			return;
+			
+		for (int i = 0; i < segmentCount; i++) {
+			float angle = (float) Math.toDegrees(Math.atan(curveDerivative.applyAsDouble(i)));
+			ms.pushPose();
+			
+			CachedBuffers.partial(model, air)
+				.translate(cameraInverse)
+				.translate(vec1)
+				.light(600)
+				.translate(0.5f, 0.5f, 0.5f)
+				.rotate(yaw, Direction.Axis.Y)
+				.rotate(-pitch, Direction.Axis.X)
+				.translateY((float) curveFunction.applyAsDouble(i) * 0.25f)
+				.translate(0, 0, i * (4 / 16f))
+				.rotateDegrees(-angle, Direction.Axis.X)
+				.translate(-0.5f, -0.5f, -0.5f)
+				.renderInto(ms, vc);
+		}
     }
 
     public static DoubleUnaryOperator derive(DoubleUnaryOperator f, double h) {
@@ -143,26 +137,20 @@ public class ElectricNetworkRenderer {
             List<ConnectingElectricalNode> connectors = new ArrayList<>();
             ElectricalProperties properties = be.getProperties();
 
-            long position = pos.asLong();
-
             RealElectricalNetwork network = RealElectricNetworkManager.getNetwork(level);
 
-            List<ElectricalNode> nodes = network.getNodes(position);
-
+            List<ElectricalNode> nodes = network.getNodes(pos);
 
             for (ElectricalNode node : nodes) {
                 if (node instanceof ConnectingElectricalNode connector)
                     connectors.add(connector);
             }
 
-
             for (ConnectingElectricalNode node : connectors) {
-				Vec3 cablePos = node.getPosition().add(Vec3.atLowerCornerOf(BlockPos.of(be.getPos())));
+				Vec3 cablePos = node.getPosition().add(Vec3.atLowerCornerOf(be.getPos()));
 
-                Vec3 center = new Vec3(cablePos.x(), cablePos.y(), cablePos.z());
-
-                Vec3 corner1 = center.add(0.1f, 0.1f, 0.1f);
-                Vec3 corner2 = center.subtract(0.1f, 0.1f, 0.1f);
+                Vec3 corner1 = cablePos.add(0.1f, 0.1f, 0.1f);
+                Vec3 corner2 = cablePos.subtract(0.1f, 0.1f, 0.1f);
 
                 TFMGUtils.createOutline(corner1, corner2, "connector_" + node.localId, Color.rainbowColor(AnimationTickHolder.getTicks() * 5));
             }

@@ -10,8 +10,6 @@ import java.util.List;
 import java.util.Map;
 
 public class RealElectricalNetwork {
-
-
     public static final double FREQUENCY = 50.0;
     public static final double OMEGA = 2.0 * Math.PI * FREQUENCY;
 
@@ -24,7 +22,7 @@ public class RealElectricalNetwork {
 
     public long id;
     public int totalNodes = 150;
-    public Map<Long, ElectricalProperties> members = new HashMap<>();
+    public Map<BlockPos, ElectricalProperties> members = new HashMap<>();
     public List<WireConnection> connections = new ArrayList<>();
 
     public LevelAccessor world;
@@ -36,22 +34,13 @@ public class RealElectricalNetwork {
 
     public Map<Integer, ComplexValue> nodeVoltages = new HashMap<>();
 
-    public List<ElectricalNode> getNodes(long pos) {
-        List<ElectricalNode> nodes = new ArrayList<>();
-
-        this.members.forEach((l, p) -> {
-            if (l == pos) {
-                nodes.addAll(p.nodes);
-            }
-        });
-
-        return nodes;
+    public List<ElectricalNode> getNodes(BlockPos pos) {
+		return members.get(pos).nodes;
     }
 
 
     public void addMember(BlockPos pos, ElectricalProperties properties) {
-        members.put(pos.asLong(), properties);
-        ;
+        members.put(pos, properties);
     }
 
     private int find(int[] parent, int i) {

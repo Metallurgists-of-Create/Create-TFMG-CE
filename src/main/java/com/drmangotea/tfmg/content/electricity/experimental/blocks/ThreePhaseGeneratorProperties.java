@@ -11,10 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ThreePhaseGeneratorProperties extends DirectionalElectricalProperties {
-    public ThreePhaseGeneratorProperties(long pos1, Direction d) {
-        super(pos1,d);
-
-        BlockPos pos = BlockPos.of(position);
+    public ThreePhaseGeneratorProperties(BlockPos pos, Direction d) {
+        super(pos,d);
 
         ElectricalNode N = new ConnectingElectricalNode(position, 0, 0,  getRotation(direction).get(0));
         ElectricalNode L1 = new ConnectingElectricalNode(position, 0, 1, getRotation(direction).get(1));

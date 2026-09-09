@@ -2,6 +2,7 @@ package com.drmangotea.tfmg.content.electricity.experimental;
 
 import com.drmangotea.tfmg.content.electricity.experimental.simulation.ElectricalComponent;
 import com.drmangotea.tfmg.content.electricity.experimental.simulation.ElectricalNode;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 
 import java.util.ArrayList;
@@ -12,10 +13,10 @@ public class ElectricalProperties {
 
     public final List<ElectricalNode> nodes = new ArrayList<>();
     public final List<ElectricalComponent> components = new ArrayList<>();
-    public long position;
+    public BlockPos position;
 
 
-    public ElectricalProperties(long pos) {
+    public ElectricalProperties(BlockPos pos) {
       this.position = pos;
     }
 

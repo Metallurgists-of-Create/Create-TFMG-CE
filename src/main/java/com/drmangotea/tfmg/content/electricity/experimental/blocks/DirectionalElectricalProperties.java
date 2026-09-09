@@ -1,6 +1,7 @@
 package com.drmangotea.tfmg.content.electricity.experimental.blocks;
 
 import com.drmangotea.tfmg.content.electricity.experimental.ElectricalProperties;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.phys.Vec3;
 
@@ -10,7 +11,7 @@ public abstract class DirectionalElectricalProperties extends ElectricalProperti
 
     public Direction direction;
 
-    public DirectionalElectricalProperties(long pos, Direction direction) {
+    public DirectionalElectricalProperties(BlockPos pos, Direction direction) {
         super(pos);
         this.direction = direction;
     }

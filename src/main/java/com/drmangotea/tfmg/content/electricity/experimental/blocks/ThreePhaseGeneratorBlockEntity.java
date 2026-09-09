@@ -121,8 +121,8 @@ public class ThreePhaseGeneratorBlockEntity extends KineticBlockEntity implement
     // }
 
     @Override
-    public long getPos() {
-        return getBlockPos().asLong();
+    public BlockPos getPos() {
+        return getBlockPos();
     }
 
     @Override

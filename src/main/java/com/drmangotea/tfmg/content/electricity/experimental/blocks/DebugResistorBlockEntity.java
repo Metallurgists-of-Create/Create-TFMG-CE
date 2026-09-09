@@ -65,8 +65,8 @@ public class DebugResistorBlockEntity extends SmartBlockEntity implements IReali
     }
 
     @Override
-    public long getPos() {
-        return getBlockPos().asLong();
+    public BlockPos getPos() {
+        return getBlockPos();
     }
 
     @Override

@@ -9,9 +9,11 @@ import com.drmangotea.tfmg.content.electricity.experimental.blocks.DebugResistor
 import com.drmangotea.tfmg.content.electricity.experimental.blocks.DirectionalElectricalProperties;
 import com.drmangotea.tfmg.content.electricity.experimental.blocks.ThreePhaseGeneratorProperties;
 import com.drmangotea.tfmg.content.electricity.experimental.simulation.*;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtUtils;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.saveddata.SavedData;
@@ -23,8 +25,7 @@ public class NetworkSavedData extends SavedData {
 
     private List<RealElectricalNetwork> list = new ArrayList<>();
 
-    public NetworkSavedData() {
-    }
+    public NetworkSavedData() {}
 
     @Override
     public CompoundTag save(CompoundTag compound, HolderLookup.Provider provider) {
@@ -47,9 +48,9 @@ public class NetworkSavedData extends SavedData {
                 for (int i = 0; i < network.members.size(); i++) {
                     CompoundTag member = new CompoundTag();
                     ElectricalProperties properties = network.members.values().stream().toList().get(i);
-                    long pos = network.members.keySet().stream().toList().get(i);
+                    BlockPos pos = network.members.keySet().stream().toList().get(i);
 
-                    member.putLong("Position", pos);
+                    member.put("Position", NbtUtils.writeBlockPos(pos));
                     member.putInt("Property Id", properties.getId());
                     for (ElectricalComponent component : properties.components) {
                         if (component instanceof IdealVoltageSource source) {
@@ -61,17 +62,6 @@ public class NetworkSavedData extends SavedData {
                     }
                     if (properties instanceof DirectionalElectricalProperties p)
                         member.putInt("direction", p.direction.get3DDataValue());
-
-                    // for (ElectricalNode node : properties.nodes) {
-                    //     if (node instanceof ConnectingElectricalNode connectingNode) {
-                    //         CompoundTag nodeTag = new CompoundTag();
-                    //         nodeTag.putDouble("X", connectingNode.getPosition().x());
-                    //         nodeTag.putDouble("Y", connectingNode.getPosition().y());
-                    //         nodeTag.putDouble("Z", connectingNode.getPosition().z());
-                    //         member.put("node " + connectingNode.localId, nodeTag);
-                    //     }
-                    // }
-
 
                     members.put("member " + i, member);
                 }
@@ -86,18 +76,10 @@ public class NetworkSavedData extends SavedData {
 
                     connectionTag.putDouble("Resistance", connection.resistance());
 
-                    CompoundTag node1 = new CompoundTag();
-                    node1.putLong("position", connection.node1().pos);
-                    node1.putInt("local id", connection.node1().getLocalId());
-                    connectionTag.put("Node1", node1);
-
-                    CompoundTag node2 = new CompoundTag();
-                    node2.putLong("position", connection.node2().pos);
-                    node2.putInt("local id", connection.node2().getLocalId());
-                    connectionTag.put("Node2", node2);
+                    connectionTag.put("Node1", connection.node1().save());
+					connectionTag.put("Node2", connection.node2().save());
 
                     connections.put("connection " + i, connectionTag);
-
                 }
 
                 networkNBT.put("connections", connections);
@@ -105,7 +87,6 @@ public class NetworkSavedData extends SavedData {
                 compound.put(serverLevel.dimension().location().toLanguageKey(), networkNBT);
 
             }
-            ;
         }
 
         return compound;
@@ -127,14 +108,14 @@ public class NetworkSavedData extends SavedData {
                 int memberCount = networkTag.getInt("Member Count");
                 for (int i = 0; i < memberCount; i++) {
                     CompoundTag member = networkTag.getCompound("blocks").getCompound("member " + i);
-                    long pos = member.getLong("Position");
+					BlockPos pos = NbtUtils.readBlockPos(member, "Position").get();
 
                     Direction direction = Direction.NORTH;
 
                     if(member.contains("direction")){
                         direction = Direction.from3DDataValue(member.getInt("direction"));
                     }
-                    ElectricalProperties properties = getElectricalProperties(member.getInt("Property Id"), direction);
+                    ElectricalProperties properties = getElectricalProperties(member.getInt("Property Id"), pos, direction);
 
                     properties.position = pos;
                     network.members.put(pos, properties);
@@ -144,34 +125,11 @@ public class NetworkSavedData extends SavedData {
                 for (int i = 0; i < connectionCount; i++) {
                     CompoundTag connection = networkTag.getCompound("connections").getCompound("connection " + i);
                     double resistance = connection.getDouble("Resistance");
-
-                    ConnectingElectricalNode node1 = null;
-                    CompoundTag node1Tag = connection.getCompound("Node1");
-                    long pos1 = node1Tag.getLong("position");
-                    int id1 = node1Tag.getInt("local id");
-                    for (ElectricalNode node : network.getNodes(pos1)) {
-                        if (node.localId == id1 && node instanceof ConnectingElectricalNode connectingNode) {
-                            node1 = connectingNode;
-                            node1.pos = pos1;
-                        }
-                    }
-
-
-                    ConnectingElectricalNode node2 = null;
-                    CompoundTag node2Tag = connection.getCompound("Node2");
-                    long pos2 = node2Tag.getLong("position");
-                    int id2 = node2Tag.getInt("local id");
-                    for (ElectricalNode node : network.getNodes(pos2)) {
-                        if (node.localId == id2 && node instanceof ConnectingElectricalNode connectingNode) {
-                            node2 = connectingNode;
-                            node2.pos = pos2;
-                        }
-                    }
+					
+					ConnectingElectricalNode node1 = getNode(connection.getCompound("Node1"), network);
+					ConnectingElectricalNode node2 = getNode(connection.getCompound("Node2"), network);
 
                     if (node1 != null && node2 != null) {
-
-                        long test = node1.pos;
-
                         network.connections.add(new WireConnection(node1, node2, resistance));
                     }
 
@@ -181,15 +139,26 @@ public class NetworkSavedData extends SavedData {
 
         return sd;
     }
+	
+	private static ConnectingElectricalNode getNode(CompoundTag tag, RealElectricalNetwork network) {
+		ConnectingElectricalNode node = null;
+		BlockPos pos = NbtUtils.readBlockPos(tag, "position").get();
+		int id1 = tag.getInt("local id");
+		for (ElectricalNode existingNode : network.getNodes(pos)) {
+			if (existingNode.localId == id1 && existingNode instanceof ConnectingElectricalNode connectingNode) {
+				node = connectingNode;
+				node.pos = pos;
+			}
+		}
+		return node;
+	}
 
-    public static ElectricalProperties getElectricalProperties(int id, Direction direction) {
-
-
-        return switch (id) {
-            case 1 -> new ThreePhaseGeneratorProperties(0,direction);
-            case 2 -> new ConnectorProperties(0);
-            case 3 -> new DebugResistorProperties(0, direction);
-            default -> new ElectricalProperties(0);
+    public static ElectricalProperties getElectricalProperties(int id, BlockPos pos, Direction direction) {
+		return switch (id) {
+            case 1 -> new ThreePhaseGeneratorProperties(pos, direction);
+            case 2 -> new ConnectorProperties(pos);
+            case 3 -> new DebugResistorProperties(pos, direction);
+            default -> new ElectricalProperties(pos);
 
         };
     }
