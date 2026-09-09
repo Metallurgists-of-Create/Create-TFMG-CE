@@ -81,7 +81,6 @@ public class TFMGCommonEvents {
             PumpjackBaseBlockEntity.registerCapabilities(event);
             PolarizerBlockEntity.registerCapabilities(event);
             LargeEngineBlockEntity.registerCapabilities(event);
-           // ConverterBlockEntity.registerCapabilities(event);
             CastingBasinBlockEntity.registerCapabilities(event);
             FireboxBlockEntity.registerCapabilities(event);
             DistillationControllerBlockEntity.registerCapabilities(event);
@@ -110,8 +109,8 @@ public class TFMGCommonEvents {
             event.register(TFMGRegistries.ENGINE_TYPE_REGISTRY);
             event.register(TFMGRegistries.MIXER_MODE_REGISTRY);
             event.register(TFMGRegistries.VAT_OPERATION_REGISTRY);
+            event.register(TFMGRegistries.VAT_TYPE_REGISTRY);
         }
-
     }
 
     @SubscribeEvent
@@ -129,24 +128,23 @@ public class TFMGCommonEvents {
 
     @SubscribeEvent
     public static void levelTick(LevelTickEvent.Post event) {
-        if (event.getLevel() instanceof ServerLevel serverLevel) {
-            try {
-                for (ChunkHolder chunkHolder : ((ChunkMapAccessor) serverLevel.getChunkSource().chunkMap).getVisibleChunkMap().values()) {
-                    LevelChunk chunk = chunkHolder.getTickingChunk();
-                    if (chunk != null) {
-                        if (!TFMGConfigs.common().worldgen.infiniteDeposits.get()) {
-                            if (chunk.hasData(TFMGDataAttachments.FLUID_RESERVOIR)) {
-                                FluidReservoir reservoir = chunk.getData(TFMGDataAttachments.FLUID_RESERVOIR);
-                                if (reservoir.removeEmptyDeposits(serverLevel)) {
-                                    chunk.removeData(TFMGDataAttachments.FLUID_RESERVOIR);
-                                }
-                            }
-                        }
-                    }
-                }
-            } catch (Exception exception) {
-                TFMG.LOGGER.error("Error occurred while ticking fluid reservoirs.", exception);
-            }
-        }
+        if (!(event.getLevel() instanceof ServerLevel serverLevel)) return;
+		
+		try {
+			for (ChunkHolder chunkHolder : ((ChunkMapAccessor) serverLevel.getChunkSource().chunkMap).getVisibleChunkMap().values()) {
+				LevelChunk chunk = chunkHolder.getTickingChunk();
+				if (chunk != null && !TFMGConfigs.common().worldGen.infiniteDeposits.get() &&
+					chunk.hasData(TFMGDataAttachments.FLUID_RESERVOIR)
+				) {
+					FluidReservoir reservoir = chunk.getData(TFMGDataAttachments.FLUID_RESERVOIR);
+					if (reservoir.isEmpty()) {
+						reservoir.removeEmptyDeposits(serverLevel);
+						chunk.removeData(TFMGDataAttachments.FLUID_RESERVOIR);
+					}
+				}
+			}
+		} catch (Exception exception) {
+			TFMG.LOGGER.error("Error occurred while ticking fluid reservoirs.", exception);
+		}
     }
 }

@@ -44,10 +44,26 @@ Contributors:<br>
   - Top hatch now properly saves its inventory.
   - Blast Furnace Hatches now limit certain inventories based on their place in the multiblock.
 - Multimeters are no longer incompatible with Goggles
+- Added support for `Create: Liquid Fuels Reburned`
+- World Generation:
+  - "tfmg:striated_ores_overworld" has been removed.
+  - "tfmg:striated_ores_nether" has been removed.
+  - Split striated ore features into individual features.
+  - All features now have a config-toggle for enabling/disabling.
+  - Added "tfmg:config_boolean" placement modifier.
 
 ### API Changes:
 - Created VAT operation registry.
 - Marked `MachineConfig$polarizerItemChargingRate` as marked for removal.
+- TFMGUtils changes
+  - deprecations:
+    - `createStorageTooltip (BlockEntity, List<Component>)`
+    - `createFluidTooltip (BlockEntity, List<Component>)`
+    - `createItemTooltip (BlockEntity, List<Component>)`
+  - Replaced by tooltip generators not dependant on a capability lookup:
+    - `createFluidTooltip (List<Component>, IFluidHanlder...)`
+    - `createItemTooltip (List<Component>, IItemHandler)`
+  -
 - Created `TFMGClientConfig`
   - Created `UIConfig`.
 - Vat:

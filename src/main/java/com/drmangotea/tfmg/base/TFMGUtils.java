@@ -209,13 +209,15 @@ public class TFMGUtils {
 		Q2.mul(q);
 		return new Vec3(Q2.x(), Q2.y(), Q2.z());
 	}
-
-    public static void createStorageTooltip(BlockEntity be, List<Component> tooltip) {
+	
+	@Deprecated(since = "1.2.5")
+	public static void createStorageTooltip(BlockEntity be, List<Component> tooltip) {
         createFluidTooltip(be, tooltip);
         createItemTooltip(be, tooltip);
     }
 
     /// makes a goggle tooltip for every tank a block entity has
+	@Deprecated(since = "1.2.5")
     public static boolean createFluidTooltip(BlockEntity be, List<Component> tooltip) {
         if (be.getLevel() == null)
             return false;
@@ -269,38 +271,113 @@ public class TFMGUtils {
 
         return true;
     }
-
-
-    public static boolean createItemTooltip(BlockEntity be, List<Component> tooltip) {
-        if (be.getLevel() == null)
-            return false;
-
-        IItemHandler handler = be.getLevel().getCapability(Capabilities.ItemHandler.BLOCK, be.getBlockPos(), null);
-
-        if (handler == null)
-            return false;
-
-        if (handler.getSlots() == 0)
-            return false;
-
-        CreateLang.translate("goggles.item_storage").forGoggles(tooltip);
-        boolean isEmpty = true;
-        for (int i = 0; i < handler.getSlots(); i++) {
-            ItemStack itemStack = handler.getStackInSlot(i);
-
-            if (itemStack.isEmpty()) continue;
-            CreateLang.itemName(itemStack).style(ChatFormatting.GRAY).add(Component.literal(" x " + itemStack.getCount()).withStyle(ChatFormatting.DARK_GREEN)).forGoggles(tooltip, 1);
-            isEmpty = false;
-        }
-        if (handler.getSlots() > 1) {
-            if (isEmpty) tooltip.removeLast();
-            return true;
-        }
-        if (!isEmpty) return true;
-
-        CreateLang.translate("item_attributes.shulker_level.empty").style(ChatFormatting.DARK_GRAY).forGoggles(tooltip, 1);
-        return true;
-    }
+	
+	/// Populates a tooltip with all the fluid tanks given to it
+	public static boolean createFluidTooltip(List<Component> tooltip, IFluidHandler... handlers) {
+		LangBuilder mb = CreateLang.translate("generic.unit.millibuckets");
+		TFMGLang.translate("goggles.fluid_storage").forGoggles(tooltip);
+		
+		boolean isEmpty = true;
+		for (IFluidHandler handler : handlers) {
+			if (handler == null || handler.getTanks() == 0)
+				continue;
+			
+			for (int i = 0; i < handler.getTanks(); i++) {
+				FluidStack fluidStack = handler.getFluidInTank(i);
+				if (fluidStack.isEmpty())
+					continue;
+				
+				CreateLang.fluidName(fluidStack)
+					.style(ChatFormatting.GRAY)
+					.forGoggles(tooltip, 1);
+				
+				CreateLang.builder()
+					.add(CreateLang.number(fluidStack.getAmount())
+						.add(mb)
+						.style(ChatFormatting.DARK_GREEN))
+					.text(ChatFormatting.GRAY, " / ")
+					.add(CreateLang.number(handler.getTankCapacity(i))
+						.add(mb)
+						.style(ChatFormatting.DARK_GRAY))
+					.forGoggles(tooltip, 1);
+				
+				isEmpty = false;
+			}
+			
+			CreateLang.translate("gui.goggles.fluid_container.capacity")
+				.add(CreateLang.number(handler.getTankCapacity(0))
+					.add(mb)
+					.style(ChatFormatting.DARK_GREEN))
+				.style(ChatFormatting.GRAY)
+				.forGoggles(tooltip, 1);
+		}
+		
+		if (isEmpty) {
+			tooltip.removeLast();
+			return false;
+		}
+		
+		return true;
+	}
+	
+	@Deprecated(since = "1.2.5")
+	public static boolean createItemTooltip(BlockEntity be, List<Component> tooltip) {
+		if (be.getLevel() == null)
+			return false;
+		
+		IItemHandler handler = be.getLevel().getCapability(Capabilities.ItemHandler.BLOCK, be.getBlockPos(), null);
+		
+		if (handler == null)
+			return false;
+		
+		if (handler.getSlots() == 0)
+			return false;
+		
+		CreateLang.translate("goggles.item_storage").forGoggles(tooltip);
+		boolean isEmpty = true;
+		for (int i = 0; i < handler.getSlots(); i++) {
+			ItemStack itemStack = handler.getStackInSlot(i);
+			
+			if (itemStack.isEmpty()) continue;
+			CreateLang.itemName(itemStack).style(ChatFormatting.GRAY).add(Component.literal(" x " + itemStack.getCount()).withStyle(ChatFormatting.DARK_GREEN)).forGoggles(tooltip, 1);
+			isEmpty = false;
+		}
+		if (handler.getSlots() > 1) {
+			if (isEmpty) tooltip.removeLast();
+			return true;
+		}
+		if (!isEmpty) return true;
+		
+		CreateLang.translate("item_attributes.shulker_level.empty").style(ChatFormatting.DARK_GRAY).forGoggles(tooltip, 1);
+		return true;
+	}
+	
+	/// Populates a tooltip with information about the items contained
+	public static boolean createItemTooltip(List<Component> tooltip, IItemHandler handler) {
+		if (handler == null)
+			return false;
+		
+		if (handler.getSlots() == 0)
+			return false;
+		
+		CreateLang.translate("goggles.item_storage").forGoggles(tooltip);
+		boolean isEmpty = true;
+		for (int i = 0; i < handler.getSlots(); i++) {
+			ItemStack itemStack = handler.getStackInSlot(i);
+			
+			if (itemStack.isEmpty()) continue;
+			CreateLang.itemName(itemStack).style(ChatFormatting.GRAY).add(Component.literal(" x " + itemStack.getCount()).withStyle(ChatFormatting.DARK_GREEN)).forGoggles(tooltip, 1);
+			isEmpty = false;
+		}
+		if (handler.getSlots() > 1) {
+			if (isEmpty) tooltip.removeLast();
+			return true;
+		}
+		if (!isEmpty) return true;
+		
+		CreateLang.translate("item_attributes.shulker_level.empty").style(ChatFormatting.DARK_GRAY).forGoggles(tooltip, 1);
+		return true;
+	}
 
     public static String formatUnits(double n, String unit) {
         if (n == 0)

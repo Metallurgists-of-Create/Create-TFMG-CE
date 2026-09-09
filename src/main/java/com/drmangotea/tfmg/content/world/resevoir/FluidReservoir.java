@@ -1,6 +1,5 @@
 package com.drmangotea.tfmg.content.world.resevoir;
 
-import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.config.TFMGConfigs;
 import com.drmangotea.tfmg.registry.TFMGDataAttachments;
 import com.mojang.serialization.Codec;
@@ -9,8 +8,10 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.chunk.ChunkAccess;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,16 +31,16 @@ public class FluidReservoir {
             FluidReservoir::new
     );
 
-    public static void createReservoir(Level level, BlockPos origin) {
+    public static void createReservoir(ChunkAccess chunk, BlockPos origin, RandomSource random) {
         FluidReservoir reservoir = new FluidReservoir(origin);
-        reservoir.setReserves(level.getRandom().nextInt(1000, TFMGConfigs.common().worldgen.depositMaxReserves.get()));
-        level.getChunk(origin).setData(TFMGDataAttachments.FLUID_RESERVOIR, reservoir);
+        reservoir.setReserves(random.nextInt(1000, TFMGConfigs.common().worldGen.depositMaxReserves.get()));
+        chunk.setData(TFMGDataAttachments.FLUID_RESERVOIR, reservoir);
     }
 
-    public static void addToReservoir(Level level, BlockPos deposit) {
-        FluidReservoir reservoir = level.getChunk(deposit).getData(TFMGDataAttachments.FLUID_RESERVOIR);
+    public static void addToReservoir(ChunkAccess chunk, BlockPos deposit) {
+        FluidReservoir reservoir = chunk.getData(TFMGDataAttachments.FLUID_RESERVOIR);
         reservoir.addDeposit(deposit);
-        level.getChunk(deposit).setData(TFMGDataAttachments.FLUID_RESERVOIR, reservoir);
+		chunk.setData(TFMGDataAttachments.FLUID_RESERVOIR, reservoir);
     }
 
     public FluidReservoir(BlockPos origin) {
@@ -86,12 +87,9 @@ public class FluidReservoir {
         return new ArrayList<>(this.deposits);
     }
 
-    public boolean removeEmptyDeposits(Level level) {
-        if (this.isEmpty()) {
-            TFMG.LOGGER.debug("EPIC REMOVAL");
-            this.deposits.forEach((pos) -> level.setBlockAndUpdate(pos, Blocks.BEDROCK.defaultBlockState()));
-            return true;
-        }
-        return false;
-    }
+    public void removeEmptyDeposits(Level level) {
+        if (!this.isEmpty()) return; //just in case
+		
+		this.deposits.forEach((pos) -> level.setBlockAndUpdate(pos, Blocks.BEDROCK.defaultBlockState()));
+	}
 }

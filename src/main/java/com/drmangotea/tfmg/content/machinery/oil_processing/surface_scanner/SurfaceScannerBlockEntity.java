@@ -27,6 +27,7 @@ public class SurfaceScannerBlockEntity extends SmartBlockEntity implements IHave
     private ChunkPos lastScanPos = null;
 	private BlockPos nearestDeposit = null;
 	private int[] signals = new int[4];
+	private boolean operational = false;
 	
     public boolean[][] grid = new boolean[5][5];
 
@@ -61,10 +62,8 @@ public class SurfaceScannerBlockEntity extends SmartBlockEntity implements IHave
 		} }
     }
 	
-	public boolean operational() {
-		return level != null
-			&& level.getBlockEntity(getBlockPos().below()) instanceof MachineInputBlockEntity input
-			&& Math.abs(input.getSpeed()) >= TFMGConfigs.common().machines.surfaceScannerMinimumRPM.get();
+	public boolean operational() { //just in case it's needed
+		return operational;
 	}
 
     @Override
@@ -72,7 +71,7 @@ public class SurfaceScannerBlockEntity extends SmartBlockEntity implements IHave
         TFMGTexts.header("surface_scanner")
                 .style(ChatFormatting.GRAY)
                 .forGoggles(tooltip);
-        if (operational()) {
+        if (operational) {
             int depositsFound = 0;
             for (boolean[] row : grid) {
                 for (boolean light : row) {
@@ -95,29 +94,44 @@ public class SurfaceScannerBlockEntity extends SmartBlockEntity implements IHave
     public void lazyTick() {
         super.lazyTick();
         if (level == null) return;
-        if (operational()) {
-			BlockPos actualPosition = SurfaceScannerSable.getActualPosition(this);
-			ChunkPos actualChunkPos = level.getChunk(actualPosition).getPos();
-			Quaterniond currentRot = SurfaceScannerSable.getSublevelRot(this);
-			recalculateSignals(actualPosition, currentRot);
-			setChanged();
-			boolean moved = lastScanPos == null || !lastScanPos.equals(actualChunkPos);
-            long currentTick = level != null ? level.getGameTime() : Long.MIN_VALUE;
-            boolean intervalElapsed = lastScanTick == Long.MIN_VALUE || (currentTick - lastScanTick) >= 2400;
-
-            if (!moved && !intervalElapsed) return;
-
-            findDeposits();
-            lastScanPos = actualChunkPos;
-            lastScanTick = currentTick;
-        } else {
-            grid = new boolean[5][5];
-			nearestDeposit = null;
-        }
-    }
+		
+		if (level.getBlockEntity(getBlockPos().below()) instanceof MachineInputBlockEntity input &&
+			Math.abs(input.getSpeed()) >= TFMGConfigs.common().machines.surfaceScannerMinimumRPM.get()
+		) {
+			if (!operational) operational = true;
+		} else {
+			if (operational) { //logic when power is lost
+				operational = false;
+				grid = new boolean[5][5];
+				nearestDeposit = null;
+				//so that you don't need to wait for rescan right after regaining power
+				lastScanTick = Long.MIN_VALUE;
+				//zero out redstone
+				signals = new int[4];
+				setChanged();
+			}
+		}
+		
+		if (!operational) return;
+		
+		BlockPos actualPosition = SurfaceScannerSable.getActualPosition(this);
+		ChunkPos actualChunkPos = level.getChunk(actualPosition).getPos();
+		Quaterniond currentRot = SurfaceScannerSable.getSublevelRot(this);
+		recalculateSignals(actualPosition, currentRot);
+		setChanged();
+		boolean moved = lastScanPos == null || !lastScanPos.equals(actualChunkPos);
+		long currentTick = level.getGameTime();
+		boolean intervalElapsed = lastScanTick == Long.MIN_VALUE || (currentTick - lastScanTick) >= 2400;
+		
+		if (!moved && !intervalElapsed) return;
+		
+		findDeposits();
+		lastScanPos = actualChunkPos;
+		lastScanTick = currentTick;
+	}
 	
 	public int getDirectionalSignal (Direction side) {
-		if (!operational()) return 0;
+		if (!operational) return 0;
 		return switch (side) {
 			case DOWN, UP -> 0;
 			case NORTH -> signals[0];
@@ -129,7 +143,7 @@ public class SurfaceScannerBlockEntity extends SmartBlockEntity implements IHave
 	
 	private void recalculateSignals (BlockPos actualPosition, Quaterniond rot) {
 		if (nearestDeposit == null) {
-			signals[0] = 0; signals[1] = 0; signals[2] = 0; signals[3] = 0;
+			signals = new int[4];
 			return;
 		}
 		

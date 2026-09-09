@@ -58,6 +58,7 @@ public class TFMG {
         TFMGElectrodes.init();
         TFMGMixerModes.init();
         TFMGVatOperations.init();
+        TFMGVatTypes.init();
         TFMGCableTypes.init();
         TFMGEngineTypes.init();
         TFMGDisplaySources.init();
@@ -74,7 +75,7 @@ public class TFMG {
         TFMGPaletteBlocks.init();
 
         TFMGParticleTypes.register(modEventBus);
-
+        TFMGPlacementModifiers.register(modEventBus);
         TFMGDataComponents.register(modEventBus);
         TFMGDataAttachments.register(modEventBus);
         TFMGMobEffects.register(modEventBus);

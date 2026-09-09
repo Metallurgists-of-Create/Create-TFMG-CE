@@ -1,7 +1,7 @@
 {
   "type": "tfmg:vat_machine_recipe",
   "allowed_vat_types": [
-    "tfmg:firebrick_lined_vat"
+    "tfmg:fireproof"
   ],
   "ingredients": [
     {
@@ -20,7 +20,7 @@
     "tfmg:graphite_electrode"
   ],
   "min_size": 9,
-  "processing_time": 40,
+  "processing_time": 20,
   "results": [
     {
       "chance": 0.9,

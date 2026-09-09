@@ -11,7 +11,13 @@ import net.neoforged.neoforge.registries.NeoForgeRegistries;
 public class TFMGDataAttachments {
     public static final DeferredRegister<AttachmentType<?>> ATTACHMENT_TYPES = DeferredRegister.create(NeoForgeRegistries.ATTACHMENT_TYPES, TFMG.MOD_ID);
 
-    public static final DeferredHolder<AttachmentType<?>, AttachmentType<FluidReservoir>> FLUID_RESERVOIR = ATTACHMENT_TYPES.register("fluid_reservoir", () -> AttachmentType.builder(() -> new FluidReservoir()).serialize(FluidReservoir.CODEC).sync(FluidReservoir.STREAM_CODEC).build());
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<FluidReservoir>> FLUID_RESERVOIR = ATTACHMENT_TYPES.register(
+		"fluid_reservoir", () -> AttachmentType
+			.builder(() -> new FluidReservoir())
+			.serialize(FluidReservoir.CODEC)
+			.sync(FluidReservoir.STREAM_CODEC)
+			.build()
+	);
 
     public static void register(IEventBus modEventBus){
         ATTACHMENT_TYPES.register(modEventBus);

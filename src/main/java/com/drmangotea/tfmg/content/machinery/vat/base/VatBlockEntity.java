@@ -1,6 +1,5 @@
 package com.drmangotea.tfmg.content.machinery.vat.base;
 
-import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.base.TFMGBlockConnectivityHandler;
 import com.drmangotea.tfmg.base.TFMGUtils;
 import com.drmangotea.tfmg.base.capabilities.TFMGCapabilities;
@@ -19,9 +18,9 @@ import com.drmangotea.tfmg.recipes.VatMachineRecipe;
 import com.drmangotea.tfmg.registry.TFMGBlockEntities;
 import com.drmangotea.tfmg.registry.TFMGRecipeTypes;
 import com.drmangotea.tfmg.registry.TFMGVatOperations;
+import com.drmangotea.tfmg.registry.TFMGVatTypes;
 import com.simibubi.create.api.boiler.BoilerHeater;
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
-import com.simibubi.create.content.processing.recipe.HeatCondition;
 import com.simibubi.create.content.processing.recipe.ProcessingOutput;
 import com.simibubi.create.foundation.blockEntity.IMultiBlockEntityContainer;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
@@ -29,6 +28,7 @@ import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour
 import com.simibubi.create.foundation.blockEntity.behaviour.fluid.SmartFluidTankBehaviour;
 import com.simibubi.create.foundation.fluid.CombinedTankWrapper;
 import com.simibubi.create.foundation.fluid.SmartFluidTank;
+import com.simibubi.create.foundation.item.ItemHelper;
 import com.simibubi.create.foundation.item.SmartInventory;
 import com.simibubi.create.foundation.recipe.RecipeConditions;
 import com.simibubi.create.foundation.recipe.RecipeFinder;
@@ -417,7 +417,7 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
             }
             if (!machinesOk
                     || !areMachinesValid
-                    || !testedRecipe.allowedVatTypes.contains(((VatBlock) getBlockState().getBlock()).vatType)) {
+                    || (!testedRecipe.allowedVatTypes.isEmpty() && !testedRecipe.allowedVatTypes.contains(((VatBlock) getBlockState().getBlock()).getVatType()))) {
                 continue;
             }
 
@@ -1047,7 +1047,7 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
         if (be == null)
             return;
 
-        if (Objects.equals(((VatBlock) getBlockState().getBlock()).vatType, TFMG.asResource("firebrick_lined_vat")))
+        if (((VatBlock) getBlockState().getBlock()).getVatType().equals(TFMGVatTypes.FIREPROOF.get()))
             return;
 
         be.setWindows(!be.window);
@@ -1184,6 +1184,14 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
     @Override
     public BlockPos getController() {
         return isController() ? worldPosition : controller;
+    }
+
+    @Override
+    public void destroy() {
+        super.destroy();
+        if (isController() || controller == null) {
+            ItemHelper.dropContents(level, worldPosition, itemCapability);
+        }
     }
 
     @Override

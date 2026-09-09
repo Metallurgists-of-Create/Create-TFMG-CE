@@ -1,9 +1,13 @@
 package com.drmangotea.tfmg.content.machinery.vat.base;
 
 import com.drmangotea.tfmg.TFMG;
+import com.drmangotea.tfmg.TFMGRegistries;
 import com.drmangotea.tfmg.base.TFMGBlockConnectivityHandler;
 import com.drmangotea.tfmg.base.lang.TFMGLang;
+import com.drmangotea.tfmg.content.machinery.vat.base.registry.types.VatType;
+import com.drmangotea.tfmg.content.machinery.vat.base.registry.types.VatTypeEntry;
 import com.drmangotea.tfmg.registry.TFMGBlockEntities;
+import com.drmangotea.tfmg.registry.TFMGVatTypes;
 import com.simibubi.create.content.equipment.wrench.IWrenchable;
 import com.simibubi.create.foundation.block.IBE;
 
@@ -31,34 +35,51 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.neoforge.common.util.DeferredSoundType;
+import net.neoforged.neoforge.registries.DeferredHolder;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 public class VatBlock extends Block implements IWrenchable, IBE<VatBlockEntity> {
-    public final ResourceLocation vatType;
+    public final VatTypeEntry vatType;
 
     public static final BooleanProperty TOP = BooleanProperty.create("top");
     public static final BooleanProperty BOTTOM = BooleanProperty.create("bottom");
     public static final EnumProperty<Shape> SHAPE = EnumProperty.create("shape", Shape.class);
 
     public static VatBlock steel(Properties properties){
-        return new VatBlock(properties, TFMG.asResource("steel_vat"));
+        return new VatBlock(properties, TFMGVatTypes.STEEL);
     }
-    public static VatBlock cast_iron(Properties properties){
-        return new VatBlock(properties, TFMG.asResource("cast_iron_vat"));
+    public static VatBlock castIron(Properties properties){
+        return new VatBlock(properties, TFMGVatTypes.CAST_IRON);
     }
     public static VatBlock fireproof(Properties properties){
-        return new VatBlock(properties, TFMG.asResource("firebrick_lined_vat"));
+        return new VatBlock(properties, TFMGVatTypes.FIREPROOF);
     }
 
-    public VatBlock(Properties properties, ResourceLocation vatType) {
+    public VatBlock(Properties properties, VatTypeEntry vatType) {
         super(properties);
         registerDefaultState(defaultBlockState().setValue(TOP, true)
                 .setValue(BOTTOM, true)
                 .setValue(SHAPE, Shape.PLAIN));
         this.vatType = vatType;
+    }
+
+    /**
+     * Use {@link VatBlock(Properties, VatTypeEntry)} instead.
+     */
+    @Deprecated(since = "1.2.5", forRemoval = true)
+    public VatBlock(Properties properties, ResourceLocation vatTypeId) {
+        super(properties);
+        registerDefaultState(defaultBlockState().setValue(TOP, true)
+                .setValue(BOTTOM, true)
+                .setValue(SHAPE, Shape.PLAIN));
+        this.vatType = new VatTypeEntry(TFMG.REGISTRATE, DeferredHolder.create(TFMGRegistries.VAT_TYPE, vatTypeId));
+    }
+
+    public VatType getVatType() {
+        return vatType.get();
     }
 
     public static boolean isVat(BlockState state) {
@@ -119,12 +140,12 @@ public class VatBlock extends Block implements IWrenchable, IBE<VatBlockEntity> 
     }
 
     @Override @ParametersAreNonnullByDefault
-    public void onRemove(BlockState state, Level world, BlockPos pos, BlockState newState, boolean isMoving) {
+    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
         if (state.hasBlockEntity() && (state.getBlock() != newState.getBlock() || !newState.hasBlockEntity())) {
-            BlockEntity be = world.getBlockEntity(pos);
+            BlockEntity be = level.getBlockEntity(pos);
             if (!(be instanceof VatBlockEntity tankBE))
                 return;
-            world.removeBlockEntity(pos);
+            IBE.onRemove(state, level, pos, newState);
 			TFMGBlockConnectivityHandler.splitMulti(tankBE);
         }
     }

@@ -1,8 +1,8 @@
 {
   "type": "tfmg:vat_machine_recipe",
   "allowed_vat_types": [
-    "tfmg:steel_vat",
-    "tfmg:firebrick_lined_vat"
+    "tfmg:steel",
+    "tfmg:fireproof"
   ],
   "heat_level": 2,
   "ingredients": [

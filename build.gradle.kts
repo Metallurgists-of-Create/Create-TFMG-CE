@@ -12,7 +12,7 @@ base {
 val ci = System.getenv("CI") != null && System.getenv("CI").toBoolean()
 val release = System.getenv("RELEASE") != null && System.getenv("RELEASE").toBoolean()
 val webhook = ci && !release
-val buildNumber: String? = System.getenv("GITHUB_RUN_NUMBER")
+val buildNumber: String? = System.getenv("MOD_BUILD_NUMBER")
 
 version = "${property("minecraft_version")}-${property("mod_version")}${if (webhook) "-build.${buildNumber}" else ""}"
 group = "${property("mod_group_id")}"
@@ -106,10 +106,25 @@ repositories {
     maven("https://maven.blamejared.com") // JEI, Vazkii's Mods
     maven("https://maven.ryanhcode.dev/releases")
     maven("https://api.modrinth.com/maven")
+    maven("https://dl.cloudsmith.io/public/wolfieboy09/liquid-fuel-reburned/maven/")
 
     maven {
         name = "DevAuth Maven"
         url = uri("https://pkgs.dev.azure.com/djtheredstoner/DevAuth/_packaging/public/maven/v1")
+    }
+
+    // Needed because CLF Reburned is making Gradle complain
+    maven("https://maven.latvian.dev/releases") {
+        content {
+            includeGroup("dev.latvian.mods")
+            includeGroup("dev.latvian.apps")
+        }
+    }
+
+    maven("https://jitpack.io") {
+        content {
+            includeGroup("com.github.rtyley")
+        }
     }
 }
 
@@ -129,6 +144,9 @@ dependencies {
 
     implementation("mezz.jei:jei-${property("jei_minecraft_version")}-neoforge:${property("jei_version")}")
     implementation("com.tterrag.registrate:Registrate:${property("registrate_version")}")
+
+    compileOnly("dev.wolfieboy09.createliquidfuel:createliquidfuel:${property("minecraft_version")}-${property("clf_reburned_version")}") { isTransitive = false }
+    runtimeOnly("dev.wolfieboy09.createliquidfuel:createliquidfuel:${property("minecraft_version")}-${property("clf_reburned_version")}") { isTransitive = false }
 
     runtimeOnly("me.djtheredstoner:DevAuth-neoforge:1.2.1")
     runtimeOnly("maven.modrinth:lhGA9TYQ:1IiqEQGl") //architectury, for CPG

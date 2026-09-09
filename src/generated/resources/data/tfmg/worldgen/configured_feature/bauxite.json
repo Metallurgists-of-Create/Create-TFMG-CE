@@ -32,25 +32,7 @@
               }
             ]
           ],
-          "weight": 2
-        },
-        {
-          "max_size": 2,
-          "min_size": 1,
-          "targets": [
-            [
-              {
-                "state": {
-                  "Name": "tfmg:sulfur"
-                },
-                "target": {
-                  "predicate_type": "minecraft:tag_match",
-                  "tag": "minecraft:base_stone_nether"
-                }
-              }
-            ]
-          ],
-          "weight": 4
+          "weight": 1
         },
         {
           "max_size": 3,
@@ -59,88 +41,7 @@
             [
               {
                 "state": {
-                  "Name": "create:scorchia"
-                },
-                "target": {
-                  "predicate_type": "minecraft:tag_match",
-                  "tag": "minecraft:base_stone_nether"
-                }
-              }
-            ],
-            [
-              {
-                "state": {
-                  "Name": "minecraft:blackstone"
-                },
-                "target": {
-                  "predicate_type": "minecraft:tag_match",
-                  "tag": "minecraft:base_stone_nether"
-                }
-              }
-            ]
-          ],
-          "weight": 3
-        },
-        {
-          "max_size": 1,
-          "min_size": 1,
-          "targets": [
-            [
-              {
-                "state": {
-                  "Name": "minecraft:magma_block"
-                },
-                "target": {
-                  "predicate_type": "minecraft:tag_match",
-                  "tag": "minecraft:base_stone_nether"
-                }
-              }
-            ]
-          ],
-          "weight": 1
-        },
-        {
-          "max_size": 1,
-          "min_size": 1,
-          "targets": [
-            [
-              {
-                "state": {
-                  "Name": "minecraft:basalt",
-                  "Properties": {
-                    "axis": "y"
-                  }
-                },
-                "target": {
-                  "predicate_type": "minecraft:tag_match",
-                  "tag": "minecraft:base_stone_nether"
-                }
-              }
-            ],
-            [
-              {
-                "state": {
-                  "Name": "minecraft:smooth_basalt"
-                },
-                "target": {
-                  "predicate_type": "minecraft:tag_match",
-                  "tag": "minecraft:base_stone_nether"
-                }
-              }
-            ]
-          ],
-          "weight": 2
-        }
-      ],
-      [
-        {
-          "max_size": 1,
-          "min_size": 1,
-          "targets": [
-            [
-              {
-                "state": {
-                  "Name": "minecraft:stone"
+                  "Name": "tfmg:bauxite"
                 },
                 "target": {
                   "predicate_type": "minecraft:tag_match",
@@ -149,10 +50,7 @@
               },
               {
                 "state": {
-                  "Name": "minecraft:deepslate",
-                  "Properties": {
-                    "axis": "y"
-                  }
+                  "Name": "tfmg:bauxite"
                 },
                 "target": {
                   "predicate_type": "minecraft:tag_match",
@@ -165,63 +63,45 @@
         },
         {
           "max_size": 2,
-          "min_size": 1,
+          "min_size": 2,
           "targets": [
             [
               {
                 "state": {
-                  "Name": "tfmg:fireclay"
+                  "Name": "minecraft:smooth_basalt"
                 },
                 "target": {
                   "predicate_type": "minecraft:tag_match",
-                  "tag": "minecraft:base_stone_nether"
+                  "tag": "minecraft:stone_ore_replaceables"
                 }
-              }
-            ]
-          ],
-          "weight": 5
-        },
-        {
-          "max_size": 3,
-          "min_size": 1,
-          "targets": [
-            [
+              },
               {
                 "state": {
-                  "Name": "create:scorchia"
+                  "Name": "minecraft:smooth_basalt"
                 },
                 "target": {
                   "predicate_type": "minecraft:tag_match",
-                  "tag": "minecraft:base_stone_nether"
+                  "tag": "minecraft:deepslate_ore_replaceables"
                 }
               }
             ],
             [
               {
                 "state": {
-                  "Name": "minecraft:gravel"
+                  "Name": "minecraft:granite"
                 },
                 "target": {
                   "predicate_type": "minecraft:tag_match",
-                  "tag": "minecraft:base_stone_nether"
+                  "tag": "minecraft:stone_ore_replaceables"
                 }
-              }
-            ]
-          ],
-          "weight": 3
-        },
-        {
-          "max_size": 1,
-          "min_size": 1,
-          "targets": [
-            [
+              },
               {
                 "state": {
-                  "Name": "minecraft:magma_block"
+                  "Name": "minecraft:granite"
                 },
                 "target": {
                   "predicate_type": "minecraft:tag_match",
-                  "tag": "minecraft:base_stone_nether"
+                  "tag": "minecraft:deepslate_ore_replaceables"
                 }
               }
             ]
@@ -235,27 +115,52 @@
             [
               {
                 "state": {
-                  "Name": "minecraft:soul_soil"
+                  "Name": "minecraft:granite"
                 },
                 "target": {
                   "predicate_type": "minecraft:tag_match",
-                  "tag": "minecraft:base_stone_nether"
+                  "tag": "minecraft:stone_ore_replaceables"
                 }
-              }
-            ],
-            [
+              },
               {
                 "state": {
-                  "Name": "minecraft:soul_sand"
+                  "Name": "minecraft:smooth_basalt"
                 },
                 "target": {
                   "predicate_type": "minecraft:tag_match",
-                  "tag": "minecraft:base_stone_nether"
+                  "tag": "minecraft:deepslate_ore_replaceables"
                 }
               }
             ]
           ],
-          "weight": 2
+          "weight": 1
+        },
+        {
+          "max_size": 1,
+          "min_size": 1,
+          "targets": [
+            [
+              {
+                "state": {
+                  "Name": "minecraft:andesite"
+                },
+                "target": {
+                  "predicate_type": "minecraft:tag_match",
+                  "tag": "minecraft:stone_ore_replaceables"
+                }
+              },
+              {
+                "state": {
+                  "Name": "minecraft:andesite"
+                },
+                "target": {
+                  "predicate_type": "minecraft:tag_match",
+                  "tag": "minecraft:deepslate_ore_replaceables"
+                }
+              }
+            ]
+          ],
+          "weight": 1
         }
       ]
     ],

@@ -3,6 +3,7 @@ package com.drmangotea.tfmg.datagen;
 import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.TFMGRegistries;
 import com.drmangotea.tfmg.content.engines.types.EngineType;
+import com.drmangotea.tfmg.datagen.integration.TFMGReburnedProvider;
 import com.drmangotea.tfmg.datagen.recipes.TFMGRecipeProvider;
 import com.drmangotea.tfmg.datagen.recipes.values.TFMGStandardRecipeGen;
 import com.drmangotea.tfmg.datagen.recipes.values.create.TFMGMechanicalCraftingRecipeGen;
@@ -54,6 +55,7 @@ public class TFMGDatagen {
         generator.addProvider(event.includeServer(),new TFMGStandardRecipeGen(output, lookupProvider));
         generator.addProvider(event.includeServer(), new TFMGMechanicalCraftingRecipeGen(output, lookupProvider));
         generator.addProvider(event.includeServer(), new TFMGSequencedAssemblyRecipeGen(output, lookupProvider));
+        generator.addProvider(event.includeServer(), new TFMGReburnedProvider(output));
 
         if (event.includeServer()) {
             TFMGRecipeProvider.registerAllProcessing(generator, output, lookupProvider);

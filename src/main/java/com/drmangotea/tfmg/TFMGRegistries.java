@@ -6,6 +6,7 @@ import com.drmangotea.tfmg.content.engines.types.EngineType;
 import com.drmangotea.tfmg.content.items.weapons.fire_extinguisher.FireExtinguisherFuelType;
 import com.drmangotea.tfmg.content.items.weapons.flamethrover.FlamethrowerFuelType;
 import com.drmangotea.tfmg.content.machinery.vat.base.registry.operations.VatOperation;
+import com.drmangotea.tfmg.content.machinery.vat.base.registry.types.VatType;
 import com.drmangotea.tfmg.content.machinery.vat.electrode_holder.electrode.Electrode;
 import com.drmangotea.tfmg.content.machinery.vat.industrial_mixer.mode.MixerMode;
 import net.minecraft.core.Registry;
@@ -18,6 +19,7 @@ public class TFMGRegistries {
     public static final ResourceKey<Registry<EngineType>> ENGINE_TYPE = createRegistryKey("engine_type");
     public static final ResourceKey<Registry<MixerMode>> MIXER_MODE = createRegistryKey("mixer_mode");
     public static final ResourceKey<Registry<VatOperation>> VAT_OPERATION = createRegistryKey("vat_operation");
+    public static final ResourceKey<Registry<VatType>> VAT_TYPE = createRegistryKey("vat_type");
 
     public static final ResourceKey<Registry<FlamethrowerFuelType>> FLAMETHROWER_FUEL_TYPE = createRegistryKey("fuel_type/flamethrower");
     public static final ResourceKey<Registry<EngineFuelType>> ENGINE_FUEL_TYPE = createRegistryKey("fuel_type/engine");
@@ -28,6 +30,7 @@ public class TFMGRegistries {
     public static final Registry<Electrode> ELECTRODE_REGISTRY = makeSyncedRegistry(ELECTRODE);
     public static final Registry<EngineType> ENGINE_TYPE_REGISTRY = makeSyncedRegistry(ENGINE_TYPE);
     public static final Registry<MixerMode> MIXER_MODE_REGISTRY = makeSyncedRegistry(MIXER_MODE);
+    public static final Registry<VatType> VAT_TYPE_REGISTRY = makeSyncedRegistry(VAT_TYPE);
 
 
     private static <T> ResourceKey<Registry<T>> createRegistryKey(String name) {

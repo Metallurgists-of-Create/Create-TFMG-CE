@@ -125,7 +125,7 @@ public class PumpjackBaseBlockEntity extends SmartBlockEntity implements IHaveGo
         // Old chunks wouldn't have a proper reservoir
         if (!level.getChunkAt(deposit).hasData(TFMGDataAttachments.FLUID_RESERVOIR)) {
             if (level.getBlockState(deposit).is(TFMGBlocks.OIL_DEPOSIT.get())) {
-                FluidReservoir.createReservoir(level, deposit);
+                FluidReservoir.createReservoir(level.getChunkAt(deposit), deposit, level.getRandom());
             }
             return;
         }
@@ -133,7 +133,7 @@ public class PumpjackBaseBlockEntity extends SmartBlockEntity implements IHaveGo
 
         if (tank.getFluidAmount() + miningRate > tank.getCapacity())
             return;
-        if (!TFMGConfigs.common().worldgen.infiniteDeposits.get() && reservoir.isEmpty()) {
+        if (!TFMGConfigs.common().worldGen.infiniteDeposits.get() && reservoir.isEmpty()) {
             deposit = null;
             findDeposit();
             return;
@@ -143,7 +143,7 @@ public class PumpjackBaseBlockEntity extends SmartBlockEntity implements IHaveGo
         if (amountPumped == 0)
             return;
 
-        if (TFMGConfigs.common().worldgen.infiniteDeposits.get())
+        if (TFMGConfigs.common().worldGen.infiniteDeposits.get())
             return;
 
         RandomSource randomSource = level.getRandom();
