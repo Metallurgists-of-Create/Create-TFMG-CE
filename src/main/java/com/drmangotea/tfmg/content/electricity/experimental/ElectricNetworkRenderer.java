@@ -91,9 +91,9 @@ public class ElectricNetworkRenderer {
 
         //
         int segmentCount = (int) ((length * 16) / 4) + 1;
-		
-		DoubleUnaryOperator curveFunction   = x -> 0.2f * x * ((x / segmentCount) - 1);
-		DoubleUnaryOperator curveDerivative = x -> 0.2f * ((2 * x / segmentCount) - 1);
+		double reciprocal = 1 / (double) segmentCount;
+		DoubleUnaryOperator curveFunction   = x -> 0.2f * x * (x * reciprocal - 1);
+		DoubleUnaryOperator curveDerivative = x -> 0.2f * (2 * x * reciprocal - 1);
 
 		if ((vec1.distanceTo(player.getEyePosition()) > cableRenderDistance) && (v.distanceTo(player.getEyePosition()) > cableRenderDistance))
 			return;
