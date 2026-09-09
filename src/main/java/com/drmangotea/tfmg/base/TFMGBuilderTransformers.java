@@ -4,6 +4,7 @@ package com.drmangotea.tfmg.base;
 import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.base.blocks.TFMGHorizontalDirectionalBlock;
 import com.drmangotea.tfmg.base.blocks.TFMGVanillaBlockStates;
+import com.drmangotea.tfmg.base.data_storage.BrokenByExplosionCondition;
 import com.drmangotea.tfmg.config.server.TFMGStress;
 import com.drmangotea.tfmg.content.decoration.FrameBlock;
 import com.drmangotea.tfmg.content.decoration.TrussBlock;
@@ -14,6 +15,7 @@ import com.drmangotea.tfmg.content.decoration.kinetics.flywheels.TFMGFlywheelBlo
 import com.drmangotea.tfmg.content.electricity.connection.copycat_cable.CopycatCableBlock;
 import com.drmangotea.tfmg.content.electricity.lights.neon_tube.NeonTubeBlock;
 import com.drmangotea.tfmg.registry.TFMGBlocks;
+import com.drmangotea.tfmg.registry.TFMGItems;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllTags;
 import com.simibubi.create.content.contraptions.behaviour.DoorMovingInteraction;
@@ -27,8 +29,10 @@ import com.simibubi.create.foundation.data.recipe.CommonMetal;
 import com.tterrag.registrate.builders.BlockBuilder;
 import com.tterrag.registrate.providers.DataGenContext;
 import com.tterrag.registrate.providers.RegistrateBlockstateProvider;
+import com.tterrag.registrate.providers.loot.RegistrateBlockLootTables;
 import com.tterrag.registrate.util.DataIngredient;
 import com.tterrag.registrate.util.entry.BlockEntry;
+import com.tterrag.registrate.util.nullness.NonNullBiConsumer;
 import com.tterrag.registrate.util.nullness.NonNullFunction;
 import com.tterrag.registrate.util.nullness.NonNullUnaryOperator;
 import net.minecraft.client.renderer.RenderType;
@@ -39,6 +43,11 @@ import net.minecraft.tags.ItemTags;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.storage.loot.LootPool;
+import net.minecraft.world.level.storage.loot.LootTable;
+import net.minecraft.world.level.storage.loot.entries.LootItem;
+import net.minecraft.world.level.storage.loot.entries.LootPoolEntryContainer;
+import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.neoforged.neoforge.client.model.generators.ModelFile;
 import net.neoforged.neoforge.client.model.generators.MultiPartBlockStateBuilder;
 import net.neoforged.neoforge.common.Tags;
@@ -196,6 +205,17 @@ public class TFMGBuilderTransformers {
                 .transform(TagGen.axeOrPickaxe());
     }
 
+    private static <B extends Block> NonNullBiConsumer<RegistrateBlockLootTables, B> concreteLoot() {
+        return (lootTables, block) -> {
+            LootPoolEntryContainer.Builder<?> dropDust = LootItem.lootTableItem(TFMGItems.CONCRETE_MIXTURE);
+            LootPoolEntryContainer.Builder<?> dropSelf = LootItem.lootTableItem(block);
+            LootItemCondition.Builder exploded = BrokenByExplosionCondition.brokenByExplosion();
+
+            LootPool.Builder pool = LootPool.lootPool().add(dropDust.when(exploded).otherwise(dropSelf));
+            lootTables.add(block, LootTable.lootTable().withPool(pool));
+        };
+    }
+
     /// ////////////
     public static BlockEntry<TFMGFlywheelBlock> flywheel(String name, NonNullFunction<BlockBehaviour.Properties, TFMGFlywheelBlock> block) {
         return REGISTRATE.block(name + "_flywheel", block)
@@ -294,6 +314,7 @@ public class TFMGBuilderTransformers {
                 .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
                 .properties(p -> p.strength(rebar ? 5f : 3.5f, rebar ? 17f : 3.5f))
                 .transform(pickaxeOnly())
+                .loot(concreteLoot())
                 .blockstate((c, p) -> TFMGVanillaBlockStates.generateWallBlockState(c, p, "concrete"))
                 .tag(BlockTags.NEEDS_STONE_TOOL)
                 .tag(BlockTags.WALLS)
@@ -308,6 +329,7 @@ public class TFMGBuilderTransformers {
                 .properties(p -> p.strength(rebar ? 5f : 3.5f, rebar ? 17f : 3.5f))
                 .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
                 .transform(pickaxeOnly())
+                .loot(concreteLoot())
                 .blockstate(simpleCubeAll("concrete"))
                 .tag(BlockTags.NEEDS_STONE_TOOL)
                 .transform(tagBlockAndItem(Tags.Blocks.CONCRETES, Tags.Items.CONCRETES))
@@ -319,6 +341,7 @@ public class TFMGBuilderTransformers {
                 .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
                 .properties(p -> p.strength(rebar ? 5f : 3.5f, rebar ? 17f : 3.5f))
                 .transform(pickaxeOnly())
+                .loot(concreteLoot())
                 .blockstate((c, p) -> TFMGVanillaBlockStates.generateStairBlockState(c, p, name))
                 .tag(BlockTags.NEEDS_STONE_TOOL)
                 .tag(BlockTags.STAIRS)
@@ -332,6 +355,7 @@ public class TFMGBuilderTransformers {
                 .properties(p -> p.strength(rebar ? 5f : 3.5f, rebar ? 17f : 3.5f))
                 .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
                 .transform(pickaxeOnly())
+                .loot(concreteLoot())
                 .blockstate((c, p) -> TFMGVanillaBlockStates.generateSlabBlockState(c, p, "concrete"))
                 .tag(BlockTags.NEEDS_STONE_TOOL)
                 .tag(BlockTags.SLABS)
@@ -358,6 +382,7 @@ public class TFMGBuilderTransformers {
                     .properties(p -> p.strength(rebar ? 12f : 3.5f, rebar ? 1200f : 3.5f))
                     .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
                     .transform(pickaxeOnly())
+                    .loot(concreteLoot())
                     .blockstate(simpleCubeAll(color + "_concrete"))
                     .tag(BlockTags.NEEDS_STONE_TOOL)
                     .item()
@@ -370,6 +395,7 @@ public class TFMGBuilderTransformers {
                     .properties(p -> p.strength(rebar ? 12f : 3.5f, rebar ? 1200f : 3.5f))
                     .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
                     .transform(pickaxeOnly())
+                    .loot(concreteLoot())
                     .blockstate((c, p) -> TFMGVanillaBlockStates.generateWallBlockState(c, p, color + "_concrete"))
                     .tag(BlockTags.NEEDS_STONE_TOOL)
                     .tag(BlockTags.WALLS)
@@ -384,6 +410,7 @@ public class TFMGBuilderTransformers {
                     .properties(p -> p.strength(rebar ? 12f : 3.5f, rebar ? 1200f : 3.5f))
                     .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
                     .transform(pickaxeOnly())
+                    .loot(concreteLoot())
                     .blockstate((c, p) -> TFMGVanillaBlockStates.generateStairBlockState(c, p, color + "_concrete"))
                     .tag(BlockTags.NEEDS_STONE_TOOL)
                     .tag(BlockTags.STAIRS)
@@ -400,6 +427,7 @@ public class TFMGBuilderTransformers {
                     .properties(p -> p.strength(rebar ? 12f : 3.5f, rebar ? 1200f : 3.5f))
                     .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
                     .transform(pickaxeOnly())
+                    .loot(concreteLoot())
                     .blockstate((c, p) -> TFMGVanillaBlockStates.generateSlabBlockState(c, p, color + "_concrete"))
                     .tag(BlockTags.NEEDS_STONE_TOOL)
                     .tag(BlockTags.SLABS)
