@@ -36,6 +36,8 @@ public class TFMGPartialModels {
             NEON_TUBE_LIGHT_SIDE = block("neon_tube/light_side"),
             TRANSFORMER_COIL = block("transformer/coil"),
             FUSE = block("fuse_block/fuse"),
+			CABLE = block("cable"),
+			CABLE_FUNNY = block("cable_funny"),
             STEERING_WHEEL = block("engine_controller/wheel"),
             PEDAL = block("engine_controller/pedal"),
             ENGINE_CONTROLLER_DIAL = block("engine_controller/dial"),

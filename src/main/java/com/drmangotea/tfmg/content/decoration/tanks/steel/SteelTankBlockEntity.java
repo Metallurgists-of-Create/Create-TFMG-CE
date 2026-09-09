@@ -204,7 +204,8 @@ public class SteelTankBlockEntity extends TFMGFluidTankBlockEntity implements IH
     @Override
     public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
         SteelTankBlockEntity controllerBE = getControllerBE();
-        if (level == null || isDistillationTower || controllerBE == null || controllerBE.isDistillationTower)
+		if (controllerBE == null) controllerBE = this;
+        if (level == null || controllerBE.isDistillationTower)
             return false;
 
         return containedFluidTooltip(tooltip, isPlayerSneaking,

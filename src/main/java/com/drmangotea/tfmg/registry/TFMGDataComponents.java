@@ -35,6 +35,11 @@ public class TFMGDataComponents {
 	public static final DataComponentType<Integer> RESISTANCE = register("resistance", Codec.INT, ByteBufCodecs.VAR_INT);
 	public static final DataComponentType<Integer> AMOUNT = register("amount", Codec.INT, ByteBufCodecs.VAR_INT);
 	public static final DataComponentType<BlockPos> POSITION = register("position", BlockPos.CODEC, BlockPos.STREAM_CODEC);
+	
+	public static final DataComponentType<Integer> CONNECTOR_ID = register(
+		"connector_id",
+		builder -> builder.persistent(Codec.INT).networkSynchronized(ByteBufCodecs.VAR_INT)
+	);
 
 	public static final DataComponentType<CylinderFuels> ENGINE_CYLINDER = register("engine_cylinder", CylinderFuels.CODEC, CylinderFuels.STREAM_CODEC);
 

@@ -6,6 +6,9 @@ import com.drmangotea.tfmg.base.spark.ElectricitySparkPacket;
 import com.drmangotea.tfmg.content.electricity.base.*;
 import com.drmangotea.tfmg.content.electricity.configuration_wrench.ElectriciansWrenchPacket;
 import com.drmangotea.tfmg.content.electricity.connection.cables.CablePlacePacket;
+import com.drmangotea.tfmg.content.electricity.experimental.packets.RealNetworkUpdatePacket;
+import com.drmangotea.tfmg.content.electricity.experimental.packets.NetworkLoadPacket;
+import com.drmangotea.tfmg.content.electricity.experimental.packets.UpdateVoltagePacket;
 import com.drmangotea.tfmg.content.items.weapons.advanced_potato_cannon.AdvancedPotatoCannonPacket;
 import com.drmangotea.tfmg.content.items.weapons.quad_potato_cannon.QuadPotatoCannonPacket;
 import com.drmangotea.tfmg.content.machinery.metallurgy.coke_oven.CokeOvenPacket;
@@ -36,7 +39,9 @@ public enum TFMGPackets implements BasePacketPayload.PacketTypeProvider {
     //TRANSMISSION_REMOVE(TransmissionRemovePacket.class, TransmissionRemovePacket.STREAM_CODEC),
     CABLE_PLACE_PACKET(CablePlacePacket.class, CablePlacePacket.STREAM_CODEC),
     ELECTRICITY_SPARK_EFFECT(ElectricitySparkPacket.class, ElectricitySparkPacket.STREAM_CODEC),
-
+    REALISTIC_NETWORK_UPDATE(RealNetworkUpdatePacket.class, RealNetworkUpdatePacket.STREAM_CODEC),
+    NETWORK_LOAD(NetworkLoadPacket.class, NetworkLoadPacket.STREAM_CODEC),
+    UPDATE_VOLTAGE(UpdateVoltagePacket.class, UpdateVoltagePacket.STREAM_CODEC),
 
     // Client to Server
     ELECTRICIANS_WRENCH_PACKET(ElectriciansWrenchPacket.class, ElectriciansWrenchPacket.STREAM_CODEC),

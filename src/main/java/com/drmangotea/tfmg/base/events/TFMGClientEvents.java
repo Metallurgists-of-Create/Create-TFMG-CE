@@ -4,6 +4,7 @@ import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.TFMGClient;
 import com.drmangotea.tfmg.base.lang.TFMGLang;
 import com.drmangotea.tfmg.content.electricity.connection.cables.CableConnectorBlockEntity;
+import com.drmangotea.tfmg.content.electricity.experimental.ElectricNetworkRenderer;
 import com.drmangotea.tfmg.content.electricity.measurement.MultimeterOverlayRenderer;
 import com.drmangotea.tfmg.content.electricity.network.transformer.small.TransformerBlockEntity;
 
@@ -16,6 +17,8 @@ import com.drmangotea.tfmg.registry.*;
 import net.createmod.ponder.api.PonderPalette;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
+import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -24,9 +27,7 @@ import net.minecraft.world.item.component.TooltipProvider;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.client.event.ClientTickEvent;
-import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
-import net.neoforged.neoforge.client.event.RegisterItemDecorationsEvent;
+import net.neoforged.neoforge.client.event.*;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
@@ -61,29 +62,37 @@ public class TFMGClientEvents {
 		onTick(false);
 	}
 
-	public static void onTick(boolean isPreEvent) {
-		if (!isGameActive())
-			return;
+    @SubscribeEvent
+    public static void onRenderLevel(RenderLevelStageEvent event) {
+        ElectricNetworkRenderer.tickRender(event);
+    }
+
+    public static void onTick(boolean isPreEvent) {
+        if (!isGameActive())
+            return;
 
 		TFMGClient.QUAD_POTATO_CANNON_RENDER_HANDLER.tick();
 		TFMGClient.ADVANCED_POTATO_CANNON_RENDER_HANDLER.tick();
 		TFMGClient.FLAMETHROWER_RENDER_HANDLER.tick();
 
 		TransformerBlockEntity.tickOutliner();
-		CableConnectorBlockEntity.tickOutliner();
-
+        CableConnectorBlockEntity.tickOutliner();
 		ScrewdriverItem.clientTick();
-	}
+    }
 
-	@SubscribeEvent
-	public static void PlayerLoggedOut(PlayerEvent.PlayerLoggedOutEvent event) {
-		Player player = event.getEntity();
+
+    @SubscribeEvent
+    public static void registerModels(ModelEvent.RegisterAdditional event) {
+        event.register(ModelResourceLocation.standalone(ResourceLocation.fromNamespaceAndPath("tfmg", "item/graphite_electrode_model")));
+    }
+
+    @SubscribeEvent
+    public static void PlayerLoggedOut(PlayerEvent.PlayerLoggedOutEvent event) {
+        Player player = event.getEntity();
 
 		if (player != null)
 			player.getPersistentData().remove("IsUsingEngineController");
 	}
-
-
 
 	public static void registerGuiOverlays(RegisterGuiLayersEvent event) {
 		event.registerAbove(VanillaGuiLayers.HOTBAR, TFMG.asResource("multimeter_info"), MultimeterOverlayRenderer.OVERLAY);

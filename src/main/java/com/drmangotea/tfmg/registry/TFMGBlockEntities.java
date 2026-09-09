@@ -23,6 +23,9 @@ import com.drmangotea.tfmg.content.electricity.connection.cables.CableConnectorR
 import com.drmangotea.tfmg.content.electricity.connection.copycat_cable.CopycatCableBlockEntity;
 import com.drmangotea.tfmg.content.electricity.connection.diagonal.DiagonalCableBlockEntity;
 import com.drmangotea.tfmg.content.electricity.connection.tube.CableTubeBlockEntity;
+import com.drmangotea.tfmg.content.electricity.experimental.blocks.DebugResistorBlockEntity;
+import com.drmangotea.tfmg.content.electricity.experimental.blocks.RealConnectorBlockEntity;
+import com.drmangotea.tfmg.content.electricity.experimental.blocks.ThreePhaseGeneratorBlockEntity;
 import com.drmangotea.tfmg.content.electricity.generators.GeneratorBlockEntity;
 import com.drmangotea.tfmg.content.electricity.generators.creative_generator.CreativeGeneratorBlockEntity;
 import com.drmangotea.tfmg.content.electricity.generators.large_generator.RotorBlockEntity;
@@ -137,7 +140,26 @@ import com.tterrag.registrate.util.entry.BlockEntityEntry;
 import static com.drmangotea.tfmg.TFMG.REGISTRATE;
 
 public class TFMGBlockEntities {
-	public static final BlockEntityEntry<DistillationOutputBlockEntity> DISTILLATION_OUTPUT = REGISTRATE
+
+    public static final BlockEntityEntry<DebugResistorBlockEntity> DEBUG_RESISTOR = REGISTRATE
+            .blockEntity("debug_resistor", DebugResistorBlockEntity::new)
+            .validBlocks(TFMGBlocks.DEBUG_RESISTOR)
+            .register();
+
+    public static final BlockEntityEntry<RealConnectorBlockEntity> DEBUG_CONNECTOR = REGISTRATE
+            .blockEntity("debug_connector", RealConnectorBlockEntity::new)
+            .validBlocks(TFMGBlocks.DEBUG_CONNECTOR)
+            .register();
+
+    public static final BlockEntityEntry<ThreePhaseGeneratorBlockEntity> THREE_PHASE_GENERATOR = REGISTRATE
+            .blockEntity("three_phase_generator", ThreePhaseGeneratorBlockEntity::new)
+            .visual(() -> OrientedRotatingVisual.of(AllPartialModels.SHAFT_HALF))
+            .validBlocks(TFMGBlocks.THREE_PHASE_GENERATOR)
+            .renderer(() -> HalfShaftRenderer::new)
+            .register();
+
+
+    public static final BlockEntityEntry<DistillationOutputBlockEntity> DISTILLATION_OUTPUT = REGISTRATE
             .blockEntity("distillation_tower_output", DistillationOutputBlockEntity::new)
             .validBlocks(TFMGBlocks.STEEL_DISTILLATION_OUTPUT)
             .register();

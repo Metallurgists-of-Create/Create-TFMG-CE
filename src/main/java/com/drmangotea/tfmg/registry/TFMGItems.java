@@ -9,10 +9,15 @@ import com.drmangotea.tfmg.base.debug.DebugCinderBlockItem;
 import com.drmangotea.tfmg.content.decoration.kinetics.gearbox.SteelVerticalGearboxItem;
 import com.drmangotea.tfmg.content.decoration.pipes.TFMGPipes;
 import com.drmangotea.tfmg.content.electricity.configuration_wrench.ElectriciansWrenchItem;
+import com.drmangotea.tfmg.base.debug.DebugCinderBlockItem;
+import com.drmangotea.tfmg.content.electricity.experimental.BetterSpoolItem;
 import com.drmangotea.tfmg.content.electricity.measurement.MultimeterItem;
 import com.drmangotea.tfmg.content.electricity.network.transformer.small.ElectromagneticCoilItem;
 import com.drmangotea.tfmg.content.electricity.utilities.polarizer.MagnetItem;
 import com.drmangotea.tfmg.content.electricity.utilities.resistor.ResistorItem;
+import com.drmangotea.tfmg.content.electricity.network.transformer.small.ElectromagneticCoilItem;
+
+import com.drmangotea.tfmg.content.engines.CylinderItem;
 import com.drmangotea.tfmg.content.engines.FluidContainingItem;
 import com.drmangotea.tfmg.content.engines.fuels.EngineFuelType;
 import com.drmangotea.tfmg.content.items.ScrewdriverItem;
@@ -195,6 +200,11 @@ public class TFMGItems {
 		COPPER_SPOOL = fullSpoolItem("copper", 0xD8735A, Items.WIRES_COPPER.tag),
 		ALUMINUM_SPOOL = fullSpoolItem("aluminum", 0xEDEFEF, Items.WIRES_ALUMINUM.tag),
 		CONSTANTAN_SPOOL = fullSpoolItem("constantan", 0xCFC2A8, Items.WIRES_CONSTANTAN.tag);
+
+    public static final ItemEntry<BetterSpoolItem> DEBUG_SPOOL =
+            REGISTRATE.item("debug_spool", BetterSpoolItem::new)
+                    .properties(p -> p.stacksTo(1))
+                    .register();
 
     public static final ItemEntry<ElectromagneticCoilItem> ELECTROMAGNETIC_COIL =
             REGISTRATE.item("electromagnetic_coil", ElectromagneticCoilItem::new)

@@ -131,14 +131,14 @@ public class RegularEngineBlockEntity extends AbstractSmallEngineBlockEntity {
                 }
             }
         }
-        return  true;
+        return true;
     }
 
     @Override
     public boolean insertItem(ItemStack itemStack, boolean shifting, Player player, InteractionHand hand) {
         if (level == null) return false;
         if (itemStack.is(AllItems.EMPTY_SCHEMATIC.get())) {
-            if(type.is(TFMGTags.Engines.SCHEMATIC_CYCLE_BLACKLIST.tag))
+            if (type.is(TFMGTags.Engines.SCHEMATIC_CYCLE_BLACKLIST.tag))
                 return false;
             boolean next = false;
             if (type.is(TFMGEngineTypes.BOXER)) {
@@ -224,7 +224,7 @@ public class RegularEngineBlockEntity extends AbstractSmallEngineBlockEntity {
     public boolean isCylinderSame(ItemStack stack) {
         if (level == null)
             return false;
-        if(stack.is(TFMGItems.TURBINE_BLADE.get()))
+        if (stack.is(TFMGItems.TURBINE_BLADE.get()))
             return true;
 
         CylinderFuels cylinderFuels = stack.getOrDefault(TFMGDataComponents.ENGINE_CYLINDER, CylinderFuels.EMPTY);
@@ -263,21 +263,21 @@ public class RegularEngineBlockEntity extends AbstractSmallEngineBlockEntity {
     }
 
     @OnlyIn(Dist.CLIENT)
-    private void makeSound(){
+    private void makeSound() {
         soundTimer++;
-        if(!isController())
+        if (!isController())
             return;
 
-        if(soundTimer>1/Math.min(6000,(rpm*0.0002)*pistonInventory.getSlots())) {
+        if (soundTimer > 1 / Math.min(6000, (rpm * 0.0002) * pistonInventory.getSlots())) {
             if (level == null) return;
             soundTimer = 0;
-            float randomPitch = (level.getRandom().nextFloat()-.5f)*0.05f;
+            float randomPitch = (level.getRandom().nextFloat() - .5f) * 0.05f;
 
             if (this instanceof TurbineEngineBlockEntity) {
                 TFMGSoundEvents.ENGINE.playAt(level, worldPosition, 0.06f * TFMGConfigs.common().machines.engineLoudness.getF(), 1.5f, false);
             } else
 
-                TFMGSoundEvents.ENGINE.playAt(level, worldPosition, 0.1f * TFMGConfigs.common().machines.engineLoudness.getF(), 0.7f+ randomPitch, false);
+                TFMGSoundEvents.ENGINE.playAt(level, worldPosition, 0.1f * TFMGConfigs.common().machines.engineLoudness.getF(), 0.7f + randomPitch, false);
         }
 
     }
@@ -309,16 +309,16 @@ public class RegularEngineBlockEntity extends AbstractSmallEngineBlockEntity {
 
     @Override
     protected void write(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {
-        super.write(compound,registries , clientPacket);
+        super.write(compound, registries, clientPacket);
         compound.putString("Type", type.getKey().toString());
         compound.put("Cylinders", pistonInventory.serializeNBT(registries));
     }
 
     @Override
     protected void read(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {
-        super.read(compound,registries , clientPacket);
+        super.read(compound, registries, clientPacket);
         this.type = TFMGEngineTypes.decodeType(compound.getString("Type"), getDefaultEngineType());
-        pistonInventory.deserializeNBT(registries,compound.getCompound("Cylinders"));
+        pistonInventory.deserializeNBT(registries, compound.getCompound("Cylinders"));
     }
 
     @Override
@@ -367,20 +367,20 @@ public class RegularEngineBlockEntity extends AbstractSmallEngineBlockEntity {
 
     @Override
     public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
-        if(!isController())
-            return getControllerBE().addToGoggleTooltip(tooltip,isPlayerSneaking);
+        if (!isController())
+            return getControllerBE().addToGoggleTooltip(tooltip, isPlayerSneaking);
 
         TFMGTexts.header("engine")
                 .style(ChatFormatting.GRAY)
                 .forGoggles(tooltip);
 
-        if(nextComponent()!= Ingredient.EMPTY){
+        if (nextComponent() != Ingredient.EMPTY) {
             TFMGTexts.Engine.unfinished().forGoggles(tooltip);
             TFMGTexts.Engine.nextComponent(nextComponent().getItems()[0]).forGoggles(tooltip);
             TFMGTexts.Engine.type(type).forGoggles(tooltip, 1);
             return true;
         }
-        if(!hasAllPistons()){
+        if (!hasAllPistons()) {
             TFMGTexts.Engine.lastRequirement(type.lastRequirement).forGoggles(tooltip);
             TFMGTexts.Engine.type(type).forGoggles(tooltip, 1);
             return true;
@@ -388,16 +388,16 @@ public class RegularEngineBlockEntity extends AbstractSmallEngineBlockEntity {
 
         TFMGTexts.Engine.type(type).forGoggles(tooltip, 1);
         TFMGTexts.Engine.rpm(rpm).forGoggles(tooltip, 1);
-        TFMGTexts.Engine.signal((int) (highestSignal*15)).forGoggles(tooltip, 1);
+        TFMGTexts.Engine.signal((int) (highestSignal * 15)).forGoggles(tooltip, 1);
         TFMGTexts.Engine.torque(torque).forGoggles(tooltip, 1);
         TFMGTexts.Engine.fuelConsumption(getFuelConsumption()).forGoggles(tooltip, 1);
-        if(oil>0){
+        if (oil > 0) {
             TFMGTexts.Engine.oil(oil).forGoggles(tooltip);
         }
-        if(coolingFluid>0){
+        if (coolingFluid > 0) {
             TFMGTexts.Engine.coolingFluid(coolingFluid).forGoggles(tooltip);
         }
-        TFMGUtils.createFluidTooltip(this,tooltip);
+        TFMGUtils.createFluidTooltip(this, tooltip);
 
         return true;
     }

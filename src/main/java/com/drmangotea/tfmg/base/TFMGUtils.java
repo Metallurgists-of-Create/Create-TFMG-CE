@@ -191,8 +191,17 @@ public class TFMGUtils {
 			spawnSmokeParticles(world, x + random.nextFloat()*spread, y + 1, z + random.nextFloat() * spread);
 		}
 	}
-
-    public static float getDistance(BlockPos pos1, BlockPos pos2, boolean is2d) {
+	
+	public static float getDistance(Vec3 pos1, Vec3 pos2) {
+		double x = Math.abs(pos1.x() - pos2.x());
+		double y = Math.abs(pos1.y() - pos2.y());
+		double z = Math.abs(pos1.z() - pos2.z());
+		
+		
+		return (float) Math.sqrt(x * x + z * z + y * y);
+	}
+	
+	public static float getDistance(BlockPos pos1, BlockPos pos2, boolean is2d) {
         float x = Math.abs(pos1.getX() - pos2.getX());
         float y = Math.abs(pos1.getY() - pos2.getY());
         float z = Math.abs(pos1.getZ() - pos2.getZ());

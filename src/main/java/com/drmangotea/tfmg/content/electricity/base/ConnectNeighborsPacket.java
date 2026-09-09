@@ -16,7 +16,6 @@ public class ConnectNeighborsPacket extends BlockEntityDataPacket<SmartBlockEnti
 
     public ConnectNeighborsPacket(BlockPos pos) {
         super(pos);
-
     }
 
     @Override
