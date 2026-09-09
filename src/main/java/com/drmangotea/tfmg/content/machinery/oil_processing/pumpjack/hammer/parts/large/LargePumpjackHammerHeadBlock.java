@@ -8,6 +8,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
+import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 public class LargePumpjackHammerHeadBlock extends PumpjackHammerHeadBlock {
@@ -15,7 +16,7 @@ public class LargePumpjackHammerHeadBlock extends PumpjackHammerHeadBlock {
         super(pProperties);
     }
     
-	@Override @ParametersAreNonnullByDefault
+	@Override @Nonnull @ParametersAreNonnullByDefault
     public VoxelShape getShape(BlockState pState, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
         return TFMGShapes.FULL;
     }

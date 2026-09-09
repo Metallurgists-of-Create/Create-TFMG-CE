@@ -22,7 +22,7 @@ public class PumpjackHammerConnectorBlock extends HorizontalDirectionalBlock {
         super(pProperties);
     }
     
-	@Override
+	@Override @Nonnull
     protected MapCodec<? extends HorizontalDirectionalBlock> codec() {
         return CODEC;
     }
