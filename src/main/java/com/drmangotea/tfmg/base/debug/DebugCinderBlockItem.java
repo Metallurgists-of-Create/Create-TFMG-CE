@@ -40,34 +40,34 @@ public class DebugCinderBlockItem extends Item {
 
         if (level.getBlockEntity(pos) instanceof ThreePhaseGeneratorBlockEntity be) {
             RealElectricalNetwork network = RealElectricNetworkManager.getNetwork(be.getLevel());
-
-
-        }
-        if (level.getBlockEntity(pos) instanceof DebugResistorBlockEntity be) {
-
-            RealElectricalNetwork network = RealElectricNetworkManager.getNetwork(be.getWorld());
-
-            network.setResistance(be, 0, Create.RANDOM.nextInt(700));
-
-            return InteractionResult.SUCCESS;
-        }
-        if (level.getBlockEntity(pos) instanceof IRealisticElectric be) {
-            //if (context.getPlayer() instanceof ServerPlayer serverPlayer) {
-            //    NetworkLoadPacket packet = new NetworkLoadPacket(RealElectricNetworkManager.networks.values().stream().toList());
-            //    CatnipServices.NETWORK.sendToClient(serverPlayer, packet);
-            //}
-
-            RealElectricalNetwork network = RealElectricNetworkManager.getNetwork(be.getWorld());
-
-            network.setVoltageGen(be, Create.RANDOM.nextInt(700));
-
-            TFMG.LOGGER.debug("Member count: " + network.members.size());
-            TFMG.LOGGER.debug("Node Count: " + network.nodes.size());
-            TFMG.LOGGER.debug("Connection Count: " + network.connections.size());
-            TFMG.LOGGER.debug("This Block Node Count: " + be.getProperties().nodes.size());
-
-            network.connections.forEach(c -> {
-                TFMG.LOGGER.debug("Connection1  " + c.node1().getPosition().x() + c.node1().getPosition().y() + c.node1().getPosition().z());
+			
+			
+		}
+		if (level.getBlockEntity(pos) instanceof DebugResistorBlockEntity be) {
+			
+			RealElectricalNetwork network = RealElectricNetworkManager.getNetwork(be.getWorld());
+			
+			network.setResistance(be, 0, Create.RANDOM.nextInt(700));
+			
+			return InteractionResult.SUCCESS;
+		}
+		if (level.getBlockEntity(pos) instanceof IRealisticElectric be) {
+			//if (context.getPlayer() instanceof ServerPlayer serverPlayer) {
+			//    NetworkLoadPacket packet = new NetworkLoadPacket(RealElectricNetworkManager.networks.values().stream().toList());
+			//    CatnipServices.NETWORK.sendToClient(serverPlayer, packet);
+			//}
+			
+			RealElectricalNetwork network = RealElectricNetworkManager.getNetwork(be.getWorld());
+			
+			network.setVoltageGen(be, Create.RANDOM.nextInt(700));
+			
+			TFMG.LOGGER.debug("Member count: " + network.members.size());
+			TFMG.LOGGER.debug("Node Count: " + network.nodes.size());
+			TFMG.LOGGER.debug("Connection Count: " + network.connections.size());
+			TFMG.LOGGER.debug("This Block Node Count: " + be.getProperties().nodes.size());
+			
+			network.connections.forEach(c -> {
+				TFMG.LOGGER.debug("Connection1  " + c.node1().getPosition().x() + c.node1().getPosition().y() + c.node1().getPosition().z());
                 TFMG.LOGGER.debug("Connection2  " + c.node2().getPosition().x() + c.node2().getPosition().y() + c.node2().getPosition().z());
             });
 

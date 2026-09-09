@@ -1,6 +1,5 @@
 package com.drmangotea.tfmg.content.electricity.experimental;
 
-import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.content.electricity.experimental.simulation.*;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.LevelAccessor;

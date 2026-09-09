@@ -1,9 +1,6 @@
 package com.drmangotea.tfmg.content.electricity.experimental;
 
-
-import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.base.TFMGUtils;
-import com.drmangotea.tfmg.content.electricity.connection.cables.CablePos;
 import com.drmangotea.tfmg.content.electricity.experimental.simulation.ConnectingElectricalNode;
 import com.drmangotea.tfmg.content.electricity.experimental.simulation.ElectricalNode;
 import com.drmangotea.tfmg.registry.TFMGPartialModels;
@@ -25,7 +22,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
@@ -61,14 +57,19 @@ public class ElectricNetworkRenderer {
         Camera camera = event.getCamera();
         Vector3f playerPos = player.getEyePosition().toVector3f();
         // TFMG.LOGGER.debug(network.connections.size()+"");
-        renderWire(TFMGPartialModels.CABLE, new CablePos(0, -56, 0), new CablePos(0, -56, 10), camera, ms, vc, player, true);
+        renderWire(TFMGPartialModels.CABLE, new Vec3(0, -56, 0), new Vec3(0, -56, 10), camera, ms, vc, player, true);
 
         for (WireConnection connection : network.connections) {
-            renderWire(TFMGPartialModels.CABLE, connection.node1().getPosition().add(BlockPos.of(connection.node1().pos)), connection.node2().getPosition().add(BlockPos.of(connection.node2().pos)), camera, ms, vc, player, false);
+            renderWire(
+				TFMGPartialModels.CABLE,
+				connection.node1().getPosition().add(Vec3.atLowerCornerOf(BlockPos.of(connection.node1().pos))),
+				connection.node2().getPosition().add(Vec3.atLowerCornerOf(BlockPos.of(connection.node2().pos))),
+				camera, ms, vc, player, false
+			);
         }
     }
 
-    public static void renderWire(PartialModel model, CablePos pos1, CablePos pos2, Camera camera, PoseStack ms, VertexConsumer vc, Player player, boolean debug) {
+    public static void renderWire(PartialModel model, Vec3 pos1, Vec3 pos2, Camera camera, PoseStack ms, VertexConsumer vc, Player player, boolean debug) {
 
         double cameraX = camera.getPosition().x;
         double cameraY = camera.getPosition().y;
@@ -79,8 +80,9 @@ public class ElectricNetworkRenderer {
         BlockState air = Blocks.AIR.defaultBlockState();
 
 
-        Vec3 vec1 = new Vec3(pos1.x() - 0.5f, pos1.y() - 0.5f, pos1.z() - 0.5f);
-        Vec3 v = new Vec3(pos2.x() - 0.5f, pos2.y() - 0.5f, pos2.z() - 0.5f);
+		pos1.subtract(0.5d,0.5d,0.5d);
+        Vec3 vec1 = pos1.subtract(0.5d,0.5d,0.5d);
+        Vec3 v = pos2.subtract(0.5d,0.5d,0.5d);
         //pos2 = player.getEyePosition().subtract(0.5,1,0.5);
         Vec3 vec2 = v.subtract(vec1);
 
@@ -155,7 +157,7 @@ public class ElectricNetworkRenderer {
 
 
             for (ConnectingElectricalNode node : connectors) {
-                CablePos cablePos = node.getPosition().add(BlockPos.of(be.getPos()));
+				Vec3 cablePos = node.getPosition().add(Vec3.atLowerCornerOf(BlockPos.of(be.getPos())));
 
                 Vec3 center = new Vec3(cablePos.x(), cablePos.y(), cablePos.z());
 

@@ -2,7 +2,6 @@ package com.drmangotea.tfmg.content.electricity.experimental;
 
 import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.base.TFMGUtils;
-import com.drmangotea.tfmg.content.electricity.connection.cables.CablePos;
 import com.drmangotea.tfmg.content.electricity.experimental.simulation.ConnectingElectricalNode;
 import com.drmangotea.tfmg.content.electricity.experimental.simulation.ElectricalNode;
 import com.drmangotea.tfmg.registry.TFMGDataComponents;
@@ -34,14 +33,14 @@ public class BetterSpoolItem extends Item {
         if (level.getBlockEntity(pos) instanceof IRealisticElectric be) {
             ConnectingElectricalNode node1 = closestNode(be, clickPosition);
             TFMG.LOGGER.debug("Closest node is " + node1.getNetworkId());
-            if (stack.get(TFMGDataComponents.POSITION) == null) {
-                stack.set(TFMGDataComponents.POSITION, pos.asLong());
+			BlockPos pos2 = stack.get(TFMGDataComponents.POSITION);
+            if (pos2 == null) {
+                stack.set(TFMGDataComponents.POSITION, pos);
                 stack.set(TFMGDataComponents.CONNECTOR_ID, node1.getLocalId());
                 TFMG.LOGGER.debug("Saved node " + node1.getLocalId() + " " + node1.getNetworkId());
             } else {
                 RealElectricalNetwork network = RealElectricNetworkManager.getNetwork(level);
 
-                BlockPos pos2 = BlockPos.of(stack.getOrDefault(TFMGDataComponents.POSITION, 0).longValue());
                 int id = stack.getOrDefault(TFMGDataComponents.CONNECTOR_ID, 0);
 
                 if (level.getBlockEntity(pos2) instanceof IRealisticElectric be2) {
@@ -82,7 +81,7 @@ public class BetterSpoolItem extends Item {
 
         be.getProperties().nodes.forEach(n -> {
             if (n instanceof ConnectingElectricalNode node) {
-                CablePos position = node.getPosition().add(pos);
+                Vec3 position = node.getPosition().add(Vec3.atLowerCornerOf(pos));
                 connectors.put(new Vec3(position.x(), position.y(), position.z()), node);
             }
         });

@@ -1,18 +1,18 @@
 package com.drmangotea.tfmg.content.electricity.experimental.simulation;
 
-import com.drmangotea.tfmg.content.electricity.connection.cables.CablePos;
 import com.drmangotea.tfmg.content.electricity.experimental.IRealisticElectric;
+import net.minecraft.world.phys.Vec3;
 
 public class ConnectingElectricalNode extends ElectricalNode {
 
-    public CablePos position;
+    public Vec3 position;
 
-    public ConnectingElectricalNode(long pos, int networkId, int localId, CablePos position) {
+    public ConnectingElectricalNode(long pos, int networkId, int localId, Vec3 position) {
         super(pos,networkId, localId);
         this.position = position;
     }
 
-    public CablePos getPosition() {
+    public Vec3 getPosition() {
         return position;
     }
 

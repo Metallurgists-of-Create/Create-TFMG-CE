@@ -1,6 +1,5 @@
 package com.drmangotea.tfmg.content.electricity.experimental;
 
-import com.drmangotea.tfmg.content.electricity.connection.cables.CablePos;
 import com.drmangotea.tfmg.content.electricity.experimental.simulation.ElectricalComponent;
 import com.drmangotea.tfmg.content.electricity.experimental.simulation.ElectricalNode;
 import net.minecraft.world.level.Level;

@@ -2,20 +2,14 @@ package com.drmangotea.tfmg;
 
 import com.drmangotea.tfmg.base.*;
 import com.drmangotea.tfmg.content.electricity.base.ElectricNetworkManager;
-
 import com.drmangotea.tfmg.content.electricity.experimental.saved_data.NetworkDataManager;
 import com.drmangotea.tfmg.content.electricity.experimental.RealElectricNetworkManager;
-import com.drmangotea.tfmg.content.engines.fuels.BaseFuelTypes;
 import com.drmangotea.tfmg.content.items.weapons.explosives.thermite_grenades.fire.TFMGColoredFires;
-//import com.drmangotea.tfmg.content.machinery.oil_processing.pumpjack.base.OilDataManager;
 import com.drmangotea.tfmg.datagen.TFMGDatagen;
 import com.drmangotea.tfmg.base.fluid.TFMGFluidInteractions;
 import com.drmangotea.tfmg.config.TFMGConfigs;
 import com.drmangotea.tfmg.content.decoration.pipes.TFMGPipes;
-import com.drmangotea.tfmg.content.electricity.base.ElectricNetworkManager;
-import com.drmangotea.tfmg.content.items.weapons.explosives.thermite_grenades.fire.TFMGColoredFires;
 import com.drmangotea.tfmg.content.world.LevelDataHandler;
-import com.drmangotea.tfmg.datagen.TFMGDatagen;
 import com.drmangotea.tfmg.registry.*;
 import com.drmangotea.tfmg.worldgen.TFMGFeatures;
 import com.mojang.logging.LogUtils;

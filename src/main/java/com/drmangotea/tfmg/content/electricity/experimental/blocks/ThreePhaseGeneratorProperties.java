@@ -1,11 +1,11 @@
 package com.drmangotea.tfmg.content.electricity.experimental.blocks;
 
-import com.drmangotea.tfmg.content.electricity.connection.cables.CablePos;
 import com.drmangotea.tfmg.content.electricity.experimental.simulation.ConnectingElectricalNode;
 import com.drmangotea.tfmg.content.electricity.experimental.simulation.ElectricalNode;
 import com.drmangotea.tfmg.content.electricity.experimental.simulation.IdealVoltageSource;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,24 +32,15 @@ public class ThreePhaseGeneratorProperties extends DirectionalElectricalProperti
         //components.add(new Resistance(L1, N, 10));
 
     }
+	
+	@Override
+    public List<Vec3> getRotation(Direction direction) {
+        List<Vec3> positions = new ArrayList<>();
 
-    @Override
-    public int getId() {
-        return 1;
-    }
-
-    @Override
-    public List<CablePos> getRotation(Direction direction) {
-        List<CablePos> positions = new ArrayList<>();
-
-        switch (direction){
-            case UP,DOWN,EAST,WEST,NORTH,SOUTH -> {
-                positions.add(new CablePos(0, 7/16f,    3/16f));
-                positions.add(new CablePos(0, 13/16f,   3/16f));
-                positions.add(new CablePos(0, 13/16f,   8/16f));
-                positions.add(new CablePos(0, 13/16f,   13/16f));
-            }
-        };
+		positions.add(new Vec3(0,  7/16f,  3/16f));
+		positions.add(new Vec3(0, 13/16f,  3/16f));
+		positions.add(new Vec3(0, 13/16f,  8/16f));
+		positions.add(new Vec3(0, 13/16f, 13/16f));
 
         return positions;
     }

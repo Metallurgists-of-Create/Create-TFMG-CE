@@ -1,11 +1,11 @@
 package com.drmangotea.tfmg.content.electricity.experimental.blocks;
 
-import com.drmangotea.tfmg.content.electricity.connection.cables.CablePos;
 import com.drmangotea.tfmg.content.electricity.experimental.ElectricalProperties;
 import com.drmangotea.tfmg.content.electricity.experimental.simulation.ConnectingElectricalNode;
 import com.drmangotea.tfmg.content.electricity.experimental.simulation.Resistance;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,29 +21,28 @@ public class DebugResistorProperties extends DirectionalElectricalProperties {
         nodes.add(node1);
         nodes.add(node2);
         components.add(new Resistance(node1, node2, 10, 0));
-
     }
 
-    public List<CablePos> getRotation(Direction direction) {
+    public List<Vec3> getRotation(Direction direction) {
 
-        List<CablePos> positions = new ArrayList<>();
+        List<Vec3> positions = new ArrayList<>();
 
         switch (direction) {
             case DOWN,UP -> {
-                positions.add(new CablePos(0.5f,1,0.5f));
-                positions.add(new CablePos(0.5f,0,0.5f));
+                positions.add(new Vec3(0.5f,1,0.5f));
+                positions.add(new Vec3(0.5f,0,0.5f));
             }
             case WEST,EAST -> {
-                positions.add(new CablePos(1,0.5f,0.5f));
-                positions.add(new CablePos(0,0.5f,0.5f));
+                positions.add(new Vec3(1,0.5f,0.5f));
+                positions.add(new Vec3(0,0.5f,0.5f));
             }
             case NORTH,SOUTH -> {
-                positions.add(new CablePos(0.5f,0.5f,1));
-                positions.add(new CablePos(0.5f,0.5f,0));
+                positions.add(new Vec3(0.5f,0.5f,1));
+                positions.add(new Vec3(0.5f,0.5f,0));
             }
 
 
-        };
+        }
 
         return positions;
     }
