@@ -129,6 +129,11 @@ public class TFMGClientEvents {
 				TFMGGuiTextures.ELECTRODE.render(graphics, 55 - 3 - 32, 32);
 				TFMGGuiTextures.ELECTRODE.render(graphics, 55 - 3 + 32, 32);
 			});
+			event.addDrawableOperation(TFMGVatOperations.CRYSTAL_PULLER.get(), (recipe, graphics, mouseX, mouseY) -> {
+				//TODO - make proper as this is temporary
+				TFMGGuiTextures.VAT_MACHINE.render(graphics, 0, 0);
+				TFMGGuiTextures.ELECTRODE.render(graphics, 0, 32);
+			});
 			event.addOperationTooltip(TFMGVatOperations.ELECTRODE.get(), (recipe, tooltip, mouseX, mouseY) -> {
 				boolean xCheck = mouseX > 11 && mouseX < 35 || mouseX > 75 && mouseX < 99;
 				if (mouseY > -3 && mouseY < 60 && xCheck) {
