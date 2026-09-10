@@ -125,6 +125,11 @@ public class TFMGPartialModels {
             LARGE_CENTRIFUGE_TOP = block("industrial_mixer/large_centrifuge_top"),
             LARGE_CENTRIFUGE_ALONE = block("industrial_mixer/large_centrifuge_alone");
 
+    // Industrial Rotor
+    //TODO: add more
+    public static final PartialModel
+        VAT_SHAFT = block("industrial_rotor/shaft");
+
     // Concrete Hose
     public static final PartialModel
             HOSE_MAGNET = block("concrete_hose/pulley_magnet"),
