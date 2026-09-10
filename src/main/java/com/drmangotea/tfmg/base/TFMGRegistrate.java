@@ -14,6 +14,9 @@ import com.drmangotea.tfmg.content.machinery.vat.electrode_holder.electrode.Elec
 import com.drmangotea.tfmg.content.machinery.vat.electrode_holder.electrode.ElectrodeBuilder;
 import com.drmangotea.tfmg.content.machinery.vat.industrial_mixer.mode.MixerMode;
 import com.drmangotea.tfmg.content.machinery.vat.industrial_mixer.mode.MixerModeBuilder;
+import com.drmangotea.tfmg.content.machinery.vat.industrial_rotor.mode.RotorMode;
+import com.drmangotea.tfmg.content.machinery.vat.industrial_rotor.mode.RotorModeBuilder;
+import com.drmangotea.tfmg.content.machinery.vat.industrial_rotor.mode.RotorModeEntry;
 import com.simibubi.create.content.fluids.VirtualFluid;
 import com.simibubi.create.foundation.data.CreateRegistrate;
 import com.simibubi.create.foundation.data.VirtualFluidBuilder;
@@ -139,6 +142,23 @@ public class TFMGRegistrate extends CreateRegistrate {
     public <T extends MixerMode, P> MixerModeBuilder<T, P> mixerMode(P parent, String name, NonNullFunction<MixerMode.Properties, T> factory) {
         return entry(name, callback -> MixerModeBuilder.create(this, parent, name, callback, factory));
     }
+
+    public <T extends RotorMode> RotorModeBuilder<T, TFMGRegistrate> rotorMode(NonNullFunction<RotorMode.Properties, T> factory) {
+        return rotorMode((TFMGRegistrate) self(), factory);
+    }
+
+    public <T extends RotorMode> RotorModeBuilder<T, TFMGRegistrate> rotorMode(String name, NonNullFunction<RotorMode.Properties, T> factory) {
+        return rotorMode((TFMGRegistrate) self(), name, factory);
+    }
+
+    public <T extends RotorMode, P> RotorModeBuilder<T, P> rotorMode(P parent, NonNullFunction<RotorMode.Properties, T> factory) {
+        return rotorMode(parent, currentName(), factory);
+    }
+
+    public <T extends RotorMode, P> RotorModeBuilder<T, P> rotorMode(P parent, String name, NonNullFunction<RotorMode.Properties, T> factory) {
+        return entry(name, callback -> RotorModeBuilder.create(this, parent, name, callback, factory));
+    }
+
 
     public VatOperationBuilder<TFMGRegistrate> vatOperation(Function<ResourceLocation, VatOperation> factory) {
         return vatOperation((TFMGRegistrate) self(), factory);
