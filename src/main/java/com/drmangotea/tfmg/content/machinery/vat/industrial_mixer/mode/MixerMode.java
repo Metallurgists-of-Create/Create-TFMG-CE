@@ -47,7 +47,7 @@ public class MixerMode implements MultiUseAttachment<IndustrialMixerBlockEntity>
 
     @Override
     public void renderInVat(IndustrialMixerBlockEntity be, float partialTicks, PoseStack ms, MultiBufferSource buffer, int light, int overlay, @Nullable ItemRenderer itemRenderer) {
-        if (this.mixerPartial != null) {
+        if (this.mixerPartial != null && be.getLevel() != null) {
             BlockState blockState = be.getBlockState();
             int height = be.vatHeight;
             for (int i = 0; i < height; i++) {
