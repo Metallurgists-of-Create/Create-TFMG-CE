@@ -13,7 +13,6 @@ import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.storage.loot.LootParams;
 
-@Debug(export = true)
 @Mixin(BlockBehaviour.class)
 public abstract class BlockBehaviourMixin {
     // It's very silly that this was necessary.
