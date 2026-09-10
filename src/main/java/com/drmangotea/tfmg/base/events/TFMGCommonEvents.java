@@ -31,6 +31,7 @@ import com.drmangotea.tfmg.content.machinery.oil_processing.pumpjack.base.Pumpja
 import com.drmangotea.tfmg.content.machinery.vat.base.VatBlockEntity;
 import com.drmangotea.tfmg.content.machinery.vat.electrode_holder.ElectrodeHolderBlockEntity;
 import com.drmangotea.tfmg.content.machinery.vat.industrial_mixer.IndustrialMixerBlockEntity;
+import com.drmangotea.tfmg.content.machinery.vat.industrial_rotor.IndustrialRotorBlockEntity;
 import com.drmangotea.tfmg.content.world.resevoir.FluidReservoir;
 import com.drmangotea.tfmg.mixin.accessor.ChunkMapAccessor;
 import com.drmangotea.tfmg.registry.TFMGDataAttachments;
@@ -99,6 +100,7 @@ public class TFMGCommonEvents {
             AirIntakeBlockEntity.registerCapabilities(event);
             WindingMachineBlockEntity.registerCapabilities(event);
             IndustrialMixerBlockEntity.registerCapabilities(event);
+            IndustrialRotorBlockEntity.registerCapabilities(event);
             ElectrodeHolderBlockEntity.registerCapabilities(event);
         }
 
@@ -110,6 +112,7 @@ public class TFMGCommonEvents {
             event.register(TFMGRegistries.MIXER_MODE_REGISTRY);
             event.register(TFMGRegistries.VAT_OPERATION_REGISTRY);
             event.register(TFMGRegistries.VAT_TYPE_REGISTRY);
+            event.register(TFMGRegistries.ROTOR_MODE_REGISTRY);
         }
     }
 
@@ -144,7 +147,7 @@ public class TFMGCommonEvents {
 				}
 			}
 		} catch (Exception exception) {
-			TFMG.LOGGER.error("Error occurred while ticking fluid reservoirs.", exception);
+			TFMG.LOGGER.error("Error occurred while ticking fluid reservoirs: ", exception);
 		}
     }
 }
