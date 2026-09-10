@@ -1,0 +1,23 @@
+{
+  "type": "tfmg:vat_machine_recipe",
+  "ingredients": [
+    {
+      "item": "minecraft:sand"
+    },
+    {
+      "type": "neoforge:single",
+      "amount": 500,
+      "fluid": "tfmg:liquid_silicon"
+    }
+  ],
+  "machines": [
+    "tfmg:crystal_puller"
+  ],
+  "min_size": 1,
+  "processing_time": 100,
+  "results": [
+    {
+      "id": "tfmg:circuit_board"
+    }
+  ]
+}

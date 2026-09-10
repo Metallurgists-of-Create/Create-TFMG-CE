@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "tfmg:block/industrial_rotor/block",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "tfmg:block/industrial_rotor/block"
+    },
+    "facing=south": {
+      "model": "tfmg:block/industrial_rotor/block",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "tfmg:block/industrial_rotor/block",
+      "y": 270
+    }
+  }
+}
