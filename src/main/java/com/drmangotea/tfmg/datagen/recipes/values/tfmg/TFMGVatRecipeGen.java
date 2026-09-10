@@ -132,6 +132,15 @@ public class TFMGVatRecipeGen extends VatRecipeGen {
                 .electrolysis()
                 .allowNonCastIron()
                 .heatLevel(2)
+        ),
+
+        CRYSTAL_PULLER_TEST = create("crystal_puller_test", b -> b
+                .require(Blocks.SAND.asItem())
+                .require(TFMGFluids.LIQUID_SILICON.getSource(), 500)
+                .output(TFMGItems.CIRCUIT_BOARD)
+                .duration(100)
+                .crystalPulling()
+                .allowAllVatTypes()
         )
 
 

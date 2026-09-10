@@ -128,6 +128,11 @@ public class VatMachineRecipe extends ProcessingRecipe<RecipeInput, VatRecipePar
             return this;
         }
 
+        public VatMachineRecipe.Builder<R> crystalPulling() {
+            params.machines.add(TFMGVatOperations.CRYSTAL_PULLER.get());
+            return this;
+        }
+
         public VatMachineRecipe.Builder<R> electrolysis() {
             params.machines.add(TFMGVatOperations.ELECTRODE.get());
             params.machines.add(TFMGVatOperations.ELECTRODE.get());

@@ -30,6 +30,7 @@ import com.drmangotea.tfmg.content.machinery.misc.winding_machine.SpoolItem;
 import com.drmangotea.tfmg.content.machinery.oil_processing.OilHammerItem;
 import com.drmangotea.tfmg.content.machinery.vat.electrode_holder.electrode.Electrode;
 import com.drmangotea.tfmg.content.machinery.vat.industrial_mixer.mode.MixerMode;
+import com.drmangotea.tfmg.content.machinery.vat.industrial_rotor.mode.RotorMode;
 import com.drmangotea.tfmg.registry.TFMGTags.Items;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllTags;
@@ -153,6 +154,7 @@ public class TFMGItems {
             NAPALM_POTATO = REGISTRATE.item("napalm_potato", Item::new).register(),
             MIXER_BLADE = REGISTRATE.item("mixer_blade", Item::new).properties(p -> p.component(TFMGDataComponents.MIXER_MODE, new MixerMode.Stored(TFMGMixerModes.mixing))).register(),
             CENTRIFUGE = REGISTRATE.item("centrifuge", Item::new).properties(p -> p.component(TFMGDataComponents.MIXER_MODE, new MixerMode.Stored(TFMGMixerModes.centrifuge))).register(),
+            CRYSTAL_PULLER = REGISTRATE.item("crystal_puller", Item::new).properties(p -> p.component(TFMGDataComponents.ROTOR_MODE, new RotorMode.Stored(TFMGRotorModes.CRYSTAL_PULLER))).register(),
             CRANKSHAFT = REGISTRATE.item("crankshaft", Item::new)
                     .model((c, p) -> p.withExistingParent(c.getName(), TFMG.asResource("item/crankshaft_model")))
                     .register(),

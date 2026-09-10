@@ -6,6 +6,7 @@ import com.drmangotea.tfmg.content.items.weapons.fire_extinguisher.FireExtinguis
 import com.drmangotea.tfmg.content.items.weapons.flamethrover.FlamethrowerFuel;
 import com.drmangotea.tfmg.content.machinery.vat.electrode_holder.electrode.Electrode;
 import com.drmangotea.tfmg.content.machinery.vat.industrial_mixer.mode.MixerMode;
+import com.drmangotea.tfmg.content.machinery.vat.industrial_rotor.mode.RotorMode;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponentType;
@@ -40,6 +41,7 @@ public class TFMGDataComponents {
 
 	public static final DataComponentType<MixerMode.Stored> MIXER_MODE = register("mixer_mode", MixerMode.Stored.CODEC, MixerMode.Stored.STREAM_CODEC);
 	public static final DataComponentType<Electrode.Stored> ELECTRODE = register("electrode", Electrode.Stored.CODEC, Electrode.Stored.STREAM_CODEC);
+	public static final DataComponentType<RotorMode.Stored> ROTOR_MODE = register("rotor_model", RotorMode.Stored.CODEC, RotorMode.Stored.STREAM_CODEC);
 
 	/**
 	 * @deprecated Use {@link com.drmangotea.tfmg.registry.TFMGDataComponents#FLAMETHROWER}.

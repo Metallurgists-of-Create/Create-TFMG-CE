@@ -13,6 +13,7 @@ import com.drmangotea.tfmg.content.machinery.vat.base.registry.operations.VatOpe
 import com.drmangotea.tfmg.content.machinery.vat.compressor.CompressorBlockEntity;
 import com.drmangotea.tfmg.content.machinery.vat.freezer.FreezerBlockEntity;
 import com.drmangotea.tfmg.content.machinery.vat.industrial_mixer.IndustrialMixerBlockEntity;
+import com.drmangotea.tfmg.content.machinery.vat.industrial_rotor.IndustrialRotorBlockEntity;
 import com.drmangotea.tfmg.mixin.accessor.TankSegmentAccessor;
 import com.drmangotea.tfmg.recipes.VatMachineRecipe;
 import com.drmangotea.tfmg.registry.TFMGBlockEntities;
@@ -152,29 +153,17 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
         event.registerBlockEntity(
                 Capabilities.FluidHandler.BLOCK,
                 TFMGBlockEntities.CHEMICAL_VAT.get(),
-                (be, context) -> {
-                    if (be.fluidCapability == null)
-                        be.refreshCapability();
-                    return be.fluidCapability;
-                }
+                (be, context) -> be.getNewFluidCapability()
         );
         event.registerBlockEntity(
                 Capabilities.ItemHandler.BLOCK,
                 TFMGBlockEntities.CHEMICAL_VAT.get(),
-                (be, context) -> {
-                    if (be.itemCapability == null)
-                        be.refreshCapability();
-                    return be.itemCapability;
-                }
+                (be, context) -> be.getNewItemCapability()
         );
         event.registerBlockEntity(
                 TFMGCapabilities.PressureStorage.BLOCK,
                 TFMGBlockEntities.CHEMICAL_VAT.get(),
-                (be, context) -> {
-                    if (be.pressureCapability == null)
-                        be.refreshCapability();
-                    return be.pressureCapability;
-                }
+                (be, context) -> be.getNewPressureCapability()
         );
     }
 
@@ -450,19 +439,18 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
             }
 
             //same but with items
-            SmartInventory testInventory = new SmartInventory(4, this);
-            for (int i = 0; i < 4; i++) {
-                testInventory.setStackInSlot(i, inputInventory.getStackInSlot(i).copy());
-            }
+            List<ItemStack> recipeItemSlots = new ArrayList<>();
+            for (ItemSource source : getRecipeItemSources(testedRecipe))
+                recipeItemSlots.add(source.inventory().getStackInSlot(source.slot()).copy());
 
             for (int i = 0; i < testedRecipe.getIngredients().size(); i++) {
                 Ingredient ingredient = testedRecipe.getIngredients().get(i);
                 boolean found = false;
-                for (int y = 0; y < 4; y++) {
-                    ItemStack stack = testInventory.getStackInSlot(y).copy();
+                for (int y = 0; y < recipeItemSlots.size(); y++) {
+                    ItemStack stack = recipeItemSlots.get(y);
                     if (ingredient.test(stack)) {
                         found = true;
-                        testInventory.getItem(y).shrink(1);
+                        recipeItemSlots.get(y).shrink(1);
                         break;
                     }
                 }
@@ -482,6 +470,40 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
         }
 
         return null;
+    }
+
+    private record ItemSource(SmartInventory inventory, int slot) {}
+
+    private boolean requiresCrystalPull(VatMachineRecipe recipe) {
+        for (VatOperation operation : recipe.machines)
+            if (operation.equals(TFMGVatOperations.CRYSTAL_PULLER.get()))
+                return true;
+        return false;
+    }
+
+    @Nullable
+    private IndustrialRotorBlockEntity getCrystalPuller() {
+        if (level == null)
+            return null;
+        for (BlockPos pos : machineMap.keySet()) {
+            BlockEntity blockEntity = level.getBlockEntity(pos);
+            if (blockEntity instanceof IndustrialRotorBlockEntity rotor)
+                return rotor;
+        }
+        return null;
+    }
+
+    // Might remake this to support other machines for "inventory expansion"
+    private List<ItemSource> getRecipeItemSources(VatMachineRecipe recipe) {
+        List<ItemSource> sources = new ArrayList<>();
+        if (requiresCrystalPull(recipe)) {
+            IndustrialRotorBlockEntity rotor = getCrystalPuller();
+            if (rotor != null)
+                sources.add(new ItemSource(rotor.inventory, 1));
+        }
+        for (int i = 0; i < inputInventory.getSlots(); i++)
+            sources.add(new ItemSource(inputInventory, i));
+        return sources;
     }
 
     @Override
@@ -614,12 +636,13 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
             //item input
             for (Ingredient ingredient : activeRecipe.getIngredients()) {
                 int needed = ingredient.getItems().length > 0 ? ingredient.getItems()[0].getCount() : 1;
-                for (int i = 0; i < inputInventory.getSlots(); i++) {
-                    ItemStack stackInInv = inputInventory.getStackInSlot(i);
+                for (ItemSource source : getRecipeItemSources(activeRecipe)) {
+                    SmartInventory sourceInventory = source.inventory();
+                    ItemStack stackInInv = sourceInventory.getStackInSlot(source.slot());
                     if (stackInInv.isEmpty())
                         continue;
                     if (ingredient.test(stackInInv) && stackInInv.getCount() >= needed) {
-                        inputInventory.extractItem(i, needed, false);
+                        sourceInventory.extractItem(source.slot(), needed, false);
                         break;
                     }
                 }
@@ -1156,15 +1179,17 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
      *
      * @return fluid capability of the vat's controller
      */
-    private IFluidHandler getNewFluidCapability() {
+    public IFluidHandler getNewFluidCapability() {
         IFluidHandler outputHandler = outputTank.getCapability();
         IFluidHandler inputHandler = inputTank.getCapability();
 
         if (inputHandler == null || outputHandler == null)
             return fluidCapability;
 
-        return isController() ? new CombinedTankWrapper(inputHandler, outputHandler)
-                : getControllerBE() != null ? getControllerBE().getNewFluidCapability() : fluidCapability;
+        VatBlockEntity controller = getControllerBE();
+        if (controller == null || controller == this)
+            return new CombinedTankWrapper(inputHandler, outputHandler);
+        return controller.getNewFluidCapability();
     }
 
     /**
@@ -1172,12 +1197,12 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
      *
      * @return item capability of the vat's controller
      */
-    private IItemHandlerModifiable getNewItemCapability() {
+    public IItemHandlerModifiable getNewItemCapability() {
         return isController() ? new CombinedInvWrapper(inputInventory, outputInventory)
                 : getControllerBE() != null ? getControllerBE().getNewItemCapability() : itemCapability;
     }
 
-    private IPressureHandler getNewPressureCapability() {
+    public IPressureHandler getNewPressureCapability() {
         return isController() ? pressureTank.getCapability()
                 : getControllerBE() != null ? getControllerBE().getNewPressureCapability() : pressureCapability;
     }
@@ -1347,16 +1372,16 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
             compound.putInt("HeatLevel", heatLevel);
             compound.putInt("RecipeDuration", recipe != null ? recipe.getProcessingDuration() : 0);
             pressure.save(compound);
-            CompoundTag inputTankData = new CompoundTag();
-            inputTank.write(inputTankData, registries, clientPacket);
-            compound.put("InputTanks", inputTankData);
-
-            CompoundTag outputTankData = new CompoundTag();
-            outputTank.write(outputTankData, registries, clientPacket);
-            compound.put("OutputTanks", outputTankData);
         } else {
             compound.put("Controller", NbtUtils.writeBlockPos(controller));
         }
+        CompoundTag inputTankData = new CompoundTag();
+        inputTank.write(inputTankData, registries, clientPacket);
+        compound.put("InputTanks", inputTankData);
+
+        CompoundTag outputTankData = new CompoundTag();
+        outputTank.write(outputTankData, registries, clientPacket);
+        compound.put("OutputTanks", outputTankData);
         compound.putInt("Luminosity", luminosity);
         super.write(compound, registries, clientPacket);
     }
@@ -1474,7 +1499,9 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
 
     @Override
     public IFluidTank getTank(int tank) {
-        return new FluidTank(1);
+        if (inputTank == null)
+            return new FluidTank(1);
+        return inputTank.getPrimaryHandler();
     }
 
     @Override
