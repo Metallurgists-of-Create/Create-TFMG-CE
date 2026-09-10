@@ -8,6 +8,7 @@ import com.drmangotea.tfmg.base.data_storage.BrokenByExplosionCondition;
 import com.drmangotea.tfmg.config.server.TFMGStress;
 import com.drmangotea.tfmg.content.decoration.FrameBlock;
 import com.drmangotea.tfmg.content.decoration.TrussBlock;
+import com.drmangotea.tfmg.content.decoration.concrete.ReinforcedBlocks;
 import com.drmangotea.tfmg.content.decoration.doors.TFMGSlidingDoorBlock;
 import com.drmangotea.tfmg.content.decoration.kinetics.encased.TFMGEncasedCogwheelBlock;
 import com.drmangotea.tfmg.content.decoration.kinetics.encased.TFMGEncasedShaftBlock;
@@ -308,11 +309,12 @@ public class TFMGBuilderTransformers {
         MaterialSet concrete = new MaterialSet();
 
 
+        float destroyTime = rebar ? 5f : 3.5f, blastResistance = rebar ? 8f : 3.5f;
 
-        concrete.wall = REGISTRATE.block(name + "_wall", WallBlock::new)
+        concrete.wall = REGISTRATE.block(name + "_wall", p -> ReinforcedBlocks.wall(rebar, p))
                 .initialProperties(() -> Blocks.STONE)
                 .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
-                .properties(p -> p.strength(rebar ? 5f : 3.5f, rebar ? 17f : 3.5f))
+                .properties(p -> p.strength(destroyTime, blastResistance))
                 .transform(pickaxeOnly())
                 .loot(concreteLoot())
                 .blockstate((c, p) -> TFMGVanillaBlockStates.generateWallBlockState(c, p, "concrete"))
@@ -324,9 +326,9 @@ public class TFMGBuilderTransformers {
                 .build()
                 .register();
 
-        concrete.block = REGISTRATE.block(name, Block::new)
+        concrete.block = REGISTRATE.block(name, p -> ReinforcedBlocks.simple(rebar, p))
                 .initialProperties(() -> Blocks.STONE)
-                .properties(p -> p.strength(rebar ? 5f : 3.5f, rebar ? 17f : 3.5f))
+                .properties(p -> p.strength(destroyTime, blastResistance))
                 .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
                 .transform(pickaxeOnly())
                 .loot(concreteLoot())
@@ -336,10 +338,10 @@ public class TFMGBuilderTransformers {
                 .build()
                 .register();
 
-        concrete.stairs = REGISTRATE.block(name + "_stairs", p -> new StairBlock(concrete.block.get().defaultBlockState(), p))
+        concrete.stairs = REGISTRATE.block(name + "_stairs", p -> ReinforcedBlocks.stair(rebar, concrete.block.get().defaultBlockState(), p))
                 .initialProperties(() -> Blocks.STONE)
                 .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
-                .properties(p -> p.strength(rebar ? 5f : 3.5f, rebar ? 17f : 3.5f))
+                .properties(p -> p.strength(destroyTime, blastResistance))
                 .transform(pickaxeOnly())
                 .loot(concreteLoot())
                 .blockstate((c, p) -> TFMGVanillaBlockStates.generateStairBlockState(c, p, name))
@@ -350,9 +352,9 @@ public class TFMGBuilderTransformers {
                 .transform(customItemModel(name + "_stairs"))
                 .register();
 
-        concrete.slab = REGISTRATE.block(name + "_slab", SlabBlock::new)
+        concrete.slab = REGISTRATE.block(name + "_slab", p -> ReinforcedBlocks.slab(rebar, p))
                 .initialProperties(() -> Blocks.STONE)
-                .properties(p -> p.strength(rebar ? 5f : 3.5f, rebar ? 17f : 3.5f))
+                .properties(p -> p.strength(destroyTime, blastResistance))
                 .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
                 .transform(pickaxeOnly())
                 .loot(concreteLoot())
@@ -373,13 +375,15 @@ public class TFMGBuilderTransformers {
 
         Map<String ,MaterialSet> list = new HashMap<>();
 
+        float destroyTime = rebar ? 5f : 3.5f, blastResistance = rebar ? 8f : 3.5f;
+
         for (String color : COLORS) {
 
             MaterialSet set = new MaterialSet();
 
-            set.block=REGISTRATE.block(color + name, Block::new)
+            set.block=REGISTRATE.block(color + name, p -> ReinforcedBlocks.simple(rebar, p))
                     .initialProperties(() -> Blocks.STONE)
-                    .properties(p -> p.strength(rebar ? 12f : 3.5f, rebar ? 1200f : 3.5f))
+                    .properties(p -> p.strength(destroyTime, blastResistance))
                     .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
                     .transform(pickaxeOnly())
                     .loot(concreteLoot())
@@ -390,9 +394,9 @@ public class TFMGBuilderTransformers {
                     .register();
 
 
-            set.wall=REGISTRATE.block(color + name + "_wall", WallBlock::new)
+            set.wall=REGISTRATE.block(color + name + "_wall", p -> ReinforcedBlocks.wall(rebar, p))
                     .initialProperties(() -> Blocks.STONE)
-                    .properties(p -> p.strength(rebar ? 12f : 3.5f, rebar ? 1200f : 3.5f))
+                    .properties(p -> p.strength(destroyTime, blastResistance))
                     .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
                     .transform(pickaxeOnly())
                     .loot(concreteLoot())
@@ -405,9 +409,9 @@ public class TFMGBuilderTransformers {
                     .build()
                     .register();
 
-            set.stairs=REGISTRATE.block(color + name + "_stairs", p -> new StairBlock(TFMGBlocks.CONCRETE.block.get().defaultBlockState(), p))
+            set.stairs=REGISTRATE.block(color + name + "_stairs", p -> ReinforcedBlocks.stair(rebar, TFMGBlocks.CONCRETE.block.get().defaultBlockState(), p))
                     .initialProperties(() -> Blocks.STONE)
-                    .properties(p -> p.strength(rebar ? 12f : 3.5f, rebar ? 1200f : 3.5f))
+                    .properties(p -> p.strength(destroyTime, blastResistance))
                     .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
                     .transform(pickaxeOnly())
                     .loot(concreteLoot())
@@ -422,9 +426,9 @@ public class TFMGBuilderTransformers {
 
 
 
-            set.slab=REGISTRATE.block(color + name + "_slab", SlabBlock::new)
+            set.slab=REGISTRATE.block(color + name + "_slab", p -> ReinforcedBlocks.slab(rebar, p))
                     .initialProperties(() -> Blocks.STONE)
-                    .properties(p -> p.strength(rebar ? 12f : 3.5f, rebar ? 1200f : 3.5f))
+                    .properties(p -> p.strength(destroyTime, blastResistance))
                     .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
                     .transform(pickaxeOnly())
                     .loot(concreteLoot())
