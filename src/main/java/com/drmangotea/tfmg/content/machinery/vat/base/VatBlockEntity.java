@@ -152,29 +152,17 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
         event.registerBlockEntity(
                 Capabilities.FluidHandler.BLOCK,
                 TFMGBlockEntities.CHEMICAL_VAT.get(),
-                (be, context) -> {
-                    if (be.fluidCapability == null)
-                        be.refreshCapability();
-                    return be.fluidCapability;
-                }
+                (be, context) -> be.getNewFluidCapability()
         );
         event.registerBlockEntity(
                 Capabilities.ItemHandler.BLOCK,
                 TFMGBlockEntities.CHEMICAL_VAT.get(),
-                (be, context) -> {
-                    if (be.itemCapability == null)
-                        be.refreshCapability();
-                    return be.itemCapability;
-                }
+                (be, context) -> be.getNewItemCapability()
         );
         event.registerBlockEntity(
                 TFMGCapabilities.PressureStorage.BLOCK,
                 TFMGBlockEntities.CHEMICAL_VAT.get(),
-                (be, context) -> {
-                    if (be.pressureCapability == null)
-                        be.refreshCapability();
-                    return be.pressureCapability;
-                }
+                (be, context) -> be.getNewPressureCapability()
         );
     }
 
