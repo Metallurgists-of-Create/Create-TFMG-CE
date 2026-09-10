@@ -109,6 +109,10 @@ import com.drmangotea.tfmg.content.machinery.vat.freezer.FreezerBlockEntity;
 import com.drmangotea.tfmg.content.machinery.vat.industrial_mixer.IndustrialMixerBlockEntity;
 import com.drmangotea.tfmg.content.machinery.vat.industrial_mixer.IndustrialMixerRenderer;
 import com.drmangotea.tfmg.content.machinery.vat.industrial_mixer.IndustrialMixerVisual;
+import com.drmangotea.tfmg.content.machinery.vat.industrial_rotor.IndustrialRotorBlock;
+import com.drmangotea.tfmg.content.machinery.vat.industrial_rotor.IndustrialRotorBlockEntity;
+import com.drmangotea.tfmg.content.machinery.vat.industrial_rotor.IndustrialRotorRenderer;
+import com.drmangotea.tfmg.content.machinery.vat.industrial_rotor.IndustrialRotorVisual;
 import com.simibubi.create.AllPartialModels;
 import com.simibubi.create.content.decoration.slidingDoor.SlidingDoorBlockEntity;
 import com.simibubi.create.content.fluids.pipes.FluidPipeBlockEntity;
@@ -350,6 +354,12 @@ public class TFMGBlockEntities {
             .visual(() -> IndustrialMixerVisual::new, true)
             .renderer(() -> IndustrialMixerRenderer::new)
             .validBlocks(TFMGBlocks.INDUSTRIAL_MIXER)
+            .register();
+    public static final BlockEntityEntry<IndustrialRotorBlockEntity> INDUSTRIAL_ROTOR = REGISTRATE
+            .blockEntity("industrial_rotor", IndustrialRotorBlockEntity::new)
+            .visual(() -> IndustrialRotorVisual::new, true)
+            .renderer(() -> IndustrialRotorRenderer::new)
+            .validBlocks(TFMGBlocks.INDUSTRIAL_ROTOR)
             .register();
     public static final BlockEntityEntry<ElectrodeHolderBlockEntity> ELECTRODE_HOLDER = REGISTRATE
             .blockEntity("electrode_holder", ElectrodeHolderBlockEntity::new)

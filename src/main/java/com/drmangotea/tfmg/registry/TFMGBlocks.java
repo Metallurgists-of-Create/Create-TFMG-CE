@@ -118,6 +118,7 @@ import com.drmangotea.tfmg.content.machinery.vat.compressor.CompressorBlock;
 import com.drmangotea.tfmg.content.machinery.vat.electrode_holder.ElectrodeHolderBlock;
 import com.drmangotea.tfmg.content.machinery.vat.freezer.FreezerBlock;
 import com.drmangotea.tfmg.content.machinery.vat.industrial_mixer.IndustrialMixerBlock;
+import com.drmangotea.tfmg.content.machinery.vat.industrial_rotor.IndustrialRotorBlock;
 import com.simibubi.create.AllTags;
 import com.simibubi.create.api.stress.BlockStressValues;
 import com.simibubi.create.content.contraptions.bearing.StabilizedBearingMovementBehaviour;
@@ -490,6 +491,15 @@ public class TFMGBlocks {
             .item()
             .transform(customItemModel())
             .register();
+     public static final BlockEntry<IndustrialRotorBlock> INDUSTRIAL_ROTOR = REGISTRATE.block("industrial_rotor", IndustrialRotorBlock::new)
+             .initialProperties(SharedProperties::softMetal)
+             .transform(pickaxeOnly())
+             .properties(BlockBehaviour.Properties::noOcclusion)
+             .blockstate(BlockStateGen.horizontalBlockProvider(true))
+             .transform(TFMGStress.setImpact(3))
+             .item()
+             .transform(customItemModel())
+             .register();
     public static final BlockEntry<ElectrodeHolderBlock> ELECTRODE_HOLDER = REGISTRATE.block("electrode_holder", ElectrodeHolderBlock::new)
             .initialProperties(SharedProperties::softMetal)
             .transform(pickaxeOnly())
