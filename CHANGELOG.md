@@ -55,15 +55,14 @@ Contributors:<br>
 ### API Changes:
 - Created VAT operation registry.
 - Marked `MachineConfig$polarizerItemChargingRate` as marked for removal.
-- TFMGUtils changes
+- `TFMGUtils` changes
   - deprecations:
     - `createStorageTooltip (BlockEntity, List<Component>)`
     - `createFluidTooltip (BlockEntity, List<Component>)`
     - `createItemTooltip (BlockEntity, List<Component>)`
-  - Replaced by tooltip generators not dependant on a capability lookup:
+  - Replaced by tooltip generators not dependent on a capability lookup:
     - `createFluidTooltip (List<Component>, IFluidHanlder...)`
     - `createItemTooltip (List<Component>, IItemHandler)`
-  -
 - Created `TFMGClientConfig`
   - Created `UIConfig`.
 - Vat:
@@ -76,6 +75,7 @@ Contributors:<br>
   - Fixed bug where recipe would get set to `null` causing recipes to take longer.
   - JEI rendering for Vat Operations, Vat Operation Tooltips & Vat Types is now handled through the `VatCategoryEvent` client event.
   - `drawVatTypes` & `drawSprites` in `ChemicalVatCategory` are now deprecated for removal.
+  - Pressure, Item, and Fluid capabilities point to the controller tank contents
 - Electricity:
   - Removed `getPos()[long]` in `IElectric` in favour of `getPos()[BlockPos]`.
 - Mixin `PipeAttachmentModelMixin#gatherModelData` no longer uses `@Overwrite`.

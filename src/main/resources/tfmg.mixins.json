@@ -18,8 +18,7 @@
     "accessor.SlidingDoorBlockEntityAccessor",
     "accessor.TankSegmentAccessor"
   ],
-  "client": [
-  ],
+  "client": [],
   "injectors": {
     "defaultRequire": 1
   }
