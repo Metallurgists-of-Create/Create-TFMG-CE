@@ -1,7 +1,10 @@
 name: Build
 
 on:
+  workflow_run:
+    branches: ["1.21.1"]
   push:
+    branches: ["1.21.1"]
     paths:
       - 'src/**'
       - 'build.gradle.kts'
