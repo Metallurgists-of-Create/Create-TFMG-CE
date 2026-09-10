@@ -262,7 +262,7 @@ public class ChemicalVatCategory extends CreateRecipeCategory<VatMachineRecipe> 
     }
 
     /**
-     * @deprecated Use {@link VatCategoryEvent#addDrawableVatType(VatTypeEntry, DrawableVatType)}  instead
+     * @deprecated Use {@link VatCategoryEvent#addDrawableVatType(VatType, DrawableVatType)} (VatTypeEntry, DrawableVatType)}  instead
      */
     @Deprecated(forRemoval = true, since = "1.2.5")
     private void drawVatTypes(List<ResourceLocation> allowedVatTypes, GuiGraphics graphics) {}
