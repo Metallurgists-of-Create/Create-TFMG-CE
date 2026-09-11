@@ -56,13 +56,17 @@ Contributors:<br>
 - Created VAT operation registry.
 - Marked `MachineConfig$polarizerItemChargingRate` as marked for removal.
 - `TFMGUtils` changes
-  - deprecations:
-    - `createStorageTooltip (BlockEntity, List<Component>)`
-    - `createFluidTooltip (BlockEntity, List<Component>)`
-    - `createItemTooltip (BlockEntity, List<Component>)`
-  - Replaced by tooltip generators not dependent on a capability lookup:
-    - `createFluidTooltip (List<Component>, IFluidHanlder...)`
-    - `createItemTooltip (List<Component>, IItemHandler)`
+  - Deprecated fluid handlers - use `ForceableFluidTank` instead.
+      - `drainFilteredTank (SmartFluidTank, int)`
+      - `drainFilteredTank (SmartFluidTank, FluidStack)`
+  - Tooltips
+    - Now deprecated:
+      - `createStorageTooltip (BlockEntity, List<Component>)`
+      - `createFluidTooltip (BlockEntity, List<Component>)`
+      - `createItemTooltip (BlockEntity, List<Component>)`
+    - Replaced by tooltip generators not dependent on a capability lookup:
+      - `createFluidTooltip (List<Component>, IFluidHanlder...)`
+      - `createItemTooltip (List<Component>, IItemHandler)`
 - Created `TFMGClientConfig`
   - Created `UIConfig`.
 - Vat:

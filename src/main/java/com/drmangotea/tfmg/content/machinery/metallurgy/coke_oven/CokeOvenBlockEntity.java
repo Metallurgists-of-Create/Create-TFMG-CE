@@ -11,6 +11,7 @@ import com.drmangotea.tfmg.registry.TFMGRecipeTypes;
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
+import com.simibubi.create.foundation.fluid.CombinedTankWrapper;
 import com.simibubi.create.foundation.item.ItemHelper;
 import com.simibubi.create.foundation.item.SmartInventory;
 import net.createmod.catnip.animation.LerpedFloat;
@@ -37,10 +38,9 @@ import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
-import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
-import net.neoforged.neoforge.items.IItemHandlerModifiable;
 import net.neoforged.neoforge.items.wrapper.RecipeWrapper;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 import static net.minecraft.world.level.block.HorizontalDirectionalBlock.FACING;
@@ -48,11 +48,9 @@ import static net.minecraft.world.level.block.HorizontalDirectionalBlock.FACING;
 public class CokeOvenBlockEntity extends SmartBlockEntity implements IHaveGoggleInformation, Clearable {
 
     public SmartInventory inventory;
-    public FluidTank primaryTank;
-    public FluidTank secondaryTank;
-    protected IFluidHandler primaryFluidCapability;
-    protected IFluidHandler secondaryFluidCapability;
-    public IItemHandlerModifiable itemCapability;
+    public ForceableFluidTank
+		primaryTank,
+		secondaryTank;
     public LerpedFloat doorAngle = LerpedFloat.angular();
     public boolean createNextTick;
     public BlockPos controller = getBlockPos();
@@ -73,16 +71,13 @@ public class CokeOvenBlockEntity extends SmartBlockEntity implements IHaveGoggle
                 .whenContentsChanged(i->this.onContentsChanged());
         primaryTank = new ForceableFluidTank(8000, this::onFluidChanged).blockInsertion();
         secondaryTank = new ForceableFluidTank(8000, this::onFluidChanged).blockInsertion();
-        itemCapability = inventory;
-        primaryFluidCapability =  primaryTank;
-        secondaryFluidCapability = secondaryTank;
         createNextTick = true;
         this.quickCheck = RecipeManager.createCheck(TFMGRecipeTypes.COKING.getType());
         updateCapability = false;
         refreshCapability();
     }
 
-    public void onContentsChanged(){
+    public void onContentsChanged() {
         if(!inventory.isEmpty() && timer == 0){
             executeRecipe();
         }
@@ -118,17 +113,15 @@ public class CokeOvenBlockEntity extends SmartBlockEntity implements IHaveGoggle
         tickRecipe();
 
         CokeOvenBlockEntity controllerOven = getController();
-        if (controllerOven != null) {
-            if(level.isClientSide && controllerOven.totalTime != 0) {
-                boolean timeCheck = controllerOven.timer < controllerOven.totalTime && controllerOven.timer > (controllerOven.totalTime * 0.95);
-                doorAngle.chase(timeCheck || forceOpen ? 90 : 0, 0.1f, LerpedFloat.Chaser.EXP);
-                doorAngle.tickChaser();
-                if(!forceOpen)
-                    manageDoors(timeCheck);
-            }
-        }
-
-        if(createNextTick){
+		if (level.isClientSide && controllerOven.totalTime != 0) {
+			boolean timeCheck = controllerOven.timer < controllerOven.totalTime && controllerOven.timer > (controllerOven.totalTime * 0.95);
+			doorAngle.chase(timeCheck || forceOpen ? 90 : 0, 0.1f, LerpedFloat.Chaser.EXP);
+			doorAngle.tickChaser();
+			if (!forceOpen)
+				manageDoors(timeCheck);
+		}
+		
+		if(createNextTick){
             createMultiblock();
             createNextTick = false;
         }
@@ -151,7 +144,7 @@ public class CokeOvenBlockEntity extends SmartBlockEntity implements IHaveGoggle
             recipeholder = null;
         }
 
-        if(recipeholder == null) {
+        if (recipeholder == null) {
             totalTime = -1;
             timer = 0;
             return;
@@ -159,12 +152,12 @@ public class CokeOvenBlockEntity extends SmartBlockEntity implements IHaveGoggle
 
         CokingRecipe recipe = recipeholder.value();
 
-        if(timer >= totalTime) {
+        if (timer >= totalTime) {
             totalTime = -1;
             timer = 0;
             inventory.getItem(0).shrink(recipe.getIngredients().getFirst().getItems()[0].getCount());
 
-            Direction direction =  getBlockState().getValue(FACING);
+            Direction direction = getBlockState().getValue(FACING);
 
             Vec3 dropVec = VecHelper.getCenterOf(worldPosition.relative(direction)).add(0,0.4,0);
             ItemEntity dropped = new ItemEntity(level, dropVec.x, dropVec.y, dropVec.z, recipe.getResultItem(level.registryAccess()).copy());
@@ -202,7 +195,6 @@ public class CokeOvenBlockEntity extends SmartBlockEntity implements IHaveGoggle
                 .forGoggles(tooltip);
 
         CokeOvenBlockEntity controllerOven = getController();
-		if (controllerOven == null) return false;
 		
 		double progress = ((double) controllerOven.timer / controllerOven.totalTime) * 100;
 		if (controllerOven.totalTime == -1 || controllerOven.timer == 0)
@@ -212,8 +204,7 @@ public class CokeOvenBlockEntity extends SmartBlockEntity implements IHaveGoggle
 					.style(ChatFormatting.GOLD)
 					.forGoggles(tooltip);
 		
-		TFMGUtils.createFluidTooltip(tooltip, controllerOven.secondaryFluidCapability, controllerOven.primaryFluidCapability);
-		//TFMGUtils.createItemTooltip(this, tooltip);
+		TFMGUtils.createFluidTooltip(tooltip, controllerOven.secondaryTank, controllerOven.primaryTank);
 		TFMGUtils.createItemTooltip(tooltip, controllerOven.inventory);
         return true;
     }
@@ -233,7 +224,7 @@ public class CokeOvenBlockEntity extends SmartBlockEntity implements IHaveGoggle
         return controller == getBlockPos();
     }
 
-    public void createMultiblock(){
+    public void createMultiblock() {
         if(level == null)
             return;
         int maxSize = TFMGConfigs.common().machines.cokeOvenMaxSize.get();
@@ -298,7 +289,7 @@ public class CokeOvenBlockEntity extends SmartBlockEntity implements IHaveGoggle
         createNextTick = true;
         updateOvenBlocks();
         if (level instanceof ServerLevel serverLevel)
-           CatnipServices.NETWORK.sendToClientsTrackingChunk(serverLevel, new ChunkPos(getBlockPos()),new CokeOvenPacket(getBlockPos()));
+           CatnipServices.NETWORK.sendToClientsTrackingChunk(serverLevel, new ChunkPos(getBlockPos()), new CokeOvenPacket(getBlockPos()));
     }
 
     @Override
@@ -325,11 +316,10 @@ public class CokeOvenBlockEntity extends SmartBlockEntity implements IHaveGoggle
         }
     }
 
-    public CokeOvenBlockEntity getController() {
-        if(level == null)
-            return null;
+    @Nonnull
+	public CokeOvenBlockEntity getController() {
         CokeOvenBlockEntity cokeOven;
-        if(level.getBlockEntity(controller) instanceof CokeOvenBlockEntity controllerOven){
+        if(level != null && level.getBlockEntity(controller) instanceof CokeOvenBlockEntity controllerOven){
             cokeOven = controllerOven;
         } else {
             controller = getBlockPos();
@@ -341,9 +331,6 @@ public class CokeOvenBlockEntity extends SmartBlockEntity implements IHaveGoggle
     private void refreshCapability() {
         if(level == null)
             return;
-        primaryFluidCapability = getController().primaryTank;
-        secondaryFluidCapability = getController().secondaryTank;
-        itemCapability = getController().inventory;
         invalidateCapabilities();
     }
 
@@ -352,14 +339,24 @@ public class CokeOvenBlockEntity extends SmartBlockEntity implements IHaveGoggle
 
     public static void registerCapabilities(RegisterCapabilitiesEvent event) {
         event.registerBlockEntity(
-                Capabilities.FluidHandler.BLOCK,
-                TFMGBlockEntities.COKE_OVEN.get(),
-                (be, context) -> context == Direction.UP ? be.secondaryFluidCapability : be.primaryFluidCapability
+			Capabilities.FluidHandler.BLOCK,
+			TFMGBlockEntities.COKE_OVEN.get(),
+			(be, dir) -> {
+				be = be.getController();
+				
+				if (dir == null) return new CombinedTankWrapper(be.primaryTank, be.secondaryTank);
+				if (dir == Direction.UP)
+					return be.secondaryTank;
+				return be.primaryTank;
+			}
         );
         event.registerBlockEntity(
-                Capabilities.ItemHandler.BLOCK,
-                TFMGBlockEntities.COKE_OVEN.get(),
-                (be, context) -> be.itemCapability
+			Capabilities.ItemHandler.BLOCK,
+			TFMGBlockEntities.COKE_OVEN.get(),
+			(be, dir) -> {
+				be = be.getController();
+				return be.inventory;
+			}
         );
     }
 
