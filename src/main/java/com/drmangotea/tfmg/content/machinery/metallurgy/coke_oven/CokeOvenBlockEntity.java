@@ -31,6 +31,7 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
@@ -51,6 +52,7 @@ public class CokeOvenBlockEntity extends SmartBlockEntity implements IHaveGoggle
     public ForceableFluidTank
 		primaryTank,
 		secondaryTank;
+	public IFluidHandler fluidCapability;
     public LerpedFloat doorAngle = LerpedFloat.angular();
     public boolean createNextTick;
     public BlockPos controller = getBlockPos();
@@ -104,8 +106,6 @@ public class CokeOvenBlockEntity extends SmartBlockEntity implements IHaveGoggle
         }
     }
 
-
-
     @Override
     public void tick() {
         super.tick();
@@ -121,7 +121,7 @@ public class CokeOvenBlockEntity extends SmartBlockEntity implements IHaveGoggle
 				manageDoors(timeCheck);
 		}
 		
-		if(createNextTick){
+		if (createNextTick) {
             createMultiblock();
             createNextTick = false;
         }
@@ -132,9 +132,7 @@ public class CokeOvenBlockEntity extends SmartBlockEntity implements IHaveGoggle
     }
 
     public void tickRecipe() {
-        if(level == null)
-            return;
-        if(inventory.isEmpty() || totalTime == 0)
+        if (level == null || inventory.isEmpty() || totalTime == 0 || !isController())
             return;
 
         RecipeHolder<CokingRecipe> recipeholder;
@@ -172,9 +170,9 @@ public class CokeOvenBlockEntity extends SmartBlockEntity implements IHaveGoggle
             onContentsChanged();
         }
 
-        if(timer <= totalTime && primaryTank.getSpace() != 0 && secondaryTank.getSpace() != 0){
-           primaryTank.fill(recipe.getPrimaryResult(), IFluidHandler.FluidAction.EXECUTE);
-           secondaryTank.fill(recipe.getSecondaryResult(), IFluidHandler.FluidAction.EXECUTE);
+        if (timer <= totalTime && primaryTank.getSpace() != 0 && secondaryTank.getSpace() != 0) {
+           primaryTank.forceFill(recipe.getPrimaryResult(), IFluidHandler.FluidAction.EXECUTE);
+           secondaryTank.forceFill(recipe.getSecondaryResult(), IFluidHandler.FluidAction.EXECUTE);
            timer++;
         }
     }
@@ -229,63 +227,70 @@ public class CokeOvenBlockEntity extends SmartBlockEntity implements IHaveGoggle
             return;
         int maxSize = TFMGConfigs.common().machines.cokeOvenMaxSize.get();
         Direction facing = getBlockState().getValue(FACING);
-        if(level.getBlockState(getBlockPos().relative(facing)).is(TFMGBlocks.COKE_OVEN.get())||level.getBlockState(getBlockPos().below()).is(TFMGBlocks.COKE_OVEN.get()))
+		BlockPos basePos = getBlockPos();
+        if(isOven(basePos.relative(facing)) || isOven(basePos.below()))
             return;
-        int size = 1;
-            for(int i = 1;i<=maxSize;i++){
-                boolean cantBuildMultiblock = false;
-                for(BlockPos pos : BlockPos.betweenClosed(getBlockPos(),getBlockPos().above(i).relative(facing.getOpposite(),i))) {
-                    if(!level.getBlockState(pos).is(TFMGBlocks.COKE_OVEN.get())){
-                        cantBuildMultiblock = true;
-                    } else if(level.getBlockState(pos).is(TFMGBlocks.COKE_OVEN.get()) &&level.getBlockState(pos).getValue(FACING) != facing){
-                        cantBuildMultiblock = true;
-                    }
-                }
-                if(cantBuildMultiblock)
-                    break;
-                size++;
-            }
-        for(BlockPos pos : BlockPos.betweenClosed(getBlockPos(),getBlockPos().above(size-1).relative(facing.getOpposite(),size-1))) {
-            if(level.getBlockEntity(pos) instanceof CokeOvenBlockEntity be&&(!level.getBlockState(getBlockPos().relative(facing)).is(TFMGBlocks.COKE_OVEN.get())&&!level.getBlockState(getBlockPos().below()).is(TFMGBlocks.COKE_OVEN.get()))){
-
-                be.controller = getBlockPos();
+		
+		//reset existing multiblocks
+		for (BlockPos pos : getRange(basePos, facing, this.size-1)) {
+			if (level.getBlockEntity(pos) instanceof CokeOvenBlockEntity be && be.controller!=be.getBlockPos()) {
+				be.controller = be.getBlockPos();
+				be.refreshCapability();
+				be.forceOpen = false;
+				be.doorAngle.setValue(0);
+				setControllerState(level, be.getBlockPos(), CokeOvenBlock.ControllerType.CASUAL);
+			}
+		}
+		
+		//get new size
+		int size = 1;
+		SizeLoop:
+		for (int i = 1; i <= maxSize; i++) {
+			for(BlockPos pos : getRange(basePos, facing, i)) {
+				if (!isOven(pos)) break SizeLoop;
+				if (level.getBlockState(pos).getValue(FACING) != facing)
+					break SizeLoop;
+			}
+			size++;
+		}
+  
+		//apply new size
+		for(BlockPos pos : getRange(basePos, facing, size - 1)) {
+			if(level.getBlockEntity(pos) instanceof CokeOvenBlockEntity be){
+                be.controller = basePos;
                 be.refreshCapability();
             }
         }
-        if(!level.getBlockState(getBlockPos().relative(facing)).is(TFMGBlocks.COKE_OVEN.get())&&!level.getBlockState(getBlockPos().below()).is(TFMGBlocks.COKE_OVEN.get()))
-            setBlockStates(size);
-        for(BlockPos pos : BlockPos.betweenClosed(getBlockPos(), getBlockPos().above(this.size-1).relative(facing.getOpposite(),this.size-1))){
-            if(level.getBlockEntity(pos) instanceof CokeOvenBlockEntity be){
-                if(Math.abs(getBlockPos().getX()-be.getBlockPos().getX())>=size || Math.abs(getBlockPos().getY()-be.getBlockPos().getY())>=size || Math.abs(getBlockPos().getZ()-be.getBlockPos().getZ())>=size)
-                    if (be.controller == getBlockPos()||be.controller!=be.getBlockPos()) {
-                        be.controller = be.getBlockPos();
-                        be.refreshCapability();
-                        be.forceOpen = false;
-                        be.doorAngle.setValue(0);
-                        level.setBlock(be.getBlockPos(), getBlockState().setValue(CokeOvenBlock.CONTROLLER_TYPE ,CokeOvenBlock.ControllerType.CASUAL), 2);
-                    }
-            }
-        }
-        this.size = size;
-    }
-
-    public void setBlockStates(int size) {
-        if(level == null)
-            return;
-        if(size > 1) {
-            level.setBlock(getBlockPos(), getBlockState().setValue(CokeOvenBlock.CONTROLLER_TYPE ,CokeOvenBlock.ControllerType.BOTTOM_ON), 2);
-            level.setBlock(getBlockPos().above(size-1), getBlockState().setValue(CokeOvenBlock.CONTROLLER_TYPE ,CokeOvenBlock.ControllerType.TOP_ON), 2);
-        } else level.setBlock(getBlockPos(), getBlockState().setValue(CokeOvenBlock.CONTROLLER_TYPE ,CokeOvenBlock.ControllerType.CASUAL), 2);
-
-        for(int i = 0; i < size; i++) {
-            BlockPos pos = getBlockPos().above(i);
-            if (i > 0 && i != size - 1) {
-                level.setBlock(pos, getBlockState().setValue(CokeOvenBlock.CONTROLLER_TYPE, CokeOvenBlock.ControllerType.MIDDLE_ON), 2);
-            }
-        }
+		
+		//set door blockstates
+		if (size > 1) {
+			setControllerState(level, basePos, CokeOvenBlock.ControllerType.BOTTOM_ON);
+			setControllerState(level, basePos.above(size - 1), CokeOvenBlock.ControllerType.TOP_ON);
+			for (int i = 1; i < size - 1; i++) {
+				setControllerState(level, basePos.above(i), CokeOvenBlock.ControllerType.MIDDLE_ON);
+			}
+		} else {
+			setControllerState(level, basePos, CokeOvenBlock.ControllerType.CASUAL);
+		}
+		
+		this.size = size;
     }
 	
-    public void onPlaced(){
+	boolean isOven (BlockPos pos) {
+		assert level != null;
+		return level.getBlockState(pos).is(TFMGBlocks.COKE_OVEN.get());
+	}
+	
+	Iterable<BlockPos> getRange(BlockPos pos, Direction facing, int size) {
+		return BlockPos.betweenClosed(pos, pos.above(size).relative(facing.getOpposite(),size));
+	}
+	
+	void setControllerState (Level level, BlockPos pos, CokeOvenBlock.ControllerType type) {
+		BlockState state = level.getBlockState(pos).setValue(CokeOvenBlock.CONTROLLER_TYPE, type);
+		level.setBlock(pos, state, 2);
+	}
+	
+    public void onPlaced() {
         createNextTick = true;
         updateOvenBlocks();
         if (level instanceof ServerLevel serverLevel)
@@ -309,8 +314,8 @@ public class CokeOvenBlockEntity extends SmartBlockEntity implements IHaveGoggle
         if (level == null) return;
         int maxSize = TFMGConfigs.common().machines.cokeOvenMaxSize.get();
         Direction facing = getBlockState().getValue(FACING);
-        for(BlockPos pos : BlockPos.betweenClosed(getBlockPos(), getBlockPos().below(maxSize).relative(facing.getOpposite(), maxSize))){
-            if(level.getBlockEntity(pos) instanceof CokeOvenBlockEntity be){
+        for(BlockPos pos : getRange(getBlockPos(), facing, maxSize)) {
+            if (level.getBlockEntity(pos) instanceof CokeOvenBlockEntity be) {
                 be.createMultiblock();
             }
         }
@@ -319,7 +324,7 @@ public class CokeOvenBlockEntity extends SmartBlockEntity implements IHaveGoggle
     @Nonnull
 	public CokeOvenBlockEntity getController() {
         CokeOvenBlockEntity cokeOven;
-        if(level != null && level.getBlockEntity(controller) instanceof CokeOvenBlockEntity controllerOven){
+        if (level != null && level.getBlockEntity(controller) instanceof CokeOvenBlockEntity controllerOven) {
             cokeOven = controllerOven;
         } else {
             controller = getBlockPos();
@@ -331,6 +336,7 @@ public class CokeOvenBlockEntity extends SmartBlockEntity implements IHaveGoggle
     private void refreshCapability() {
         if(level == null)
             return;
+		fluidCapability = new CombinedTankWrapper(primaryTank, secondaryTank);
         invalidateCapabilities();
     }
 
@@ -344,7 +350,7 @@ public class CokeOvenBlockEntity extends SmartBlockEntity implements IHaveGoggle
 			(be, dir) -> {
 				be = be.getController();
 				
-				if (dir == null) return new CombinedTankWrapper(be.primaryTank, be.secondaryTank);
+				if (dir == null) return be.fluidCapability;
 				if (dir == Direction.UP)
 					return be.secondaryTank;
 				return be.primaryTank;

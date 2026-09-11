@@ -16,6 +16,7 @@ Contributors:<br>
 ### Changes:
 - Coke Oven:
   - Now hides progress when no recipe is being processed.
+- Exhausts & Smokestacks now accept any fluid with the new tag `tfmg:exhaustable` 
 - Ponders:
   - Added ponders for the following:
     - Regular Engine Assembly
@@ -46,11 +47,11 @@ Contributors:<br>
 - Multimeters are no longer incompatible with Goggles
 - Added support for `Create: Liquid Fuels Reburned`
 - World Generation:
-  - "tfmg:striated_ores_overworld" has been removed.
-  - "tfmg:striated_ores_nether" has been removed.
+  - `tfmg:striated_ores_overworld` has been removed.
+  - `tfmg:striated_ores_nether` has been removed.
   - Split striated ore features into individual features.
   - All features now have a config-toggle for enabling/disabling.
-  - Added "tfmg:config_boolean" placement modifier.
+  - Added `tfmg:config_boolean` placement modifier.
 
 ### API Changes:
 - Created VAT operation registry.
