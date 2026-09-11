@@ -7,7 +7,6 @@ import com.drmangotea.tfmg.content.machinery.vat.base.registry.functions.Drawabl
 import com.drmangotea.tfmg.content.machinery.vat.base.registry.operations.VatCategoryEvent;
 import com.drmangotea.tfmg.content.machinery.vat.base.registry.operations.VatOperation;
 import com.drmangotea.tfmg.content.machinery.vat.base.registry.types.VatType;
-import com.drmangotea.tfmg.content.machinery.vat.base.registry.types.VatTypeEntry;
 import com.drmangotea.tfmg.recipes.VatMachineRecipe;
 import com.drmangotea.tfmg.recipes.VatRecipeParams;
 import com.drmangotea.tfmg.registry.TFMGGuiTextures;
