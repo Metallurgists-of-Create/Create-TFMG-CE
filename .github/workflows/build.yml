@@ -1,8 +1,6 @@
 name: Build
 
 on:
-  workflow_run:
-    branches: ["1.21.1"]
   push:
     branches: ["1.21.1"]
     paths:
@@ -10,7 +8,6 @@ on:
       - 'build.gradle.kts'
       - 'gradle.properties'
       - 'gradle/**'
-
 
 jobs:
   build:
