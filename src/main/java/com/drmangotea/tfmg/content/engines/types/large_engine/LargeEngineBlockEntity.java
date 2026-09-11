@@ -52,8 +52,8 @@ public class LargeEngineBlockEntity extends AbstractEngineBlockEntity {
         super(type, pos, state);
         target = new WeakReference<>(null);
         exhaustTank = new EngineFluidTank(2000, true, false, f->tankUpdated(f,false));
-        fuelTank = new EngineFluidTank(2000, false, true, f->tankUpdated(f,true), TFMGTags.Fluids.AIR.tag);
-        airTank = new EngineFluidTank(1000, false, true, TFMGTags.Fluids.AIR.tag, f->tankUpdated(f,true));
+        fuelTank = new EngineFluidTank(2000, false, true, f->tankUpdated(f,true), f -> !f.is(TFMGTags.Fluids.AIR.tag));
+        airTank = new EngineFluidTank(1000, false, true, f->tankUpdated(f,true), f -> f.is(TFMGTags.Fluids.AIR.tag));
         fluidCapability = new CombinedTankWrapper(exhaustTank,fuelTank,airTank);
     }
 

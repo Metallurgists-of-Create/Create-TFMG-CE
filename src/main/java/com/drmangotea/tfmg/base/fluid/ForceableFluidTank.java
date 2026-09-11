@@ -15,7 +15,7 @@ import java.util.function.Predicate;
  */
 @MethodsReturnNonnullByDefault @ParametersAreNonnullByDefault
 public class ForceableFluidTank extends SmartFluidTank {
-    private boolean extractionAllowed = true, insertionAllowed = true;
+    protected boolean extractionAllowed = true, insertionAllowed = true;
 
     public ForceableFluidTank(int capacity, Consumer<FluidStack> updateCallback) {
         super(capacity, updateCallback);
