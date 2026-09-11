@@ -79,7 +79,8 @@ public class BlastFurnaceHatchBlockEntity extends SmartBlockEntity implements IH
 
     @Override
     public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
-        TFMGUtils.createStorageTooltip(this, tooltip);
+		TFMGUtils.createFluidTooltip(tooltip, fluidCapability);
+		TFMGUtils.createItemTooltip(tooltip, itemCapability);
         return true;
     }
 

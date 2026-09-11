@@ -233,7 +233,7 @@ public class LargeEngineBlockEntity extends AbstractEngineBlockEntity {
         if(getShaft() == null || tanksEmpty)
             return false;
         TFMGTexts.header("large_engine").forGoggles(tooltip);
-        TFMGUtils.createFluidTooltip(this, tooltip);
+        TFMGUtils.createFluidTooltip(tooltip, fluidCapability);
 
         return true;
     }

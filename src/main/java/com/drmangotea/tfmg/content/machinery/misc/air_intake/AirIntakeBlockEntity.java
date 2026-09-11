@@ -372,7 +372,7 @@ public class AirIntakeBlockEntity extends KineticBlockEntity implements IWrencha
             TFMGTexts.CommonMachines.minRPM(getMinimumSpeed()).style(ChatFormatting.RED).forGoggles(tooltip);
         }
         TFMGTexts.fluidProduction(getProduction()).style(getProduction() > 0 ? ChatFormatting.AQUA : ChatFormatting.RED).forGoggles(tooltip);
-        TFMGUtils.createFluidTooltip(this, tooltip);
+        TFMGUtils.createFluidTooltip(tooltip, fluidCapability);
         return true;
     }
 
