@@ -51,6 +51,7 @@ Contributors:<br>
   - Split striated ore features into individual features.
   - All features now have a config-toggle for enabling/disabling.
   - Added "tfmg:config_boolean" placement modifier.
+- Created `Industrial Rotor` block
 
 ### API Changes:
 - Created VAT operation registry.
@@ -76,6 +77,10 @@ Contributors:<br>
   - JEI rendering for Vat Operations, Vat Operation Tooltips & Vat Types is now handled through the `VatCategoryEvent` client event.
   - `drawVatTypes` & `drawSprites` in `ChemicalVatCategory` are now deprecated for removal.
   - Pressure, Item, and Fluid capabilities point to the controller tank contents
+  - Made the following methods public:
+    - `getNewFluidCapability()`
+    - `getNewItemCapability()`
+    - `getNewPressureCapability()`
 - Electricity:
   - Removed `getPos()[long]` in `IElectric` in favour of `getPos()[BlockPos]`.
 - Mixin `PipeAttachmentModelMixin#gatherModelData` no longer uses `@Overwrite`.
@@ -87,6 +92,12 @@ Contributors:<br>
   - Data gen can specify amount of energy.
   - Polarizers now have an output inventory.
   - `PolarizerBlockEntity#getItemChargingRate` now uses recipe charge rate.
+- Data Components
+  - Created `ROTOR_MODE`
+- Registries
+  - Created `RotorMode` registries
 
 ### New Translations:
-
+- `item.tfmg.crystal_puller`
+- `block.tfmg.industrial_rotor`
+- `tfmg.goggles.vat.tfmg.crystal_puller`
