@@ -14,8 +14,11 @@ import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 import net.minecraft.client.gui.GuiGraphics;
 
+import javax.annotation.ParametersAreNonnullByDefault;
+
+@ParametersAreNonnullByDefault
 public class PolarizingCategory extends CreateRecipeCategory<PolarizingRecipe> {
-    private Polarizer polarizer = new Polarizer();
+    private final Polarizer polarizer = new Polarizer();
 
     public PolarizingCategory(Info<PolarizingRecipe> info) {
         super(info);

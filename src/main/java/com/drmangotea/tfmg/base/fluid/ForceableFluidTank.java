@@ -15,7 +15,7 @@ import java.util.function.Predicate;
  */
 @MethodsReturnNonnullByDefault @ParametersAreNonnullByDefault
 public class ForceableFluidTank extends SmartFluidTank {
-    private boolean extractionAllowed = true, insertionAllowed = true;
+    protected boolean extractionAllowed = true, insertionAllowed = true;
 
     public ForceableFluidTank(int capacity, Consumer<FluidStack> updateCallback) {
         super(capacity, updateCallback);
@@ -68,15 +68,18 @@ public class ForceableFluidTank extends SmartFluidTank {
         if (!insertionAllowed) return 0;
         return super.fill(resource, action);
     }
-
-    public FluidStack forceDrain(FluidStack resource, FluidAction action) {
+	
+	/**Drain a {@link ForceableFluidTank}, even if {@code extractionAllowed = false}**/
+	public FluidStack forceDrain(FluidStack resource, FluidAction action) {
         return super.drain(resource, action);
     }
-
-    public FluidStack forceDrain(int maxDrain, FluidAction action) {
+	
+	/**Drain a {@link ForceableFluidTank}, even if {@code extractionAllowed = false}**/
+	public FluidStack forceDrain(int maxDrain, FluidAction action) {
         return super.drain(maxDrain, action);
     }
 
+	/**Fill a {@link ForceableFluidTank}, even if {@code insertionAllowed = false}**/
     public int forceFill(FluidStack resource, FluidAction action) {
         return super.fill(resource, action);
     }

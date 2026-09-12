@@ -1,6 +1,5 @@
 package com.drmangotea.tfmg.integration.jei.render;
 
-
 import com.drmangotea.tfmg.registry.TFMGBlocks;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
@@ -64,15 +63,10 @@ public class BlastFurnace extends AnimatedKinetics {
                         .atLocal(-1, -i, -2)
                         .scale(scale)
                         .render(graphics);
-
-
         }
 
         matrixStack.scale(scale, -scale, scale);
         matrixStack.translate(0, -1.8, 0);
         matrixStack.popPose();
     }
-
-
-
 }

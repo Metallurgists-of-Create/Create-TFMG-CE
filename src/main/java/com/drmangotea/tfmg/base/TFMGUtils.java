@@ -288,13 +288,12 @@ public class TFMGUtils {
 		
 		boolean isEmpty = true;
 		for (IFluidHandler handler : handlers) {
-			if (handler == null || handler.getTanks() == 0)
+			if (handler.getTanks() == 0)
 				continue;
 			
 			for (int i = 0; i < handler.getTanks(); i++) {
 				FluidStack fluidStack = handler.getFluidInTank(i);
-				if (fluidStack.isEmpty())
-					continue;
+				if (fluidStack.isEmpty()) continue;
 				
 				CreateLang.fluidName(fluidStack)
 					.style(ChatFormatting.GRAY)
@@ -312,17 +311,19 @@ public class TFMGUtils {
 				
 				isEmpty = false;
 			}
-			
-			CreateLang.translate("gui.goggles.fluid_container.capacity")
-				.add(CreateLang.number(handler.getTankCapacity(0))
-					.add(mb)
-					.style(ChatFormatting.DARK_GREEN))
-				.style(ChatFormatting.GRAY)
-				.forGoggles(tooltip, 1);
 		}
 		
 		if (isEmpty) {
 			tooltip.removeLast();
+			if (handlers.length == 1 && handlers[0].getTanks() == 1) {
+				CreateLang.translate("gui.goggles.fluid_container.capacity")
+					.add(CreateLang.number(handlers[0].getTankCapacity(0))
+						.add(mb)
+						.style(ChatFormatting.DARK_GREEN))
+					.style(ChatFormatting.GRAY)
+					.forGoggles(tooltip, 1);
+				return true;
+			}
 			return false;
 		}
 		
@@ -424,11 +425,15 @@ public class TFMGUtils {
         }
         return TFMGTexts.DECIMAL_FORMAT.format(amount) + "mB";
     }
-
-    public static void drainFilteredTank(SmartFluidTank tank, int amount) {
+	
+	/** Use {@link com.drmangotea.tfmg.base.fluid.ForceableFluidTank#forceDrain(int, IFluidHandler.FluidAction)} instead. **/
+	@Deprecated(since = "1.2.5")
+	public static void drainFilteredTank(SmartFluidTank tank, int amount) {
         tank.setFluid(new FluidStack(tank.getFluid().getFluidHolder(), Math.max(tank.getFluidAmount() - amount, 0)));
     }
-
+	
+	/** Use {@link com.drmangotea.tfmg.base.fluid.ForceableFluidTank#forceFill(FluidStack, IFluidHandler.FluidAction)} instead. **/
+	@Deprecated(since = "1.2.5")
     public static void fillFilteredTank(SmartFluidTank tank, FluidStack resource) {
         if (tank.getFluid().getFluid().isSame(resource.getFluid()) || tank.isEmpty())
             tank.setFluid(new FluidStack(resource.getFluid(), Math.min(tank.getFluidAmount() + resource.getAmount(), tank.getCapacity())));

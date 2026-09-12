@@ -4,7 +4,6 @@ import com.drmangotea.tfmg.content.machinery.vat.base.registry.functions.Drawabl
 import com.drmangotea.tfmg.content.machinery.vat.base.registry.functions.DrawableVatType;
 import com.drmangotea.tfmg.content.machinery.vat.base.registry.functions.VatOperationDescriptor;
 import com.drmangotea.tfmg.content.machinery.vat.base.registry.types.VatType;
-import com.drmangotea.tfmg.content.machinery.vat.base.registry.types.VatTypeEntry;
 import com.drmangotea.tfmg.recipes.VatMachineRecipe;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;

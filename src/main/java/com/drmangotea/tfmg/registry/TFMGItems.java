@@ -156,8 +156,8 @@ public class TFMGItems {
                     .register(),
             CINDERFLOURBLOCK = REGISTRATE.item("cinderflourblock", Item::new).register(),
             NAPALM_POTATO = REGISTRATE.item("napalm_potato", Item::new).register(),
-            MIXER_BLADE = REGISTRATE.item("mixer_blade", Item::new).properties(p -> p.component(TFMGDataComponents.MIXER_MODE, new MixerMode.Stored(TFMGMixerModes.mixing))).register(),
-            CENTRIFUGE = REGISTRATE.item("centrifuge", Item::new).properties(p -> p.component(TFMGDataComponents.MIXER_MODE, new MixerMode.Stored(TFMGMixerModes.centrifuge))).register(),
+            MIXER_BLADE = REGISTRATE.item("mixer_blade", Item::new).properties(p -> p.component(TFMGDataComponents.MIXER_MODE, new MixerMode.Stored(TFMGMixerModes.MIXING))).register(),
+            CENTRIFUGE = REGISTRATE.item("centrifuge", Item::new).properties(p -> p.component(TFMGDataComponents.MIXER_MODE, new MixerMode.Stored(TFMGMixerModes.CENTRIFUGE))).register(),
             CRANKSHAFT = REGISTRATE.item("crankshaft", Item::new)
                     .model((c, p) -> p.withExistingParent(c.getName(), TFMG.asResource("item/crankshaft_model")))
                     .register(),
