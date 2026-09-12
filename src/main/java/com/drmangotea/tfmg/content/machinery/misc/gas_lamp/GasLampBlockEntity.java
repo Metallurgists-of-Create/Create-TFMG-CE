@@ -68,7 +68,7 @@ public class GasLampBlockEntity extends SmartBlockEntity implements IHaveGoggleI
 
     @Override
     public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
-        return TFMGUtils.createFluidTooltip(this, tooltip);
+        return TFMGUtils.createFluidTooltip(tooltip, fluidCapability);
     }
 
     @Override

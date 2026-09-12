@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Optional;
 
 public class TFMGJeiConstants {
-
     @Nullable
     public static RegistryAccess registryAccess() {
         if (Minecraft.getInstance().level == null) {

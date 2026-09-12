@@ -19,6 +19,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.world.item.ItemStack;
 
+import javax.annotation.ParametersAreNonnullByDefault;
+
+@ParametersAreNonnullByDefault
 public class WindingCategory extends CreateRecipeCategory<WindingRecipe> {
     private final WindingMachine windingMachine = new WindingMachine();
 

@@ -471,7 +471,7 @@ public abstract class AbstractSmallEngineBlockEntity extends AbstractEngineBlock
         if (isController() && !nextComponent().isEmpty())
             TFMGLang.text(nextComponent().getItems()[0].getDisplayName().getString()).forGoggles(tooltip);
 
-        TFMGUtils.createFluidTooltip(this, tooltip);
+        TFMGUtils.createFluidTooltip(tooltip, fluidCapability);
 
         return true;
     }

@@ -3,7 +3,6 @@ package com.drmangotea.tfmg.content.machinery.metallurgy.blast_furnace;
 import com.drmangotea.tfmg.base.TFMGUtils;
 import com.drmangotea.tfmg.base.fluid.ForceableFluidTank;
 import com.drmangotea.tfmg.registry.TFMGBlockEntities;
-import com.drmangotea.tfmg.registry.TFMGFluids;
 import com.drmangotea.tfmg.registry.TFMGTags;
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
@@ -79,7 +78,8 @@ public class BlastFurnaceHatchBlockEntity extends SmartBlockEntity implements IH
 
     @Override
     public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
-        TFMGUtils.createStorageTooltip(this, tooltip);
+		TFMGUtils.createFluidTooltip(tooltip, fluidCapability);
+		TFMGUtils.createItemTooltip(tooltip, itemCapability);
         return true;
     }
 

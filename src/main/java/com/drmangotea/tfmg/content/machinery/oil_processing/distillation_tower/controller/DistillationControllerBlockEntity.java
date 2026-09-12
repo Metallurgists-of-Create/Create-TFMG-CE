@@ -217,7 +217,7 @@ public class DistillationControllerBlockEntity extends SmartBlockEntity implemen
         } else
             TFMGTexts.Distillation.tankNotFound().forGoggles(tooltip, 1);
 
-        TFMGUtils.createFluidTooltip(this,tooltip);
+        TFMGUtils.createFluidTooltip(tooltip, fluidCapability);
 
         return true;
     }

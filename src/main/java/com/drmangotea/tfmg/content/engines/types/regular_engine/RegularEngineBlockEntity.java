@@ -397,7 +397,7 @@ public class RegularEngineBlockEntity extends AbstractSmallEngineBlockEntity {
         if(coolingFluid>0){
             TFMGTexts.Engine.coolingFluid(coolingFluid).forGoggles(tooltip);
         }
-        TFMGUtils.createFluidTooltip(this,tooltip);
+        TFMGUtils.createFluidTooltip(tooltip, fluidCapability);
 
         return true;
     }

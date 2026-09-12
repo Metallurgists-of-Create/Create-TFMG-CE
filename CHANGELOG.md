@@ -16,6 +16,7 @@ Contributors:<br>
 ### Changes:
 - Coke Oven:
   - Now hides progress when no recipe is being processed.
+- Exhausts & Smokestacks now accept any fluid with the new tag `tfmg:exhaustable` 
 - Ponders:
   - Added ponders for the following:
     - Regular Engine Assembly
@@ -46,24 +47,27 @@ Contributors:<br>
 - Multimeters are no longer incompatible with Goggles
 - Added support for `Create: Liquid Fuels Reburned`
 - World Generation:
-  - "tfmg:striated_ores_overworld" has been removed.
-  - "tfmg:striated_ores_nether" has been removed.
+  - `tfmg:striated_ores_overworld` has been removed.
+  - `tfmg:striated_ores_nether` has been removed.
   - Split striated ore features into individual features.
   - All features now have a config-toggle for enabling/disabling.
-  - Added "tfmg:config_boolean" placement modifier.
+  - Added `tfmg:config_boolean` placement modifier.
 
 ### API Changes:
 - Created VAT operation registry.
 - Marked `MachineConfig$polarizerItemChargingRate` as marked for removal.
-- TFMGUtils changes
-  - deprecations:
-    - `createStorageTooltip (BlockEntity, List<Component>)`
-    - `createFluidTooltip (BlockEntity, List<Component>)`
-    - `createItemTooltip (BlockEntity, List<Component>)`
-  - Replaced by tooltip generators not dependant on a capability lookup:
-    - `createFluidTooltip (List<Component>, IFluidHanlder...)`
-    - `createItemTooltip (List<Component>, IItemHandler)`
-  -
+- `TFMGUtils` changes
+  - Deprecated fluid handlers - use `ForceableFluidTank` instead.
+      - `drainFilteredTank (SmartFluidTank, int)`
+      - `drainFilteredTank (SmartFluidTank, FluidStack)`
+  - Tooltips
+    - Now deprecated:
+      - `createStorageTooltip (BlockEntity, List<Component>)`
+      - `createFluidTooltip (BlockEntity, List<Component>)`
+      - `createItemTooltip (BlockEntity, List<Component>)`
+    - Replaced by tooltip generators not dependent on a capability lookup:
+      - `createFluidTooltip (List<Component>, IFluidHanlder...)`
+      - `createItemTooltip (List<Component>, IItemHandler)`
 - Created `TFMGClientConfig`
   - Created `UIConfig`.
 - Vat:
@@ -76,6 +80,7 @@ Contributors:<br>
   - Fixed bug where recipe would get set to `null` causing recipes to take longer.
   - JEI rendering for Vat Operations, Vat Operation Tooltips & Vat Types is now handled through the `VatCategoryEvent` client event.
   - `drawVatTypes` & `drawSprites` in `ChemicalVatCategory` are now deprecated for removal.
+  - Pressure, Item, and Fluid capabilities point to the controller tank contents
 - Electricity:
   - Removed `getPos()[long]` in `IElectric` in favour of `getPos()[BlockPos]`.
 - Mixin `PipeAttachmentModelMixin#gatherModelData` no longer uses `@Overwrite`.

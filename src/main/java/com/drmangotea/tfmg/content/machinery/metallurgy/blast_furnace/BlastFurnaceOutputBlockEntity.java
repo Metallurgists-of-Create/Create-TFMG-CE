@@ -131,8 +131,9 @@ public class BlastFurnaceOutputBlockEntity extends SmartBlockEntity implements I
             TFMGTexts.BlastFurnace.timer(timer).forGoggles(tooltip, 1);
         if (multiblock.isReinforced())
             TFMGTexts.BlastFurnace.reinforced().forGoggles(tooltip);
-
-        TFMGUtils.createStorageTooltip(this, tooltip);
+		
+		TFMGUtils.createFluidTooltip(tooltip, fluidCapability);
+		TFMGUtils.createItemTooltip(tooltip, itemCapability);
         return true;
     }
 

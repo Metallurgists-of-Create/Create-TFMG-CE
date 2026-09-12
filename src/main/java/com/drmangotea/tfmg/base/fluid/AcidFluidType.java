@@ -1,7 +1,6 @@
 package com.drmangotea.tfmg.base.fluid;
 
 
-import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.datagen.TFMGDamageSources;
 import com.simibubi.create.AllFluids;
 import com.tterrag.registrate.builders.FluidBuilder;

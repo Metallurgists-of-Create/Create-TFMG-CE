@@ -37,7 +37,7 @@ public class IndustrialMixerBlockEntity extends KineticBlockEntity implements IV
             .whenContentsChanged(this::onInventoryChanged);
     public IItemHandlerModifiable itemCapability;
 
-    public MixerMode mixerMode = TFMGMixerModes.none.get();
+    public MixerMode mixerMode = TFMGMixerModes.NONE.get();
     public int vatSize = 1;
     public int vatHeight = 1;
     public BlockPos vatPos = null;
@@ -63,7 +63,7 @@ public class IndustrialMixerBlockEntity extends KineticBlockEntity implements IV
         sendData();
         setChanged();
         if (inventory.isEmpty()) {
-            this.mixerMode = TFMGMixerModes.none.get();
+            this.mixerMode = TFMGMixerModes.NONE.get();
             this.updateVat = true;
             return;
         }
