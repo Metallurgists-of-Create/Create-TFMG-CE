@@ -1,13 +1,14 @@
 package com.drmangotea.tfmg.content.machinery.misc.air_intake;
 
 import com.drmangotea.tfmg.base.TFMGUtils;
+import com.drmangotea.tfmg.base.fluid.ForceableFluidTank;
 import com.drmangotea.tfmg.base.lang.TFMGTexts;
 import com.drmangotea.tfmg.registry.TFMGBlockEntities;
 import com.drmangotea.tfmg.registry.TFMGFluids;
+import com.drmangotea.tfmg.registry.TFMGTags;
 import com.simibubi.create.content.equipment.wrench.IWrenchable;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.foundation.fluid.FluidHelper;
-import com.simibubi.create.foundation.fluid.SmartFluidTank;
 
 
 import net.createmod.catnip.animation.LerpedFloat;
@@ -26,8 +27,6 @@ import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
-import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
-import org.jetbrains.annotations.NotNull;
 
 
 import java.util.ArrayList;
@@ -50,7 +49,7 @@ public class AirIntakeBlockEntity extends KineticBlockEntity implements IWrencha
     public float angle = 0;
     public LerpedFloat visual_angle = LerpedFloat.angular();
 
-    protected FluidTank tankInventory;
+    protected ForceableFluidTank tankInventory;
     protected IFluidHandler fluidCapability;
 
     protected boolean updateCapability;
@@ -66,7 +65,7 @@ public class AirIntakeBlockEntity extends KineticBlockEntity implements IWrencha
 
     public AirIntakeBlockEntity(BlockEntityType<?> typeIn, BlockPos pos, BlockState state) {
         super(typeIn, pos, state);
-        tankInventory = createInventory();
+        tankInventory = new ForceableFluidTank(8000, this::onFluidStackChanged).blockInsertion().withValidator(fs->fs.is(TFMGTags.Fluids.AIR.tag));
         fluidCapability = tankInventory;
         updateCapability = false;
         refreshCapability();
@@ -104,7 +103,7 @@ public class AirIntakeBlockEntity extends KineticBlockEntity implements IWrencha
 
         if (!level.isClientSide) {
             if (tankInventory.getFluidAmount() + Math.min(getProduction(), tankInventory.getSpace()) <= tankInventory.getCapacity()) {
-                tankInventory.fill(new FluidStack(FluidHelper.convertToStill(TFMGFluids.AIR.get()), getProduction()), IFluidHandler.FluidAction.EXECUTE);
+                tankInventory.forceFill(new FluidStack(FluidHelper.convertToStill(TFMGFluids.AIR.get()), getProduction()), IFluidHandler.FluidAction.EXECUTE);
             }
         }
 
@@ -376,14 +375,7 @@ public class AirIntakeBlockEntity extends KineticBlockEntity implements IWrencha
         return true;
     }
 
-    protected SmartFluidTank createInventory() {
-        return new SmartFluidTank(8000, this::onFluidStackChanged) {
-            @Override
-            public boolean isFluidValid(@NotNull FluidStack stack) {
-                return stack.getFluid().isSame(TFMGFluids.AIR.getSource());
-            }
-        };
-    }
+
 
     protected void onFluidStackChanged(FluidStack newFluidStack) {
         int amount = newFluidStack.getAmount();
