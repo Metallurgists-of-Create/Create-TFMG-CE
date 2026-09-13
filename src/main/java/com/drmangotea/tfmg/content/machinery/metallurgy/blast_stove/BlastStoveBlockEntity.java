@@ -47,7 +47,8 @@ public class BlastStoveBlockEntity extends SmartBlockEntity implements IHaveGogg
 	
 	protected IFluidHandler
 		primaryCapability,
-		secondaryCapability;
+		secondaryCapability,
+		combinedCapability;
 	protected ForceableFluidTank
 		primaryOutputTank,
 		exhaustOutputTank,
@@ -75,6 +76,7 @@ public class BlastStoveBlockEntity extends SmartBlockEntity implements IHaveGogg
         fuelInputTank = new ForceableFluidTank(capacity, this::onFluidStackChanged).blockExtraction();
         primaryCapability = new InputOutputTankWrapper(primaryOutputTank, fuelInputTank);
         secondaryCapability = new InputOutputTankWrapper(exhaustOutputTank, AirInputTank);
+		combinedCapability = new CombinedTankWrapper(primaryCapability, secondaryCapability);
 		updateConnectivity = false;
 		recipe = null;
         updateCapability = false;
@@ -144,8 +146,6 @@ public class BlastStoveBlockEntity extends SmartBlockEntity implements IHaveGogg
                 sendData();
         }
 
-
-
         if (lastKnownPos == null)
             lastKnownPos = getBlockPos();
         else if (!lastKnownPos.equals(worldPosition)) {
@@ -200,8 +200,7 @@ public class BlastStoveBlockEntity extends SmartBlockEntity implements IHaveGogg
 
     @Override
     public boolean isController() {
-        return controller == null || worldPosition.getX() == controller.getX()
-                && worldPosition.getY() == controller.getY() && worldPosition.getZ() == controller.getZ();
+        return controller == null || worldPosition.equals(controller);
     }
 
     @Override
@@ -294,21 +293,18 @@ public class BlastStoveBlockEntity extends SmartBlockEntity implements IHaveGogg
     }
 
     public void refreshCapability() {
-        primaryCapability = handlerForPrimaryCapability();
-        secondaryCapability = handlerForSecondaryCapability();
+		BlastStoveBlockEntity controller = getControllerBE();
+		if (isController() || controller == null) {
+			primaryCapability = new InputOutputTankWrapper(primaryOutputTank, fuelInputTank);
+			secondaryCapability = new InputOutputTankWrapper(exhaustOutputTank, AirInputTank);
+			combinedCapability = new CombinedTankWrapper(primaryCapability, secondaryCapability);
+		} else {
+			controller.updateCapability = true; //controller will refresh next tick
+			primaryCapability = null;
+			secondaryCapability = null;
+			combinedCapability = null;
+		}
         invalidateCapabilities();
-    }
-
-    private IFluidHandler handlerForPrimaryCapability() {
-		if (isController() || getControllerBE() == null)
-			return new InputOutputTankWrapper(primaryOutputTank, fuelInputTank);
-		return getControllerBE().handlerForPrimaryCapability();
-    }
-
-    private IFluidHandler handlerForSecondaryCapability() {
-		if (isController() || getControllerBE() == null)
-			return new InputOutputTankWrapper(exhaustOutputTank, AirInputTank);
-        return getControllerBE().handlerForSecondaryCapability();
     }
 
     @Override
@@ -370,10 +366,11 @@ public class BlastStoveBlockEntity extends SmartBlockEntity implements IHaveGogg
 
     @Override
 	public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
-        if (getControllerBE() == null) { return false; }
+		BlastStoveBlockEntity controller = getControllerBE();
+        if (controller == null) { return false; }
 		
-		IFluidHandler pri = getControllerBE().primaryCapability;
-		IFluidHandler sec = getControllerBE().secondaryCapability;
+		IFluidHandler pri = controller.primaryCapability;
+		IFluidHandler sec = controller.secondaryCapability;
 
         TFMGTexts.header("blast_stove").forGoggles(tooltip);
         tankTooltip(tooltip, "goggles.blast_stove.tank1", sec.getFluidInTank(1), ChatFormatting.DARK_GREEN); //input (air)
@@ -432,13 +429,13 @@ public class BlastStoveBlockEntity extends SmartBlockEntity implements IHaveGogg
                 if (controller == null)
                     return null;
 
-                if (controller.primaryCapability == null || controller.secondaryCapability == null)
+                if (controller.primaryCapability == null || controller.secondaryCapability == null || controller.combinedCapability == null)
                     controller.refreshCapability();
 				
 				if (dir == null)
-					return new CombinedTankWrapper(controller.primaryCapability, controller.secondaryCapability);
+					return controller.combinedCapability;
 				if (dir.getAxis().isVertical())
-                    return controller.primaryCapability;
+					return controller.primaryCapability;
                 if (be.getController().getY() == be.getBlockPos().getY())
                     return controller.secondaryCapability;
 				
@@ -462,15 +459,20 @@ public class BlastStoveBlockEntity extends SmartBlockEntity implements IHaveGogg
 	@Override
 	public void addBehaviours(List<BlockEntityBehaviour> behaviours) { }
 
-    public FluidTank getTank () {
+    //I think these are based on FluidTank methods? But this shouldn't be used
+	@Deprecated(since = "1.2.5")
+	public FluidTank getTank () {
         return primaryOutputTank;
     }
 	
+	@Deprecated(since = "1.2.5")
 	public FluidStack getFluid () {
 		return primaryOutputTank.getFluid().copy();
 	}
 	
 	public static int getCapacityMultiplier() {
+		//should this have its own config?
+		// Also shouldn't capacity scale with size? but maybe that should be in applyFluidTankSize
 		return AllConfigs.server().fluids.fluidTankCapacity.get() * 1000;
 	}
 
