@@ -72,7 +72,7 @@ public class BlastStoveBlockEntity extends SmartBlockEntity implements IHaveGogg
 		int capacity = getCapacityMultiplier();
         primaryOutputTank = new ForceableFluidTank(capacity, this::onFluidStackChanged).blockInsertion(); //output (hot air)
         exhaustOutputTank = new ForceableFluidTank(capacity, this::onFluidStackChanged).blockInsertion();
-        AirInputTank = new ForceableFluidTank(capacity, this::onFluidStackChanged).blockExtraction(); //input (air)
+        AirInputTank = new ForceableFluidTank(capacity, this::onFluidStackChanged).blockExtraction();
         fuelInputTank = new ForceableFluidTank(capacity, this::onFluidStackChanged).blockExtraction();
         primaryCapability = new InputOutputTankWrapper(primaryOutputTank, fuelInputTank);
         secondaryCapability = new InputOutputTankWrapper(exhaustOutputTank, AirInputTank);
@@ -88,17 +88,8 @@ public class BlastStoveBlockEntity extends SmartBlockEntity implements IHaveGogg
         if (!isController() || level == null)
             return;
 
-        for (int yOffset = 0; yOffset < height; yOffset++)
-            for (int xOffset = 0; xOffset < width; xOffset++)
-                for (int zOffset = 0; zOffset < width; zOffset++)
-                    if (level.getBlockEntity(
-                            worldPosition.offset(xOffset, yOffset, zOffset)) instanceof BlastStoveBlockEntity fbe)
-                        fbe.refreshCapability();
-
-
         if (level.isClientSide)
             return;
-        refreshCapability();
 
         ConnectivityHandler.formMulti(this);
 		updateRecipe();
@@ -217,13 +208,11 @@ public class BlastStoveBlockEntity extends SmartBlockEntity implements IHaveGogg
     }
 
     protected void onFluidStackChanged(FluidStack newFluidStack) {
-        if (level == null)
-            return;
-        if (!level.isClientSide) {
-            setChanged();
-            sendData();
-        }
-    }
+        if (level == null || level.isClientSide) return;
+		
+		setChanged();
+		sendData();
+	}
 
     @Override
     public void invalidate() {
@@ -420,19 +409,18 @@ public class BlastStoveBlockEntity extends SmartBlockEntity implements IHaveGogg
     public static void registerCapabilities(RegisterCapabilitiesEvent event) {
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, TFMGBlockEntities.BLAST_STOVE.get(),
 			(be, dir) -> {
-                BlastStoveBlockEntity controller = be.getControllerBE();
-                if (controller == null)
-                    return null;
+				if (be.getControllerBE() instanceof BlastStoveBlockEntity controller)
+					be = controller;
 
-                if (controller.primaryCapability == null || controller.secondaryCapability == null || controller.combinedCapability == null)
-                    controller.refreshCapability();
+                if (be.primaryCapability == null || be.secondaryCapability == null || be.combinedCapability == null)
+                    be.refreshCapability();
 				
 				if (dir == null)
-					return controller.combinedCapability;
+					return be.combinedCapability;
 				if (dir.getAxis().isVertical())
-					return controller.primaryCapability;
+					return be.primaryCapability;
                 if (be.getController().getY() == be.getBlockPos().getY())
-                    return controller.secondaryCapability;
+                    return be.secondaryCapability;
 				
 				return null;
 			}
