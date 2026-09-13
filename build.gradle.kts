@@ -149,8 +149,9 @@ dependencies {
     runtimeOnly("dev.wolfieboy09.createliquidfuel:createliquidfuel:${property("minecraft_version")}-${property("clf_reburned_version")}") { isTransitive = false }
 
     runtimeOnly("me.djtheredstoner:DevAuth-neoforge:1.2.1")
-    runtimeOnly("maven.modrinth:lhGA9TYQ:1IiqEQGl") //architectury, for CPG
-    runtimeOnly("maven.modrinth:power-grid:ip4gJrgx") //Create: Power Grid 0.6.1
+
+    //runtimeOnly("maven.modrinth:lhGA9TYQ:1IiqEQGl") //architectury, for CPG
+    //runtimeOnly("maven.modrinth:power-grid:ip4gJrgx") //Create: Power Grid 0.6.1
 }
 
 val generateModMetadata by tasks.registering(ProcessResources::class) {
