@@ -330,13 +330,8 @@ public class BlastStoveBlockEntity extends SmartBlockEntity implements IHaveGogg
         int prevHeight = height;
 
         updateConnectivity = compound.contains("Uninitialized");
-        controller = null;
-        lastKnownPos = null;
-
-        if (compound.contains("LastKnownPos"))
-            lastKnownPos = NbtUtils.readBlockPos(compound, "LastKnownPos").get();
-        if (compound.contains("Controller"))
-            controller = NbtUtils.readBlockPos(compound, "Controller").get();
+        lastKnownPos = NbtUtils.readBlockPos(compound, "LastKnownPos").orElse(null);
+		controller = NbtUtils.readBlockPos(compound, "Controller").orElse(null);
 
         if (isController()) {
             width = compound.getInt("Size");
