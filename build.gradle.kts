@@ -169,7 +169,9 @@ val generateModMetadata by tasks.registering(ProcessResources::class) {
         "mod_version" to project.findProperty("mod_version") as String,
         "mod_authors" to project.findProperty("mod_authors") as String,
         "mod_credits" to project.findProperty("mod_credits") as String,
-        "mod_description" to project.findProperty("mod_description") as String
+        "mod_description" to project.findProperty("mod_description") as String,
+        "jei_version" to project.findProperty("jei_version") as String,
+        "jade_version" to project.findProperty("jade_version") as String
     )
     inputs.properties(replaceProperties)
     expand(replaceProperties)
