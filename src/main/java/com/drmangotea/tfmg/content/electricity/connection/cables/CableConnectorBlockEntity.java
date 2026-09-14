@@ -1,6 +1,7 @@
 package com.drmangotea.tfmg.content.electricity.connection.cables;
 
 import com.drmangotea.tfmg.base.TFMGUtils;
+import com.drmangotea.tfmg.base.lang.TFMGTexts;
 import com.drmangotea.tfmg.config.TFMGConfigs;
 import com.drmangotea.tfmg.content.electricity.base.ElectricBlockEntity;
 import com.drmangotea.tfmg.content.electricity.base.IElectric;
@@ -13,12 +14,14 @@ import net.createmod.catnip.animation.AnimationTickHolder;
 import net.createmod.catnip.math.VecHelper;
 import net.createmod.catnip.platform.CatnipServices;
 import net.createmod.catnip.theme.Color;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
@@ -40,8 +43,9 @@ import java.util.List;
 
 import static com.drmangotea.tfmg.base.blocks.WallMountBlock.FACING;
 import static com.drmangotea.tfmg.content.electricity.connection.cables.CableConnectorBlock.EXTENSION;
+import static com.drmangotea.tfmg.content.electricity.connection.cables.CableConnectorBlock.INPUT_MODE;
 
-public class CableConnectorBlockEntity extends ElectricBlockEntity implements IHaveHoveringInformation {
+public class CableConnectorBlockEntity extends ElectricBlockEntity {
     //player held cable rendering
     public Player player;
     public int color = 0x000000;
@@ -53,6 +57,14 @@ public class CableConnectorBlockEntity extends ElectricBlockEntity implements IH
 
     public CableConnectorBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
+    }
+
+    @Override
+    public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
+        super.addToGoggleTooltip(tooltip, isPlayerSneaking);
+        TFMGTexts.header("block.tfmg.cable_connector.input_mode").forGoggles(tooltip);
+        tooltip.add(Component.translatable("block.tfmg.cable_connector.input_mode." + getBlockState().getValue(INPUT_MODE)).withStyle(ChatFormatting.GOLD));
+        return true;
     }
 
     @Override
