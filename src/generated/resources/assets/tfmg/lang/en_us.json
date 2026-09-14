@@ -526,6 +526,7 @@
   "block.tfmg.zinc_frame": "Zinc Frame",
   "block.tfmg.zinc_truss": "Zinc Truss",
   "chemica.recipe.vat.platinum_electrode": "Requires Platinum Electrodes",
+  "config.jade.plugin_tfmg.cable_connector": "Cable Connector",
   "create.goggles.item_storage": "Item Storage:",
   "create.recipe.advanced_distillation": "Advanced Distillation",
   "create.recipe.assembly.winding": "Wind a Spool",
