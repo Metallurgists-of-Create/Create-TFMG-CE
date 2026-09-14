@@ -27,7 +27,6 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ChunkPos;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
@@ -60,18 +59,13 @@ public class CableConnectorBlockEntity extends ElectricBlockEntity {
     }
 
     @Override
-    public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
-        super.addToGoggleTooltip(tooltip, isPlayerSneaking);
+    public boolean makeMultimeterTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
         TFMGTexts.header("block.tfmg.cable_connector.input_mode").forGoggles(tooltip);
         tooltip.add(Component.translatable("block.tfmg.cable_connector.input_mode." + getBlockState().getValue(INPUT_MODE)).withStyle(ChatFormatting.GOLD));
-        return true;
+        return super.makeMultimeterTooltip(tooltip, isPlayerSneaking);
     }
-
-    @Override
-    public void addBehaviours(List<BlockEntityBehaviour> behaviours) {
-    }
-
-    @Override
+	
+	@Override
     public void remove() {
         notifyRemoval();
         super.remove();
@@ -117,7 +111,7 @@ public class CableConnectorBlockEntity extends ElectricBlockEntity {
     }
 
     public void notifyRemoval() {
-        if (level.isClientSide)
+        if (level == null || level.isClientSide)
             return;
 
         for (CableConnection connection : connections) {
