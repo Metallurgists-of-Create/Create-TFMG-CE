@@ -2,7 +2,7 @@ plugins {
     id("java-library")
     id("maven-publish")
     id("idea")
-    id("net.neoforged.moddev") version "2.0.89"
+    id("net.neoforged.moddev") version "2.0.147"
 }
 
 val baseArchivesName = project.property("mod_id").toString()
@@ -104,7 +104,7 @@ repositories {
     maven("https://mvn.devos.one/snapshots") // Registrate
     maven("https://raw.githubusercontent.com/Fuzss/modresources/main/maven/") // ForgeConfigAPIPort
     maven("https://maven.blamejared.com") // JEI, Vazkii's Mods
-    maven("https://maven.ryanhcode.dev/releases")
+    maven("https://maven.ryanhcode.dev/releases") //Sable Companion
     maven("https://api.modrinth.com/maven")
     maven("https://dl.cloudsmith.io/public/wolfieboy09/liquid-fuel-reburned/maven/")
 
@@ -142,7 +142,7 @@ dependencies {
     implementation("maven.modrinth:createaddition:neoforge-1.21.1-1.6.0")
     implementation("maven.modrinth:spark:1.10.124-neoforge-1.21.1")
 
-    implementation("mezz.jei:jei-${property("jei_minecraft_version")}-neoforge:${property("jei_version")}")
+    implementation("mezz.jei:jei-${property("minecraft_version")}-neoforge:${property("jei_version")}")
     implementation("com.tterrag.registrate:Registrate:${property("registrate_version")}")
 
     implementation("dev.wolfieboy09.createliquidfuel:createliquidfuel:${property("minecraft_version")}-${property("clf_reburned_version")}") { isTransitive = false }
