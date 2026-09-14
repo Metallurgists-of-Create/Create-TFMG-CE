@@ -51,6 +51,7 @@ public class InputOutputTankWrapper implements IFluidHandler {
 	
 	@Override
 	public FluidStack drain(int maxDrain, FluidAction action) {
+		if (maxDrain == 0) return FluidStack.EMPTY;
 		return output.drain(maxDrain, action);
 	}
 	

@@ -3,11 +3,10 @@ package com.drmangotea.tfmg.content.machinery.misc.exhaust;
 import com.drmangotea.tfmg.base.TFMGUtils;
 import com.drmangotea.tfmg.base.fluid.ForceableFluidTank;
 import com.drmangotea.tfmg.registry.TFMGBlockEntities;
-import com.drmangotea.tfmg.registry.TFMGFluids;
+import com.drmangotea.tfmg.registry.TFMGTags;
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
-import com.simibubi.create.foundation.fluid.SmartFluidTank;
 import dev.ryanhcode.sable.companion.SableCompanion;
 import dev.ryanhcode.sable.companion.SubLevelAccess;
 import net.minecraft.core.BlockPos;
@@ -24,13 +23,12 @@ import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
-import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
 
 import java.util.List;
 
 public class ExhaustBlockEntity extends SmartBlockEntity implements IHaveGoggleInformation {
     protected IFluidHandler fluidCapability;
-    public FluidTank tankInventory;
+    public final ForceableFluidTank tankInventory;
 
     public boolean spawnsSmoke = false;
     public int smokeTimer = 0;
@@ -39,7 +37,9 @@ public class ExhaustBlockEntity extends SmartBlockEntity implements IHaveGoggleI
 
     public ExhaustBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
-        tankInventory = createInventory();
+        tankInventory = new ForceableFluidTank(1000, this::onFluidStackChanged)
+			.allowInsertion().blockExtraction()
+			.withValidator((stack) -> stack.is(TFMGTags.Fluids.EXHAUSTABLE.tag));
         fluidCapability = tankInventory;
         updateCapability = false;
         refreshCapability();
@@ -55,14 +55,8 @@ public class ExhaustBlockEntity extends SmartBlockEntity implements IHaveGoggleI
 
     @Override
     public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
-        return TFMGUtils.createFluidTooltip(this, tooltip);
+        return TFMGUtils.createFluidTooltip(tooltip, fluidCapability);
     }
-
-    protected SmartFluidTank createInventory() {
-		return new ForceableFluidTank(1000, this::onFluidStackChanged)
-			.blockExtraction() //it makes no sense to extract from an exhaust
-			.withValidator((stack) -> stack.getFluid().isSame(TFMGFluids.CARBON_DIOXIDE.getSource()));
-	}
 
     protected void onFluidStackChanged(FluidStack newFluidStack) {
         sendData();
@@ -86,7 +80,7 @@ public class ExhaustBlockEntity extends SmartBlockEntity implements IHaveGoggleI
         if (tankInventory.getFluidAmount() > 0) {
             smokeTimer = 100;
             spawnsSmoke = true;
-            tankInventory.drain(100, IFluidHandler.FluidAction.EXECUTE);
+            tankInventory.forceDrain(100, IFluidHandler.FluidAction.EXECUTE);
         }
 
         if (updateCapability) {

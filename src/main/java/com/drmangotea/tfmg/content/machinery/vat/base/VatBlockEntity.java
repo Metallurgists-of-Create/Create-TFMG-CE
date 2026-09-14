@@ -1275,7 +1275,8 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
         }
         addMachineTooltip(countedMachines, tooltip);
 
-        TFMGUtils.createStorageTooltip(this, tooltip);
+        TFMGUtils.createFluidTooltip(tooltip, fluidCapability);
+		TFMGUtils.createItemTooltip(tooltip, itemCapability);
         return true;
     }
 

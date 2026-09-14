@@ -130,8 +130,8 @@ public class CastingBasinBlockEntity extends SmartBlockEntity implements IHaveGo
 
     @Override
     public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
-        TFMGUtils.createFluidTooltip(this, tooltip);
-        TFMGUtils.createItemTooltip(this, tooltip);
+        TFMGUtils.createFluidTooltip(tooltip, fluidCapability);
+        TFMGUtils.createItemTooltip(tooltip, itemCapability);
         return true;
     }
 

@@ -113,5 +113,9 @@
   "item.tfmg.quad_potato_cannon.tooltip.condition1": "When R-Clicked",
   "item.tfmg.quad_potato_cannon.tooltip.behaviour1": "_Shoots_ a suitable item from your _Inventory_.",
   "item.tfmg.quad_potato_cannon.tooltip.condition2": "While wearing Backtank",
-  "item.tfmg.quad_potato_cannon.tooltip.behaviour2": "_No_ _Durability_ will be used. Instead, _Air_ _pressure_ is drained from the Tank"
+  "item.tfmg.quad_potato_cannon.tooltip.behaviour2": "_No_ _Durability_ will be used. Instead, _Air_ _pressure_ is drained from the Tank",
+  "block.tfmg.cable_connector.input_mode": "Inputting Energy: ",
+  "block.tfmg.cable_connector.input_mode.true": "Yes",
+  "block.tfmg.cable_connector.input_mode.false": "No",
+  "config.jade.plugin_tfmg.cable_connector": "Cable Connector"
 }

@@ -122,7 +122,7 @@ public class MixerMode implements MultiUseAttachment<IndustrialMixerBlockEntity>
                 Stored::new
         );
 
-        public static final MixerMode.Stored NONE = new Stored(TFMGMixerModes.none);
+        public static final MixerMode.Stored NONE = new Stored(TFMGMixerModes.NONE);
     }
 
 }

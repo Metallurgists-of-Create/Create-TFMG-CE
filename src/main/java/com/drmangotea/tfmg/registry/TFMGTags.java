@@ -126,6 +126,7 @@ public class TFMGTags {
         AIR(COMMON),
         COOLING_FLUID(COMMON),
         HOT_AIR,
+		EXHAUSTABLE,
 
         GASOLINE(COMMON),
         DIESEL(COMMON),
