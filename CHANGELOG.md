@@ -18,4 +18,10 @@ Contributors:<br>
 
 
 ### New Translations:
-
+- Jade Integration
+  - Config
+    - `config.jade.plugin_tfmg.cable_connector`
+  - Cable Connector Block
+    - `block.tfmg.cable_connector.input_mode`
+    - `block.tfmg.cable_connector.input_mode.true`
+    - `block.tfmg.cable_connector.input_mode.false`
