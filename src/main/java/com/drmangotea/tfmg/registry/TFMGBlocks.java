@@ -171,7 +171,7 @@ import static com.simibubi.create.foundation.data.CreateRegistrate.connectedText
 import static com.simibubi.create.foundation.data.ModelGen.customItemModel;
 import static com.simibubi.create.foundation.data.TagGen.*;
 
-@SuppressWarnings("removal")
+@SuppressWarnings({"unused","removal"})
 public class TFMGBlocks {
     // I see no reason for this here
     @Deprecated(since = "1.2.6", forRemoval = true)
@@ -1119,7 +1119,7 @@ public class TFMGBlocks {
                     .item(AccumulatorItem::new)
                     .build()
                     .register();
-    ;
+    
     public static final BlockEntry<LightBulbBlock> LIGHT_BULB =
             REGISTRATE.block("light_bulb", p -> new LightBulbBlock(p, TFMGBlockEntities.LIGHT_BULB, TFMGShapes.LIGHT_BULB))
                     .initialProperties(SharedProperties::softMetal)
@@ -1364,18 +1364,6 @@ public class TFMGBlocks {
                     .item(LargeElectromagneticCoilItem::new)
                     .transform(customItemModel())
                     .register();
-
-    //public static final BlockEntry<FuseBlock> FUSE_BLOCK =
-    //        REGISTRATE.block("fuse_block", FuseBlock::new)
-    //                 .initialProperties(SharedProperties::softMetal)
-    //                .transform(pickaxeOnly())
-    //                .properties(BlockBehaviour.Properties::noOcclusion)
-    //                .addLayer(() -> RenderType::cutoutMipped)
-    //                .blockstate(BlockStateGen.horizontalBlockProvider(true))
-    //                .item()
-    //                .transform(customItemModel())
-    //                .register();
-
 
     //------------------EXHAUST/WASTE_REMOVAL------------------//
     public static final BlockEntry<SmokestackBlock> BRICK_SMOKESTACK = REGISTRATE.block("brick_smokestack", SmokestackBlock::new)

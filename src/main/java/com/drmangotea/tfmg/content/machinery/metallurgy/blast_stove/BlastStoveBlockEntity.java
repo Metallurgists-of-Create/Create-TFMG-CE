@@ -1,5 +1,6 @@
 package com.drmangotea.tfmg.content.machinery.metallurgy.blast_stove;
 
+import com.drmangotea.tfmg.base.TFMGUtils;
 import com.drmangotea.tfmg.base.fluid.ForceableFluidTank;
 import com.drmangotea.tfmg.base.fluid.InputOutputTankWrapper;
 import com.drmangotea.tfmg.base.lang.TFMGLang;
@@ -15,9 +16,7 @@ import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour
 import com.simibubi.create.foundation.fluid.CombinedTankWrapper;
 import com.simibubi.create.foundation.recipe.RecipeConditions;
 import com.simibubi.create.foundation.recipe.RecipeFinder;
-import com.simibubi.create.foundation.utility.CreateLang;
 import com.simibubi.create.infrastructure.config.AllConfigs;
-import net.createmod.catnip.lang.LangBuilder;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -359,21 +358,18 @@ public class BlastStoveBlockEntity extends SmartBlockEntity implements IHaveGogg
         TFMGTexts.header("blast_stove").forGoggles(tooltip);
         tankTooltip(tooltip, "goggles.blast_stove.tank1", sec.getFluidInTank(1), ChatFormatting.DARK_GREEN); //input (air)
         tankTooltip(tooltip, "goggles.blast_stove.tank2", pri.getFluidInTank(1), ChatFormatting.DARK_GREEN); //fuel
-        tankTooltip(tooltip, "goggles.blast_stove.tank3", pri.getFluidInTank(0), ChatFormatting.YELLOW);     //output (hot air)
-        tankTooltip(tooltip, "goggles.blast_stove.tank4", sec.getFluidInTank(0), ChatFormatting.YELLOW);     //output (exhaust)
+        tankTooltip(tooltip, "goggles.blast_stove.tank3", pri.getFluidInTank(0), ChatFormatting.GOLD);       //output (hot air)
+        tankTooltip(tooltip, "goggles.blast_stove.tank4", sec.getFluidInTank(0), ChatFormatting.GOLD);       //output (exhaust)
         return true;
     }
 	
 	private void tankTooltip (List<Component> tooltip, String key, FluidStack fluid, ChatFormatting color) {
-		LangBuilder mb = CreateLang.translate("generic.unit.millibuckets");
-		LangBuilder name = fluid.getFluid() == Fluids.EMPTY ? TFMGLang.text("") :  TFMGLang.text(" "+fluid.getHoverName().getString());
-	
-		TFMGLang.builder()
-			.add(TFMGLang.translate(key))
-			.add(TFMGLang.number(fluid.getAmount()).add(mb).add(name).style(color))
-			.text(ChatFormatting.GRAY, " / ")
-			.add(TFMGLang.number(getCapacityMultiplier()).add(mb).style(ChatFormatting.DARK_GRAY))
-			.forGoggles(tooltip, 1);
+		TFMGLang.builder().add(TFMGLang.translate(key))
+			.add(fluid.getFluid() == Fluids.EMPTY
+				? TFMGLang.text("")
+				:  TFMGLang.text(" "+fluid.getHoverName().getString())
+			).style(color).forGoggles(tooltip, 1);
+		TFMGUtils.fluidOutOfCapacity(fluid.getAmount(), ChatFormatting.GRAY, getCapacityMultiplier()).forGoggles(tooltip, 2);
 	}
 
 

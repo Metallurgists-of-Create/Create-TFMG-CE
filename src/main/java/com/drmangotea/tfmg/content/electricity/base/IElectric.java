@@ -462,7 +462,7 @@ public interface IElectric extends IHaveGoggleInformation {
 
 
     /**
-     * @return true if the network has enough power
+     * @return {@code true} if the network has enough power
      */
     default boolean canWork() {
         return !getData().notEnoughPower;

@@ -194,13 +194,11 @@ public class CableConnectorBlockEntity extends ElectricBlockEntity implements IH
         if (level == null) return;
         if (updateConnections) {
             for (CableConnection connection : connections) {
-                for (BlockPos pos : List.of(connection.pos1(), connection.pos2())) {
-                    BlockEntity be = level.getBlockEntity(pos);
-                    if (be instanceof IElectric electric) {
-                        electric.updateNetwork();
-                    }
-                }
+				//don't update if it's this
+				BlockPos pos = worldPosition.equals(connection.pos1()) ? connection.pos2() : connection.pos1();
+				if (level.getBlockEntity(pos) instanceof IElectric ie) ie.updateNetwork();
             }
+			this.updateNetwork();
             updateConnections = false;
         }
         if (removeWiresNextTick) {
@@ -246,7 +244,7 @@ public class CableConnectorBlockEntity extends ElectricBlockEntity implements IH
             for (var entry : getData().energyOutputs.entrySet()) {
                 IEnergyStorage energyStorage = entry.getValue();
 
-                int energyToTake = energyStorage.extractEnergy(Math.round((float)Math.clamp(powerNeeded, 0, energyStorage.getEnergyStored())), true);//(int) Math.min(Math.clamp(powerNeeded, 10, 1028 * 10), c.getEnergyStored());
+                int energyToTake = energyStorage.extractEnergy(Math.round((float)Math.clamp(powerNeeded, 0, energyStorage.getEnergyStored())), true);
                 int FETaken = 0;
                 int energyLeft = energyToTake;
 

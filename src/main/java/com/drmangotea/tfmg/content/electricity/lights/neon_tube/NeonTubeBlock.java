@@ -7,6 +7,7 @@ import com.drmangotea.tfmg.registry.TFMGBlocks;
 import com.mojang.serialization.MapCodec;
 import com.simibubi.create.content.equipment.wrench.IWrenchable;
 import com.simibubi.create.foundation.block.IBE;
+import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundEvents;
@@ -29,11 +30,10 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
-@ParametersAreNonnullByDefault
+@ParametersAreNonnullByDefault @MethodsReturnNonnullByDefault
 public class NeonTubeBlock extends PipeBlock implements IBE<NeonTubeBlockEntity>, IWrenchable {
     public static final IntegerProperty LIGHT = LightBulbBlock.LIGHT;
 
@@ -85,7 +85,7 @@ public class NeonTubeBlock extends PipeBlock implements IBE<NeonTubeBlockEntity>
         return InteractionResult.SUCCESS;
     }
 
-    private static @NotNull Direction getDirToToggle(UseOnContext context, BlockPos pos) {
+    private static Direction getDirToToggle(UseOnContext context, BlockPos pos) {
         Vec3 position = context.getClickLocation();
 
         double X = position.x()- pos.getX();
@@ -151,6 +151,7 @@ public class NeonTubeBlock extends PipeBlock implements IBE<NeonTubeBlockEntity>
     public BlockEntityType<? extends NeonTubeBlockEntity> getBlockEntityType() {
         return TFMGBlockEntities.NEON_TUBE.get();
     }
+	
     public static final MapCodec<NeonTubeBlock> CODEC = simpleCodec(NeonTubeBlock::new);
 
     @Override
