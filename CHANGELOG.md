@@ -3,7 +3,7 @@
 
 
 Contributors:<br>
-
+@pouffy @wolfieboy09 @ShallowAssumption
 
 **Please note that not all bugs are fixed and some new additions are subject to change and should be considered experimental.**
 
@@ -12,7 +12,8 @@ Contributors:<br>
 
 
 ### Changes:
-
+- Light bulbs (& variants) allow more fine-tuned redstone control of their intensity.
+- Cable Connectors print their current input mode on their multimeter tooltip.
 
 ### API Changes:
 
