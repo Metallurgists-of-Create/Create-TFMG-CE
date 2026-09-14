@@ -36,11 +36,6 @@ file="META-INF/accesstransformer.cfg"
     versionRange = "[6.0.6,)"
     side = "BOTH"
 [[dependencies."${mod_id}"]]
-    modId = "jade"
-    type = "optional"
-    versionRange = "[{jade_version}+neoforge,)"
-    side = "BOTH"
-[[dependencies."${mod_id}"]]
     modId = "jei"
     type = "optional"
     versionRange = "[{jei_version},)"

@@ -146,9 +146,7 @@ dependencies {
     implementation("com.tterrag.registrate:Registrate:${property("registrate_version")}")
 
     implementation("dev.wolfieboy09.createliquidfuel:createliquidfuel:${property("minecraft_version")}-${property("clf_reburned_version")}") { isTransitive = false }
-
-    implementation("maven.modrinth:jade:${property("jade_version")}+neoforge")
-
+    
     runtimeOnly("me.djtheredstoner:DevAuth-neoforge:1.2.1")
 
     //runtimeOnly("maven.modrinth:lhGA9TYQ:1IiqEQGl") //architectury, for CPG
@@ -171,7 +169,6 @@ val generateModMetadata by tasks.registering(ProcessResources::class) {
         "mod_credits" to project.findProperty("mod_credits") as String,
         "mod_description" to project.findProperty("mod_description") as String,
         "jei_version" to project.findProperty("jei_version") as String,
-        "jade_version" to project.findProperty("jade_version") as String
     )
     inputs.properties(replaceProperties)
     expand(replaceProperties)
