@@ -149,8 +149,8 @@ dependencies {
     
     runtimeOnly("me.djtheredstoner:DevAuth-neoforge:1.2.1")
 
-    //runtimeOnly("maven.modrinth:lhGA9TYQ:1IiqEQGl") //architectury, for CPG
-    //runtimeOnly("maven.modrinth:power-grid:ip4gJrgx") //Create: Power Grid 0.6.1
+    runtimeOnly("maven.modrinth:lhGA9TYQ:1IiqEQGl") //architectury, for CPG
+    runtimeOnly("maven.modrinth:power-grid:jCkPHjmP") //Create: Power Grid 0.6.2
 }
 
 val generateModMetadata by tasks.registering(ProcessResources::class) {
