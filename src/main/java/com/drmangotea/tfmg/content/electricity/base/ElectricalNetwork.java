@@ -4,6 +4,7 @@ import com.drmangotea.tfmg.content.electricity.network.large_switch.LargeSwitchB
 import com.drmangotea.tfmg.content.electricity.network.transformer.large.LargeTransformerBlockEntity;
 import com.drmangotea.tfmg.content.electricity.utilities.electric_motor.ElectricMotorBlockEntity;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.LevelAccessor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,7 +61,7 @@ public class ElectricalNetwork {
         for (IElectric member : members) {
             member.getData().notEnoughPower = false;
             member.getData().highestCurrent = 0;
-            //    member.getLevelAccessor().setBlock(member.getBlockPos().above(2), Blocks.GOLD_BLOCK.defaultBlockState(),2);
+			
             maxVoltage = Math.max(member.voltageGeneration(), maxVoltage);
             powerGeneration = (int) (powerGeneration + member.powerGeneration());
         }
@@ -70,21 +71,15 @@ public class ElectricalNetwork {
          * 2) sets network's resistance
          * 3) informs blocks about their group's resistance
          */
-        List<IElectric> list = new ArrayList<>(members);
-        if (!members.isEmpty()) {
-
-            for (IElectric member : list) {
-                int oldVoltage = member.getData().getVoltage();
-                float oldPower = member.getPowerUsage();
-                member.getData().voltageSupply = maxVoltage;
-                member.setVoltage(maxVoltage);
-                member.getData().setVoltageNextTick = true;
-                member.getData().networkPowerGeneration = powerGeneration;
-                member.onNetworkChanged(oldVoltage, oldPower);
-                //if (member.resistance() != 0)
-                //    resistance += 1f / member.resistance();
-            }
-        }
+		for (IElectric member : members) {
+			int oldVoltage = member.getData().getVoltage();
+			float oldPower = member.getPowerUsage();
+			member.getData().voltageSupply = maxVoltage;
+			member.setVoltage(maxVoltage);
+			member.getData().setVoltageNextTick = true;
+			member.getData().networkPowerGeneration = powerGeneration;
+			member.onNetworkChanged(oldVoltage, oldPower);
+		}
 
         /*
          * Phase III:
@@ -102,10 +97,8 @@ public class ElectricalNetwork {
             if (member instanceof VoltageAlteringBlockEntity be) {
                 be.updateInFront();
             }
-            member.getLevelAccessor().blockUpdated(member.getPos(), member.getLevelAccessor().getBlockState(member.getPos()).getBlock());
-           // if (resistance != 0) {
-           //     member.setNetworkResistance(1f / resistance);
-           // } else member.setNetworkResistance(0);
+			LevelAccessor level = member.getLevelAccessor();
+            level.blockUpdated(member.getPos(), level.getBlockState(member.getPos()).getBlock());
         }
         /*
          * Phase IV:
@@ -137,36 +130,24 @@ public class ElectricalNetwork {
     }
 
     public static float getCableCurrent(IElectric be) {
-
         float current = 0;
-
-
         for (IElectric member : be.getOrCreateElectricNetwork().members) {
             current += member.getCurrent();
         }
-
-
         return current;
     }
 
-
     public void checkForLoops(BlockPos pos) {
-
         members.forEach(member -> {
-            if (member instanceof VoltageAlteringBlockEntity be) {
-                if (be.getControlledBlock() != null) {
-                    List<ElectricalNetwork> list = new ArrayList<>();
-                    list.add(this);
-                    be.getControlledBlock().getOrCreateElectricNetwork().checkForLoops(list, pos);
-                }
+            if (member instanceof VoltageAlteringBlockEntity be && be.getControlledBlock() != null) {
+				List<ElectricalNetwork> list = new ArrayList<>();
+				list.add(this);
+				be.getControlledBlock().getOrCreateElectricNetwork().checkForLoops(list, pos);
             }
         });
-
-
     }
 
     public void checkForLoops(List<ElectricalNetwork> network, BlockPos pos) {
-
         if (network.contains(this)) {
             if (!members.isEmpty())
                 members.getFirst().getLevelAccessor().destroyBlock(pos, false);
@@ -174,10 +155,8 @@ public class ElectricalNetwork {
         }
         network.add(this);
         members.forEach(member -> {
-            if (member instanceof VoltageAlteringBlockEntity be) {
-                if (be.getControlledBlock() != null) {
-                    be.getControlledBlock().getOrCreateElectricNetwork().checkForLoops(network, pos);
-                }
+            if (member instanceof VoltageAlteringBlockEntity be && be.getControlledBlock() != null) {
+				be.getControlledBlock().getOrCreateElectricNetwork().checkForLoops(network, pos);
             }
         });
     }

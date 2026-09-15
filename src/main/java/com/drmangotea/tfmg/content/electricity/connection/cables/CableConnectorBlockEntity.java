@@ -1,30 +1,30 @@
 package com.drmangotea.tfmg.content.electricity.connection.cables;
 
 import com.drmangotea.tfmg.base.TFMGUtils;
+import com.drmangotea.tfmg.base.lang.TFMGTexts;
 import com.drmangotea.tfmg.config.TFMGConfigs;
 import com.drmangotea.tfmg.content.electricity.base.ElectricBlockEntity;
 import com.drmangotea.tfmg.content.electricity.base.IElectric;
 import com.drmangotea.tfmg.content.electricity.base.NetworkUpdatePacket;
 import com.drmangotea.tfmg.content.machinery.misc.winding_machine.SpoolItem;
 import com.drmangotea.tfmg.registry.TFMGBlocks;
-import com.simibubi.create.api.equipment.goggles.IHaveHoveringInformation;
-import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import net.createmod.catnip.animation.AnimationTickHolder;
 import net.createmod.catnip.math.VecHelper;
 import net.createmod.catnip.platform.CatnipServices;
 import net.createmod.catnip.theme.Color;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ChunkPos;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
@@ -40,8 +40,9 @@ import java.util.List;
 
 import static com.drmangotea.tfmg.base.blocks.WallMountBlock.FACING;
 import static com.drmangotea.tfmg.content.electricity.connection.cables.CableConnectorBlock.EXTENSION;
+import static com.drmangotea.tfmg.content.electricity.connection.cables.CableConnectorBlock.INPUT_MODE;
 
-public class CableConnectorBlockEntity extends ElectricBlockEntity implements IHaveHoveringInformation {
+public class CableConnectorBlockEntity extends ElectricBlockEntity {
     //player held cable rendering
     public Player player;
     public int color = 0x000000;
@@ -56,10 +57,13 @@ public class CableConnectorBlockEntity extends ElectricBlockEntity implements IH
     }
 
     @Override
-    public void addBehaviours(List<BlockEntityBehaviour> behaviours) {
+    public boolean makeMultimeterTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
+        TFMGTexts.header("block.tfmg.cable_connector.input_mode").forGoggles(tooltip);
+        tooltip.add(Component.translatable("block.tfmg.cable_connector.input_mode." + getBlockState().getValue(INPUT_MODE)).withStyle(ChatFormatting.GOLD));
+        return super.makeMultimeterTooltip(tooltip, isPlayerSneaking);
     }
-
-    @Override
+	
+	@Override
     public void remove() {
         notifyRemoval();
         super.remove();
@@ -105,7 +109,7 @@ public class CableConnectorBlockEntity extends ElectricBlockEntity implements IH
     }
 
     public void notifyRemoval() {
-        if (level.isClientSide)
+        if (level == null || level.isClientSide)
             return;
 
         for (CableConnection connection : connections) {
@@ -194,13 +198,11 @@ public class CableConnectorBlockEntity extends ElectricBlockEntity implements IH
         if (level == null) return;
         if (updateConnections) {
             for (CableConnection connection : connections) {
-                for (BlockPos pos : List.of(connection.pos1(), connection.pos2())) {
-                    BlockEntity be = level.getBlockEntity(pos);
-                    if (be instanceof IElectric electric) {
-                        electric.updateNetwork();
-                    }
-                }
+				//don't update if it's this
+				BlockPos pos = worldPosition.equals(connection.pos1()) ? connection.pos2() : connection.pos1();
+				if (level.getBlockEntity(pos) instanceof IElectric ie) ie.updateNetwork();
             }
+			this.updateNetwork();
             updateConnections = false;
         }
         if (removeWiresNextTick) {
@@ -246,7 +248,7 @@ public class CableConnectorBlockEntity extends ElectricBlockEntity implements IH
             for (var entry : getData().energyOutputs.entrySet()) {
                 IEnergyStorage energyStorage = entry.getValue();
 
-                int energyToTake = energyStorage.extractEnergy(Math.round((float)Math.clamp(powerNeeded, 0, energyStorage.getEnergyStored())), true);//(int) Math.min(Math.clamp(powerNeeded, 10, 1028 * 10), c.getEnergyStored());
+                int energyToTake = energyStorage.extractEnergy(Math.round((float)Math.clamp(powerNeeded, 0, energyStorage.getEnergyStored())), true);
                 int FETaken = 0;
                 int energyLeft = energyToTake;
 
