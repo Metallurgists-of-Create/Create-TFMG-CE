@@ -9,6 +9,7 @@ Contributors:<br>
 
 ## Changelog:
 ### Bug Fixes:
+- Coke oven multiblocks work again
 
 
 ### Changes:
@@ -16,13 +17,10 @@ Contributors:<br>
 - Cable Connectors print their current input mode on their multimeter tooltip.
 
 ### API Changes:
-
+- added an optional `showIfEmpty` argument to `TFMGUtils.createFluidTooltip`, to reduce flashing on rapidly updating tanks.
 
 ### New Translations:
-- Jade Integration
-  - Config
-    - `config.jade.plugin_tfmg.cable_connector`
-  - Cable Connector Block
-    - `block.tfmg.cable_connector.input_mode`
-    - `block.tfmg.cable_connector.input_mode.true`
-    - `block.tfmg.cable_connector.input_mode.false`
+- Cable Connector Block
+  - `block.tfmg.cable_connector.input_mode`
+  - `block.tfmg.cable_connector.input_mode.true`
+  - `block.tfmg.cable_connector.input_mode.false`

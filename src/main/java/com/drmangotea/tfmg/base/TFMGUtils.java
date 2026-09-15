@@ -236,8 +236,15 @@ public class TFMGUtils {
 			.add(TFMGLang.number(capacity).add(mb).style(ChatFormatting.DARK_GRAY));
 	}
 	
-	/// Populates a tooltip with all the fluid tanks given to it
+	/// Populates a tooltip with all the fluid tanks given to it.
 	public static boolean createFluidTooltip(List<Component> tooltip, IFluidHandler... handlers) {
+		return createFluidTooltip(tooltip, false, handlers);
+	}
+	
+	/** Populates a tooltip with all the fluid tanks given to it
+	 * @param showIfEmpty determines whether fluid handling is noted if the fluid tanks are empty.
+	 * **/
+	public static boolean createFluidTooltip(List<Component> tooltip, boolean showIfEmpty, IFluidHandler... handlers) {
 		LangBuilder mb = CreateLang.translate("generic.unit.millibuckets");
 		TFMGLang.translate("goggles.fluid_storage").forGoggles(tooltip);
 		
@@ -248,20 +255,20 @@ public class TFMGUtils {
 			
 			for (int i = 0; i < handler.getTanks(); i++) {
 				FluidStack fluidStack = handler.getFluidInTank(i);
-				if (fluidStack.isEmpty()) continue;
+				if (fluidStack.isEmpty() && !showIfEmpty) continue;
+				//todo: find or create lang key for empty tank
+				LangBuilder name = fluidStack.isEmpty() ? TFMGLang.text("Empty") : TFMGLang.fluidName(fluidStack);
 				
-				TFMGLang.fluidName(fluidStack)
-					.style(ChatFormatting.GRAY)
-					.forGoggles(tooltip, 1);
+				name.style(ChatFormatting.GRAY).forGoggles(tooltip, 1);
 				
 				fluidOutOfCapacity(fluidStack.getAmount(), ChatFormatting.DARK_GREEN, handler.getTankCapacity(i))
-					.forGoggles(tooltip, 1);
+					.forGoggles(tooltip, 2);
 				
 				isEmpty = false;
 			}
 		}
 		
-		if (isEmpty) {
+		if (isEmpty & !showIfEmpty) {
 			tooltip.removeLast();
 			if (handlers.length == 1 && handlers[0].getTanks() == 1) {
 				CreateLang.translate("gui.goggles.fluid_container.capacity")
