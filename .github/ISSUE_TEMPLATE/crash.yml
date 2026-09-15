@@ -36,22 +36,6 @@ body:
     validations:
       required: true
 
-  - type: textarea
-    id: other-mods
-    attributes:
-      label: Other Mods Installed
-      description: Optional. List other mods installed, or link a modlist/pack if applicable. Leave the collapsible block below intact, as it makes it easier for us to read your issue.
-      value: |
-        <details>
-        <summary>Click to expand mod list</summary>
-
-        - Mod Name 1
-        - Mod Name 2
-
-        </details>
-    validations:
-      required: false
-
   - type: checkboxes
     id: checks
     attributes:
@@ -59,11 +43,5 @@ body:
       options:
         - label: I have searched existing issues and this crash hasn't already been reported.
           required: true
-
-  - type: checkboxes
-    id: latest-version
-    attributes:
-      label: Checklist
-      options:
         - label: "I am using the latest release of TFMG: CE"
           required: true

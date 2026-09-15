@@ -53,14 +53,6 @@ body:
     validations:
       required: false
 
-  - type: textarea
-    id: other-mods
-    attributes:
-      label: Other Mods Installed
-      description: List other mods installed, or link a modlist/pack if applicable.
-    validations:
-      required: false
-
   - type: checkboxes
     id: checks
     attributes:
@@ -68,11 +60,5 @@ body:
       options:
         - label: I have searched existing issues and this bug hasn't already been reported.
           required: true
-
-  - type: checkboxes
-    id: latest-version
-    attributes:
-      label: Checklist
-      options:
         - label: "I am using the latest release of TFMG: CE"
           required: true
