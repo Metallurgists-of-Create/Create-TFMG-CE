@@ -12,8 +12,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class IndustrialMixerRenderer extends KineticBlockEntityRenderer<IndustrialMixerBlockEntity> {
-
-
     public IndustrialMixerRenderer(BlockEntityRendererProvider.Context context) {
         super(context);
     }

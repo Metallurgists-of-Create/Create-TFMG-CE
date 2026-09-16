@@ -152,29 +152,17 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
         event.registerBlockEntity(
                 Capabilities.FluidHandler.BLOCK,
                 TFMGBlockEntities.CHEMICAL_VAT.get(),
-                (be, context) -> {
-                    if (be.fluidCapability == null)
-                        be.refreshCapability();
-                    return be.fluidCapability;
-                }
+                (be, context) -> be.getNewFluidCapability()
         );
         event.registerBlockEntity(
                 Capabilities.ItemHandler.BLOCK,
                 TFMGBlockEntities.CHEMICAL_VAT.get(),
-                (be, context) -> {
-                    if (be.itemCapability == null)
-                        be.refreshCapability();
-                    return be.itemCapability;
-                }
+                (be, context) -> be.getNewItemCapability()
         );
         event.registerBlockEntity(
                 TFMGCapabilities.PressureStorage.BLOCK,
                 TFMGBlockEntities.CHEMICAL_VAT.get(),
-                (be, context) -> {
-                    if (be.pressureCapability == null)
-                        be.refreshCapability();
-                    return be.pressureCapability;
-                }
+                (be, context) -> be.getNewPressureCapability()
         );
     }
 
@@ -210,6 +198,10 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
 
     public int getProgressPercentage() {
         return recipeDuration <= 0 ? -1 : Math.min(100, (int) (100f * timer / recipeDuration));
+    }
+
+    public int getRecipeDuration() {
+        return recipeDuration;
     }
 
     //goggle stuff
@@ -1246,7 +1238,8 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
         }
         addMachineTooltip(countedMachines, tooltip);
 
-        TFMGUtils.createStorageTooltip(this, tooltip);
+        TFMGUtils.createFluidTooltip(tooltip, fluidCapability);
+		TFMGUtils.createItemTooltip(tooltip, itemCapability);
         return true;
     }
 
@@ -1287,6 +1280,8 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
             });
             inputInventory.deserializeNBT(registries, compound.getCompound("InputItems"));
             outputInventory.deserializeNBT(registries, compound.getCompound("OutputItems"));
+            inputTank.read(compound.getCompound("InputTanks"), registries, clientPacket);
+            outputTank.read(compound.getCompound("OutputTanks"), registries, clientPacket);
             timer = compound.getInt("Timer");
             heatLevel = compound.getInt("HeatLevel");
             recipeDuration = compound.getInt("RecipeDuration");
@@ -1341,6 +1336,13 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
             compound.putInt("HeatLevel", heatLevel);
             compound.putInt("RecipeDuration", recipe != null ? recipe.getProcessingDuration() : 0);
             pressure.save(compound);
+            CompoundTag inputTankData = new CompoundTag();
+            inputTank.write(inputTankData, registries, clientPacket);
+            compound.put("InputTanks", inputTankData);
+
+            CompoundTag outputTankData = new CompoundTag();
+            outputTank.write(outputTankData, registries, clientPacket);
+            compound.put("OutputTanks", outputTankData);
         } else {
             compound.put("Controller", NbtUtils.writeBlockPos(controller));
         }

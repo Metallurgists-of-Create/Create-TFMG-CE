@@ -3,7 +3,6 @@ package com.drmangotea.tfmg.worldgen;
 import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.registry.TFMGBlocks;
 import com.simibubi.create.infrastructure.worldgen.AllFeatures;
-import com.simibubi.create.infrastructure.worldgen.LayerPattern;
 import com.simibubi.create.infrastructure.worldgen.LayeredOreConfiguration;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstrapContext;

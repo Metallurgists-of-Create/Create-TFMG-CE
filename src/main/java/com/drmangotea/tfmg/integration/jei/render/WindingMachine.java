@@ -1,6 +1,5 @@
 package com.drmangotea.tfmg.integration.jei.render;
 
-
 import com.drmangotea.tfmg.content.electricity.utilities.polarizer.PolarizerBlock;
 import com.drmangotea.tfmg.registry.TFMGBlocks;
 import com.drmangotea.tfmg.registry.TFMGPartialModels;

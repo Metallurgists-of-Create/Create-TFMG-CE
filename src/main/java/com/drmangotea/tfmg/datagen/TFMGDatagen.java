@@ -21,6 +21,7 @@ import net.createmod.ponder.foundation.PonderIndex;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
+import net.neoforged.fml.loading.LoadingModList;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
 
 import java.util.Map;
@@ -55,7 +56,11 @@ public class TFMGDatagen {
         generator.addProvider(event.includeServer(),new TFMGStandardRecipeGen(output, lookupProvider));
         generator.addProvider(event.includeServer(), new TFMGMechanicalCraftingRecipeGen(output, lookupProvider));
         generator.addProvider(event.includeServer(), new TFMGSequencedAssemblyRecipeGen(output, lookupProvider));
-        generator.addProvider(event.includeServer(), new TFMGReburnedProvider(output));
+
+        // Maybe use ModList instead?
+        if (LoadingModList.get().getModFileById("createliquidfuel") != null) {
+            generator.addProvider(event.includeServer(), new TFMGReburnedProvider(output));
+        }
 
         if (event.includeServer()) {
             TFMGRecipeProvider.registerAllProcessing(generator, output, lookupProvider);

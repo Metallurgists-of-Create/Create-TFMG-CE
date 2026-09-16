@@ -86,7 +86,7 @@ public class TFMGUtils {
     public static void playSound(Level level, BlockPos pos, SoundEvent sound, SoundSource source, float volume, float pitch){
         playSound(level,pos,sound,source,volume,pitch,null);
     }
-    public static void playSound(Level level, BlockPos pos, SoundEvent sound, SoundSource source, float volume, float pitch, Player player){
+    public static void playSound(Level level, BlockPos pos, SoundEvent sound, SoundSource source, float volume, float pitch, Player player) {
         level.playSound(player,pos,sound,source,volume,pitch);
     }
 
@@ -224,96 +224,61 @@ public class TFMGUtils {
 
         IFluidHandler handler = be.getLevel().getCapability(Capabilities.FluidHandler.BLOCK, be.getBlockPos(), null);
 
-        if (handler == null || handler.getTanks() == 0)
-            return false;
-
-        LangBuilder mb = CreateLang.translate("generic.unit.millibuckets");
-        TFMGLang.translate("goggles.fluid_storage")
-                .forGoggles(tooltip);
-
-        boolean isEmpty = true;
-        for (int i = 0; i < handler.getTanks(); i++) {
-            FluidStack fluidStack = handler.getFluidInTank(i);
-            if (fluidStack.isEmpty())
-                continue;
-
-            CreateLang.fluidName(fluidStack)
-                    .style(ChatFormatting.GRAY)
-                    .forGoggles(tooltip, 1);
-
-            CreateLang.builder()
-                    .add(CreateLang.number(fluidStack.getAmount())
-                            .add(mb)
-                            .style(ChatFormatting.DARK_GREEN))
-                    .text(ChatFormatting.GRAY, " / ")
-                    .add(CreateLang.number(handler.getTankCapacity(i))
-                            .add(mb)
-                            .style(ChatFormatting.DARK_GRAY))
-                    .forGoggles(tooltip, 1);
-
-            isEmpty = false;
-        }
-
-        if (handler.getTanks() > 1) {
-            if (isEmpty) tooltip.removeLast();
-            return true;
-        }
-
-        if (!isEmpty)
-            return true;
-
-        CreateLang.translate("gui.goggles.fluid_container.capacity")
-                .add(CreateLang.number(handler.getTankCapacity(0))
-                        .add(mb)
-                        .style(ChatFormatting.DARK_GREEN))
-                .style(ChatFormatting.GRAY)
-                .forGoggles(tooltip, 1);
-
-        return true;
+		return createFluidTooltip(tooltip, handler);
     }
 	
-	/// Populates a tooltip with all the fluid tanks given to it
+	public static LangBuilder fluidOutOfCapacity(int volume, ChatFormatting style, int capacity) {
+		LangBuilder mb = CreateLang.translate("generic.unit.millibuckets");
+		
+		return TFMGLang.builder()
+			.add(TFMGLang.number(volume).add(mb).style(style))
+			.text(ChatFormatting.GRAY, " / ")
+			.add(TFMGLang.number(capacity).add(mb).style(ChatFormatting.DARK_GRAY));
+	}
+	
+	/// Populates a tooltip with all the fluid tanks given to it.
 	public static boolean createFluidTooltip(List<Component> tooltip, IFluidHandler... handlers) {
+		return createFluidTooltip(tooltip, false, handlers);
+	}
+	
+	/** Populates a tooltip with all the fluid tanks given to it
+	 * @param showIfEmpty determines whether fluid handling is noted if the fluid tanks are empty.
+	 * **/
+	public static boolean createFluidTooltip(List<Component> tooltip, boolean showIfEmpty, IFluidHandler... handlers) {
 		LangBuilder mb = CreateLang.translate("generic.unit.millibuckets");
 		TFMGLang.translate("goggles.fluid_storage").forGoggles(tooltip);
 		
 		boolean isEmpty = true;
 		for (IFluidHandler handler : handlers) {
-			if (handler == null || handler.getTanks() == 0)
+			if (handler.getTanks() == 0)
 				continue;
 			
 			for (int i = 0; i < handler.getTanks(); i++) {
 				FluidStack fluidStack = handler.getFluidInTank(i);
-				if (fluidStack.isEmpty())
-					continue;
+				if (fluidStack.isEmpty() && !showIfEmpty) continue;
+				//todo: find or create lang key for empty tank
+				LangBuilder name = fluidStack.isEmpty() ? TFMGLang.text("Empty") : TFMGLang.fluidName(fluidStack);
 				
-				CreateLang.fluidName(fluidStack)
-					.style(ChatFormatting.GRAY)
-					.forGoggles(tooltip, 1);
+				name.style(ChatFormatting.GRAY).forGoggles(tooltip, 1);
 				
-				CreateLang.builder()
-					.add(CreateLang.number(fluidStack.getAmount())
-						.add(mb)
-						.style(ChatFormatting.DARK_GREEN))
-					.text(ChatFormatting.GRAY, " / ")
-					.add(CreateLang.number(handler.getTankCapacity(i))
-						.add(mb)
-						.style(ChatFormatting.DARK_GRAY))
-					.forGoggles(tooltip, 1);
+				fluidOutOfCapacity(fluidStack.getAmount(), ChatFormatting.DARK_GREEN, handler.getTankCapacity(i))
+					.forGoggles(tooltip, 2);
 				
 				isEmpty = false;
 			}
-			
-			CreateLang.translate("gui.goggles.fluid_container.capacity")
-				.add(CreateLang.number(handler.getTankCapacity(0))
-					.add(mb)
-					.style(ChatFormatting.DARK_GREEN))
-				.style(ChatFormatting.GRAY)
-				.forGoggles(tooltip, 1);
 		}
 		
-		if (isEmpty) {
+		if (isEmpty & !showIfEmpty) {
 			tooltip.removeLast();
+			if (handlers.length == 1 && handlers[0].getTanks() == 1) {
+				CreateLang.translate("gui.goggles.fluid_container.capacity")
+					.add(CreateLang.number(handlers[0].getTankCapacity(0))
+						.add(mb)
+						.style(ChatFormatting.DARK_GREEN))
+					.style(ChatFormatting.GRAY)
+					.forGoggles(tooltip, 1);
+				return true;
+			}
 			return false;
 		}
 		
@@ -327,29 +292,7 @@ public class TFMGUtils {
 		
 		IItemHandler handler = be.getLevel().getCapability(Capabilities.ItemHandler.BLOCK, be.getBlockPos(), null);
 		
-		if (handler == null)
-			return false;
-		
-		if (handler.getSlots() == 0)
-			return false;
-		
-		CreateLang.translate("goggles.item_storage").forGoggles(tooltip);
-		boolean isEmpty = true;
-		for (int i = 0; i < handler.getSlots(); i++) {
-			ItemStack itemStack = handler.getStackInSlot(i);
-			
-			if (itemStack.isEmpty()) continue;
-			CreateLang.itemName(itemStack).style(ChatFormatting.GRAY).add(Component.literal(" x " + itemStack.getCount()).withStyle(ChatFormatting.DARK_GREEN)).forGoggles(tooltip, 1);
-			isEmpty = false;
-		}
-		if (handler.getSlots() > 1) {
-			if (isEmpty) tooltip.removeLast();
-			return true;
-		}
-		if (!isEmpty) return true;
-		
-		CreateLang.translate("item_attributes.shulker_level.empty").style(ChatFormatting.DARK_GRAY).forGoggles(tooltip, 1);
-		return true;
+		return createItemTooltip(tooltip, handler);
 	}
 	
 	/// Populates a tooltip with information about the items contained
@@ -415,11 +358,15 @@ public class TFMGUtils {
         }
         return TFMGTexts.DECIMAL_FORMAT.format(amount) + "mB";
     }
-
-    public static void drainFilteredTank(SmartFluidTank tank, int amount) {
+	
+	/** Use {@link com.drmangotea.tfmg.base.fluid.ForceableFluidTank#forceDrain(int, IFluidHandler.FluidAction)} instead. **/
+	@Deprecated(since = "1.2.5")
+	public static void drainFilteredTank(SmartFluidTank tank, int amount) {
         tank.setFluid(new FluidStack(tank.getFluid().getFluidHolder(), Math.max(tank.getFluidAmount() - amount, 0)));
     }
-
+	
+	/** Use {@link com.drmangotea.tfmg.base.fluid.ForceableFluidTank#forceFill(FluidStack, IFluidHandler.FluidAction)} instead. **/
+	@Deprecated(since = "1.2.5")
     public static void fillFilteredTank(SmartFluidTank tank, FluidStack resource) {
         if (tank.getFluid().getFluid().isSame(resource.getFluid()) || tank.isEmpty())
             tank.setFluid(new FluidStack(resource.getFluid(), Math.min(tank.getFluidAmount() + resource.getAmount(), tank.getCapacity())));

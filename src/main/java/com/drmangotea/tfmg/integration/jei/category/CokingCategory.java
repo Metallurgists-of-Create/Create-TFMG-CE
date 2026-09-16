@@ -23,7 +23,6 @@ public class CokingCategory extends CreateRecipeCategory<CokingRecipe> {
         super(info);
     }
 
-
     @Override
     public void setRecipe(IRecipeLayoutBuilder builder, CokingRecipe recipe, IFocusGroup focuses) {
 

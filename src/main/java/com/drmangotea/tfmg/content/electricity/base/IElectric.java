@@ -376,8 +376,7 @@ public interface IElectric extends IHaveGoggleInformation {
      */
     @Override @OnlyIn(Dist.CLIENT)
     default boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
-        if (Minecraft.getInstance().player == null
-                || !MultimeterItem.isHeldByPlayer(Minecraft.getInstance().player))
+        if (Minecraft.getInstance().player == null || !MultimeterItem.isHeldByPlayer(Minecraft.getInstance().player))
             return false;
         return makeMultimeterTooltip(tooltip, isPlayerSneaking);
     }
@@ -462,7 +461,7 @@ public interface IElectric extends IHaveGoggleInformation {
 
 
     /**
-     * @return true if the network has enough power
+     * @return {@code true} if the network has enough power
      */
     default boolean canWork() {
         return !getData().notEnoughPower;

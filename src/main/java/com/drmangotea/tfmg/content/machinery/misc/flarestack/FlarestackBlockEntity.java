@@ -20,12 +20,11 @@ import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
-import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
 
 import java.util.List;
 
 public class FlarestackBlockEntity extends SmartBlockEntity implements IHaveGoggleInformation {
-    public FluidTank tankInventory;
+    public ForceableFluidTank tankInventory;
     public int smokeTimer = 0;
 
     public FlarestackBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
@@ -33,7 +32,7 @@ public class FlarestackBlockEntity extends SmartBlockEntity implements IHaveGogg
         tankInventory = new ForceableFluidTank(2500, this::onFluidStackChanged)
 			.blockExtraction()
 			.withValidator(
-				(stack) ->  stack.getFluid().is(TFMGTags.Fluids.FLAMMABLE.tag)||stack.getFluid().is(TFMGTags.Fluids.FUEL.tag)
+				(stack) ->  stack.is(TFMGTags.Fluids.FLAMMABLE.tag)||stack.is(TFMGTags.Fluids.FUEL.tag)
 			);
     }
 
@@ -59,7 +58,7 @@ public class FlarestackBlockEntity extends SmartBlockEntity implements IHaveGogg
 
     @Override
     public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
-        return TFMGUtils.createFluidTooltip(this, tooltip);
+        return TFMGUtils.createFluidTooltip(tooltip, tankInventory);
     }
 
 
@@ -83,7 +82,7 @@ public class FlarestackBlockEntity extends SmartBlockEntity implements IHaveGogg
 
         if (tankInventory.getFluidAmount() > 0) {
             smokeTimer = 100;
-            tankInventory.drain(25, IFluidHandler.FluidAction.EXECUTE);
+            tankInventory.forceDrain(25, IFluidHandler.FluidAction.EXECUTE);
         }
     }
 

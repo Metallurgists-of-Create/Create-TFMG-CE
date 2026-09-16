@@ -22,9 +22,6 @@ import net.minecraft.world.phys.BlockHitResult;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class IndustrialMixerBlock extends KineticBlock implements IBE<IndustrialMixerBlockEntity> {
-
-
-
     public IndustrialMixerBlock(Properties properties) {
         super(properties);
     }

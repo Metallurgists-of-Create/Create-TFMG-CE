@@ -13,7 +13,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.registries.DeferredHolder;
 
 public class MixerModeBuilder<T extends MixerMode, P> extends AbstractBuilder<MixerMode, T, P, MixerModeBuilder<T, P>> {
-
     public static <T extends MixerMode, P> MixerModeBuilder<T, P> create(AbstractRegistrate<?> owner, P parent, String name, BuilderCallback callback, NonNullFunction<MixerMode.Properties, T> factory) {
         return new MixerModeBuilder<>(owner, parent, name, callback, factory);
     }

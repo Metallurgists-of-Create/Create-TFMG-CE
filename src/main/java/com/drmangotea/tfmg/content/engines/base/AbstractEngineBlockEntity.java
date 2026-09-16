@@ -5,7 +5,6 @@ import com.drmangotea.tfmg.content.electricity.base.KineticElectricBlockEntity;
 import com.drmangotea.tfmg.content.engines.fuels.EngineFuel;
 import com.drmangotea.tfmg.registry.TFMGBlockEntities;
 import com.drmangotea.tfmg.registry.TFMGFluids;
-import com.drmangotea.tfmg.registry.TFMGTags;
 import com.simibubi.create.foundation.fluid.CombinedTankWrapper;
 import net.createmod.catnip.math.VecHelper;
 import net.minecraft.core.BlockPos;
@@ -59,8 +58,8 @@ public abstract class AbstractEngineBlockEntity extends KineticElectricBlockEnti
     public AbstractEngineBlockEntity(BlockEntityType<?> typeIn, BlockPos pos, BlockState state) {
         super(typeIn, pos, state);
         setLazyTickRate(10);
-        fuelTank = new EngineFluidTank(8000, false, true, f -> tankUpdated(f, true), TFMGTags.Fluids.AIR.tag);
-        exhaustTank = new EngineFluidTank(8000, true, false, f -> tankUpdated(f, false));
+        fuelTank = EngineFluidTank.fuelTank(8000, f -> tankUpdated(f, true));
+        exhaustTank = EngineFluidTank.exhaustTank(8000, f -> tankUpdated(f, false));
         fluidCapability = new CombinedTankWrapper(fuelTank, exhaustTank);
         updateCapability = false;
         refreshCapability();

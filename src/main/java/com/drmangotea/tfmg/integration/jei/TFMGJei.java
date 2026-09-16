@@ -38,11 +38,9 @@ import java.util.function.Predicate;
 @SuppressWarnings("unused")
 @ParametersAreNonnullByDefault
 public class TFMGJei implements IModPlugin {
-
     private static final ResourceLocation ID = TFMG.asResource("jei_plugin");
 
     private final List<CreateRecipeCategory<?>> allCategories = new ArrayList<>();
-    private IIngredientManager ingredientManager;
     public static IJeiRuntime runtime;
 
     private void loadCategories() {
@@ -137,7 +135,7 @@ public class TFMGJei implements IModPlugin {
 
     @Override
     public void registerRecipes(IRecipeRegistration registration) {
-        ingredientManager = registration.getIngredientManager();
+        IIngredientManager ingredientManager = registration.getIngredientManager();
         allCategories.forEach(c -> c.registerRecipes(registration));
     }
 

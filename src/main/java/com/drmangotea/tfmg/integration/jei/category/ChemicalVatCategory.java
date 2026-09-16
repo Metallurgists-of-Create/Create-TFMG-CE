@@ -7,7 +7,6 @@ import com.drmangotea.tfmg.content.machinery.vat.base.registry.functions.Drawabl
 import com.drmangotea.tfmg.content.machinery.vat.base.registry.operations.VatCategoryEvent;
 import com.drmangotea.tfmg.content.machinery.vat.base.registry.operations.VatOperation;
 import com.drmangotea.tfmg.content.machinery.vat.base.registry.types.VatType;
-import com.drmangotea.tfmg.content.machinery.vat.base.registry.types.VatTypeEntry;
 import com.drmangotea.tfmg.recipes.VatMachineRecipe;
 import com.drmangotea.tfmg.recipes.VatRecipeParams;
 import com.drmangotea.tfmg.registry.TFMGGuiTextures;
@@ -262,7 +261,7 @@ public class ChemicalVatCategory extends CreateRecipeCategory<VatMachineRecipe> 
     }
 
     /**
-     * @deprecated Use {@link VatCategoryEvent#addDrawableVatType(VatTypeEntry, DrawableVatType)}  instead
+     * @deprecated Use {@link VatCategoryEvent#addDrawableVatType(VatType, DrawableVatType)}  instead
      */
     @Deprecated(forRemoval = true, since = "1.2.5")
     private void drawVatTypes(List<ResourceLocation> allowedVatTypes, GuiGraphics graphics) {}

@@ -1,6 +1,5 @@
 package com.drmangotea.tfmg.content.electricity.lights;
 
-
 import com.drmangotea.tfmg.base.blocks.WallMountBlock;
 import com.drmangotea.tfmg.content.electricity.base.IElectric;
 import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
@@ -36,13 +35,10 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
-@ParametersAreNonnullByDefault
-@MethodsReturnNonnullByDefault
+@ParametersAreNonnullByDefault @MethodsReturnNonnullByDefault
 public class LightBulbBlock extends WallMountBlock implements IBE<LightBulbBlockEntity>, SimpleWaterloggedBlock, IWrenchable {
     public static final IntegerProperty LIGHT = BlockStateProperties.LEVEL;
-
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
-
     public final BlockEntityEntry<? extends LightBulbBlockEntity> blockEntityType;
     public final VoxelShaper shape;
 
@@ -53,20 +49,21 @@ public class LightBulbBlock extends WallMountBlock implements IBE<LightBulbBlock
         this.shape = shape;
     }
 
-
     @Override
     public void onPlace(BlockState pState, Level level, BlockPos pos, BlockState pOldState, boolean pIsMoving) {
         withBlockEntityDo(level,pos, IElectric::onPlaced);
     }
+	
     @Override
     public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
         IBE.onRemove(state, level, pos, newState);
     }
+	
     @Override
     public VoxelShape getShape(BlockState pState, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
-
         return shape.get(pState.getValue(FACING));
     }
+	
     @Override
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand pHand, BlockHitResult hitResult) {
         if (player.isShiftKeyDown())
@@ -74,41 +71,33 @@ public class LightBulbBlock extends WallMountBlock implements IBE<LightBulbBlock
         ItemStack heldItem = player.getItemInHand(pHand);
         LightBulbBlockEntity be = getBlockEntity(level, pos);
         DyeColor dye = DyeColor.getColor(heldItem);
-        if (be != null) {
-            if (dye != null) {
-                level.playSound(null, pos, SoundEvents.DYE_USE, SoundSource.BLOCKS, 1.0F, 1.0F);
-                be.setColor(dye);
-                return ItemInteractionResult.SUCCESS;
-            }
+        if (be != null && dye != null) {
+			level.playSound(null, pos, SoundEvents.DYE_USE, SoundSource.BLOCKS, 1.0F, 1.0F);
+			be.setColor(dye);
+			return ItemInteractionResult.SUCCESS;
         }
-
-
         return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
     }
 
-    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> p_153687_) {
-        p_153687_.add(LIGHT, WATERLOGGED,FACING);
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        builder.add(LIGHT, WATERLOGGED, FACING);
     }
-    public BlockState updateShape(BlockState p_153680_, Direction p_153681_, BlockState p_153682_, LevelAccessor p_153683_, BlockPos p_153684_, BlockPos p_153685_) {
-        if (p_153680_.getValue(WATERLOGGED)) {
-            p_153683_.scheduleTick(p_153684_, Fluids.WATER, Fluids.WATER.getTickDelay(p_153683_));
+	
+    public BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
+        if (state.getValue(WATERLOGGED)) {
+            level.scheduleTick(pos, Fluids.WATER, Fluids.WATER.getTickDelay(level));
         }
-
-        return super.updateShape(p_153680_, p_153681_, p_153682_, p_153683_, p_153684_, p_153685_);
+        return super.updateShape(state, direction, neighborState, level, pos, neighborPos);
     }
 
-    public FluidState getFluidState(BlockState p_153699_) {
-        return p_153699_.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : super.getFluidState(p_153699_);
+    public FluidState getFluidState(BlockState state) {
+        return state.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : super.getFluidState(state);
     }
-
-
-
 
     @Override
     public Class<LightBulbBlockEntity> getBlockEntityClass() {
         return LightBulbBlockEntity.class;
     }
-
 
     @Override
     public BlockEntityType<? extends LightBulbBlockEntity> getBlockEntityType() {

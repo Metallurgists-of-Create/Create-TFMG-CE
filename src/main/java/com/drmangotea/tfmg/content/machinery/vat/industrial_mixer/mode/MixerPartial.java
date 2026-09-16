@@ -5,6 +5,5 @@ import dev.engine_room.flywheel.lib.model.baked.PartialModel;
 
 @FunctionalInterface
 public interface MixerPartial {
-
     PartialModel getPartial(int currentHeight, int totalHeight, IndustrialMixerBlockEntity mixer);
 }

@@ -29,8 +29,6 @@ public class CastingCategory extends CreateRecipeCategory<CastingRecipe> {
                 .addItemStack(TFMGJeiConstants.getSingleResult(recipe));
 
         addFluidSlot(builder,15,20,recipe.getFluidIngredients().getFirst());
-
-
     }
 
     @Override

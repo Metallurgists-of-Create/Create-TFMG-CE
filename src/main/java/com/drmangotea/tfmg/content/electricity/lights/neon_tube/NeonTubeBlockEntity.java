@@ -16,7 +16,6 @@ import static com.drmangotea.tfmg.content.electricity.lights.LightBulbBlock.LIGH
 
 public class NeonTubeBlockEntity extends ElectricBlockEntity {
     public DyeColor color = DyeColor.WHITE;
-
     public LerpedFloat glow = LerpedFloat.linear();
 
     public NeonTubeBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
@@ -34,10 +33,10 @@ public class NeonTubeBlockEntity extends ElectricBlockEntity {
 		glow.chase(getPowerUsage()*1.5, 0.4, LerpedFloat.Chaser.EXP);
 		glow.tickChaser();
 		int light = Math.min(getData().getVoltage() / 10, 15);
-		if (light != getBlockState().getValue(LIGHT))
+		if (light != getBlockState().getValue(LIGHT) && level != null)
 			level.setBlock(getBlockPos(), getBlockState().setValue(LIGHT, light), 2);
-
     }
+	
     @Override
     protected void write(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {
         super.write(compound,registries , clientPacket);
