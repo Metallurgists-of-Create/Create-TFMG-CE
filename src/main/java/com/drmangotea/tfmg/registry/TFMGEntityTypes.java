@@ -66,10 +66,12 @@ public class TFMGEntityTypes {
                     MobCategory.MISC, 4, 20, true, true, Spark::build).register();
 
 
-    private static <T extends Entity> CreateEntityBuilder<T, ?> register(String name, EntityType.EntityFactory<T> factory,
-                                                                         NonNullSupplier<NonNullFunction<EntityRendererProvider.Context, EntityRenderer<? super T>>> renderer,
-                                                                         MobCategory group, int range, int updateFrequency, boolean sendVelocity, boolean immuneToFire,
-                                                                         NonNullConsumer<EntityType.Builder<T>> propertyBuilder) {
+    private static <T extends Entity> CreateEntityBuilder<T, ?> register(
+		String name, EntityType.EntityFactory<T> factory,
+		NonNullSupplier<NonNullFunction<EntityRendererProvider.Context, EntityRenderer<? super T>>> renderer,
+		MobCategory group, int range, int updateFrequency, boolean sendVelocity, boolean immuneToFire,
+		NonNullConsumer<EntityType.Builder<T>> propertyBuilder
+	) {
         String id = TFMGLang.asId(name);
         return (CreateEntityBuilder<T, ?>) TFMG.REGISTRATE
                 .entity(id, factory, group)

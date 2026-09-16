@@ -30,6 +30,8 @@ import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.HumanoidArm;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -57,24 +59,24 @@ public class TFMGUtils {
         };
     }
 	
-    public static void createFireExplosion(Level level, Entity entity, BlockPos pos, int sparkAmount, float radius) {
-
+    public static void createFireExplosion(Level level, Entity entity, Vec3 pos, int sparkAmount, float radius) {
         if (level.isClientSide && entity != null) level.broadcastEntityEvent(entity, (byte) 3);
 
         for (int i = 0; i < sparkAmount; i++) {
-            float x = level.random.nextFloat() * 360;
-            float y = level.random.nextFloat() * 360;
-            float z = level.random.nextFloat() * 360;
+            float x = level.random.nextFloat() * Mth.TWO_PI;
+            float y = level.random.nextFloat() * Mth.TWO_PI;
+            float z = level.random.nextFloat() * Mth.TWO_PI;
             Spark spark = TFMGEntityTypes.SPARK.create(level);
-            spark.moveTo(pos.getX(), pos.getY() + 1, pos.getZ());
+			if (spark == null) continue;
+            spark.moveTo(pos.x(), pos.y() + 1, pos.z());
 
-            float f = -Mth.sin(y * ((float) Math.PI / 180F)) * Mth.cos(x * ((float) Math.PI / 180F));
-            float f1 = -Mth.sin((x + z) * ((float) Math.PI / 180F));
-            float f2 = Mth.cos(y * ((float) Math.PI / 180F)) * Mth.cos(x * ((float) Math.PI / 180F));
+            float f = -Mth.sin(y) * Mth.cos(x);
+            float f1 = -Mth.sin(x + z);
+            float f2 = Mth.cos(y) * Mth.cos(x);
             spark.shoot(f, f1, f2, 0.3f, 1);
             level.addFreshEntity(spark);
         }
-        level.explode(null, pos.getX(), pos.getY(), pos.getZ(), radius, Level.ExplosionInteraction.BLOCK);
+        level.explode(null, pos.x(), pos.y(), pos.z(), radius, Level.ExplosionInteraction.BLOCK);
     }
 	
     public static void playSound(Level level, BlockPos pos, SoundEvent sound, SoundSource source){
@@ -90,29 +92,27 @@ public class TFMGUtils {
         level.playSound(player,pos,sound,source,volume,pitch);
     }
 
+	//what is this even for?
     public static void blowUpTank(FluidTankBlockEntity tank, int power) {
-        if (tank == null || tank.getControllerBE() == null) return;
+        if (tank == null) return;
         FluidTankBlockEntity be = tank.getControllerBE();
+		if (be == null) return;
+		BlockPos pos = be.getBlockPos();
+		Level level = be.getLevel();
+		if (level == null) return;
 
-        for (int xOffset = 0; xOffset < be.getWidth(); xOffset++) {
-            for (int zOffset = 0; zOffset < be.getWidth(); zOffset++) {
-                for (int yOffset = 0; yOffset < be.getHeight(); yOffset++) {
+        for (int X = 0; X < be.getWidth(); X++) { for (int Z = 0; Z < be.getWidth(); Z++) { for (int Y = 0; Y < be.getHeight(); Y++) {
+			level.destroyBlock(pos.offset(X, Y, Z), false);
+		} } }
 
-                    BlockPos pos = be.getBlockPos().offset(xOffset, yOffset, zOffset);
-
-                    be.getLevel().destroyBlock(pos, false);
-                }
-            }
-        }
-
-        createFireExplosion(be.getLevel(), null, new BlockPos(be.getBlockPos().getX() + (be.getWidth() / 2), be.getBlockPos().getY() + (be.getHeight() / 2), be.getBlockPos().getZ() + (be.getWidth() / 2)), power * 15, (float) power);
+        createFireExplosion(level, null, Vec3.atLowerCornerWithOffset(pos, be.getWidth()  * 0.5f, be.getHeight()  * 0.5f, be.getWidth() * 0.5f), power * 15, (float) power);
     }
 
-    public static void createOutline(Vec3 pos1, Vec3 pos2,String name,Color color){
-        createOutline(pos1,pos2,name,color,1/32f);
+    public static void createOutline(Vec3 pos1, Vec3 pos2, String name, Color color) {
+        createOutline(pos1, pos2, name, color, 1/32f);
     }
 
-    public static void createOutline(Vec3 pos1, Vec3 pos2,String name,Color color,float width){
+    public static void createOutline(Vec3 pos1, Vec3 pos2, String name, Color color, float width) {
         Outliner.getInstance().showAABB(name, new AABB(pos1, pos2))
                 .lineWidth(width)
                 .colored(color);
@@ -200,9 +200,18 @@ public class TFMGUtils {
         return (float) Math.sqrt(x * x + z * z + (is2d ? 0: y * y));
     }
 	
+	public static Vec3 getGunBarrelVec(LivingEntity entity, boolean mainHand, Vec3 rightHandForward) {
+		Vec3 start = entity.position().add(0, entity.getEyeHeight(), 0);
+		int flip = mainHand == (entity.getMainArm() == HumanoidArm.RIGHT) ? -1 : 1;
+		Vec3 barrelPosNoTransform = new Vec3(flip * rightHandForward.x, rightHandForward.y, rightHandForward.z)
+			.xRot(-entity.getXRot() * Mth.DEG_TO_RAD)
+			.yRot(-entity.getYRot() * Mth.DEG_TO_RAD);
+		return start.add(barrelPosNoTransform);
+	}
+	
 	//for Sable stuff:
 	public static Vec3 rotateQuat(final Vec3 V, final Quaterniond Q) {
-		final Quaterniond q = new Quaterniond((float) V.x, (float) V.y, (float) V.z, 0.0f);
+		final Quaterniond q = new Quaterniond(V.x, V.y, V.z, 0.0f);
 		final Quaterniond Q2 = new Quaterniond(Q);
 		q.mul(Q2);
 		Q2.conjugate();
