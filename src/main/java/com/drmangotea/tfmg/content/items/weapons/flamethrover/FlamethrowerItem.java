@@ -2,6 +2,7 @@ package com.drmangotea.tfmg.content.items.weapons.flamethrover;
 
 import com.drmangotea.tfmg.TFMGClient;
 import com.drmangotea.tfmg.TFMGRegistries;
+import com.drmangotea.tfmg.base.TFMGUtils;
 import com.drmangotea.tfmg.base.spark.DryIceFlake;
 import com.drmangotea.tfmg.base.spark.LithiumSpark;
 import com.drmangotea.tfmg.base.spark.Spark;
@@ -22,7 +23,6 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -38,8 +38,6 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import org.jetbrains.annotations.Nullable;
 
 public class FlamethrowerItem extends Item implements CustomArmPoseItem {
-
-
     public static final int FUEL_CAPACITY = 4000;
 
     public FlamethrowerItem(Properties pProperties) {
@@ -63,7 +61,7 @@ public class FlamethrowerItem extends Item implements CustomArmPoseItem {
         FlamethrowerFuel fuel = stack.getOrDefault(TFMGDataComponents.FLAMETHROWER, FlamethrowerFuel.EMPTY);
         FlamethrowerFuelType fuelType = getFuel(level.registryAccess(), stack);
 
-        Vec3 barrelPos = getGunBarrelVec(entity, entity.getUsedItemHand() == InteractionHand.MAIN_HAND,
+        Vec3 barrelPos = TFMGUtils.getGunBarrelVec(entity, entity.getUsedItemHand() == InteractionHand.MAIN_HAND,
                     new Vec3(.75f, -0.65f, 1.5f));
 
         boolean isCold = fuel.fuelType() != null && registry.getHolder(fuel.fuelType().location()).filter((holder) -> holder.is(TFMGTags.FlamethrowerFuel.COLD.tag)).isPresent();
@@ -104,18 +102,6 @@ public class FlamethrowerItem extends Item implements CustomArmPoseItem {
             stack.set(TFMGDataComponents.FLAMETHROWER, FlamethrowerFuel.EMPTY);
             entity.stopUsingItem();
         }
-    }
-
-    public static Vec3 getGunBarrelVec(LivingEntity entity, boolean mainHand, Vec3 rightHandForward) {
-        Vec3 start = entity.position()
-                .add(0, entity.getEyeHeight(), 0);
-        float yaw = (float) ((entity.getYRot()) / -180 * Math.PI);
-        float pitch = (float) ((entity.getXRot()) / -180 * Math.PI);
-        int flip = mainHand == (entity.getMainArm() == HumanoidArm.RIGHT) ? -1 : 1;
-        Vec3 barrelPosNoTransform = new Vec3(flip * rightHandForward.x, rightHandForward.y, rightHandForward.z);
-        Vec3 barrelPos = start.add(barrelPosNoTransform.xRot(pitch)
-                .yRot(yaw));
-        return barrelPos;
     }
 
     @Override
