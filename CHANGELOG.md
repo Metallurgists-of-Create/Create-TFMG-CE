@@ -12,7 +12,8 @@ Contributors:<br>
 
 
 ### Changes:
-
+- Surface Scanner
+  - Now can be picked up with shift and right-click of the wrench
 
 ### API Changes:
 
