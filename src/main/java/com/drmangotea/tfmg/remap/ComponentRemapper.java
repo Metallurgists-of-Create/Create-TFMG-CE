@@ -55,18 +55,8 @@ public class ComponentRemapper {
         return true;
     }
 
-
     private static Optional<ResourceKey<EngineFuelType>> engineFuelKey(String name, RegistryAccess registryAccess) {
         ResourceKey<EngineFuelType> key = ResourceKey.create(TFMGRegistries.ENGINE_FUEL_TYPE, TFMG.asResource(name));
-        Optional<Holder.Reference<EngineFuelType>> type = registryAccess.lookupOrThrow(TFMGRegistries.ENGINE_FUEL_TYPE).get(key);
-        if (type.isEmpty()) {
-            return chemicaEngineFuelKey(name, registryAccess);
-        }
-        return type.flatMap(Holder.Reference::unwrapKey);
-    }
-
-    private static Optional<ResourceKey<EngineFuelType>> chemicaEngineFuelKey(String name, RegistryAccess registryAccess) {
-        ResourceKey<EngineFuelType> key = ResourceKey.create(TFMGRegistries.ENGINE_FUEL_TYPE, ResourceLocation.fromNamespaceAndPath("chemica", name));
         Optional<Holder.Reference<EngineFuelType>> type = registryAccess.lookupOrThrow(TFMGRegistries.ENGINE_FUEL_TYPE).get(key);
         return type.flatMap(Holder.Reference::unwrapKey);
     }

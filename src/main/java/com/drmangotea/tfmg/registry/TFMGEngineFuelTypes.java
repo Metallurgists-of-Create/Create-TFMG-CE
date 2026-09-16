@@ -80,38 +80,6 @@ public class TFMGEngineFuelTypes {
                 .efficiency(0.3f)
                 .torque(0.3f)
                 .build());
-
-        //Chemica fix
-
-        register(ctx, BIODIESEL, new EngineFuelType.Builder(TFMGTags.Fluids.BIODIESEL.tag)
-                .speed(1.0f)
-                .efficiency(0.9f)
-                .torque(0.8f)
-                .build());
-
-        register(ctx, ETHANOL, new EngineFuelType.Builder(TFMGTags.Fluids.ETHANOL.tag)
-                .speed(0.6f)
-                .efficiency(0.8f)
-                .torque(0.6f)
-                .build());
-
-        register(ctx, HIGH_CETANE_DIESEL, new EngineFuelType.Builder(TFMGTags.Fluids.HIGH_CETANE_DIESEL.tag)
-                .speed(1.8f)
-                .efficiency(1.0f)
-                .torque(2.1f)
-                .build());
-
-        register(ctx, HIGH_OCTANE_GASOLINE, new EngineFuelType.Builder(TFMGTags.Fluids.HIGH_OCTANE_GASOLINE.tag)
-                .speed(1.6f)
-                .efficiency(1.2f)
-                .torque(2.3f)
-                .build());
-
-        register(ctx, HYDROGEN_FUEL, new EngineFuelType.Builder(TFMGTags.Fluids.HYDROGEN_FUEL.tag)
-                .speed(1.8f)
-                .efficiency(1.3f)
-                .torque(0.8f)
-                .build());
     }
 
     private static void register(BootstrapContext<EngineFuelType> ctx, ResourceKey<EngineFuelType> name, EngineFuelType type) {
