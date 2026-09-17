@@ -36,6 +36,7 @@ import com.tterrag.registrate.util.entry.BlockEntry;
 import com.tterrag.registrate.util.nullness.NonNullBiConsumer;
 import com.tterrag.registrate.util.nullness.NonNullFunction;
 import com.tterrag.registrate.util.nullness.NonNullUnaryOperator;
+
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.Direction;
 import net.minecraft.data.recipes.RecipeCategory;
@@ -44,11 +45,11 @@ import net.minecraft.tags.ItemTags;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockBehaviour;
-import net.minecraft.world.level.storage.loot.LootPool;
+import net.minecraft.world.level.block.state.properties.SlabType;
 import net.minecraft.world.level.storage.loot.LootTable;
-import net.minecraft.world.level.storage.loot.entries.LootItem;
-import net.minecraft.world.level.storage.loot.entries.LootPoolEntryContainer;
+import net.minecraft.world.level.storage.loot.entries.LootPoolSingletonContainer;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
+import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.neoforged.neoforge.client.model.generators.ModelFile;
 import net.neoforged.neoforge.client.model.generators.MultiPartBlockStateBuilder;
 import net.neoforged.neoforge.common.Tags;
@@ -65,6 +66,13 @@ import static com.simibubi.create.foundation.data.BlockStateGen.axisBlock;
 import static com.simibubi.create.foundation.data.BlockStateGen.simpleCubeAll;
 import static com.simibubi.create.foundation.data.ModelGen.customItemModel;
 import static com.simibubi.create.foundation.data.TagGen.*;
+import static net.minecraft.world.level.storage.loot.predicates.LootItemRandomChanceCondition.randomChance;
+import static net.minecraft.world.level.storage.loot.predicates.LootItemBlockStatePropertyCondition.hasBlockStateProperties;
+import static net.minecraft.advancements.critereon.StatePropertiesPredicate.Builder.properties;
+import static net.minecraft.world.level.storage.loot.LootPool.lootPool;
+import static net.minecraft.world.level.storage.loot.LootTable.lootTable;
+import static net.minecraft.world.level.storage.loot.entries.LootItem.lootTableItem;
+import static net.minecraft.world.level.storage.loot.functions.SetItemCountFunction.setCount;
 
 @SuppressWarnings("removal")
 public class TFMGBuilderTransformers {
@@ -208,12 +216,23 @@ public class TFMGBuilderTransformers {
 
     private static <B extends Block> NonNullBiConsumer<RegistrateBlockLootTables, B> concreteLoot() {
         return (lootTables, block) -> {
-            LootPoolEntryContainer.Builder<?> dropDust = LootItem.lootTableItem(TFMGItems.CONCRETE_MIXTURE);
-            LootPoolEntryContainer.Builder<?> dropSelf = LootItem.lootTableItem(block);
+            LootPoolSingletonContainer.Builder<?> dropSelf = lootTableItem(block);
+            LootPoolSingletonContainer.Builder<?> dropDust = lootTableItem(TFMGItems.CONCRETE_MIXTURE);
             LootItemCondition.Builder exploded = BrokenByExplosionCondition.brokenByExplosion();
 
-            LootPool.Builder pool = LootPool.lootPool().add(dropDust.when(exploded).otherwise(dropSelf));
-            lootTables.add(block, LootTable.lootTable().withPool(pool));
+            if (block instanceof SlabBlock) {
+                LootItemCondition.Builder doubleSlab = hasBlockStateProperties(block)
+                    .setProperties(properties().hasProperty(SlabBlock.TYPE, SlabType.DOUBLE));
+
+                dropDust = dropDust.apply(setCount(ConstantValue.exactly(0)).when(doubleSlab.invert().and(randomChance(0.5f))));
+                dropSelf = dropSelf.apply(setCount(ConstantValue.exactly(2)).when(doubleSlab));
+            }
+
+            LootTable.Builder table = lootTable()
+                .withPool(lootPool().add(dropDust).when(exploded))
+                .withPool(lootPool().add(dropSelf).when(exploded.invert()));
+
+            lootTables.add(block, table);
         };
     }
 

@@ -12,6 +12,8 @@ public interface ReinforcedBlock extends IBlockExtension {
 
     @Override
     default void onBlockExploded(BlockState state, Level level, BlockPos pos, Explosion explosion) {
+        // TODO: When the explosion is sufficiently powerful, destroy the rebar too.
+        // A nuke probably shouldn't leave behind rebar floating above a crater.
         BlockState newState = withoutConcrete(state).setValue(ConcreteloggedBlock.CONCRETELOGGED, false);
         level.setBlock(pos, newState, Block.UPDATE_NEIGHBORS | Block.UPDATE_CLIENTS);
     }
