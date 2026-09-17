@@ -138,28 +138,43 @@ public class ElectricalNetwork {
     }
 
     public void checkForLoops(BlockPos pos) {
-        members.forEach(member -> {
+        List<IElectric> membersSnapshot = new ArrayList<>(members);
+
+        List<ElectricalNetwork> networks = new ArrayList<>();
+        networks.add(this);
+
+        for (IElectric member : membersSnapshot) {
             if (member instanceof VoltageAlteringBlockEntity be && be.getControlledBlock() != null) {
-				List<ElectricalNetwork> list = new ArrayList<>();
-				list.add(this);
-				be.getControlledBlock().getOrCreateElectricNetwork().checkForLoops(list, pos);
+                be.getControlledBlock()
+                        .getOrCreateElectricNetwork()
+                        .checkForLoops(networks, pos);
             }
-        });
+        }
     }
 
     public void checkForLoops(List<ElectricalNetwork> network, BlockPos pos) {
         if (network.contains(this)) {
-            if (!members.isEmpty())
+            if (!members.isEmpty()) {
                 members.getFirst().getLevelAccessor().destroyBlock(pos, false);
+            }
             return;
         }
+
         network.add(this);
-        members.forEach(member -> {
+
+        List<IElectric> membersSnapshot = new ArrayList<>(members);
+
+        for (IElectric member : membersSnapshot) {
             if (member instanceof VoltageAlteringBlockEntity be && be.getControlledBlock() != null) {
-				be.getControlledBlock().getOrCreateElectricNetwork().checkForLoops(network, pos);
+                be.getControlledBlock()
+                        .getOrCreateElectricNetwork()
+                        .checkForLoops(network, pos);
             }
-        });
+        }
     }
+
+
+
 
     public List<IElectric> getMembers() {
         return members;

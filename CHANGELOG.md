@@ -9,12 +9,21 @@ Contributors:<br>
 
 ## Changelog:
 ### Bug Fixes:
+- Fix rare `ConcurrentModificationException` being thrown with `ElectricalNetwork#checkForLoops`
+- TFMGTiers now uses proper mineable tags.
+- Rebar recipe now produces 2 per ingot instead of 4 to prevent duping.
 
 
 ### Changes:
-
+- Surface Scanner
+  - Now can be picked up with shift and right-click of the wrench
+- Flamethrower
+  - Fuel type now pulls fluid lang key instead of relying on a new key
 
 ### API Changes:
+- Removed `ILockablePipe`
+- Removed `PipeAttachmentModelMixin`
+- Pipe Locking now uses the `tfmg:locked_pipe` data attachment.
 
 
 ### New Translations:

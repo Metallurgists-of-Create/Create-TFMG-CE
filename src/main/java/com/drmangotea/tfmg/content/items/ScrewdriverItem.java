@@ -1,11 +1,18 @@
 package com.drmangotea.tfmg.content.items;
 
-import com.drmangotea.tfmg.content.decoration.pipes.ILockablePipe;
+import com.drmangotea.tfmg.registry.TFMGDataAttachments;
+import com.simibubi.create.AllBlocks;
+import com.simibubi.create.content.fluids.FluidTransportBehaviour;
+import com.simibubi.create.content.fluids.pipes.FluidPipeBlock;
+import com.simibubi.create.content.fluids.pipes.FluidPipeBlockEntity;
 import com.simibubi.create.foundation.utility.RaycastHelper;
 import net.createmod.catnip.outliner.Outliner;
 import net.createmod.ponder.api.PonderPalette;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -13,13 +20,18 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+
+import java.util.Map;
 
 
 public class ScrewdriverItem extends Item {
@@ -34,13 +46,35 @@ public class ScrewdriverItem extends Item {
         Level level = pContext.getLevel();
 
         if (level.getBlockEntity(positionClicked) != null && player != null) {
-            if (level.getBlockEntity(positionClicked) instanceof ILockablePipe lockablePipe) {
-                lockablePipe.toggleLock(player, level, positionClicked, level.getBlockState(positionClicked));
+            if (level.getBlockEntity(positionClicked) instanceof FluidPipeBlockEntity fp) {
+                toggleLock(player, level, positionClicked, level.getBlockState(positionClicked), fp);
                 pContext.getItemInHand().hurtAndBreak(1, player, LivingEntity.getSlotForHand(pContext.getHand()));
                 return InteractionResult.SUCCESS;
             }
         }
         return super.useOn(pContext);
+    }
+
+    public void toggleLock(Player player, Level world, BlockPos pos, BlockState state, BlockEntity blockEntity) {
+        world.playSound(player, pos, SoundEvents.ITEM_PICKUP, SoundSource.BLOCKS, 0.4f, 0.5f);
+        setLocked(blockEntity, !isLocked(blockEntity));
+        if (isLocked(blockEntity))
+            return;
+
+        BlockState newState;
+        FluidTransportBehaviour.cacheFlows(world, pos);
+        newState = updatePipe(world, pos, state).setValue(BlockStateProperties.WATERLOGGED, state.getValue(BlockStateProperties.WATERLOGGED));
+        world.setBlock(pos, newState, 3);
+        FluidTransportBehaviour.loadFlows(world, pos);
+    }
+
+    BlockState updatePipe(LevelAccessor world, BlockPos pos, BlockState state) {
+        Direction side = Direction.UP;
+        Map<Direction, BooleanProperty> facingToPropertyMap = FluidPipeBlock.PROPERTY_BY_DIRECTION;
+        return AllBlocks.FLUID_PIPE.get()
+                .updateBlockState(state.getBlock().defaultBlockState()
+                        .setValue(facingToPropertyMap.get(side), true)
+                        .setValue(facingToPropertyMap.get(side.getOpposite()), true), side, null, world, pos);
     }
 
     private static AABB lastShownAABB = null;
@@ -70,9 +104,9 @@ public class ScrewdriverItem extends Item {
 
         BlockEntity blockEntity = world.getBlockEntity(targetedPos);
 
-        if (blockEntity instanceof ILockablePipe lockable) {
+        if (blockEntity instanceof FluidPipeBlockEntity) {
             lastShownAABB = shape.isEmpty() ? new AABB(BlockPos.ZERO) : shape.bounds().move(targetedPos);
-            colour = lockable.locked() ? PonderPalette.RED.getColor() : PonderPalette.GREEN.getColor();
+            colour = isLocked(blockEntity) ? PonderPalette.RED.getColor() : PonderPalette.GREEN.getColor();
             render = true;
         } else {
             render = false;
@@ -83,5 +117,13 @@ public class ScrewdriverItem extends Item {
                     .colored(colour)
                     .lineWidth(1 / 32f);
         }
+    }
+
+    public static void setLocked(BlockEntity blockEntity, boolean locked) {
+        blockEntity.setData(TFMGDataAttachments.LOCKED_PIPE, locked);
+    }
+
+    public static boolean isLocked(BlockEntity blockEntity) {
+        return blockEntity.getExistingData(TFMGDataAttachments.LOCKED_PIPE).orElse(false);
     }
 }
