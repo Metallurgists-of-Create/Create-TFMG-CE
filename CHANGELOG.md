@@ -9,10 +9,10 @@ Contributors:<br>
 
 ## Changelog:
 ### Bug Fixes:
+- Fix rare `ConcurrentModificationException` being thrown with `ElectricalNetwork#checkForLoops`
 
 
 ### Changes:
-- Fix rare `ConcurrentModificationException` being thrown with `ElectricalNetwork#checkForLoops`
 - Surface Scanner
   - Now can be picked up with shift and right-click of the wrench
 - Flamethrower
