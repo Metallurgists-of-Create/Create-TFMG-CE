@@ -10,6 +10,8 @@ Contributors:<br>
 ## Changelog:
 ### Bug Fixes:
 - Fix rare `ConcurrentModificationException` being thrown with `ElectricalNetwork#checkForLoops`
+- TFMGTiers now uses proper mineable tags.
+- Rebar recipe now produces 2 per ingot instead of 4 to prevent duping.
 
 
 ### Changes:
