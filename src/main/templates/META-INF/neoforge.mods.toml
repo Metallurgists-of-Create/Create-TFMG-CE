@@ -97,6 +97,6 @@ file="META-INF/accesstransformer.cfg"
 [[dependencies."${mod_id}"]]
     modId = "cmparallelpipes"
     type = "discouraged"
-    reason = "TFMG: CE introduces pipe locking the same way Parallel Pipes does pipe locking."
+    reason = "TFMG contains Pipe Locking via the Screwdriver that behaves funtionally identical to Create More: Parallel Pipes"
     ordering="AFTER"
     side = "BOTH"

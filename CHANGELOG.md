@@ -22,6 +22,7 @@ Contributors:<br>
 
 ### API Changes:
 - Removed `ILockablePipe`
+- Removed `PipeAttachmentModelMixin`
 - Pipe Locking now uses the `tfmg:locked_pipe` data attachment.
 
 
