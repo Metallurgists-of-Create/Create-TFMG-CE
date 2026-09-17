@@ -150,6 +150,7 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.functions.ApplyBonusCount;
+import net.neoforged.neoforge.client.model.generators.ModelFile;
 import net.neoforged.neoforge.common.Tags;
 
 import java.util.ArrayList;
@@ -1914,7 +1915,12 @@ public class TFMGBlocks {
                     .addLayer(() -> RenderType::cutoutMipped)
                     .transform(pickaxeOnly())
                     .tag(BlockTags.NEEDS_IRON_TOOL)
-                    .blockstate((ctx, prov) -> prov.simpleBlock(ctx.getEntry(), AssetLookup.partialBaseModel(ctx, prov)))
+                    .blockstate((ctx, prov) -> {
+                        ModelFile bottom = AssetLookup.partialBaseModel(ctx, prov),
+                                  top = AssetLookup.partialBaseModel(ctx, prov, "top"),
+                                  doubleSlab = AssetLookup.partialBaseModel(ctx, prov, "double");
+                        prov.slabBlock(ctx.getEntry(), bottom, top, doubleSlab);
+                    })
                     .item()
                     .transform(customItemModel())
                     .register();

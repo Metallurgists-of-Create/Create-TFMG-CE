@@ -35,7 +35,8 @@ public abstract class ReinforcedBlocks {
 
         @Override
         public BlockState withoutConcrete(BlockState state) {
-            return TFMGBlocks.REBAR_FLOOR.getDefaultState();
+            return TFMGBlocks.REBAR_FLOOR.getDefaultState()
+                .setValue(TYPE, state.getValue(TYPE));
         }
     }
 
