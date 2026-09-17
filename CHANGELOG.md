@@ -21,6 +21,8 @@ Contributors:<br>
   - Fuel type now pulls fluid lang key instead of relying on a new key
 
 ### API Changes:
+- Removed `ILockablePipe`
+- Pipe Locking now uses the `tfmg:locked_pipe` data attachment.
 
 
 ### New Translations:
