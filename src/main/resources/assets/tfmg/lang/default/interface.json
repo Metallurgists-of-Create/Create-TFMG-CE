@@ -123,6 +123,7 @@
   "create.recipe.hot_blast": "Air Blasting",
   "create.recipe.winding": "Winding",
   "tfmg.recipe.assembly.winding": "Wind %s",
+  "tfmg.recipe.vat.minsize": "Min. Size: %s",
   "tfmg.recipe.vat.pressure": "Pressure Level: %s",
   "tfmg.recipe.vat.pressure.none": "No Pressure Required",
   "tfmg.recipe.vat.heat": "Heat Level: %s",

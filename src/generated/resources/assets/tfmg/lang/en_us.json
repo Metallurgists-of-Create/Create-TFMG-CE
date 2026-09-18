@@ -1178,6 +1178,7 @@
   "tfmg.recipe.vat.electrode": "Requires Electrodes",
   "tfmg.recipe.vat.graphite_electrode": "Requires Graphite Electrodes",
   "tfmg.recipe.vat.heat": "Heat Level: %s",
+  "tfmg.recipe.vat.minsize": "Min. Size: %s",
   "tfmg.recipe.vat.mixing": "Requires Mixer Blade",
   "tfmg.recipe.vat.pressure": "Pressure Level: %s",
   "tfmg.recipe.vat.pressure.none": "No Pressure Required",
