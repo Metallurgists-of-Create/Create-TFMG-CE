@@ -34,6 +34,8 @@ public class OilWellFeature extends Feature<NoneFeatureConfiguration> {
         BlockPos pos = startingPos;
         RandomSource randomsource = context.random();
 
+        if (randomsource.nextInt(7) <= 1)
+            return false;
 
         setBlock(level, startingPos, TFMGBlocks.OIL_DEPOSIT.getDefaultState());
         //resevoir handling
