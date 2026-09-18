@@ -23,10 +23,9 @@ public class OilHammerItem extends Item {
         ChunkAccess chunk = level.getChunk(context.getClickedPos());
         Player player = context.getPlayer();
 
-        if (!chunk.hasData(TFMGDataAttachments.FLUID_RESERVOIR)) {
+        FluidReservoir reservoir = chunk.getExistingDataOrNull(TFMGDataAttachments.FLUID_RESERVOIR);
+        if (reservoir == null)
             return InteractionResult.sidedSuccess(level.isClientSide());
-        }
-        FluidReservoir reservoir = chunk.getData(TFMGDataAttachments.FLUID_RESERVOIR);
 
         if (level.isClientSide && player != null)
             player.displayClientMessage(TFMGLang

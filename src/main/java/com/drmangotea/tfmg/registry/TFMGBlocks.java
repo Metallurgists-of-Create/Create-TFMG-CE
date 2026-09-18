@@ -118,6 +118,7 @@ import com.drmangotea.tfmg.content.machinery.vat.compressor.CompressorBlock;
 import com.drmangotea.tfmg.content.machinery.vat.electrode_holder.ElectrodeHolderBlock;
 import com.drmangotea.tfmg.content.machinery.vat.freezer.FreezerBlock;
 import com.drmangotea.tfmg.content.machinery.vat.industrial_mixer.IndustrialMixerBlock;
+import com.drmangotea.tfmg.content.world.resevoir.OilDepositBlock;
 import com.simibubi.create.AllTags;
 import com.simibubi.create.api.stress.BlockStressValues;
 import com.simibubi.create.content.contraptions.bearing.StabilizedBearingMovementBehaviour;
@@ -424,7 +425,7 @@ public class TFMGBlocks {
             .blockstate((ctx, prov) -> prov.simpleBlock(ctx.getEntry(), AssetLookup.partialBaseModel(ctx, prov)))
             .simpleItem()
             .register();
-    public static final BlockEntry<Block> OIL_DEPOSIT = REGISTRATE.block("oil_deposit", Block::new)
+    public static final BlockEntry<OilDepositBlock> OIL_DEPOSIT = REGISTRATE.block("oil_deposit", OilDepositBlock::new)
             .initialProperties(() -> net.minecraft.world.level.block.Blocks.BEDROCK)
             .properties(p -> p)
             .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
