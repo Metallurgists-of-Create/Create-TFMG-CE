@@ -76,6 +76,7 @@ public class TFMG {
 
         TFMGParticleTypes.register(modEventBus);
         TFMGPlacementModifiers.register(modEventBus);
+        TFMGHeightProviders.register(modEventBus);
         TFMGDataComponents.register(modEventBus);
         TFMGDataAttachments.register(modEventBus);
         TFMGMobEffects.register(modEventBus);

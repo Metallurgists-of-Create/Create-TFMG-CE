@@ -1,6 +1,7 @@
 package com.drmangotea.tfmg.worldgen;
 
 import com.drmangotea.tfmg.TFMG;
+import com.drmangotea.tfmg.content.world.height_provider.WorldBottomHeight;
 import com.drmangotea.tfmg.content.world.placement_modifier.BooleanConfigPlacementModifier;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderGetter;
@@ -80,7 +81,7 @@ public class TFMGPlacedFeatures {
         return List.of(
                 frequency,
                 InSquarePlacement.spread(),
-                HeightRangePlacement.uniform(VerticalAnchor.absolute(-64), VerticalAnchor.absolute(-64)),
+                HeightRangePlacement.of(new WorldBottomHeight()),
                 configPlacementModifier
         );
     }
