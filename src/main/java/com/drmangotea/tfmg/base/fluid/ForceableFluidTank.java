@@ -83,6 +83,12 @@ public class ForceableFluidTank extends SmartFluidTank {
     public int forceFill(FluidStack resource, FluidAction action) {
         return super.fill(resource, action);
     }
+	
+	public ForceableFluidTank read(HolderLookup.Provider lookupProvider, CompoundTag nbt) {
+		readFromNBT(lookupProvider, nbt);
+		if (getSpace() < 0) this.forceDrain(-getSpace(), FluidAction.EXECUTE);
+		return this;
+	}
 
     public ForceableFluidTank readFromNBT(HolderLookup.Provider lookupProvider, CompoundTag nbt) {
         this.fluid = FluidStack.parseOptional(lookupProvider, nbt.getCompound("Fluid"));

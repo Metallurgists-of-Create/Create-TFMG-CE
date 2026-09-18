@@ -8,6 +8,7 @@ import com.drmangotea.tfmg.base.lang.TFMGTexts;
 import com.drmangotea.tfmg.recipes.HotBlastRecipe;
 import com.drmangotea.tfmg.registry.TFMGBlockEntities;
 import com.drmangotea.tfmg.registry.TFMGRecipeTypes;
+import com.drmangotea.tfmg.registry.TFMGTags;
 import com.simibubi.create.api.connectivity.ConnectivityHandler;
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.foundation.blockEntity.IMultiBlockEntityContainer;
@@ -34,7 +35,6 @@ import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
-import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
 
 import java.util.List;
 import java.util.Objects;
@@ -72,7 +72,8 @@ public class BlastStoveBlockEntity extends SmartBlockEntity implements IHaveGogg
         primaryOutputTank = new ForceableFluidTank(capacity, this::onFluidStackChanged).blockInsertion(); //output (hot air)
         exhaustOutputTank = new ForceableFluidTank(capacity, this::onFluidStackChanged).blockInsertion();
         AirInputTank = new ForceableFluidTank(capacity, this::onFluidStackChanged).blockExtraction();
-        fuelInputTank = new ForceableFluidTank(capacity, this::onFluidStackChanged).blockExtraction();
+        fuelInputTank = new ForceableFluidTank(capacity, this::onFluidStackChanged).blockExtraction()
+			.withValidator(f -> f.is(TFMGTags.Fluids.BLAST_STOVE_FUEL.tag));
         primaryCapability = new InputOutputTankWrapper(primaryOutputTank, fuelInputTank);
         secondaryCapability = new InputOutputTankWrapper(exhaustOutputTank, AirInputTank);
 		combinedCapability = new CombinedTankWrapper(primaryCapability, secondaryCapability);
@@ -94,7 +95,7 @@ public class BlastStoveBlockEntity extends SmartBlockEntity implements IHaveGogg
 		updateRecipe();
     }
 
-
+	//TODO: Rework
     @Override
 	public void tick() {
         super.tick();
@@ -158,8 +159,10 @@ public class BlastStoveBlockEntity extends SmartBlockEntity implements IHaveGogg
 		return width * width * height;
 	}
 
+	//TODO: Rework
     public int getSpeed () {
-        return (int) (1000f / (getTotalTankSize() * 3));
+        //return 40 / getTotalTankSize(); //max size is 2x2x10
+		return (int) (1000f / (getTotalTankSize() * 3));
     }
 
     protected Object getRecipeCacheKey() {
@@ -229,8 +232,15 @@ public class BlastStoveBlockEntity extends SmartBlockEntity implements IHaveGogg
         return null;
     }
 
+	//TODO: This alone isn't enough to get things working properly
+	// Blast Stoves, having four fluid tanks, might require their own custom Connectivity Handler.
     public void applyFluidTankSize(int blocks) {
-
+		int capacity = getCapacityMultiplier() * blocks;
+		
+		primaryOutputTank.withCapacity(capacity);
+		exhaustOutputTank.withCapacity(capacity);
+		AirInputTank.withCapacity(capacity);
+		fuelInputTank.withCapacity(capacity);
     }
 
     public void removeController(boolean keepFluids) {
@@ -324,12 +334,11 @@ public class BlastStoveBlockEntity extends SmartBlockEntity implements IHaveGogg
         if (isController()) {
             width = compound.getInt("Size");
             height = compound.getInt("Height");
-            primaryOutputTank.readFromNBT(registries, compound.getCompound("primaryOutputInventory"));
-            AirInputTank.readFromNBT(registries, compound.getCompound("primaryInputInventory"));
-            exhaustOutputTank.readFromNBT(registries, compound.getCompound("secondaryOutputInventory"));
-            fuelInputTank.readFromNBT(registries, compound.getCompound("secondaryInputInventory"));
-            if (primaryOutputTank.getSpace() < 0)
-                primaryOutputTank.drain(-primaryOutputTank.getSpace(), IFluidHandler.FluidAction.EXECUTE);
+			applyFluidTankSize(width * width * height); //set capacity before fluids are filled
+            primaryOutputTank.read(registries, compound.getCompound("primaryOutputInventory"));
+            AirInputTank.read(registries, compound.getCompound("primaryInputInventory"));
+            exhaustOutputTank.read(registries, compound.getCompound("secondaryOutputInventory"));
+            fuelInputTank.read(registries, compound.getCompound("secondaryInputInventory"));
 
             updateCapability = true;
         }
@@ -354,22 +363,25 @@ public class BlastStoveBlockEntity extends SmartBlockEntity implements IHaveGogg
 		
 		IFluidHandler pri = controller.primaryCapability;
 		IFluidHandler sec = controller.secondaryCapability;
+		
+		int capacity = getCapacityMultiplier() * controller.getTotalTankSize();
 
         TFMGTexts.header("blast_stove").forGoggles(tooltip);
-        tankTooltip(tooltip, "goggles.blast_stove.tank1", sec.getFluidInTank(1), ChatFormatting.DARK_GREEN); //input (air)
-        tankTooltip(tooltip, "goggles.blast_stove.tank2", pri.getFluidInTank(1), ChatFormatting.DARK_GREEN); //fuel
-        tankTooltip(tooltip, "goggles.blast_stove.tank3", pri.getFluidInTank(0), ChatFormatting.GOLD);       //output (hot air)
-        tankTooltip(tooltip, "goggles.blast_stove.tank4", sec.getFluidInTank(0), ChatFormatting.GOLD);       //output (exhaust)
+		TFMGLang.text(TFMGTexts.PERCENT_FORMAT.format(timer / getSpeed())).forGoggles(tooltip);
+        tankTooltip(tooltip, "goggles.blast_stove.tank1", sec.getFluidInTank(1), capacity, ChatFormatting.DARK_GREEN); //input (air)
+        tankTooltip(tooltip, "goggles.blast_stove.tank2", pri.getFluidInTank(1), capacity, ChatFormatting.DARK_GREEN); //fuel
+        tankTooltip(tooltip, "goggles.blast_stove.tank3", pri.getFluidInTank(0), capacity, ChatFormatting.GOLD);       //output (hot air)
+        tankTooltip(tooltip, "goggles.blast_stove.tank4", sec.getFluidInTank(0), capacity, ChatFormatting.GOLD);       //output (exhaust)
         return true;
     }
 	
-	private void tankTooltip (List<Component> tooltip, String key, FluidStack fluid, ChatFormatting color) {
+	private void tankTooltip (List<Component> tooltip, String key, FluidStack fluid, int capacity, ChatFormatting color) {
 		TFMGLang.builder().add(TFMGLang.translate(key))
 			.add(fluid.getFluid() == Fluids.EMPTY
 				? TFMGLang.text("")
 				:  TFMGLang.text(" "+fluid.getHoverName().getString())
 			).style(color).forGoggles(tooltip, 1);
-		TFMGUtils.fluidOutOfCapacity(fluid.getAmount(), ChatFormatting.GRAY, getCapacityMultiplier()).forGoggles(tooltip, 2);
+		TFMGUtils.fluidOutOfCapacity(fluid.getAmount(), ChatFormatting.GRAY, capacity).forGoggles(tooltip, 2);
 	}
 
 
@@ -438,25 +450,13 @@ public class BlastStoveBlockEntity extends SmartBlockEntity implements IHaveGogg
 	@Override
 	public void addBehaviours(List<BlockEntityBehaviour> behaviours) { }
 
-    //I think these are based on FluidTank methods? But this shouldn't be used
-	@Deprecated(since = "1.2.5")
-	public FluidTank getTank () {
-        return primaryOutputTank;
-    }
-	
-	@Deprecated(since = "1.2.5")
-	public FluidStack getFluid () {
-		return primaryOutputTank.getFluid().copy();
-	}
-	
-	public static int getCapacityMultiplier() {
+    public static int getCapacityMultiplier() {
 		//should this have its own config?
-		// Also shouldn't capacity scale with size? but maybe that should be in applyFluidTankSize
 		return AllConfigs.server().fluids.fluidTankCapacity.get() * 1000;
 	}
 
     public static int getMaxHeight() {
-        return AllConfigs.server().fluids.fluidTankMaxHeight.get();
+        return 10; //Should this be configurable? //AllConfigs.server().fluids.fluidTankMaxHeight.get();
     }
 
     @Override
@@ -469,6 +469,10 @@ public class BlastStoveBlockEntity extends SmartBlockEntity implements IHaveGogg
         onFluidStackChanged(primaryOutputTank.getFluid());
         setChanged();
         updateConnectivity = true;
+		
+		if (isController()) {
+			applyFluidTankSize(width * width * height);
+		}
 
         sendData();
         setChanged();
