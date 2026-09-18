@@ -3,6 +3,7 @@ package com.drmangotea.tfmg.content.machinery.oil_processing.surface_scanner;
 import com.drmangotea.tfmg.integration.sable.SurfaceScannerSable;
 import com.drmangotea.tfmg.registry.TFMGPartialModels;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.simibubi.create.foundation.blockEntity.renderer.SafeBlockEntityRenderer;
 import com.simibubi.create.foundation.render.RenderTypes;
 import net.createmod.catnip.render.CachedBuffers;
@@ -42,6 +43,11 @@ public class SurfaceScannerRenderer extends SafeBlockEntityRenderer<SurfaceScann
         BlockState blockState = be.getBlockState();
         ms.pushPose();
 		ms.rotateAround(getFacingQuat(be), 0.5f, 0.5f, 0.5f);
+		
+		//TODO: This makes it not ignore the rest of the model
+		// but is a problem since it clashes with the lights already in the model
+		// so the model should have the lights removed, and then we can just render all lights here
+		VertexConsumer consumer = bufferSource.getBuffer(RenderTypes.entityTranslucentBlockMipped());
   
 		for (int x = 0 ; x < 5; x++) {
 			for (int z = 0; z < 5; z++) {
@@ -50,7 +56,7 @@ public class SurfaceScannerRenderer extends SafeBlockEntityRenderer<SurfaceScann
 						.translate((x - 2)*0.19, 0, (z - 2)*0.19)
 						.light(LightTexture.FULL_BRIGHT)
 						.color(255, 69, 96, 255) //#ff4560ff
-						.renderInto(ms, bufferSource.getBuffer(RenderTypes.additive()));
+						.renderInto(ms, consumer);
 				}
 			}
 		}
