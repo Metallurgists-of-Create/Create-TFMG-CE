@@ -5,6 +5,7 @@
   "compatibilityLevel": "JAVA_21",
   "refmap": "tfmg.refmap.json",
   "mixins": [
+    "BlockBehaviourMixin",
     "DeployerBlockEntityMixin",
     "FluidPipeBlockEntityMixin",
     "FluidPipeBlockMixin",

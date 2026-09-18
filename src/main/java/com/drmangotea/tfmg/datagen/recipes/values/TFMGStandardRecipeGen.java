@@ -847,7 +847,7 @@ public class TFMGStandardRecipeGen extends TFMGRecipeProvider {
                     .pattern("O  ")
                     .pattern("OO ")),
 
-    REBAR_FLOOR = create(TFMGBlocks.REBAR_FLOOR).returns(3)
+    REBAR_FLOOR = create(TFMGBlocks.REBAR_FLOOR).returns(6)
             .unlockedBy(TFMGItems.REBAR::get)
             .viaShaped(b -> b
                     .define('O', rebar())
