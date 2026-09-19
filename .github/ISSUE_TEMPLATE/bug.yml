@@ -62,5 +62,5 @@ body:
           required: true
         - label: "I am using the latest release of TFMG: CE"
           required: true
-        - label: **I HAVE ACTUALLY LOOKED AT THE CURRENT ISSUES AND DETERMINED MY ISSUE HAS NOT BEEN REPORTED YET**
+        - label: "**I HAVE ACTUALLY LOOKED AT THE CURRENT ISSUES AND DETERMINED MY ISSUE HAS NOT BEEN REPORTED YET**"
           required: true
