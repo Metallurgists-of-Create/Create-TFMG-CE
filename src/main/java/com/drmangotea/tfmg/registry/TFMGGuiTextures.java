@@ -36,8 +36,7 @@ public enum TFMGGuiTextures implements ScreenElement {
     VAT_FREEZER("chemical_vat",112,80,9,9),
     VAT_HEATER("chemical_vat", 112, 89, 9, 9),
     VAT_SUPERHEATER("chemical_vat", 112, 98, 9, 9),
-    VAT_BAROMETER("chemical_vat",211,3,42,42),
-    PLATINUM_ELECTRODE("chemical_vat", 202, 0, 8, 29)
+    VAT_BAROMETER("chemical_vat",211,3,42,42)
     ;
 
 
