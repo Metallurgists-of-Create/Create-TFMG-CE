@@ -42,7 +42,7 @@ public class TFMGVanillaBlockStates {
 
     //SLAB
 
-    public static void generateSlabBlockState(DataGenContext<Block, SlabBlock> ctx, RegistrateBlockstateProvider prov,
+    public static <B extends SlabBlock> void generateSlabBlockState(DataGenContext<Block, B> ctx, RegistrateBlockstateProvider prov,
                                               String variantName) {
         String name = variantName;
         ResourceLocation texture = TFMG.asResource("block/" + name);

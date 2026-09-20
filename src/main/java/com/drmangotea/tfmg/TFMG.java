@@ -116,6 +116,7 @@ public class TFMG {
     public static void onRegister(final RegisterEvent event) {
         TFMGContraptions.prepare();
         TFMGArmInteractionPoints.prepare();
+        TFMGLootItemConditions.prepare();
     }
 
     @Contract("_ -> new")
