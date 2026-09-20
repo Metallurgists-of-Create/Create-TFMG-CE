@@ -19,6 +19,8 @@ Contributors:<br>
   - Now can be picked up with shift and right-click of the wrench
 - Flamethrower
   - Fuel type now pulls fluid lang key instead of relying on a new key
+- Rutile Integration
+  - Added chemical composition files for relevant items/fluids.
 
 ### API Changes:
 - Removed `ILockablePipe`
