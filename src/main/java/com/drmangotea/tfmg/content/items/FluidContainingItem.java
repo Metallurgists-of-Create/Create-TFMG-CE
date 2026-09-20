@@ -1,10 +1,8 @@
-package com.drmangotea.tfmg.content.engines;
+package com.drmangotea.tfmg.content.items;
 
 import com.drmangotea.tfmg.base.lang.TFMGLang;
 import com.drmangotea.tfmg.registry.TFMGDataComponents;
 import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
-import com.simibubi.create.content.fluids.tank.FluidTankBlockEntity;
-import com.tterrag.registrate.util.entry.FluidEntry;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -17,22 +15,26 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
+import java.util.function.Predicate;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 public class FluidContainingItem extends Item {
 
-    public final FluidEntry<?> fluid;
+    public final Predicate<FluidStack> validator;
 
     public static final int CAPACITY = 4000;
 
-    public FluidContainingItem(Properties p_41383_, FluidEntry<?> fluid) {
-        super(p_41383_);
-        this.fluid = fluid;
+    public FluidContainingItem(Properties properties, Predicate<FluidStack> validator) {
+        super(properties);
+        this.validator = validator;
     }
 
     @Override
@@ -52,17 +54,15 @@ public class FluidContainingItem extends Item {
 
     @Override
     public int getBarColor(ItemStack stack) {
-        if(!stack.has(TFMGDataComponents.AMOUNT))
-            stack.set(TFMGDataComponents.AMOUNT, 0);
         return 0xC7C4A4;
     }
 
     @Override
     public int getBarWidth(ItemStack stack) {
         if(!stack.has(TFMGDataComponents.AMOUNT))
-            stack.set(TFMGDataComponents.AMOUNT, 0);
+            return 0;
 
-        return Math.round( 13* ((float)stack.getOrDefault(TFMGDataComponents.AMOUNT, 0)/(float)CAPACITY));
+        return Math.round( 13* ((float)stack.getOrDefault(TFMGDataComponents.AMOUNT, 0) / (float)CAPACITY));
     }
 
     @Override
@@ -76,27 +76,36 @@ public class FluidContainingItem extends Item {
             return InteractionResult.PASS;
 
         if (player.isShiftKeyDown() && stack.getOrDefault(TFMGDataComponents.AMOUNT, 0) > 0) {
-            level.playSound(null, pos, SoundEvents.BUCKET_FILL, SoundSource.BLOCKS, 1f, 1f);
+            level.playSound(null, pos, SoundEvents.BUCKET_EMPTY, SoundSource.BLOCKS, 1f, 1f);
             stack.set(TFMGDataComponents.AMOUNT, 0);
             return InteractionResult.SUCCESS;
         }
 
-        if (level.getBlockEntity(pos) != null) {
-            if (level.getBlockEntity(pos) instanceof FluidTankBlockEntity fluidTankBe) {
-                FluidTankBlockEntity be = fluidTankBe.isController() ? fluidTankBe : fluidTankBe.getControllerBE();
-                if (be.getFluid(0).getFluid().isSame(fluid.get())) {
-                    int toDrain = Math.min(CAPACITY - stack.getOrDefault(TFMGDataComponents.AMOUNT, 0), be.getFluid(0).getAmount());
-                    if (toDrain == 0 || player.getCooldowns().isOnCooldown(stack.getItem()))
-                        return InteractionResult.PASS;
+        int contained = stack.getOrDefault(TFMGDataComponents.AMOUNT, 0);
 
-                    level.playSound(null, be.getBlockPos(), SoundEvents.BUCKET_FILL, SoundSource.BLOCKS, 1f, 1f);
-                    be.getTankInventory().drain(toDrain, IFluidHandler.FluidAction.EXECUTE);
-                    stack.set(TFMGDataComponents.AMOUNT, stack.getOrDefault(TFMGDataComponents.AMOUNT, 0) + toDrain);
-                    player.getCooldowns().addCooldown(stack.getItem(), 20);
-                    return InteractionResult.SUCCESS;
+        BlockEntity blockEntity = level.getBlockEntity(pos);
+
+        boolean foundFluid = false;
+
+        if (blockEntity != null) {
+            IFluidHandler capability = level.getCapability(Capabilities.FluidHandler.BLOCK, blockEntity.getBlockPos(), context.getClickedFace());
+            if (capability != null) {
+                for (int i = 0; i < capability.getTanks(); i++) {
+                    if (capability.getFluidInTank(i).isEmpty()) continue;
+                    FluidStack fluidStack = capability.getFluidInTank(i);
+                    int toDrain = Math.min(CAPACITY - contained, fluidStack.getAmount());
+                    FluidStack stackToDrain = fluidStack.copyWithAmount(toDrain);
+                    if (validator.test(stackToDrain)) {
+                        FluidStack actuallyDrained = capability.drain(stackToDrain, IFluidHandler.FluidAction.EXECUTE);
+                        stack.set(TFMGDataComponents.AMOUNT, contained + actuallyDrained.getAmount());
+                        context.getPlayer().getCooldowns().addCooldown(stack.getItem(), 20);
+                        foundFluid = true;
+                        break;
+                    }
                 }
             }
         }
-        return InteractionResult.PASS;
+
+        return foundFluid ? InteractionResult.SUCCESS : InteractionResult.PASS;
     }
 }

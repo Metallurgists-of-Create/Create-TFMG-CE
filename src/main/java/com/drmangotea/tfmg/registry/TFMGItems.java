@@ -13,7 +13,7 @@ import com.drmangotea.tfmg.content.electricity.measurement.MultimeterItem;
 import com.drmangotea.tfmg.content.electricity.network.transformer.small.ElectromagneticCoilItem;
 import com.drmangotea.tfmg.content.electricity.utilities.polarizer.MagnetItem;
 import com.drmangotea.tfmg.content.electricity.utilities.resistor.ResistorItem;
-import com.drmangotea.tfmg.content.engines.FluidContainingItem;
+import com.drmangotea.tfmg.content.items.FluidContainingItem;
 import com.drmangotea.tfmg.content.engines.fuels.EngineFuelType;
 import com.drmangotea.tfmg.content.items.ScrewdriverItem;
 import com.drmangotea.tfmg.content.items.weapons.LeadAxeItem;
@@ -319,11 +319,11 @@ public class TFMGItems {
 
 
     public static final ItemEntry<FluidContainingItem>
-            OIL_CAN = REGISTRATE.item("oil_can", p -> new FluidContainingItem(p, TFMGFluids.LUBRICATION_OIL))
+            OIL_CAN = REGISTRATE.item("oil_can", p -> new FluidContainingItem(p, (s) -> s.is(TFMGTags.Fluids.LUBRICATION_OIL.tag)))
             .properties(p -> p.stacksTo(1))
             .model((c, p) -> p.withExistingParent(c.getName(), TFMG.asResource("item/oil_can_model")))
             .register(),
-            COOLING_FLUID_BOTTLE = REGISTRATE.item("cooling_fluid_bottle", p -> new FluidContainingItem(p, TFMGFluids.COOLING_FLUID))
+            COOLING_FLUID_BOTTLE = REGISTRATE.item("cooling_fluid_bottle", p -> new FluidContainingItem(p, (s) -> s.is(TFMGTags.Fluids.COOLING_FLUID.tag)))
                     .properties(p -> p.stacksTo(1))
                     .register();
 	

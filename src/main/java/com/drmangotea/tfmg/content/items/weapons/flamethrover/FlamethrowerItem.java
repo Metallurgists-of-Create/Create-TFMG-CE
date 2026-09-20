@@ -190,8 +190,8 @@ public class FlamethrowerItem extends Item implements CustomArmPoseItem {
                     if (fuel == FlamethrowerFuel.EMPTY) continue;
                     if (fuelType != TFMGFlamethrowerFuelTypes.FALLBACK) {
                         if (fuelType.equals(fuel.fuelType())) {
-                            stack.set(TFMGDataComponents.FLAMETHROWER, existingFuel.increment(toDrain, FUEL_CAPACITY));
-                            capability.drain(stackToDrain, IFluidHandler.FluidAction.EXECUTE);
+                            FluidStack actuallyDrained = capability.drain(stackToDrain, IFluidHandler.FluidAction.EXECUTE);
+                            stack.set(TFMGDataComponents.FLAMETHROWER, existingFuel.increment(actuallyDrained.getAmount(), FUEL_CAPACITY));
                             context.getPlayer().getCooldowns().addCooldown(stack.getItem(), 20);
                             foundFluid = true;
                         }

@@ -12,6 +12,7 @@ Contributors:<br>
 - Fix rare `ConcurrentModificationException` being thrown with `ElectricalNetwork#checkForLoops`
 - TFMGTiers now uses proper mineable tags.
 - Rebar recipe now produces 2 per ingot instead of 4 to prevent duping.
+- Cooling Fluid Bottles and Oil Cans no-longer void their contents instantly.
 
 
 ### Changes:
@@ -26,6 +27,8 @@ Contributors:<br>
 - Removed `ILockablePipe`
 - Removed `PipeAttachmentModelMixin`
 - Pipe Locking now uses the `tfmg:locked_pipe` data attachment.
+- Removed `ItemFluidTank`
+- `FluidContainingItem`'s constructor now takes in a `Predicate<FluidStack>` as a validator instead of a strict `FluidEntry<?>`.
 
 
 ### New Translations:
