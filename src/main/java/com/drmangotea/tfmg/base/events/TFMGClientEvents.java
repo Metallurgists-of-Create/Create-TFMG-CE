@@ -150,19 +150,6 @@ public class TFMGClientEvents {
 							.withColor(PonderPalette.INPUT.getColor()));
 				}
 			});
-			event.addDrawableOperation(new VatOperation(TFMG.asResource("chemica:electrode")), (recipe, graphics, mouseX, mouseY) -> {
-				TFMGGuiTextures.VAT_MACHINE.render(graphics, 11, 0);
-				TFMGGuiTextures.VAT_MACHINE.render(graphics, 75, 0);
-				TFMGGuiTextures.PLATINUM_ELECTRODE.render(graphics, 19, 32);
-				TFMGGuiTextures.PLATINUM_ELECTRODE.render(graphics, 83, 32);
-			});
-			event.addOperationTooltip(new VatOperation(TFMG.asResource("chemica:electrode")), (recipe, tooltip, mouseX, mouseY) -> {
-				boolean xCheck = mouseX > 11 && mouseX < 35 || mouseX > 75 && mouseX < 99;
-				if (mouseY > -3 && mouseY < 60 && xCheck) {
-					tooltip.accept(Component.translatable("chemica.recipe.vat.platinum_electrode")
-							.withColor(PonderPalette.INPUT.getColor()));
-				}
-			});
 
 			event.addDrawableVatType(TFMGVatTypes.FIREPROOF.get(), (vatType, graphics, mouseX, mouseY) -> TFMGGuiTextures.FIREPROOF_BRICK_OVERLAY.render(graphics, 55 - 48, 32));
 			event.addDrawableVatType(TFMGVatTypes.CAST_IRON.get(), (vatType, graphics, mouseX, mouseY) -> TFMGGuiTextures.CAST_IRON_VAT_OVERLAY.render(graphics, 0, 24));

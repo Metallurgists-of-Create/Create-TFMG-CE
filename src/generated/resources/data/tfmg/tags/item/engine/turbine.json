@@ -1,9 +1,5 @@
 {
   "values": [
-    "tfmg:turbine_blade",
-    {
-      "id": "chemica:hydrogen_turbine_blade",
-      "required": false
-    }
+    "tfmg:turbine_blade"
   ]
 }

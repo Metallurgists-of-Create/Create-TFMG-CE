@@ -143,13 +143,6 @@ public class TFMGTags {
         MOLTEN_STEEL(COMMON),
         FUEL(COMMON),
 
-        //Chemica fix
-        BIODIESEL(COMMON),
-        ETHANOL(COMMON),
-        HIGH_CETANE_DIESEL(COMMON),
-        HIGH_OCTANE_GASOLINE(COMMON),
-        HYDROGEN_FUEL(COMMON)
-
         ;
 
         public final TagKey<Fluid> tag;
