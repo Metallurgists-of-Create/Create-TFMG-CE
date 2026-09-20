@@ -39,17 +39,15 @@ public class ElectricalNetwork {
         members.add(be);
     }
 
-    private float current;
-    /**
+	/**
      * Called when a block is removed or added to the network or when loading chunks the network is in
      * Sets up blocks in the network
      */
     public void updateNetwork() {
-        boolean currentValid = false;
         int maxVoltage = 0;
         float resistance = 0;
         int powerGeneration = 0;
-
+		float current = 0;
 
         /*
          *  Phase I:
@@ -78,6 +76,7 @@ public class ElectricalNetwork {
 			member.setVoltage(maxVoltage);
 			member.getData().setVoltageNextTick = true;
 			member.getData().networkPowerGeneration = powerGeneration;
+			current += member.getCurrent();
 			member.onNetworkChanged(oldVoltage, oldPower);
 		}
 
@@ -88,11 +87,7 @@ public class ElectricalNetwork {
          */
         for (IElectric member : members) {
             if (member.resistance() == 0) {
-                if (!currentValid) {
-                    this.current = ElectricalNetwork.getCableCurrent(member);
-                    currentValid = true;
-                }
-                member.getData().highestCurrent = this.current;
+                member.getData().highestCurrent = current;
             }
             if (member instanceof VoltageAlteringBlockEntity be) {
                 be.updateInFront();
@@ -108,7 +103,6 @@ public class ElectricalNetwork {
             members.getFirst().doActionNextTick(i-> members.getFirst().recalculateNetworkResistance());
         handleInsufficientPower();
     }
-
 
     public void handleInsufficientPower() {
         if (!members.isEmpty())
@@ -129,7 +123,8 @@ public class ElectricalNetwork {
             }
     }
 
-    public static float getCableCurrent(IElectric be) {
+    @Deprecated(since = "1.3.2")
+	public static float getCableCurrent(IElectric be) {
         float current = 0;
         for (IElectric member : be.getOrCreateElectricNetwork().members) {
             current += member.getCurrent();
