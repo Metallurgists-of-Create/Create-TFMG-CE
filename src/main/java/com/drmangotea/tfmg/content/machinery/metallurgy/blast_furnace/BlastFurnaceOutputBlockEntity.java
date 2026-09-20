@@ -100,6 +100,12 @@ public class BlastFurnaceOutputBlockEntity extends SmartBlockEntity implements I
         );
     }
 
+    public void addFuel(int amount) {
+        this.fuel += amount;
+        setChanged();
+        sendData();
+    }
+
     @Override
     public void addBehaviours(List<BlockEntityBehaviour> behaviours) {
     }

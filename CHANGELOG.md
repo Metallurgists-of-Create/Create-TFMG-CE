@@ -13,6 +13,7 @@ Contributors:<br>
 - TFMGTiers now uses proper mineable tags.
 - Rebar recipe now produces 2 per ingot instead of 4 to prevent duping.
 - Cooling Fluid Bottles and Oil Cans no-longer void their contents instantly.
+- Blast Furnace top hatches no-longer void items.
 
 
 ### Changes:

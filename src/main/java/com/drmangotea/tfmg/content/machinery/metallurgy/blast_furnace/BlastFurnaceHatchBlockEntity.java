@@ -110,12 +110,9 @@ public class BlastFurnaceHatchBlockEntity extends SmartBlockEntity implements IH
                 blastFurnaceOutput.fluxInventory.setItem(0, toPlace);
             }
             if (!fuelInventory.isEmpty()) {
-                for (int i = 0; i < fuelInventory.getStackInSlot(0).getCount(); i++) {
-                    if (blastFurnaceOutput.fuel < BlastFurnaceOutputBlockEntity.STORAGE_SPACE) {
-                        blastFurnaceOutput.fuel++;
-                        fuelInventory.extractItem(0, 1, false);
-                    }
-                }
+                int toExtract = Math.min(BlastFurnaceOutputBlockEntity.STORAGE_SPACE - blastFurnaceOutput.fuel, fuelInventory.getStackInSlot(0).getCount());
+                fuelInventory.extractItem(0, toExtract, false);
+                blastFurnaceOutput.addFuel(toExtract);
             }
         }
     }
