@@ -96,16 +96,18 @@ public class BlastFurnaceHatchBlockEntity extends SmartBlockEntity implements IH
             if (!inputInventory.isEmpty()
                     && (blastFurnaceOutput.inputInventory.getStackInSlot(0).isEmpty() || ItemStack.isSameItemSameComponents(inputInventory.getStackInSlot(0), blastFurnaceOutput.inputInventory.getStackInSlot(0)))
                     && blastFurnaceOutput.inputInventory.getStackInSlot(0).getCount() < blastFurnaceOutput.inputInventory.getSlotLimit(0)) {
-                int toPlace = Math.min(blastFurnaceOutput.inputInventory.getSlotLimit(0) - blastFurnaceOutput.inputInventory.getStackInSlot(0).getCount(), inputInventory.getStackInSlot(0).getCount());
-                blastFurnaceOutput.inputInventory.setItem(0, inputInventory.getStackInSlot(0).copyWithCount(toPlace));
-                inputInventory.extractItem(0, toPlace, false);
+                int toExtract = Math.min(blastFurnaceOutput.inputInventory.getSlotLimit(0) - blastFurnaceOutput.inputInventory.getStackInSlot(0).getCount(), inputInventory.getStackInSlot(0).getCount());
+                ItemStack toPlace = inputInventory.getStackInSlot(0).copyWithCount(blastFurnaceOutput.inputInventory.getStackInSlot(0).getCount() + toExtract);
+                inputInventory.extractItem(0, toExtract, false);
+                blastFurnaceOutput.inputInventory.setItem(0, toPlace);
             }
             if (!fluxInventory.isEmpty()
                     && (blastFurnaceOutput.fluxInventory.getStackInSlot(0).isEmpty() || ItemStack.isSameItemSameComponents(fluxInventory.getStackInSlot(0), blastFurnaceOutput.fluxInventory.getStackInSlot(0)))
                     && blastFurnaceOutput.fluxInventory.getStackInSlot(0).getCount() < blastFurnaceOutput.fluxInventory.getSlotLimit(0)) {
-                int toPlace = Math.min(blastFurnaceOutput.fluxInventory.getSlotLimit(0) - blastFurnaceOutput.fluxInventory.getStackInSlot(0).getCount(), fluxInventory.getStackInSlot(0).getCount());
-                blastFurnaceOutput.fluxInventory.setItem(0, fluxInventory.getStackInSlot(0).copyWithCount(toPlace));
-                fluxInventory.extractItem(0, toPlace, false);
+                int toExtract = Math.min(blastFurnaceOutput.fluxInventory.getSlotLimit(0) - blastFurnaceOutput.fluxInventory.getStackInSlot(0).getCount(), fluxInventory.getStackInSlot(0).getCount());
+                ItemStack toPlace = fluxInventory.getStackInSlot(0).copyWithCount(blastFurnaceOutput.fluxInventory.getStackInSlot(0).getCount() + toExtract);
+                fluxInventory.extractItem(0, toExtract, false);
+                blastFurnaceOutput.fluxInventory.setItem(0, toPlace);
             }
             if (!fuelInventory.isEmpty()) {
                 for (int i = 0; i < fuelInventory.getStackInSlot(0).getCount(); i++) {
