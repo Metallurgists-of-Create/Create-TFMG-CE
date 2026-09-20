@@ -107,7 +107,10 @@ repositories {
     maven("https://maven.ryanhcode.dev/releases") //Sable Companion
     maven("https://api.modrinth.com/maven")
     maven("https://dl.cloudsmith.io/public/wolfieboy09/liquid-fuel-reburned/maven/")
-
+    maven {
+        name = "Krystals Releases Maven"
+        url = uri("https://krystalsmaven.oreostack.uk/releases") // Rutile
+    }
     maven {
         name = "DevAuth Maven"
         url = uri("https://pkgs.dev.azure.com/djtheredstoner/DevAuth/_packaging/public/maven/v1")
@@ -146,6 +149,7 @@ dependencies {
     implementation("com.tterrag.registrate:Registrate:${property("registrate_version")}")
 
     implementation("dev.wolfieboy09.createliquidfuel:createliquidfuel:${property("minecraft_version")}-${property("clf_reburned_version")}") { isTransitive = false }
+    implementation("dev.metallurgists:rutile:${property("minecraft_version")}-${property("rutile_version")}") { isTransitive = false }
     
     runtimeOnly("me.djtheredstoner:DevAuth-neoforge:1.2.1")
 

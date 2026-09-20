@@ -4,6 +4,7 @@ import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.TFMGRegistries;
 import com.drmangotea.tfmg.content.engines.types.EngineType;
 import com.drmangotea.tfmg.datagen.integration.TFMGReburnedProvider;
+import com.drmangotea.tfmg.datagen.integration.TFMGRutileProvider;
 import com.drmangotea.tfmg.datagen.recipes.TFMGRecipeProvider;
 import com.drmangotea.tfmg.datagen.recipes.values.TFMGStandardRecipeGen;
 import com.drmangotea.tfmg.datagen.recipes.values.create.TFMGMechanicalCraftingRecipeGen;
@@ -29,6 +30,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
 
 import static com.drmangotea.tfmg.TFMG.REGISTRATE;
+import static com.drmangotea.tfmg.TFMG.registrate;
 
 public class TFMGDatagen {
     public static final ProviderType<RegistrateTagsProvider.IntrinsicImpl<EngineType>> ENGINE_TAGS = ProviderType.registerIntrinsicTag("tags/engine_type", "engine_type", TFMGRegistries.ENGINE_TYPE, engineType -> engineType.builtInRegistryHolder().getKey());
@@ -60,6 +62,10 @@ public class TFMGDatagen {
         // Maybe use ModList instead?
         if (LoadingModList.get().getModFileById("createliquidfuel") != null) {
             generator.addProvider(event.includeServer(), new TFMGReburnedProvider(output));
+        }
+        if (LoadingModList.get().getModFileById("rutile") != null) {
+            generator.addProvider(event.includeServer(), new TFMGRutileProvider.Item(output, lookupProvider));
+            generator.addProvider(event.includeServer(), new TFMGRutileProvider.Fluid(output, lookupProvider));
         }
 
         if (event.includeServer()) {

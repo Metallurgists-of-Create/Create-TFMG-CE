@@ -1,0 +1,12 @@
+{
+  "compositions": [
+    {
+      "elements": [
+        {
+          "amount": 1,
+          "id": "rutile:copper"
+        }
+      ]
+    }
+  ]
+}
