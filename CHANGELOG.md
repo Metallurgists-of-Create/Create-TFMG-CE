@@ -29,6 +29,8 @@ Contributors:<br>
 - Create: Big Cannons compatibility
   - removal of CBC steel/nethersteel recipes
   - Fireproof vat Nethersteel recipe
+- Chemical Vat
+  - Vat recipes in JEI now cycle all valid vat types
 
 ### API Changes:
 - Removed `ILockablePipe`
