@@ -47,7 +47,7 @@ public class TFMGVatRecipeGen extends VatRecipeGen {
                 .require(TFMGItems.COAL_COKE_DUST)
                 .output(0.9f, TFMGItems.COAL_COKE_DUST)
                 .output(TFMGFluids.MOLTEN_STEEL.get(), 90)
-                .output(TFMGFluids.MOLTEN_SLAG.get(), 180)
+                .output(TFMGFluids.MOLTEN_SLAG.get(), 160)
                 .duration(20)
                 .allowFireproof()
                 .minSize(9)
