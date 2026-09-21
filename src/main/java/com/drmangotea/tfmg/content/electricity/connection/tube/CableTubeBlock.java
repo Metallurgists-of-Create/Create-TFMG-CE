@@ -1,6 +1,5 @@
 package com.drmangotea.tfmg.content.electricity.connection.tube;
 
-
 import com.drmangotea.tfmg.base.TFMGShapes;
 import com.drmangotea.tfmg.content.decoration.concrete.ConcreteloggedBlock;
 import com.drmangotea.tfmg.content.electricity.base.IElectric;
@@ -64,15 +63,12 @@ public class CableTubeBlock extends RotatedPillarBlock implements IBE<CableTubeB
 
     @Override
     public void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource randomSource) {
-
         if (state.is(TFMGBlocks.CABLE_TUBE.get()))
             tickDrying(level, state, TFMGBlocks.CONCRETE_ENCASED_CABLE_TUBE.getDefaultState().setValue(AXIS, state.getValue(AXIS)), pos, randomSource);
 
         if (state.is(TFMGBlocks.ELECTRIC_POST.get()))
             tickDrying(level, state, TFMGBlocks.CONCRETE_ENCASED_CABLE_TUBE.getDefaultState().setValue(AXIS, state.getValue(AXIS)), pos, randomSource);
     }
-
-
 
     @Override
     public boolean isRandomlyTicking(BlockState p_49921_) {
@@ -118,14 +114,8 @@ public class CableTubeBlock extends RotatedPillarBlock implements IBE<CableTubeB
         return TFMGBlockEntities.CABLE_TUBE.get();
     }
 
-
-
     @Override
     public ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
-
-
-
-
         ItemStack itemInHand = player.getItemInHand(hand);
 
         IPlacementHelper helper = PlacementHelpers.get(placementHelperId);
@@ -134,39 +124,34 @@ public class CableTubeBlock extends RotatedPillarBlock implements IBE<CableTubeB
                     .placeInWorld(level, (BlockItem) itemInHand.getItem(), player, hand, hitResult);
         }
 
-
         return concreteEncased ? ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION : onClicked(level, pos, state, player, hand);
     }
 
 
     @MethodsReturnNonnullByDefault
     private static class PlacementHelper extends PoleHelper<Direction.Axis> {
-
-
         private PlacementHelper() {
-            super(state -> state.getBlock() instanceof CableTubeBlock, state -> state.getValue(AXIS), AXIS);
+            super(
+				state -> state.getBlock() instanceof CableTubeBlock,
+				state -> state.getValue(AXIS),
+				AXIS
+			);
         }
 
         @Override
         public Predicate<ItemStack> getItemPredicate() {
-            return i -> i.getItem() instanceof BlockItem
-                    && ((BlockItem) i.getItem()).getBlock() instanceof CableTubeBlock;
+            return i -> i.getItem() instanceof BlockItem bi && bi.getBlock() instanceof CableTubeBlock;
         }
 
         @Override
-        public Predicate<BlockState> getStatePredicate() {
-            return s -> s.getBlock() instanceof CableTubeBlock;
-        }
-
-        @Override
-        public PlacementOffset getOffset(Player player, Level world, BlockState state, BlockPos pos,
-                                         BlockHitResult ray) {
+        public PlacementOffset getOffset(
+			Player player, Level world, BlockState state, BlockPos pos, BlockHitResult ray
+		) {
             PlacementOffset offset = super.getOffset(player, world, state, pos, ray);
             if (offset.isSuccessful())
                 offset.withTransform(offset.getTransform()
                         .andThen(s -> state.setValue(AXIS, state.getValue(AXIS))));
             return offset;
         }
-
     }
 }

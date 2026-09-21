@@ -224,9 +224,8 @@ public class TFMGBlocks {
             .properties(BlockBehaviour.Properties::noOcclusion)
             .transform(TFMGStress.setCapacity(55))
             .transform(pickaxeOnly())
-            .blockstate((c, p) -> p.horizontalFaceBlock(c.get(), AssetLookup.partialBaseModel(c, p)))
-            .item()
-            .transform(customItemModel())
+            .blockstate((c, p) -> p.directionalBlock(c.get(), AssetLookup.partialBaseModel(c, p)))
+            .item().transform(customItemModel())
             .register();
     public static final BlockEntry<LargeEngineBlock> SIMPLE_LARGE_ENGINE = REGISTRATE.block("simple_large_engine", LargeEngineBlock::new)
             .initialProperties(SharedProperties::softMetal)
@@ -234,9 +233,8 @@ public class TFMGBlocks {
             .properties(BlockBehaviour.Properties::noOcclusion)
             .transform(TFMGStress.setCapacity(40))
             .transform(pickaxeOnly())
-            .blockstate((c, p) -> p.horizontalFaceBlock(c.get(), AssetLookup.partialBaseModel(c, p)))
-            .item()
-            .transform(customItemModel())
+            .blockstate((c, p) -> p.directionalBlock(c.get(), AssetLookup.partialBaseModel(c, p)))
+            .item().transform(customItemModel())
             .register();
 
     public static final BlockEntry<EngineGearboxBlock> ENGINE_GEARBOX = REGISTRATE.block("engine_gearbox", EngineGearboxBlock::new)
@@ -245,8 +243,7 @@ public class TFMGBlocks {
             .properties(BlockBehaviour.Properties::noOcclusion)
             .blockstate(BlockStateGen.horizontalBlockProvider(true))
             .transform(pickaxeOnly())
-            .item()
-            .transform(customItemModel())
+            .item().transform(customItemModel())
             .register();
 
 
