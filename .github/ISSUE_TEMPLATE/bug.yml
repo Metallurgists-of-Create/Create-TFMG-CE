@@ -7,6 +7,11 @@ body:
     attributes:
       value: "Report a bug with TFMG: CE"
 
+  - type: markdown
+    attributes:
+      value: |
+        > **Northstar Redux issues:** Please do **NOT** report bugs originating from Northstar Redux here. These are already fixed in that mod's dev branch, and we're unable to do anything about it on our end until Northstar Redux pushes an official update. Issues will be closed if determined to be caused by Northstar Redux.
+
   - type: input
     id: mod-version
     attributes:
