@@ -7,7 +7,10 @@ import com.simibubi.create.api.data.recipe.CompactingRecipeGen;
 import com.simibubi.create.content.processing.recipe.HeatCondition;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
+import net.minecraft.resources.ResourceLocation;
+import net.neoforged.neoforge.common.conditions.FalseCondition;
 import net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient;
+import rbasamoyai.createbigcannons.CreateBigCannons;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -35,6 +38,28 @@ public class TFMGCompactingRecipeGen extends CompactingRecipeGen {
                     .output(TFMGItems.CAST_IRON_INGOT, 1)
                     .requiresHeat(HeatCondition.HEATED)
             );
+
+    //Overriding CBC recipes
+    GeneratedRecipe
+            IRON_TO_CAST_IRON_INGOT = overrideOther(CreateBigCannons.resource("iron_to_cast_iron_ingot")),
+            IRON_TO_CAST_IRON_BLOCK = overrideOther(CreateBigCannons.resource("iron_to_cast_iron_block")),
+            FORGE_CAST_IRON_INGOT = overrideOther(CreateBigCannons.resource("forge_cast_iron_ingot")),
+            FORGE_CAST_IRON_NUGGET = overrideOther(CreateBigCannons.resource("forge_cast_iron_nugget")),
+            FORGE_CAST_IRON_BLOCK = overrideOther(CreateBigCannons.resource("forge_cast_iron_block")),
+            FORGE_BRONZE_INGOT = overrideOther(CreateBigCannons.resource("forge_bronze_ingot")),
+            FORGE_BRONZE_NUGGET = overrideOther(CreateBigCannons.resource("forge_bronze_nugget")),
+            FORGE_BRONZE_BLOCK = overrideOther(CreateBigCannons.resource("forge_bronze_block")),
+            FORGE_STEEL_INGOT = overrideOther(CreateBigCannons.resource("forge_steel_ingot")),
+            FORGE_STEEL_NUGGET = overrideOther(CreateBigCannons.resource("forge_steel_nugget")),
+            FORGE_STEEL_BLOCK = overrideOther(CreateBigCannons.resource("forge_steel_block")),
+            FORGE_NETHERSTEEL_INGOT = overrideOther(CreateBigCannons.resource("forge_nethersteel_ingot")),
+            FORGE_NETHERSTEEL_NUGGET = overrideOther(CreateBigCannons.resource("forge_nethersteel_nugget")),
+            FORGE_NETHERSTEEL_BLOCK = overrideOther(CreateBigCannons.resource("forge_nethersteel_block"));
+
+
+    private GeneratedRecipe overrideOther(ResourceLocation name) {
+        return create(name, b -> b.withCondition(FalseCondition.INSTANCE));
+    }
 
     public TFMGCompactingRecipeGen(PackOutput generator, CompletableFuture<HolderLookup.Provider> registries) {
         super(generator, registries, TFMG.MOD_ID);

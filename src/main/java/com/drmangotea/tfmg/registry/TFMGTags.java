@@ -143,6 +143,11 @@ public class TFMGTags {
         MOLTEN_STEEL(COMMON),
         FUEL(COMMON),
 
+        //CBC
+        MOLTEN_CAST_IRON(COMMON),
+        MOLTEN_BRONZE(COMMON),
+        MOLTEN_NETHERSTEEL(COMMON)
+
         ;
 
         public final TagKey<Fluid> tag;

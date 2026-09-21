@@ -27,11 +27,11 @@
       "id": "tfmg:coal_coke_dust"
     },
     {
-      "amount": 144,
+      "amount": 90,
       "id": "tfmg:molten_steel"
     },
     {
-      "amount": 288,
+      "amount": 180,
       "id": "tfmg:molten_slag"
     }
   ]

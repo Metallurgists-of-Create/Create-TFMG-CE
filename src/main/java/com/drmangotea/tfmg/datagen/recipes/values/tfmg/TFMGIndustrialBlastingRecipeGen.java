@@ -26,8 +26,8 @@ public class TFMGIndustrialBlastingRecipeGen extends IndustrialBlastingRecipeGen
     STEEL_CRUSHED = create("steel", b -> b
             .require(AllItems.CRUSHED_IRON)
             .require(TFMGTags.Items.FLUX.tag)
-            .output(TFMGFluids.MOLTEN_STEEL.get(),144)
-            .output(TFMGFluids.MOLTEN_SLAG.get(),144)
+            .output(TFMGFluids.MOLTEN_STEEL.get(),90)
+            .output(TFMGFluids.MOLTEN_SLAG.get(),90)
             .output(TFMGFluids.FURNACE_GAS.get(),200)
             .duration(20)
             .hotAirUsage(20)
@@ -35,8 +35,8 @@ public class TFMGIndustrialBlastingRecipeGen extends IndustrialBlastingRecipeGen
     STEEL_RAW = create("steel_from_raw_iron", b -> b
             .require(Items.RAW_IRON)
             .require(TFMGTags.Items.FLUX.tag)
-            .output(TFMGFluids.MOLTEN_STEEL.get(),288)
-            .output(TFMGFluids.MOLTEN_SLAG.get(),288)
+            .output(TFMGFluids.MOLTEN_STEEL.get(),180)
+            .output(TFMGFluids.MOLTEN_SLAG.get(),180)
             .output(TFMGFluids.FURNACE_GAS.get(),200)
             .duration(40)
             .hotAirUsage(40)
@@ -44,8 +44,8 @@ public class TFMGIndustrialBlastingRecipeGen extends IndustrialBlastingRecipeGen
     STEEL_DUST = create("steel_from_dust", b -> b
             .require(ironDust())
             .require(TFMGTags.Items.FLUX.tag)
-            .output(TFMGFluids.MOLTEN_STEEL.get(),144)
-            .output(TFMGFluids.MOLTEN_SLAG.get(),144)
+            .output(TFMGFluids.MOLTEN_STEEL.get(),90)
+            .output(TFMGFluids.MOLTEN_SLAG.get(),90)
             .output(TFMGFluids.FURNACE_GAS.get(),20)
             .duration(20)
             .hotAirUsage(20)

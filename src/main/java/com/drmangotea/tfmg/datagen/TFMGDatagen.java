@@ -3,6 +3,7 @@ package com.drmangotea.tfmg.datagen;
 import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.TFMGRegistries;
 import com.drmangotea.tfmg.content.engines.types.EngineType;
+import com.drmangotea.tfmg.datagen.integration.TFMGBigCannonsProvider;
 import com.drmangotea.tfmg.datagen.integration.TFMGReburnedProvider;
 import com.drmangotea.tfmg.datagen.integration.TFMGRutileProvider;
 import com.drmangotea.tfmg.datagen.recipes.TFMGRecipeProvider;
@@ -65,6 +66,9 @@ public class TFMGDatagen {
         if (LoadingModList.get().getModFileById("rutile") != null) {
             generator.addProvider(event.includeServer(), new TFMGRutileProvider.Item(output, lookupProvider));
             generator.addProvider(event.includeServer(), new TFMGRutileProvider.Fluid(output, lookupProvider));
+        }
+        if (LoadingModList.get().getModFileById("createbigcannons") != null) {
+            generator.addProvider(event.includeServer(), new TFMGBigCannonsProvider.Melting(output, lookupProvider));
         }
 
         if (event.includeServer()) {

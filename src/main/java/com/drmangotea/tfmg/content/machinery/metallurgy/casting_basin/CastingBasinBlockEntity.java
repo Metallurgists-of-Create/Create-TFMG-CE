@@ -37,7 +37,7 @@ public class CastingBasinBlockEntity extends SmartBlockEntity implements IHaveGo
     int flowTimer = 0;
     public SmartInventory inventory = new SmartInventory(1, this, 1, false);
 
-    public FluidTank tank = new SmartFluidTank(144, this::onFluidChanged);
+    public FluidTank tank = new SmartFluidTank(90, this::onFluidChanged);
     public IFluidHandler fluidCapability;
     public IItemHandlerModifiable itemCapability;
     public CastingRecipe recipe = null;

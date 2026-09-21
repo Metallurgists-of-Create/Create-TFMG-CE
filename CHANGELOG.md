@@ -17,6 +17,7 @@ Contributors:<br>
 
 
 ### Changes:
+- TFMG now uses the standard `90mB ⇒ 1 ingot` fluid units in recipes.
 - Blast Stove
   - capacity now scales with volume
   - maximum height changed to 5
@@ -24,11 +25,14 @@ Contributors:<br>
   - Now can be picked up with shift and right-click of the wrench
 - Flamethrower
   - Fuel type now pulls fluid lang key instead of relying on a new key
-- Rutile Integration
+- `Rutile` Integration
   - Added chemical composition files for relevant items/fluids.
-- Create: Big Cannons compatibility
-  - removal of CBC steel/nethersteel recipes
-  - Fireproof vat Nethersteel recipe
+- `Create: Big Cannons` Integration:
+  - Removed mixer alloying recipes.
+  - Removed compacting-casting recipes.
+  - Added Melting recipes for TFMG metals.
+  - Added Casting Basin recipes for CBC metals.
+  - Added Vat recipe for Nethersteel.
 - Chemical Vat
   - Vat recipes in JEI now cycle all valid vat types
 

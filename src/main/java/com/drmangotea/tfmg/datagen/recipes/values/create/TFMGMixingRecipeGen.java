@@ -8,6 +8,7 @@ import com.simibubi.create.content.processing.recipe.HeatCondition;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
+import net.neoforged.neoforge.common.conditions.FalseCondition;
 import net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient;
 import rbasamoyai.createbigcannons.CreateBigCannons;
 
@@ -141,7 +142,7 @@ public class TFMGMixingRecipeGen extends MixingRecipeGen {
 		ALLOY_STEEL = overrideOther(CreateBigCannons.resource("alloy_steel"));
 	
 	private GeneratedRecipe overrideOther(ResourceLocation name) {
-		return create(name, b -> b);
+		return create(name, b -> b.withCondition(FalseCondition.INSTANCE));
 	}
 
 	public TFMGMixingRecipeGen(PackOutput generator, CompletableFuture<HolderLookup.Provider> registries) {
