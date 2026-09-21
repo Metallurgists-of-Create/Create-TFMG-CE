@@ -95,7 +95,6 @@ public class BlastStoveBlockEntity extends SmartBlockEntity implements IHaveGogg
 		updateRecipe();
     }
 
-	//TODO: Rework
     @Override
 	public void tick() {
         super.tick();
@@ -159,9 +158,9 @@ public class BlastStoveBlockEntity extends SmartBlockEntity implements IHaveGogg
 		return width * width * height;
 	}
 
-	//TODO: Rework
+	//TODO: Rework heat system
     public int getSpeed () {
-        //return 40 / getTotalTankSize(); //max size is 2x2x10
+        //return 20 / getTotalTankSize(); //max size is 2x2x5
 		return (int) (1000f / (getTotalTankSize() * 3));
     }
 
@@ -451,12 +450,12 @@ public class BlastStoveBlockEntity extends SmartBlockEntity implements IHaveGogg
 	public void addBehaviours(List<BlockEntityBehaviour> behaviours) { }
 
     public static int getCapacityMultiplier() {
-		//should this have its own config?
+		//TODO: should this have its own config?
 		return AllConfigs.server().fluids.fluidTankCapacity.get() * 1000;
 	}
 
     public static int getMaxHeight() {
-        return 10; //Should this be configurable? //AllConfigs.server().fluids.fluidTankMaxHeight.get();
+        return 5;
     }
 
     @Override

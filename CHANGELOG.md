@@ -17,6 +17,9 @@ Contributors:<br>
 
 
 ### Changes:
+- Blast Stove
+  - capacity now scales with volume
+  - maximum height changed to 5
 - Surface Scanner
   - Now can be picked up with shift and right-click of the wrench
 - Flamethrower
