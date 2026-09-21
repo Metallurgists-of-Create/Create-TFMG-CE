@@ -1,6 +1,5 @@
 package com.drmangotea.tfmg.datagen.recipes.values.tfmg;
 
-
 import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.base.pressure.Pressure;
 import com.drmangotea.tfmg.content.machinery.vat.base.registry.operations.VatOperation;
@@ -11,10 +10,13 @@ import com.drmangotea.tfmg.registry.TFMGItems;
 import com.drmangotea.tfmg.registry.TFMGTags;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.material.Fluids;
 import net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient;
+import rbasamoyai.createbigcannons.index.CBCFluids;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -132,7 +134,17 @@ public class TFMGVatRecipeGen extends VatRecipeGen {
                 .electrolysis()
                 .allowNonCastIron()
                 .heatLevel(2)
-        )
+        ),
+	
+	//CBC
+	Nethersteel = create("nethersteel", b -> b.whenModLoaded("createbigcannons")
+		.require(Items.NETHERITE_SCRAP)
+		.require(TFMGTags.Fluids.MOLTEN_STEEL.tag, 360)
+		.output(CBCFluids.MOLTEN_NETHERSTEEL.get(), 360)
+		.arcBlasting()
+		.allowFireproof()
+		.heatLevel(2)
+	)
 
 
                     //DEBUG = createVatRecipe("debug_5", b -> ((VatMachineRecipe.Builder<VatMachineRecipe>) b)
@@ -185,7 +197,7 @@ public class TFMGVatRecipeGen extends VatRecipeGen {
 
     }
 
-    @Override
+    @Override @Nonnull
     public String getName() {
         return "TFMG'S Vat Recipes";
     }

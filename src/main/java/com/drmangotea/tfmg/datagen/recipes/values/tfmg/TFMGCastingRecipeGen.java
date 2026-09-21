@@ -42,6 +42,10 @@ public class TFMGCastingRecipeGen extends CastingRecipeGen {
 			.duration(200));
 
 ;
+	//TODO:
+	// - Add casting recipes for molten CBC metals
+	// - Remove their compacting recipes?
+	
 	public TFMGCastingRecipeGen(PackOutput generator, CompletableFuture<HolderLookup.Provider> registries) {
 		super(generator, registries,TFMG.MOD_ID);
 	}

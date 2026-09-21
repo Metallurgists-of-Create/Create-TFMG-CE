@@ -26,6 +26,9 @@ Contributors:<br>
   - Fuel type now pulls fluid lang key instead of relying on a new key
 - Rutile Integration
   - Added chemical composition files for relevant items/fluids.
+- Create: Big Cannons compatibility
+  - removal of CBC steel/nethersteel recipes
+  - Fireproof vat Nethersteel recipe
 
 ### API Changes:
 - Removed `ILockablePipe`

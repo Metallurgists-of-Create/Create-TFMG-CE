@@ -2,19 +2,21 @@ package com.drmangotea.tfmg.datagen.recipes.values.create;
 
 import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.registry.TFMGItems;
-import com.simibubi.create.AllRecipeTypes;
 import com.simibubi.create.api.data.recipe.MixingRecipeGen;
 import com.simibubi.create.content.decoration.palettes.AllPaletteStoneTypes;
 import com.simibubi.create.content.processing.recipe.HeatCondition;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
+import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient;
+import rbasamoyai.createbigcannons.CreateBigCannons;
 
 import java.util.concurrent.CompletableFuture;
 
 import static com.drmangotea.tfmg.datagen.recipes.TFMGRecipeProvider.F.*;
 import static com.drmangotea.tfmg.datagen.recipes.TFMGRecipeProvider.I.*;
 
+@SuppressWarnings("unused")
 public class TFMGMixingRecipeGen extends MixingRecipeGen {
 
 	GeneratedRecipe
@@ -111,7 +113,7 @@ public class TFMGMixingRecipeGen extends MixingRecipeGen {
 	NAPALM = create("napalm", b -> b
 			.require(SizedFluidIngredient.of(gasoline(),1000))
 			.require(aluminumIngot())
-				.output(napalm(),250)
+			.output(napalm(),250)
 	),
 
 	COOLING_FLUID = create("cooling_fluid", b -> b
@@ -131,15 +133,18 @@ public class TFMGMixingRecipeGen extends MixingRecipeGen {
 			.requiresHeat(HeatCondition.HEATED)
 	);
 
-
+	//Overriding CBC recipes
+	//TODO: find & override CBC cast iron recipe
+	GeneratedRecipe
+		ALLOY_NETHERSTEEL_CAST_IRON = overrideOther(CreateBigCannons.resource("alloy_nethersteel_cast_iron")),
+		ALLOY_NETHERSTEEL_STEEL = overrideOther(CreateBigCannons.resource("alloy_nethersteel_steel")),
+		ALLOY_STEEL = overrideOther(CreateBigCannons.resource("alloy_steel"));
+	
+	private GeneratedRecipe overrideOther(ResourceLocation name) {
+		return create(name, b -> b);
+	}
 
 	public TFMGMixingRecipeGen(PackOutput generator, CompletableFuture<HolderLookup.Provider> registries) {
 		super(generator, registries, TFMG.MOD_ID);
 	}
-
-	@Override
-	protected AllRecipeTypes getRecipeType() {
-		return AllRecipeTypes.MIXING;
-	}
-
 }
