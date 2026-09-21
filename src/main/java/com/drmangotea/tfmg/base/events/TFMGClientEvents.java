@@ -153,6 +153,7 @@ public class TFMGClientEvents {
 
 			event.addDrawableVatType(TFMGVatTypes.FIREPROOF.get(), (vatType, graphics, mouseX, mouseY) -> TFMGGuiTextures.FIREPROOF_BRICK_OVERLAY.render(graphics, 55 - 48, 32));
 			event.addDrawableVatType(TFMGVatTypes.CAST_IRON.get(), (vatType, graphics, mouseX, mouseY) -> TFMGGuiTextures.CAST_IRON_VAT_OVERLAY.render(graphics, 0, 24));
+			event.addDrawableVatType(TFMGVatTypes.STEEL.get(), (vatType, graphics, mouseX, mouseY) -> TFMGGuiTextures.STEEL_VAT_OVERLAY.render(graphics, 0, 24));
 		}
 	}
 }
