@@ -1,7 +1,10 @@
 package com.drmangotea.tfmg.datagen.integration;
 
 import com.drmangotea.tfmg.TFMG;
-import com.drmangotea.tfmg.registry.*;
+import com.drmangotea.tfmg.registry.TFMGBlocks;
+import com.drmangotea.tfmg.registry.TFMGFluids;
+import com.drmangotea.tfmg.registry.TFMGItems;
+import com.drmangotea.tfmg.registry.TFMGPaletteStoneTypes;
 import dev.metallurgists.rutile.Rutile;
 import dev.metallurgists.rutile.api.data.provider.composition.FluidCompositionProvider;
 import dev.metallurgists.rutile.api.data.provider.composition.ItemCompositionProvider;

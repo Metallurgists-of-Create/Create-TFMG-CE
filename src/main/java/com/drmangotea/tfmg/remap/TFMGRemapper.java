@@ -1,16 +1,8 @@
 package com.drmangotea.tfmg.remap;
 
 import com.drmangotea.tfmg.TFMG;
-import com.drmangotea.tfmg.TFMGRegistries;
-import com.drmangotea.tfmg.base.data_storage.CylinderFuels;
-import com.drmangotea.tfmg.content.machinery.vat.electrode_holder.electrode.Electrode;
-import com.drmangotea.tfmg.registry.TFMGDataComponents;
-import com.drmangotea.tfmg.registry.TFMGEngineFuelTypes;
-import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -19,7 +11,6 @@ import net.neoforged.neoforge.registries.RegisterEvent;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 
 @EventBusSubscriber

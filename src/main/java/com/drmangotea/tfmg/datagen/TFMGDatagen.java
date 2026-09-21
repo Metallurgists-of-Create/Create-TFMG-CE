@@ -30,7 +30,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
 
 import static com.drmangotea.tfmg.TFMG.REGISTRATE;
-import static com.drmangotea.tfmg.TFMG.registrate;
 
 public class TFMGDatagen {
     public static final ProviderType<RegistrateTagsProvider.IntrinsicImpl<EngineType>> ENGINE_TAGS = ProviderType.registerIntrinsicTag("tags/engine_type", "engine_type", TFMGRegistries.ENGINE_TYPE, engineType -> engineType.builtInRegistryHolder().getKey());
