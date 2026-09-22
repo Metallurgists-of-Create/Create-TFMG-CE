@@ -15,6 +15,7 @@ import java.util.concurrent.CompletableFuture;
 
 import static com.drmangotea.tfmg.datagen.recipes.TFMGRecipeProvider.I.*;
 
+@SuppressWarnings("unused")
 public class TFMGCrushingRecipeGen extends CrushingRecipeGen {
 
     GeneratedRecipe

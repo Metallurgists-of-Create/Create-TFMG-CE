@@ -8,10 +8,12 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.item.Items;
 
+import javax.annotation.Nonnull;
 import java.util.concurrent.CompletableFuture;
 
 import static com.drmangotea.tfmg.datagen.recipes.TFMGRecipeProvider.I.*;
 
+@SuppressWarnings("unused")
 public class TFMGMechanicalCraftingRecipeGen extends MechanicalCraftingRecipeGen {
 
     GeneratedRecipe
@@ -120,7 +122,7 @@ public class TFMGMechanicalCraftingRecipeGen extends MechanicalCraftingRecipeGen
         super(output, registries,TFMG.MOD_ID);
     }
 
-    @Override
+    @Override @Nonnull
     public String getName() {
         return "TFMG'S Mechanical Crafting Recipes";
     }

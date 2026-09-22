@@ -8,6 +8,7 @@ import net.minecraft.data.PackOutput;
 
 import java.util.concurrent.CompletableFuture;
 
+@SuppressWarnings("unused")
 public class TFMGPolarizingRecipeGen extends PolarizingRecipeGen {
 	GeneratedRecipe MAGNET = create(TFMG.asResource("magnet"), b -> b
 			.require(TFMGItems.MAGNETIC_ALLOY_INGOT)

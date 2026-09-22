@@ -13,6 +13,7 @@ import rbasamoyai.createbigcannons.index.CBCItems;
 
 import java.util.concurrent.CompletableFuture;
 
+@SuppressWarnings("unused")
 public class TFMGCastingRecipeGen extends CastingRecipeGen {
 
 	BaseRecipeProvider.GeneratedRecipe

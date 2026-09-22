@@ -11,6 +11,7 @@ import java.util.concurrent.CompletableFuture;
 
 import static com.drmangotea.tfmg.datagen.recipes.TFMGRecipeProvider.F.*;
 
+@SuppressWarnings("unused")
 public class TFMGHotBlastRecipeGen extends HotBlastRecipeGen {
 
 	GeneratedRecipe

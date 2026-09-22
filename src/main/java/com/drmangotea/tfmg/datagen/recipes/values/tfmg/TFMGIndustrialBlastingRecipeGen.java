@@ -14,6 +14,7 @@ import java.util.concurrent.CompletableFuture;
 
 import static com.drmangotea.tfmg.datagen.recipes.TFMGRecipeProvider.I.ironDust;
 
+@SuppressWarnings("unused")
 public class TFMGIndustrialBlastingRecipeGen extends IndustrialBlastingRecipeGen {
     GeneratedRecipe
 

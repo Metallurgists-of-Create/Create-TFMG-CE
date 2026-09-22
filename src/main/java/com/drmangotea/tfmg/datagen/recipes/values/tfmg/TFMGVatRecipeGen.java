@@ -24,6 +24,7 @@ import java.util.concurrent.CompletableFuture;
 import static com.drmangotea.tfmg.datagen.recipes.TFMGRecipeProvider.F.*;
 import static com.drmangotea.tfmg.datagen.recipes.TFMGRecipeProvider.I.*;
 
+@SuppressWarnings("unused")
 public class TFMGVatRecipeGen extends VatRecipeGen {
     public TFMGVatRecipeGen(PackOutput generator, CompletableFuture<HolderLookup.Provider> registries) {
         super(generator, registries, TFMG.MOD_ID);

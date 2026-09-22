@@ -62,7 +62,7 @@ import java.util.function.UnaryOperator;
 
 import static com.drmangotea.tfmg.datagen.recipes.TFMGRecipeProvider.I.*;
 
-
+@SuppressWarnings("unused")
 public class TFMGStandardRecipeGen extends TFMGRecipeProvider {
     private Marker MATERIALS = enterFolder("materials");
     public static final Map<String, ItemLike> DYES_FROM_COLOR = new HashMap<>();
