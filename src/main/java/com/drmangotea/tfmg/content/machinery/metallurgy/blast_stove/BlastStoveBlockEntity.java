@@ -17,6 +17,7 @@ import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour
 import com.simibubi.create.foundation.fluid.CombinedTankWrapper;
 import com.simibubi.create.foundation.recipe.RecipeConditions;
 import com.simibubi.create.foundation.recipe.RecipeFinder;
+import com.simibubi.create.foundation.utility.CreateLang;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -25,6 +26,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -344,11 +346,12 @@ public class BlastStoveBlockEntity extends SmartBlockEntity implements IHaveGogg
             AirInputTank.read(registries, compound.getCompound("primaryInputInventory"));
             exhaustOutputTank.read(registries, compound.getCompound("secondaryOutputInventory"));
             fuelInputTank.read(registries, compound.getCompound("secondaryInputInventory"));
+            timer = compound.getInt("Timer");
 
             updateCapability = true;
         }
 
-        timer = compound.getInt("Timer");
+
 
         if (!clientPacket)
             return;
@@ -361,10 +364,24 @@ public class BlastStoveBlockEntity extends SmartBlockEntity implements IHaveGogg
         }
     }
 
+    public int getProgressPercentage() {
+        return getSpeed() <= 0 ? -1 : Math.min(100, (int) (100f * timer / getSpeed()));
+    }
+
+    public MutableComponent getProgressComponent() {
+        int progress = getProgressPercentage();
+        if (progress == -1)
+            return null;
+        return TFMGLang.translateDirect("goggles.progress", Component.literal(getProgressPercentage() + "%").withStyle(ChatFormatting.GOLD)).withStyle(ChatFormatting.GRAY);
+    }
+
     @Override
 	public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
 		BlastStoveBlockEntity controller = getControllerBE();
         if (controller == null) { return false; }
+        if (!isController()) {
+            return controller.addToGoggleTooltip(tooltip, isPlayerSneaking);
+        }
 		
 		IFluidHandler pri = controller.primaryCapability;
 		IFluidHandler sec = controller.secondaryCapability;
@@ -372,7 +389,10 @@ public class BlastStoveBlockEntity extends SmartBlockEntity implements IHaveGogg
 		int capacity = getCapacityMultiplier() * controller.getTotalTankSize();
 
         TFMGTexts.header("blast_stove").forGoggles(tooltip);
-		TFMGLang.text(TFMGTexts.PERCENT_FORMAT.format(timer / getSpeed())).forGoggles(tooltip);
+        MutableComponent progressComp = getProgressComponent();
+        if (progressComp != null) {
+            CreateLang.builder().add(getProgressComponent()).forGoggles(tooltip, 1);
+        }
         tankTooltip(tooltip, "goggles.blast_stove.tank1", sec.getFluidInTank(1), capacity, ChatFormatting.DARK_GREEN); //input (air)
         tankTooltip(tooltip, "goggles.blast_stove.tank2", pri.getFluidInTank(1), capacity, ChatFormatting.DARK_GREEN); //fuel
         tankTooltip(tooltip, "goggles.blast_stove.tank3", pri.getFluidInTank(0), capacity, ChatFormatting.GOLD);       //output (hot air)
@@ -407,9 +427,8 @@ public class BlastStoveBlockEntity extends SmartBlockEntity implements IHaveGogg
             compound.put("secondaryInputInventory", fuelInputTank.writeToNBT(registries, new CompoundTag()));
             compound.putInt("Size", width);
             compound.putInt("Height", height);
+            compound.putInt("Timer", timer);
         }
-
-        compound.putInt("Timer", timer);
 
         forEachBehaviour(tb -> tb.write(compound, registries, clientPacket));
 
