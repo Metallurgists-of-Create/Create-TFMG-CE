@@ -34,7 +34,12 @@ Contributors:<br>
   - Added Casting Basin recipes for CBC metals.
   - Added Vat recipe for Nethersteel.
 - Chemical Vat
-  - Vat recipes in JEI now cycle all valid vat types
+  - Vat recipes in JEI now cycle all valid vat types.
+- Distillation Tower
+  - Distillation Controller uses recipe-specific durations.
+  - Timer progression is based on the heat level of the tower.
+  - Progress percentage now displays in the goggle tooltip.
+  - Tweaked durations for all distillation recipes (200 ticks per output).
 
 ### API Changes:
 - Removed `ILockablePipe`

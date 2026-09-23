@@ -7,6 +7,7 @@
       "fluid": "tfmg:crude_oil"
     }
   ],
+  "processing_time": 1000,
   "results": [
     {
       "amount": 120,
