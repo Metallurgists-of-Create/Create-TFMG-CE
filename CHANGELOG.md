@@ -19,8 +19,9 @@ Contributors:<br>
 ### Changes:
 - TFMG now uses the standard `90mB ⇒ 1 ingot` fluid units in recipes.
 - Blast Stove
-  - capacity now scales with volume
-  - maximum height changed to 5
+  - Capacity now scales with volume.
+  - Maximum height changed to 5.
+  - A modified Blast Stove will no-longer stop allowing pipe flow in some contexts.
 - Surface Scanner
   - Now can be picked up with shift and right-click of the wrench
 - Flamethrower
