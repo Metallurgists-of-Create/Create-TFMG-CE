@@ -221,6 +221,12 @@ public class BlastStoveBlockEntity extends SmartBlockEntity implements IHaveGogg
         invalidateCapabilities();
     }
 
+    @Override
+    public void destroy() {
+        getControllerBE().updateCapability = true;
+        super.destroy();
+    }
+
     @SuppressWarnings("unchecked")
     @Override
     public BlastStoveBlockEntity getControllerBE() {
