@@ -183,7 +183,7 @@ val generateModMetadata by tasks.registering(ProcessResources::class) {
     }
 
     from("src/main/templates")
-    into("build/resources")
+    into("build/generated/sources/modMetadata")
 }
 
 // Include the output of "generateModMetadata" as an input directory for the build.
