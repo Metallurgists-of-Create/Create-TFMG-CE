@@ -41,6 +41,16 @@ Contributors:<br>
   - Timer progression is based on the heat level of the tower.
   - Progress percentage now displays in the goggle tooltip.
   - Tweaked durations for all distillation recipes (200 ticks per output).
+- Capacity:
+  - Exhaust: 1000mB -> 4000mB
+  - Smokestack: 8000mB -> 16000mB
+- Exhaust Drain Rate:
+  - Exhaust: 100mB/t -> 500mB/t
+  - Flarestack: 25mB/t -> 100mB/t
+  - Smokestack: 150mB/t -> 1000mB/t
+- Smoke Timer:
+  - Smokestack: 40t -> 500t
+- The Engine Piping upgrade can now pull from any adjacent fluid handler instead of just Create's fluid tanks.
 
 ### API Changes:
 - Removed `ILockablePipe`
