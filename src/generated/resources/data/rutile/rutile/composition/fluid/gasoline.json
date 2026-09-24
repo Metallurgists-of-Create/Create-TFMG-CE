@@ -3,15 +3,17 @@
     {
       "elements": [
         {
-          "amount": 1,
+          "amount": 12,
           "id": "rutile:carbon"
+        },
+        {
+          "amount": 2,
+          "id": "rutile:hydrogen"
         }
       ]
     }
   ],
   "contents": [
-    "tfmg:coal_coke_block",
-    "tfmg:coal_coke",
-    "tfmg:coal_coke_dust"
+    "tfmg:gasoline"
   ]
 }

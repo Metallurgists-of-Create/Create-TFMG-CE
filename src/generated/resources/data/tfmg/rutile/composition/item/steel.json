@@ -4,16 +4,15 @@
       "elements": [
         {
           "amount": 1,
-          "id": "rutile:lead"
-        },
-        {
-          "amount": 1,
-          "id": "rutile:sulfur"
+          "id": "rutile:iron"
         }
       ]
     }
   ],
   "contents": [
-    "tfmg:galena"
+    "tfmg:steel_block",
+    "tfmg:steel_ingot",
+    "tfmg:steel_nugget",
+    "tfmg:heavy_plate"
   ]
 }

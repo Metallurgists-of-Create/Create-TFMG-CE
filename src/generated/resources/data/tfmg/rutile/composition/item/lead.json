@@ -5,15 +5,16 @@
         {
           "amount": 1,
           "id": "rutile:lead"
-        },
-        {
-          "amount": 1,
-          "id": "rutile:sulfur"
         }
       ]
     }
   ],
   "contents": [
-    "tfmg:galena"
+    "tfmg:raw_lead_block",
+    "tfmg:lead_block",
+    "tfmg:raw_lead",
+    "tfmg:lead_ingot",
+    "tfmg:lead_nugget",
+    "tfmg:lead_sheet"
   ]
 }

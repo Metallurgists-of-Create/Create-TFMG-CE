@@ -16,5 +16,9 @@
         }
       ]
     }
+  ],
+  "contents": [
+    "tfmg:bauxite",
+    "tfmg:bauxite_powder"
   ]
 }

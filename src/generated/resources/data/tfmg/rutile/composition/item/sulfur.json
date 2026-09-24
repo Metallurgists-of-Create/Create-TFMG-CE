@@ -8,5 +8,9 @@
         }
       ]
     }
+  ],
+  "contents": [
+    "tfmg:sulfur",
+    "tfmg:sulfur_dust"
   ]
 }

@@ -4,16 +4,18 @@
       "elements": [
         {
           "amount": 1,
-          "id": "rutile:lead"
+          "id": "rutile:copper"
         },
         {
           "amount": 1,
-          "id": "rutile:sulfur"
+          "id": "rutile:nickel"
         }
       ]
     }
   ],
   "contents": [
-    "tfmg:galena"
+    "tfmg:constantan_block",
+    "tfmg:constantan_ingot",
+    "tfmg:constantan_nugget"
   ]
 }

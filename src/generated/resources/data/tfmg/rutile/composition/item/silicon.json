@@ -4,16 +4,12 @@
       "elements": [
         {
           "amount": 1,
-          "id": "rutile:lead"
-        },
-        {
-          "amount": 1,
-          "id": "rutile:sulfur"
+          "id": "rutile:silicon"
         }
       ]
     }
   ],
   "contents": [
-    "tfmg:galena"
+    "tfmg:silicon_ingot"
   ]
 }

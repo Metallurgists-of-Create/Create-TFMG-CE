@@ -4,16 +4,12 @@
       "elements": [
         {
           "amount": 1,
-          "id": "rutile:lead"
-        },
-        {
-          "amount": 1,
-          "id": "rutile:sulfur"
+          "id": "rutile:zinc"
         }
       ]
     }
   ],
   "contents": [
-    "tfmg:galena"
+    "tfmg:zinc_electrode"
   ]
 }

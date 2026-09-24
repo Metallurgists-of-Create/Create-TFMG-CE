@@ -4,16 +4,16 @@
       "elements": [
         {
           "amount": 1,
-          "id": "rutile:lead"
+          "id": "rutile:carbon"
         },
         {
-          "amount": 1,
-          "id": "rutile:sulfur"
+          "amount": 2,
+          "id": "rutile:oxygen"
         }
       ]
     }
   ],
   "contents": [
-    "tfmg:galena"
+    "tfmg:carbon_dioxide"
   ]
 }
