@@ -10,7 +10,6 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.common.conditions.FalseCondition;
 import net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient;
-import rbasamoyai.createbigcannons.CreateBigCannons;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -137,9 +136,9 @@ public class TFMGMixingRecipeGen extends MixingRecipeGen {
 	//Overriding CBC recipes
 	//TODO: find & override CBC cast iron recipe
 	GeneratedRecipe
-		ALLOY_NETHERSTEEL_CAST_IRON = overrideOther(CreateBigCannons.resource("alloy_nethersteel_cast_iron")),
-		ALLOY_NETHERSTEEL_STEEL = overrideOther(CreateBigCannons.resource("alloy_nethersteel_steel")),
-		ALLOY_STEEL = overrideOther(CreateBigCannons.resource("alloy_steel"));
+		ALLOY_NETHERSTEEL_CAST_IRON = overrideOther(cbcLoc("alloy_nethersteel_cast_iron")),
+		ALLOY_NETHERSTEEL_STEEL = overrideOther(cbcLoc("alloy_nethersteel_steel")),
+		ALLOY_STEEL = overrideOther(cbcLoc("alloy_steel"));
 	
 	private GeneratedRecipe overrideOther(ResourceLocation name) {
 		return create(name, b -> b.withCondition(FalseCondition.INSTANCE));
@@ -147,5 +146,9 @@ public class TFMGMixingRecipeGen extends MixingRecipeGen {
 
 	public TFMGMixingRecipeGen(PackOutput generator, CompletableFuture<HolderLookup.Provider> registries) {
 		super(generator, registries, TFMG.MOD_ID);
+	}
+
+	private ResourceLocation cbcLoc(String path) {
+		return TFMG.asResource("createbigcannons:" + path);
 	}
 }
