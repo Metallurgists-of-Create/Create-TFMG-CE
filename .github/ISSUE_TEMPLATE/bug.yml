@@ -6,17 +6,12 @@ body:
   - type: markdown
     attributes:
       value: "Report a bug with TFMG: CE"
-
-  - type: markdown
-    attributes:
-      value: |
-        > **Northstar Redux issues:** Please do **NOT** report bugs originating from Northstar Redux here. These are already fixed in that mod's dev branch, and we're unable to do anything about it on our end until Northstar Redux pushes an official update. Issues will be closed if determined to be caused by Northstar Redux.
-
+      
   - type: input
     id: mod-version
     attributes:
       label: TFMG:CE Version / Build
-      description: The exact version or build number of TFMG:CE you're using.
+      description: "The exact version or build number of TFMG: CE you're using."
       placeholder: e.g. 1.2.4 or build #190
     validations:
       required: true
@@ -63,9 +58,7 @@ body:
     attributes:
       label: Checklist
       options:
-        - label: I have searched existing issues and this bug hasn't already been reported.
+        - label: I have searched existing issues, and this bug hasn't already been reported.
           required: true
         - label: "I am using the latest release of TFMG: CE"
-          required: true
-        - label: "**I HAVE ACTUALLY LOOKED AT THE CURRENT ISSUES AND DETERMINED MY ISSUE HAS NOT BEEN REPORTED YET**"
           required: true
