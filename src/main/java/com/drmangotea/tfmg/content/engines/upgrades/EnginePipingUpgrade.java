@@ -8,6 +8,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
+import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 
@@ -16,19 +17,23 @@ import java.util.Optional;
 
 public class EnginePipingUpgrade extends EngineUpgrade {
     @Nullable
-    public FluidTankBlockEntity tank = null;
+    public BlockPos fluidTankPosition = null;
+    @Nullable
+    public Direction handlerDirection = null;
 
     public void findTank(AbstractSmallEngineBlockEntity be) {
         Level level = be.getLevel();
         if (level == null) return;
         for (Direction direction : Direction.values()) {
             BlockPos pos = be.getBlockPos().relative(direction);
-            if (level.getBlockEntity(pos) instanceof FluidTankBlockEntity foundTank) {
-                tank = foundTank;
+            if (level.getCapability(Capabilities.FluidHandler.BLOCK, pos, direction.getOpposite()) != null) {
+                fluidTankPosition = pos;
+                handlerDirection = direction.getOpposite();
                 return;
             }
         }
-        tank = null;
+        fluidTankPosition = null;
+        handlerDirection = null;
     }
 
     @Override
@@ -38,19 +43,35 @@ public class EnginePipingUpgrade extends EngineUpgrade {
 
     @Override
     public void lazyTickUpgrade(AbstractSmallEngineBlockEntity engine) {
-        if (tank != null) {
+        Level level = engine.getLevel();
+        if (level == null) return;
+        if (fluidTankPosition == null || handlerDirection == null) return;
+        IFluidHandler fluidHandler = engine.getLevel().getCapability(Capabilities.FluidHandler.BLOCK, fluidTankPosition, handlerDirection);
+        if (fluidHandler != null) {
             AbstractSmallEngineBlockEntity controller = engine.getControllerBE();
-
-            int maxOutput = tank.getTankInventory().drain(500, IFluidHandler.FluidAction.SIMULATE).getAmount();
-            int maxInput = tank.getTankInventory().fill(new FluidStack(tank.getFluid(0).getFluidHolder(), 500), IFluidHandler.FluidAction.SIMULATE);
             if(controller == null)
                 return;
             if(controller.fuelTank == null)
                 return;
 
+            FluidStack toDrain = FluidStack.EMPTY;
+            FluidStack contained = controller.fuelTank.getFluid();
+            for (int i = 0; i < fluidHandler.getTanks(); i++) {
+                FluidStack fluidStack = fluidHandler.getFluidInTank(i);
+                if (fluidStack.isEmpty()) continue;
+                if (!contained.isEmpty() && FluidStack.isSameFluidSameComponents(contained, fluidStack)) {
+                    toDrain = fluidStack.copy();
+                    break;
+                }
+                toDrain = fluidStack.copy();
+            }
+
+            int maxInput = controller.fuelTank.fill(toDrain.copyWithAmount(500), IFluidHandler.FluidAction.SIMULATE);
+            int maxOutput = fluidHandler.drain(toDrain.copyWithAmount(maxInput), IFluidHandler.FluidAction.SIMULATE).getAmount();
+
             int amount = Math.min(maxInput, Math.min(maxOutput, controller.fuelTank.getSpace()));
-            tank.getTankInventory().drain(amount, IFluidHandler.FluidAction.EXECUTE);
-            controller.getControllerBE().fuelTank.fill(new FluidStack(tank.getFluid(0).getFluidHolder(), amount), IFluidHandler.FluidAction.EXECUTE);
+            controller.getControllerBE().fuelTank.fill(toDrain.copyWithAmount(amount), IFluidHandler.FluidAction.EXECUTE);
+            fluidHandler.drain(toDrain.copyWithAmount(amount), IFluidHandler.FluidAction.EXECUTE);
         } else findTank(engine);
     }
 
