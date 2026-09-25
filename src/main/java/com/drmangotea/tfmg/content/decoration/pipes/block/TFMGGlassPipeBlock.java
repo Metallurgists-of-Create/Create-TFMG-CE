@@ -11,7 +11,6 @@ import com.simibubi.create.content.fluids.pipes.GlassFluidPipeBlock;
 import com.simibubi.create.content.fluids.pipes.StraightPipeBlockEntity;
 import com.simibubi.create.content.schematics.requirement.ItemRequirement;
 import net.createmod.catnip.data.Iterate;
-import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
@@ -26,11 +25,10 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.phys.BlockHitResult;
 
-import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Map;
+import com.drmangotea.tfmg.base.annotation.NothingNullByDefault;
 
-@MethodsReturnNonnullByDefault
-@ParametersAreNonnullByDefault
+@NothingNullByDefault
 public class TFMGGlassPipeBlock extends GlassFluidPipeBlock {
 
     public final TFMGPipes.PipeMaterial material;

@@ -15,7 +15,6 @@ import com.simibubi.create.foundation.item.SmartInventory;
 import net.createmod.catnip.animation.LerpedFloat;
 import net.createmod.catnip.math.VecHelper;
 import net.minecraft.ChatFormatting;
-import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -36,12 +35,14 @@ import net.neoforged.neoforge.items.wrapper.CombinedInvWrapper;
 import net.neoforged.neoforge.items.wrapper.RecipeWrapper;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 import java.util.Optional;
 
 import static com.drmangotea.tfmg.content.machinery.misc.winding_machine.WindingMachineBlock.POWERED;
 import static com.simibubi.create.content.kinetics.base.HorizontalKineticBlock.HORIZONTAL_FACING;
+import com.drmangotea.tfmg.base.annotation.NothingNullByDefault;
+
+import javax.annotation.ParametersAreNonnullByDefault;
 
 public class WindingMachineBlockEntity extends KineticBlockEntity implements IHaveGoggleInformation, Clearable {
     LerpedFloat spoolSpeed = LerpedFloat.linear();
@@ -413,8 +414,7 @@ public class WindingMachineBlockEntity extends KineticBlockEntity implements IHa
         }
     }
 
-    @MethodsReturnNonnullByDefault
-    @ParametersAreNonnullByDefault
+    @NothingNullByDefault
     private record SpoolSlotHandler(WindingMachineBlockEntity be) implements IItemHandlerModifiable {
 
         @Override

@@ -6,7 +6,6 @@ import com.drmangotea.tfmg.content.engines.types.radial_engine.RadialEngineBlock
 import com.drmangotea.tfmg.content.engines.types.turbine_engine.TurbineEngineBlockEntity;
 import com.drmangotea.tfmg.content.engines.upgrades.EnginePipingUpgrade;
 import com.drmangotea.tfmg.registry.TFMGBlocks;
-import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.kinetics.base.HorizontalKineticBlock;
 import net.minecraft.core.BlockPos;
@@ -31,13 +30,13 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Optional;
 
 import static com.drmangotea.tfmg.content.engines.base.EngineBlock.EngineState.NORMAL;
 import static com.drmangotea.tfmg.content.engines.base.EngineBlock.EngineState.SHAFT;
+import com.drmangotea.tfmg.base.annotation.NothingNullByDefault;
 
-@MethodsReturnNonnullByDefault @ParametersAreNonnullByDefault
+@NothingNullByDefault
 public class EngineBlock extends HorizontalKineticBlock {
     public static final EnumProperty<EngineState> ENGINE_STATE = EnumProperty.create("engine_state", EngineState.class);
 

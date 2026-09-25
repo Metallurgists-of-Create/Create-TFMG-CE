@@ -7,7 +7,6 @@ import com.drmangotea.tfmg.registry.TFMGBlockEntities;
 import com.mojang.serialization.MapCodec;
 import com.simibubi.create.content.equipment.wrench.IWrenchable;
 import com.simibubi.create.foundation.block.IBE;
-import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionResult;
@@ -31,12 +30,11 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 
 import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Objects;
+import com.drmangotea.tfmg.base.annotation.NothingNullByDefault;
 
 @SuppressWarnings({"unused"})
-@ParametersAreNonnullByDefault
-@MethodsReturnNonnullByDefault
+@NothingNullByDefault
 public class DiagonalCableBlock extends DirectionalBlock implements SimpleWaterloggedBlock, IWrenchable, IBE<DiagonalCableBlockEntity> {
     public static final MapCodec<DiagonalCableBlock> CODEC = simpleCodec(DiagonalCableBlock::new);
 

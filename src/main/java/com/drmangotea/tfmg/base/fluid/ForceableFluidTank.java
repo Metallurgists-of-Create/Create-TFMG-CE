@@ -1,19 +1,18 @@
 package com.drmangotea.tfmg.base.fluid;
 
+import com.drmangotea.tfmg.base.annotation.NothingNullByDefault;
 import com.simibubi.create.foundation.fluid.SmartFluidTank;
-import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.neoforged.neoforge.fluids.FluidStack;
 
-import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 /**
  * Simple tank with insertion and extraction restrictions that can be bypassed manually.
  */
-@MethodsReturnNonnullByDefault @ParametersAreNonnullByDefault
+@NothingNullByDefault
 public class ForceableFluidTank extends SmartFluidTank {
     protected boolean extractionAllowed = true, insertionAllowed = true;
 

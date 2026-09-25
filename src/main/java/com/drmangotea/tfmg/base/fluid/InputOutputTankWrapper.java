@@ -1,12 +1,11 @@
 package com.drmangotea.tfmg.base.fluid;
 
-import net.minecraft.MethodsReturnNonnullByDefault;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+import com.drmangotea.tfmg.base.annotation.NothingNullByDefault;
 
-import javax.annotation.ParametersAreNonnullByDefault;
 
-@MethodsReturnNonnullByDefault @ParametersAreNonnullByDefault
+@NothingNullByDefault
 public class InputOutputTankWrapper implements IFluidHandler {
 	protected final IFluidHandler input, output;
 	

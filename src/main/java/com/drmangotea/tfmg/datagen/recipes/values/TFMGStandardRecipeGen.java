@@ -22,7 +22,6 @@ import com.tterrag.registrate.util.entry.BlockEntry;
 import com.tterrag.registrate.util.entry.ItemEntry;
 import com.tterrag.registrate.util.entry.ItemProviderEntry;
 import net.createmod.catnip.registry.RegisteredObjectsHelper;
-import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.advancements.critereon.ItemPredicate;
@@ -50,7 +49,6 @@ import net.neoforged.neoforge.common.conditions.ModLoadedCondition;
 import net.neoforged.neoforge.common.conditions.NotCondition;
 import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -61,6 +59,7 @@ import java.util.function.Function;
 import java.util.function.UnaryOperator;
 
 import static com.drmangotea.tfmg.datagen.recipes.TFMGRecipeProvider.I.*;
+import com.drmangotea.tfmg.base.annotation.NothingNullByDefault;
 
 @SuppressWarnings("unused")
 public class TFMGStandardRecipeGen extends TFMGRecipeProvider {
@@ -2687,8 +2686,7 @@ public class TFMGStandardRecipeGen extends TFMGRecipeProvider {
         super(output, registries);
     }
 
-    @ParametersAreNonnullByDefault
-    @MethodsReturnNonnullByDefault
+    @NothingNullByDefault
     private static class ModdedCookingRecipeOutputShim implements Recipe<RecipeInput> {
 
         private static final Map<RecipeType<?>, ModdedCookingRecipeOutputShim.Serializer> serializers = new ConcurrentHashMap<>();
@@ -2787,8 +2785,7 @@ public class TFMGStandardRecipeGen extends TFMGRecipeProvider {
         }
     }
 
-    @ParametersAreNonnullByDefault
-    @MethodsReturnNonnullByDefault
+    @NothingNullByDefault
     private record ModdedCookingRecipeOutput(RecipeOutput wrapped, ResourceLocation outputOverride) implements RecipeOutput {
 
         @Override

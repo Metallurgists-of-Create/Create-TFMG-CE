@@ -3,7 +3,6 @@ package com.drmangotea.tfmg.content.items.weapons.advanced_potato_cannon.project
 import com.drmangotea.tfmg.base.TFMGUtils;
 import com.drmangotea.tfmg.registry.TFMGEntityTypes;
 import com.drmangotea.tfmg.registry.TFMGItems;
-import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.entity.EntityType;
@@ -12,11 +11,10 @@ import net.minecraft.world.entity.projectile.ThrowableItemProjectile;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.HitResult;
+import com.drmangotea.tfmg.base.annotation.NothingNullByDefault;
 
-import javax.annotation.ParametersAreNonnullByDefault;
 
-@ParametersAreNonnullByDefault
-@MethodsReturnNonnullByDefault
+@NothingNullByDefault
 public class NapalmPotato extends ThrowableItemProjectile {
     public NapalmPotato(EntityType<? extends NapalmPotato> entityType, Level level) {
         super(entityType, level);

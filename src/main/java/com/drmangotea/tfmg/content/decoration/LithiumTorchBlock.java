@@ -3,7 +3,6 @@ package com.drmangotea.tfmg.content.decoration;
 import com.drmangotea.tfmg.base.blocks.WallMountBlock;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
-import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -25,10 +24,10 @@ import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Map;
+import com.drmangotea.tfmg.base.annotation.NothingNullByDefault;
 
-@MethodsReturnNonnullByDefault @ParametersAreNonnullByDefault
+@NothingNullByDefault
 public class LithiumTorchBlock extends WallMountBlock implements SimpleWaterloggedBlock {
 
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;

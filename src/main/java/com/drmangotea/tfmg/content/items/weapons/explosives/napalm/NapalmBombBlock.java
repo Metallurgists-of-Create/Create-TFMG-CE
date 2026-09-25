@@ -1,6 +1,5 @@
 package com.drmangotea.tfmg.content.items.weapons.explosives.napalm;
 
-import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundEvents;
@@ -27,10 +26,9 @@ import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.BlockHitResult;
 
 import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
+import com.drmangotea.tfmg.base.annotation.NothingNullByDefault;
 
-@ParametersAreNonnullByDefault
-@MethodsReturnNonnullByDefault
+@NothingNullByDefault
 public class NapalmBombBlock extends Block {
     public static final BooleanProperty UNSTABLE = BlockStateProperties.UNSTABLE;
 

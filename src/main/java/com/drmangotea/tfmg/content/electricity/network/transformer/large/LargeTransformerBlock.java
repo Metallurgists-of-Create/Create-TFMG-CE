@@ -6,7 +6,6 @@ import com.drmangotea.tfmg.content.electricity.network.large_switch.LargeSwitchB
 
 import com.drmangotea.tfmg.registry.TFMGBlockEntities;
 import com.drmangotea.tfmg.registry.TFMGBlocks;
-import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
 import com.simibubi.create.content.kinetics.base.HorizontalKineticBlock;
 import com.simibubi.create.foundation.block.IBE;
 import net.minecraft.core.BlockPos;
@@ -33,12 +32,11 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
 import java.util.List;
+import com.drmangotea.tfmg.base.annotation.NothingNullByDefault;
 
-@ParametersAreNonnullByDefault
-@MethodsReturnNonnullByDefault
+@NothingNullByDefault
 public class LargeTransformerBlock extends HorizontalKineticBlock implements IBE<LargeTransformerBlockEntity> {
     public static final BooleanProperty IS_MAIN_PART = LargeSwitchBlock.IS_MAIN_PART;
     public static final BooleanProperty UNFINISHED_MODEL = BooleanProperty.create("unfinished_model");

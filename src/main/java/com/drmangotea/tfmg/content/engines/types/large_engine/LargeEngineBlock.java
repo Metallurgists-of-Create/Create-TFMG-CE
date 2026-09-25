@@ -1,6 +1,7 @@
 package com.drmangotea.tfmg.content.engines.types.large_engine;
 
 import com.drmangotea.tfmg.base.TFMGShapes;
+import com.drmangotea.tfmg.base.annotation.NothingNullByDefault;
 import com.drmangotea.tfmg.base.blocks.TFMGDirectionalBlock;
 import com.drmangotea.tfmg.registry.TFMGBlockEntities;
 import com.drmangotea.tfmg.registry.TFMGBlocks;
@@ -37,12 +38,11 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.function.Predicate;
 
 import static net.minecraft.world.level.block.state.properties.BlockStateProperties.WATERLOGGED;
 
-@MethodsReturnNonnullByDefault @ParametersAreNonnullByDefault
+@NothingNullByDefault
 public class LargeEngineBlock extends TFMGDirectionalBlock implements IWrenchable, IBE<LargeEngineBlockEntity> {
     public static final MapCodec<LargeEngineBlock> CODEC = simpleCodec(LargeEngineBlock::new);
 

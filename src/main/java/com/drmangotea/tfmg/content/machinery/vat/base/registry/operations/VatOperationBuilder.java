@@ -5,15 +5,13 @@ import com.tterrag.registrate.AbstractRegistrate;
 import com.tterrag.registrate.builders.AbstractBuilder;
 import com.tterrag.registrate.builders.BuilderCallback;
 import com.tterrag.registrate.util.entry.RegistryEntry;
-import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.registries.DeferredHolder;
 
-import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.function.Function;
+import com.drmangotea.tfmg.base.annotation.NothingNullByDefault;
 
-@MethodsReturnNonnullByDefault
-@ParametersAreNonnullByDefault
+@NothingNullByDefault
 public class VatOperationBuilder<P> extends AbstractBuilder<VatOperation, VatOperation, P, VatOperationBuilder<P>> {
     private final Function<ResourceLocation, VatOperation> factory;
 

@@ -34,11 +34,10 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.function.Predicate;
+import com.drmangotea.tfmg.base.annotation.NothingNullByDefault;
 
-@ParametersAreNonnullByDefault
-@MethodsReturnNonnullByDefault
+@NothingNullByDefault
 public class CableTubeBlock extends RotatedPillarBlock implements IBE<CableTubeBlockEntity>, ConcreteloggedBlock {
     public static final int placementHelperId = PlacementHelpers.register(new PlacementHelper());
 
@@ -127,8 +126,6 @@ public class CableTubeBlock extends RotatedPillarBlock implements IBE<CableTubeB
         return concreteEncased ? ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION : onClicked(level, pos, state, player, hand);
     }
 
-
-    @MethodsReturnNonnullByDefault
     private static class PlacementHelper extends PoleHelper<Direction.Axis> {
         private PlacementHelper() {
             super(
