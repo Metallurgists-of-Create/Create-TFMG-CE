@@ -66,7 +66,7 @@ public class TFMGCompactingRecipeGen extends CompactingRecipeGen {
     }
 
     private ResourceLocation cbcLoc(String path) {
-        return TFMG.asResource("createbigcannons:" + path);
+        return ResourceLocation.fromNamespaceAndPath("createbigcannons", path);
     }
 
     @Override

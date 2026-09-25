@@ -19,6 +19,7 @@ import rbasamoyai.createbigcannons.index.CBCRecipeTypes;
 
 import java.util.concurrent.CompletableFuture;
 
+@SuppressWarnings("unused")
 public class TFMGBigCannonsProvider {
 
     public static class Melting extends StandardProcessingRecipeGen<MeltingRecipe> {

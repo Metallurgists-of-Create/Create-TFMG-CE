@@ -149,6 +149,6 @@ public class TFMGMixingRecipeGen extends MixingRecipeGen {
 	}
 
 	private ResourceLocation cbcLoc(String path) {
-		return TFMG.asResource("createbigcannons:" + path);
+		return ResourceLocation.fromNamespaceAndPath("createbigcannons", path);
 	}
 }
