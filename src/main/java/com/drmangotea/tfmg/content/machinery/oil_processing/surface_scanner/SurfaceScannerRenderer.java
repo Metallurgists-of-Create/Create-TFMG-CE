@@ -8,33 +8,21 @@ import com.simibubi.create.foundation.render.RenderTypes;
 import net.createmod.catnip.render.CachedBuffers;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.world.level.block.state.BlockState;
 import org.joml.Quaterniond;
 import org.joml.Quaternionf;
 
 public class SurfaceScannerRenderer extends SafeBlockEntityRenderer<SurfaceScannerBlockEntity> {
-	private static final Quaternionf
-		FACING_NORTH = new Quaternionf(0, 1, 0, 0), //-z
-		FACING_SOUTH = new Quaternionf(0, 0, 0, 1), //+z
-		FACING_WEST  = new Quaternionf(0, 1, 0,-1).normalize(), //-x
-		FACING_EAST  = new Quaternionf(0, 1, 0, 1).normalize(); //+x
+	private static final int COLOR = 0xffff4560; //#ff4560, transparency comes first
+	private static final float OFFSET = 2.285f / 16f;
 	
     public SurfaceScannerRenderer(BlockEntityRendererProvider.Context context) {}
 
 	private Quaternionf getFacingQuat(SurfaceScannerBlockEntity be) {
 		Quaterniond rot = SurfaceScannerSable.getSublevelRot(be);
-		double y = -rot.y;
-		double w = rot.w;
-		Quaternionf best = FACING_NORTH;
-		double bestDot = y * FACING_NORTH.y + w * FACING_NORTH.w;
-		double d = y * FACING_WEST.y + w * FACING_WEST.w;
-		if (d > bestDot) { bestDot = d; best = FACING_WEST; }
-		d = y * FACING_SOUTH.y + w * FACING_SOUTH.w;
-		if (d > bestDot) { bestDot = d; best = FACING_SOUTH; }
-		d = y * FACING_EAST.y + w * FACING_EAST.w;
-		if (d > bestDot) { best = FACING_EAST; }
-		return best;
+		return new Quaternionf(0,-rot.y,0,rot.w).normalize();
 	}
 	
     @Override
@@ -42,18 +30,26 @@ public class SurfaceScannerRenderer extends SafeBlockEntityRenderer<SurfaceScann
         BlockState blockState = be.getBlockState();
         ms.pushPose();
 		ms.rotateAround(getFacingQuat(be), 0.5f, 0.5f, 0.5f);
+		ms.translate(0f, 1f / 16f, 0f);
+		
+		CachedBuffers.partial(TFMGPartialModels.SURFACE_SCANNER_BASE, blockState)
+			.light(light)
+			.renderInto(ms, bufferSource.getBuffer(RenderType.SOLID));
   
-		for (int x = 0 ; x < 5; x++) {
-			for (int z = 0; z < 5; z++) {
-				if (be.grid[x][z]) {
-					CachedBuffers.partial(TFMGPartialModels.SURFACE_SCANNER_LIGHT, blockState)
-						.translate((x - 2)*0.19, 0, (z - 2)*0.19)
-						.light(LightTexture.FULL_BRIGHT)
-						.color(255, 69, 96, 255) //#ff4560ff
-						.renderInto(ms, bufferSource.getBuffer(RenderTypes.additive()));
-				}
+		for (int x = 0 ; x < 7; x++) { for (int z = 0; z < 7; z++) {
+			CachedBuffers.partial(TFMGPartialModels.SURFACE_SCANNER_BULB, blockState)
+				.translate((x - 3)*OFFSET, 0f, (z - 3)*OFFSET)
+				.light(light)
+				.renderInto(ms, bufferSource.getBuffer(RenderType.TRANSLUCENT));
+			
+			if (be.grid[x][z]) {
+				CachedBuffers.partial(TFMGPartialModels.SURFACE_SCANNER_LIGHT, blockState)
+					.translate((x - 3)*OFFSET, 0f, (z - 3)*OFFSET)
+					.light(LightTexture.FULL_BRIGHT)
+					.color(COLOR)
+					.renderInto(ms, bufferSource.getBuffer(RenderTypes.additive()));
 			}
-		}
+		} }
         ms.popPose();
     }
 }

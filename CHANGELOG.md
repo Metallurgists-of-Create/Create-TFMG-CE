@@ -23,7 +23,9 @@ Contributors:<br>
   - Maximum height changed to 5.
   - A modified Blast Stove will no-longer stop allowing pipe flow in some contexts.
 - Surface Scanner
+  - Scans 7x7 area rather than 5x5
   - Now can be picked up with shift and right-click of the wrench
+  - Better visuals for rotating on sub-levels.
 - Flamethrower
   - Fuel type now pulls fluid lang key instead of relying on a new key
 - `Rutile` Integration

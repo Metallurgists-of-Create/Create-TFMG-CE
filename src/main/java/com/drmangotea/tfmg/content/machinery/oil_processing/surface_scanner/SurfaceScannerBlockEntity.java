@@ -29,7 +29,7 @@ public class SurfaceScannerBlockEntity extends SmartBlockEntity implements IHave
 	private int[] signals = new int[4];
 	private boolean operational = false;
 	
-    public boolean[][] grid = new boolean[5][5];
+    public boolean[][] grid = new boolean[7][7];
 
     public SurfaceScannerBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
@@ -45,8 +45,8 @@ public class SurfaceScannerBlockEntity extends SmartBlockEntity implements IHave
 		BlockPos actualPosition = SurfaceScannerSable.getActualPosition(this);
 		ChunkPos chunkPos = level.getChunk(actualPosition).getPos();
 		
-        for (int x = 0; x < 5; x++) { for (int z = 0; z < 5; z++) {
-			ChunkAccess chunk = level.getChunk(chunkPos.x + x - 2, chunkPos.z + z - 2);
+        for (int x = 0; x < 7; x++) { for (int z = 0; z < 7; z++) {
+			ChunkAccess chunk = level.getChunk(chunkPos.x + x - 3, chunkPos.z + z - 3);
 			boolean oil = chunk.hasData(TFMGDataAttachments.FLUID_RESERVOIR);
 			grid[x][z] = oil;
 			if (!oil) continue;
@@ -102,7 +102,7 @@ public class SurfaceScannerBlockEntity extends SmartBlockEntity implements IHave
 		} else {
 			if (operational) { //logic when power is lost
 				operational = false;
-				grid = new boolean[5][5];
+				grid = new boolean[7][7];
 				nearestDeposit = null;
 				//so that you don't need to wait for rescan right after regaining power
 				lastScanTick = Long.MIN_VALUE;

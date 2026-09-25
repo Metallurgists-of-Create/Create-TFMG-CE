@@ -131,7 +131,10 @@ public class TFMGPartialModels {
             HOSE_HALF_MAGNET = block("concrete_hose/rope_half_magnet");
 
     // Surface Scanner
-    public static final PartialModel SURFACE_SCANNER_LIGHT = block("surface_scanner/light");
+    public static final PartialModel
+		SURFACE_SCANNER_BULB = block("surface_scanner/light"),
+		SURFACE_SCANNER_LIGHT = block("surface_scanner/light_lit"),
+		SURFACE_SCANNER_BASE = block("surface_scanner/base");
 
     //Display Segments
     public static final List<PartialModel> SEGMENTS = new ArrayList<>();
