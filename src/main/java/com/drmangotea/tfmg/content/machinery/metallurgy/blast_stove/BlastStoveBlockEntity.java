@@ -372,7 +372,7 @@ public class BlastStoveBlockEntity extends SmartBlockEntity implements IHaveGogg
         int progress = getProgressPercentage();
         if (progress == -1)
             return null;
-        return TFMGLang.translateDirect("goggles.progress", Component.literal(getProgressPercentage() + "%").withStyle(ChatFormatting.GOLD)).withStyle(ChatFormatting.GRAY);
+        return TFMGLang.translateDirect("goggles.progress", Component.literal(progress + "%").withStyle(ChatFormatting.GOLD)).withStyle(ChatFormatting.GRAY);
     }
 
     @Override
@@ -391,7 +391,7 @@ public class BlastStoveBlockEntity extends SmartBlockEntity implements IHaveGogg
         TFMGTexts.header("blast_stove").forGoggles(tooltip);
         MutableComponent progressComp = getProgressComponent();
         if (progressComp != null) {
-            CreateLang.builder().add(getProgressComponent()).forGoggles(tooltip, 1);
+            CreateLang.builder().add(progressComp).forGoggles(tooltip, 1);
         }
         tankTooltip(tooltip, "goggles.blast_stove.tank1", sec.getFluidInTank(1), capacity, ChatFormatting.DARK_GREEN); //input (air)
         tankTooltip(tooltip, "goggles.blast_stove.tank2", pri.getFluidInTank(1), capacity, ChatFormatting.DARK_GREEN); //fuel
