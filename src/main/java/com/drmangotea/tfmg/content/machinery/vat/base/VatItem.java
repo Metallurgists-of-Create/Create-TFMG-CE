@@ -1,6 +1,7 @@
 package com.drmangotea.tfmg.content.machinery.vat.base;
 
 import com.drmangotea.tfmg.base.TFMGBlockConnectivityHandler;
+import com.drmangotea.tfmg.base.annotation.NothingNullByDefault;
 import com.drmangotea.tfmg.registry.TFMGBlockEntities;
 import com.simibubi.create.content.fluids.tank.FluidTankBlockEntity;
 import com.simibubi.create.foundation.block.IBE;
@@ -22,7 +23,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.fluids.FluidStack;
 
 import javax.annotation.Nullable;
-import com.drmangotea.tfmg.base.annotation.NothingNullByDefault;
 
 @NothingNullByDefault
 public class VatItem extends BlockItem {

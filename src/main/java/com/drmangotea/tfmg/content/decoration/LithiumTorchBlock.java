@@ -1,5 +1,6 @@
 package com.drmangotea.tfmg.content.decoration;
 
+import com.drmangotea.tfmg.base.annotation.NothingNullByDefault;
 import com.drmangotea.tfmg.base.blocks.WallMountBlock;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
@@ -25,7 +26,6 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 import java.util.Map;
-import com.drmangotea.tfmg.base.annotation.NothingNullByDefault;
 
 @NothingNullByDefault
 public class LithiumTorchBlock extends WallMountBlock implements SimpleWaterloggedBlock {

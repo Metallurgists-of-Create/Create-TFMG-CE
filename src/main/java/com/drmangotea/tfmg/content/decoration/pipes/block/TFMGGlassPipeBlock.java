@@ -1,6 +1,7 @@
 package com.drmangotea.tfmg.content.decoration.pipes.block;
 
 
+import com.drmangotea.tfmg.base.annotation.NothingNullByDefault;
 import com.drmangotea.tfmg.content.decoration.pipes.TFMGPipes;
 import com.drmangotea.tfmg.registry.TFMGBlockEntities;
 import com.simibubi.create.AllBlocks;
@@ -26,7 +27,6 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.phys.BlockHitResult;
 
 import java.util.Map;
-import com.drmangotea.tfmg.base.annotation.NothingNullByDefault;
 
 @NothingNullByDefault
 public class TFMGGlassPipeBlock extends GlassFluidPipeBlock {

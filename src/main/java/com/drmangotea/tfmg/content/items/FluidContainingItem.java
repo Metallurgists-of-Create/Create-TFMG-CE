@@ -1,5 +1,6 @@
 package com.drmangotea.tfmg.content.items;
 
+import com.drmangotea.tfmg.base.annotation.NothingNullByDefault;
 import com.drmangotea.tfmg.base.lang.TFMGLang;
 import com.drmangotea.tfmg.registry.TFMGDataComponents;
 import net.minecraft.ChatFormatting;
@@ -21,7 +22,6 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 
 import java.util.List;
 import java.util.function.Predicate;
-import com.drmangotea.tfmg.base.annotation.NothingNullByDefault;
 
 @NothingNullByDefault
 public class FluidContainingItem extends Item {

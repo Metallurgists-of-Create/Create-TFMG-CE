@@ -1,6 +1,7 @@
 package com.drmangotea.tfmg.content.electricity.utilities.resistor;
 
 import com.drmangotea.tfmg.base.TFMGShapes;
+import com.drmangotea.tfmg.base.annotation.NothingNullByDefault;
 import com.drmangotea.tfmg.base.blocks.WallMountBlock;
 import com.drmangotea.tfmg.content.electricity.base.IElectric;
 import com.drmangotea.tfmg.registry.TFMGBlockEntities;
@@ -24,7 +25,6 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
-import com.drmangotea.tfmg.base.annotation.NothingNullByDefault;
 
 @NothingNullByDefault
 public class ResistorBlock extends WallMountBlock implements IBE<ResistorBlockEntity> {

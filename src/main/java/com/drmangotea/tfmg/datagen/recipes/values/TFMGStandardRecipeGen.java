@@ -2,6 +2,7 @@ package com.drmangotea.tfmg.datagen.recipes.values;
 
 import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.base.TFMGRegistrate;
+import com.drmangotea.tfmg.base.annotation.NothingNullByDefault;
 import com.drmangotea.tfmg.content.decoration.pipes.TFMGPipes;
 import com.drmangotea.tfmg.datagen.recipes.TFMGRecipeProvider;
 import com.drmangotea.tfmg.registry.TFMGBlocks;
@@ -59,7 +60,6 @@ import java.util.function.Function;
 import java.util.function.UnaryOperator;
 
 import static com.drmangotea.tfmg.datagen.recipes.TFMGRecipeProvider.I.*;
-import com.drmangotea.tfmg.base.annotation.NothingNullByDefault;
 
 @SuppressWarnings("unused")
 public class TFMGStandardRecipeGen extends TFMGRecipeProvider {

@@ -2,6 +2,7 @@ package com.drmangotea.tfmg.content.electricity.connection.diagonal;
 
 
 import com.drmangotea.tfmg.base.TFMGShapes;
+import com.drmangotea.tfmg.base.annotation.NothingNullByDefault;
 import com.drmangotea.tfmg.content.electricity.base.IElectric;
 import com.drmangotea.tfmg.registry.TFMGBlockEntities;
 import com.mojang.serialization.MapCodec;
@@ -28,10 +29,8 @@ import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-
 import javax.annotation.Nullable;
 import java.util.Objects;
-import com.drmangotea.tfmg.base.annotation.NothingNullByDefault;
 
 @SuppressWarnings({"unused"})
 @NothingNullByDefault

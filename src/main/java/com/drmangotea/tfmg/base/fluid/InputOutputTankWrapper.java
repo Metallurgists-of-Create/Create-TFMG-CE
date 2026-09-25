@@ -1,8 +1,8 @@
 package com.drmangotea.tfmg.base.fluid;
 
+import com.drmangotea.tfmg.base.annotation.NothingNullByDefault;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
-import com.drmangotea.tfmg.base.annotation.NothingNullByDefault;
 
 
 @NothingNullByDefault

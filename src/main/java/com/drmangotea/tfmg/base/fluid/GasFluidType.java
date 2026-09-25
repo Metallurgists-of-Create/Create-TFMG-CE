@@ -1,6 +1,7 @@
 package com.drmangotea.tfmg.base.fluid;
 
 
+import com.drmangotea.tfmg.base.annotation.NothingNullByDefault;
 import com.drmangotea.tfmg.registry.TFMGFluids;
 import com.mojang.blaze3d.shaders.FogShape;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -19,7 +20,6 @@ import org.joml.Vector3f;
 import java.util.function.Consumer;
 
 import static com.drmangotea.tfmg.registry.TFMGFluids.getGasTexture;
-import com.drmangotea.tfmg.base.annotation.NothingNullByDefault;
 
 @NothingNullByDefault
 public class GasFluidType extends TFMGFluids.SolidRenderedPlaceableFluidType {

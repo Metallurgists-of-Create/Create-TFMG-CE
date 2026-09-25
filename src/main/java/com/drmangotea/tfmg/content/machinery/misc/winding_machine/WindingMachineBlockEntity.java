@@ -1,5 +1,6 @@
 package com.drmangotea.tfmg.content.machinery.misc.winding_machine;
 
+import com.drmangotea.tfmg.base.annotation.NothingNullByDefault;
 import com.drmangotea.tfmg.base.lang.TFMGLang;
 import com.drmangotea.tfmg.base.lang.TFMGTexts;
 import com.drmangotea.tfmg.recipes.WindingRecipe;
@@ -35,14 +36,12 @@ import net.neoforged.neoforge.items.wrapper.CombinedInvWrapper;
 import net.neoforged.neoforge.items.wrapper.RecipeWrapper;
 import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 import java.util.Optional;
 
 import static com.drmangotea.tfmg.content.machinery.misc.winding_machine.WindingMachineBlock.POWERED;
 import static com.simibubi.create.content.kinetics.base.HorizontalKineticBlock.HORIZONTAL_FACING;
-import com.drmangotea.tfmg.base.annotation.NothingNullByDefault;
-
-import javax.annotation.ParametersAreNonnullByDefault;
 
 public class WindingMachineBlockEntity extends KineticBlockEntity implements IHaveGoggleInformation, Clearable {
     LerpedFloat spoolSpeed = LerpedFloat.linear();

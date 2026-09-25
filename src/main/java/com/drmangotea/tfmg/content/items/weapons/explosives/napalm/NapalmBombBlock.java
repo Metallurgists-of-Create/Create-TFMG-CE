@@ -1,5 +1,6 @@
 package com.drmangotea.tfmg.content.items.weapons.explosives.napalm;
 
+import com.drmangotea.tfmg.base.annotation.NothingNullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundEvents;
@@ -26,7 +27,6 @@ import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.BlockHitResult;
 
 import javax.annotation.Nullable;
-import com.drmangotea.tfmg.base.annotation.NothingNullByDefault;
 
 @NothingNullByDefault
 public class NapalmBombBlock extends Block {
