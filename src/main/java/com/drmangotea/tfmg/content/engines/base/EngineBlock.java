@@ -31,12 +31,13 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Optional;
 
 import static com.drmangotea.tfmg.content.engines.base.EngineBlock.EngineState.NORMAL;
 import static com.drmangotea.tfmg.content.engines.base.EngineBlock.EngineState.SHAFT;
 
-@MethodsReturnNonnullByDefault
+@MethodsReturnNonnullByDefault @ParametersAreNonnullByDefault
 public class EngineBlock extends HorizontalKineticBlock {
     public static final EnumProperty<EngineState> ENGINE_STATE = EnumProperty.create("engine_state", EngineState.class);
 
@@ -98,7 +99,7 @@ public class EngineBlock extends HorizontalKineticBlock {
 
 
     @Override
-    public VoxelShape getShape(BlockState state, BlockGetter p_60556_, BlockPos pos, CollisionContext p_60558_) {
+    public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return state.getValue(ENGINE_STATE) == SHAFT ? TFMGShapes.ENGINE_FRONT.get(state.getValue(HORIZONTAL_FACING).getOpposite()) : TFMGShapes.ENGINE.get(state.getValue(HORIZONTAL_FACING));
     }
 
@@ -116,8 +117,8 @@ public class EngineBlock extends HorizontalKineticBlock {
     @Override
     public void neighborChanged(BlockState state, Level level, BlockPos pos, Block block, BlockPos neighbor, boolean b) {
         if (level.getBlockEntity(pos) instanceof AbstractSmallEngineBlockEntity be) {
-            if (be.hasUpgrade() && be.upgrade.get().getItem() == TFMGBlocks.INDUSTRIAL_PIPE.asItem()) {
-                ((EnginePipingUpgrade) be.upgrade.get()).findTank(be);
+            if (be.upgrade.isPresent() && be.upgrade.get() instanceof EnginePipingUpgrade pipe) {
+				pipe.findTank(be);
             }
         }
 

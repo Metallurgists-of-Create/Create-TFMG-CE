@@ -163,7 +163,7 @@ public abstract class AbstractEngineBlockEntity extends KineticElectricBlockEnti
         if (rpm >= 6000)
             return 1;
 
-        return 1 / (0.08f * (rpm / 1000) + 0.5f);
+		return 2f / (1f + (rpm / 6250));
     }
 
 

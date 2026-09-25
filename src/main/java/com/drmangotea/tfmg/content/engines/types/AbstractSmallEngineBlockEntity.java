@@ -103,14 +103,14 @@ public abstract class AbstractSmallEngineBlockEntity extends AbstractEngineBlock
     @Override
     public int voltageGeneration() {
         if (upgrade.isPresent() && upgrade.get().getItem() == TFMGBlocks.GENERATOR.asItem())
-            return (int) (20 * (rpm / 500));
+            return (int) (rpm / 25f);
         return 0;
     }
 
     @Override
     public float powerGeneration() {
         if (upgrade.isPresent() && upgrade.get().getItem() == TFMGBlocks.GENERATOR.asItem())
-            return (int) rpm;
+            return rpm;
         return 0;
     }
 
@@ -161,8 +161,8 @@ public abstract class AbstractSmallEngineBlockEntity extends AbstractEngineBlock
     @Override
     public void onLoad() {
         super.onLoad();
-        if (this.hasUpgrade() && this.upgrade.get().getItem() == TFMGBlocks.INDUSTRIAL_PIPE.asItem()) {
-            ((EnginePipingUpgrade) this.upgrade.get()).findTank(this);
+        if (this.upgrade.isPresent() && this.upgrade.get() instanceof EnginePipingUpgrade pipe) {
+            pipe.findTank(this);
         }
     }
 
@@ -277,7 +277,7 @@ public abstract class AbstractSmallEngineBlockEntity extends AbstractEngineBlock
             allEngines.forEach(pos -> {
                 if (level == null) return;
                 if (level.getBlockEntity(pos) instanceof AbstractEngineBlockEntity be) {
-                    be.rpm = 4000 * speedModifier() * highestSignal ;
+                    be.rpm = 4000 * speedModifier() * highestSignal;
                     be.torque = 15 * torqueModifier() * highestSignal;
                     be.updateGeneratedRotation();
                 }
