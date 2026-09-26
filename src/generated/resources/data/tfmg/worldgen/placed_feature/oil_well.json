@@ -9,6 +9,13 @@
       "type": "minecraft:in_square"
     },
     {
+      "type": "minecraft:block_predicate_filter",
+      "predicate": {
+        "type": "minecraft:matching_blocks",
+        "blocks": "minecraft:bedrock"
+      }
+    },
+    {
       "type": "tfmg:world_bottom"
     },
     {

@@ -6,8 +6,11 @@ import com.drmangotea.tfmg.registry.TFMGBlocks;
 import com.drmangotea.tfmg.registry.TFMGDataAttachments;
 import com.drmangotea.tfmg.registry.TFMGFluids;
 import com.mojang.serialization.Codec;
+import net.createmod.catnip.data.Iterate;
+import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.state.BlockState;
@@ -55,16 +58,23 @@ public class OilDepositFeature extends Feature<NoneFeatureConfiguration> {
         for (int i = 0; i < height; i++) {
             pos = pos.above();
 
+            if (level.getBlockState(pos).isAir()) continue;
+
             setBlock(level, pos, TFMGFluids.CRUDE_OIL.get().getSource().defaultFluidState().createLegacyBlock());
 
-            Direction direction1 = Direction.getRandom(randomsource);
-            if (direction1.getAxis().isHorizontal())
-                setBlock(level, pos.relative(direction1), TFMGFluids.CRUDE_OIL.get().getSource().defaultFluidState().createLegacyBlock());
+
+            Direction crudeBranchDir = Util.getRandom(Iterate.horizontalDirections, randomsource);
+            BlockPos crudeBranch = pos.relative(crudeBranchDir);
+            if (!level.getBlockState(crudeBranch).isAir()) {
+                setBlock(level, crudeBranch, TFMGFluids.CRUDE_OIL.get().getSource().defaultFluidState().createLegacyBlock());
+            }
 
             if (i < (height / 2)) {
-                Direction direction2 = Direction.getRandom(randomsource);
-                if (direction2.getAxis().isHorizontal())
-                    setBlock(level, pos.relative(direction2), TFMGBlocks.FOSSILSTONE.getDefaultState());
+                Direction fossilDir = Util.getRandom(Iterate.horizontalDirections, randomsource);
+                BlockPos fossil = pos.relative(fossilDir);
+                if (level.getBlockState(fossil).is(BlockTags.BASE_STONE_OVERWORLD)) {
+                    setBlock(level, fossil, TFMGBlocks.FOSSILSTONE.getDefaultState());
+                }
             }
         }
     }

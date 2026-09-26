@@ -9,9 +9,9 @@ import com.mojang.serialization.Codec;
 import net.createmod.catnip.data.Iterate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.levelgen.Heightmap;
@@ -50,9 +50,9 @@ public class OilWellFeature extends Feature<NoneFeatureConfiguration> {
 
         for (int i = 0; i < height; i++) {
             pos = pos.above();
-            for (Direction direction : Iterate.directions) {
+            for (Direction direction : Iterate.horizontalDirections) {
                 if (randomsource.nextInt(3) == 1) {
-                    if (direction.getAxis().isHorizontal() && level.getBlockState(pos.relative(direction)).is(Blocks.STONE)) {
+                    if (direction.getAxis().isHorizontal() && level.getBlockState(pos.relative(direction)).is(BlockTags.BASE_STONE_OVERWORLD)) {
                         setBlock(level, pos.relative(direction), TFMGBlocks.FOSSILSTONE.getDefaultState());
                     }
                 }

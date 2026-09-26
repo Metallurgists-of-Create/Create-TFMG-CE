@@ -53,6 +53,11 @@ Contributors:<br>
 - Smoke Timer:
   - Smokestack: 40t -> 500t
 - The Engine Piping upgrade can now pull from any adjacent fluid handler instead of just Create's fluid tanks.
+- Oil Deposits:
+  - Fossilstone is now only placed where a stone-type block would be.
+  - Oil Branches no-longer replace air.
+  - Oil Deposits now properly generate at the very bottom of the world.
+  - Oil Deposits will not place if the origin point isn't bedrock.
 
 ### API Changes:
 - Removed `ILockablePipe`
