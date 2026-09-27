@@ -17,6 +17,7 @@ Contributors:<br>
 
 
 ### Changes:
+- Liquid Concrete now has it's dedicated colors for each dye type
 - TFMG now uses the standard `90mB ⇒ 1 ingot` fluid units in recipes.
 - Blast Stove
   - Capacity now scales with volume.
