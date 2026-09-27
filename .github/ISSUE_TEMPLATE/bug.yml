@@ -31,7 +31,7 @@ body:
     id: description
     attributes:
       label: Describe the Bug
-      description: A clear description of what the issue is.
+      description: A clear description of what the issue is. **If you don't describe the bug, we cannot fix it.**
     validations:
       required: true
 
