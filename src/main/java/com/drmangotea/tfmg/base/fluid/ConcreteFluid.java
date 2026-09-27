@@ -1,9 +1,13 @@
 package com.drmangotea.tfmg.base.fluid;
 
+import com.drmangotea.tfmg.base.MaterialSet;
 import com.drmangotea.tfmg.registry.TFMGBlocks;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.material.Fluid;
@@ -14,6 +18,10 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
 public class ConcreteFluid extends BaseFlowingFluid {
+    private static final String FLOWING_PREFIX = "flowing_";
+    private static final String COLOR_SUFFIX = "_liquid_concrete";
+
+    private Block solidifiedBlock;
 
     protected ConcreteFluid(Properties properties) {
         super(properties);
@@ -33,10 +41,34 @@ public class ConcreteFluid extends BaseFlowingFluid {
     public void randomTick(Level level, BlockPos pos, FluidState state, RandomSource randomSource) {
         if(!(level.getBlockState(pos).getBlock() instanceof LiquidBlock))
             return;
-        int random = randomSource.nextInt(7) ;
+        int random = randomSource.nextInt(7);
         if(random == 2) {
-            level.setBlock(pos, TFMGBlocks.CONCRETE.block.get().defaultBlockState(), 3);
+            level.setBlock(pos, getSolidifiedBlock().defaultBlockState(), 3);
         }
+    }
+
+    protected Block getSolidifiedBlock() {
+        if (solidifiedBlock == null) {
+            solidifiedBlock = resolveSolidifiedBlock();
+        }
+        return solidifiedBlock;
+    }
+
+    private Block resolveSolidifiedBlock() {
+        ResourceLocation fluidId = BuiltInRegistries.FLUID.getKey(this);
+
+        String path = fluidId.getPath();
+        if (path.startsWith(FLOWING_PREFIX)) {
+            path = path.substring(FLOWING_PREFIX.length());
+        }
+
+        if (!path.endsWith(COLOR_SUFFIX)) {
+            return TFMGBlocks.CONCRETE.block.get();
+        }
+
+        String color = path.substring(0, path.length() - COLOR_SUFFIX.length());
+        MaterialSet coloredConcrete = TFMGBlocks.COLORED_CONCRETE.get(color);
+        return coloredConcrete != null ? coloredConcrete.block.get() : TFMGBlocks.CONCRETE.block.get();
     }
 
     protected boolean isRandomlyTicking() {
