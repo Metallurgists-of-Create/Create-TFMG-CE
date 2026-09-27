@@ -40,133 +40,240 @@ public class TFMGVatRecipeGen extends VatRecipeGen {
             .output(TFMGFluids.LIQUID_CONCRETE.get(), 32000)
             .allowAllVatTypes()
             .mixing()
-        ),
+    ),
 
-        ARC_FURNACE_STEEL = create("arc_furnace_steel", b -> b
-                .require(crushedRawIron())
-                .require(TFMGTags.Items.FLUX.tag)
-                .require(TFMGItems.COAL_COKE_DUST)
-                .output(0.9f, TFMGItems.COAL_COKE_DUST)
-                .output(TFMGFluids.MOLTEN_STEEL.get(), 90)
-                .output(TFMGFluids.MOLTEN_SLAG.get(), 160)
-                .duration(20)
-                .allowFireproof()
-                .minSize(9)
-                .arcBlasting()
-        ),
+    WHITE_CONCRETE = create("white_concrete", b -> b
+            .require(Items.WHITE_DYE)
+            .require(TFMGFluids.LIQUID_CONCRETE.getSource(), 8000)
+            .output(TFMGFluids.WHITE_LIQUID_CONCRETE.get(), 8000)
+            .duration(100)
+            .mixing()
+    ),
 
-        NEON = create("neon", b -> b
-                .require(TFMGFluids.AIR.get(), 1000)
-                .output(TFMGFluids.NEON.get(), 1)
-                .duration(10)
-                .centrifuge()
-                .allowAllVatTypes()
-        ),
+    LIGHT_GRAY_CONCRETE = create("light_gray_concrete", b -> b
+            .require(Items.LIGHT_GRAY_DYE)
+            .require(TFMGFluids.LIQUID_CONCRETE.getSource(), 8000)
+            .output(TFMGFluids.LIGHT_GRAY_LIQUID_CONCRETE.get(), 8000)
+            .duration(100)
+            .mixing()
+    ),
 
-        SULFURIC_ACID = create("sulfuric_acid", b -> b
-                .require(SizedFluidIngredient.of(water(), 1000))
-                .require(sulfurDust())
-                .require(sulfurDust())
-                .require(sulfurDust())
-                .require(nitrateDust())
-                .output(sulfuricAcid(), 500)
-                .mixing()
-                .duration(5)
-                .allowAllVatTypes()
-        ),
+    GRAY_CONCRETE = create("gray_concrete", b -> b
+            .require(Items.GRAY_DYE)
+            .require(TFMGFluids.LIQUID_CONCRETE.getSource(), 8000)
+            .output(TFMGFluids.GRAY_LIQUID_CONCRETE.get(), 8000)
+            .duration(100)
+            .mixing()
+    ),
 
-        RUBBER = create("rubber", b -> b
-                .require(SizedFluidIngredient.of(heavyOil(), 250))
-                .require(sulfurDust())
-                .output(rubber())
-                .mixing()
-                .allowAllVatTypes()
-                .duration(40)
-                .heatLevel(2)
-        ),
+    BLACK_CONCRETE = create("black_concrete", b -> b
+            .require(Items.BLACK_DYE)
+            .require(TFMGFluids.LIQUID_CONCRETE.getSource(), 8000)
+            .output(TFMGFluids.BLACK_LIQUID_CONCRETE.get(), 8000)
+            .duration(100)
+            .mixing()
+    ),
 
-        NAPHTHA = create("naphtha", b -> b
-                .require(SizedFluidIngredient.of(naphtha(), 500))
-                .output(ethylene(), 250)
-                .output(propylene(), 250)
-                .mixing()
-                .duration(20)
-                .allowAllVatTypes()
-                .heatLevel(2)
-        ),
+    BROWN_CONCRETE = create("brown_concrete", b -> b
+            .require(Items.BROWN_DYE)
+            .require(TFMGFluids.LIQUID_CONCRETE.getSource(), 8000)
+            .output(TFMGFluids.BROWN_LIQUID_CONCRETE.get(), 8000)
+            .duration(100)
+            .mixing()
+    ),
 
-        PLASTIC_FROM_ETHYLENE = create("plastic_from_ethylene", b -> b
-                .require(SizedFluidIngredient.of(ethylene(), 500))
-                .output(liquidPlastic(), 500)
-                .mixing()
-                .allowAllVatTypes()
-                .duration(30)
-                .heatLevel(2)
-        ),
+    RED_CONCRETE = create("red_concrete", b -> b
+            .require(Items.RED_DYE)
+            .require(TFMGFluids.LIQUID_CONCRETE.getSource(), 8000)
+            .output(TFMGFluids.RED_LIQUID_CONCRETE.get(), 8000)
+            .duration(100)
+            .mixing()
+    ),
 
-        PLASTIC_FROM_PROPYLENE = create("plastic_from_propylene", b -> b
-                .require(SizedFluidIngredient.of(propylene(), 500))
-                .output(liquidPlastic(), 500)
-                .mixing()
-                .duration(30)
-                .allowAllVatTypes()
-                .heatLevel(2)
-        ),
+    ORANGE_CONCRETE = create("orange_concrete", b -> b
+            .require(Items.ORANGE_DYE)
+            .require(TFMGFluids.LIQUID_CONCRETE.getSource(), 8000)
+            .output(TFMGFluids.ORANGE_LIQUID_CONCRETE.get(), 8000)
+            .duration(100)
+            .mixing()
+    ),
 
-        ETCHED_CIRCUIT_BOARD = create("etched_circuit_board", b -> b
-                .require(TFMGItems.COATED_CIRCUIT_BOARD)
-                .require(TFMGFluids.SULFURIC_ACID.getSource(), 250)
-                .output(TFMGItems.ETCHED_CIRCUIT_BOARD)
-                .duration(100)
-                .mixing()
-                .allowAllVatTypes()
-        ),
+    YELLOW_CONCRETE = create("yellow_concrete", b -> b
+            .require(Items.YELLOW_DYE)
+            .require(TFMGFluids.LIQUID_CONCRETE.getSource(), 8000)
+            .output(TFMGFluids.YELLOW_LIQUID_CONCRETE.get(), 8000)
+            .duration(100)
+            .mixing()
+    ),
 
-        ALUMINUM = create("aluminum", b -> b
-                .require(TFMGItems.BAUXITE_POWDER)
-                .require(TFMGItems.BAUXITE_POWDER)
-                .require(TFMGItems.BAUXITE_POWDER)
-                .require(TFMGItems.BAUXITE_POWDER)
-                .output(TFMGItems.ALUMINUM_INGOT)
-                .output(.5f, TFMGItems.ALUMINUM_NUGGET, 4)
-                .output(.25f, TFMGItems.ALUMINUM_NUGGET, 2)
-                .output(TFMGFluids.CARBON_DIOXIDE.get(), 500)
-                .duration(100)
-                .electrolysis()
-                .allowNonCastIron()
-                .heatLevel(2)
-        ),
-	
-	//CBC
-	Nethersteel = create("nethersteel", b -> b.whenModLoaded("createbigcannons")
-		.require(Items.NETHERITE_SCRAP)
-		.require(TFMGTags.Fluids.MOLTEN_STEEL.tag, 360)
-		.output(CBCFluids.MOLTEN_NETHERSTEEL.get(), 360)
-		.arcBlasting()
-		.allowFireproof()
-		.heatLevel(2)
-	)
+    LIME_CONCRETE = create("lime_concrete", b -> b
+            .require(Items.LIME_DYE)
+            .require(TFMGFluids.LIQUID_CONCRETE.getSource(), 8000)
+            .output(TFMGFluids.LIME_LIQUID_CONCRETE.get(), 8000)
+            .duration(100)
+            .mixing()
+    ),
 
+    GREEN_CONCRETE = create("green_concrete", b -> b
+            .require(Items.GREEN_DYE)
+            .require(TFMGFluids.LIQUID_CONCRETE.getSource(), 8000)
+            .output(TFMGFluids.GREEN_LIQUID_CONCRETE.get(), 8000)
+            .duration(100)
+            .mixing()
+    ),
 
-                    //DEBUG = createVatRecipe("debug_5", b -> ((VatMachineRecipe.Builder<VatMachineRecipe>) b)
-                    //                .require(Blocks.GOLD_BLOCK.asItem())
-                    //                .require(Blocks.DIAMOND_BLOCK.asItem())
-                    //                .require(Blocks.IRON_BLOCK.asItem())
-                    //                .require(Blocks.COAL_BLOCK.asItem())
-                    //                .require(TFMGFluids.LIQUID_CONCRETE.getSource(), 1)
-                    //                .require(TFMGFluids.HEAVY_OIL.getSource(), 1)
-                    //                .require(TFMGFluids.COOLING_FLUID.getSource(), 1)
-                    //                .require(TFMGFluids.CRUDE_OIL.getSource(), 1)
-                    //                .output(TFMGFluids.LIQUID_CONCRETE.get(), 1)
-                    //                .output(TFMGFluids.HEAVY_OIL.get(), 1)
-                    //                .output(TFMGFluids.COOLING_FLUID.get(), 1)
-                    //                .output(TFMGFluids.CRUDE_OIL.get(), 1)
-                    //                .output(Items.EGG)
-                    //                .output(Items.ARROW)
-                    //                .output(Items.DIAMOND)
-                    //                .output(Items.STRING)
-                    //        , mixing());
-                    ;
+    CYAN_CONCRETE = create("cyan_concrete", b -> b
+            .require(Items.CYAN_DYE)
+            .require(TFMGFluids.LIQUID_CONCRETE.getSource(), 8000)
+            .output(TFMGFluids.CYAN_LIQUID_CONCRETE.get(), 8000)
+            .duration(100)
+            .mixing()
+    ),
+
+    LIGHT_BLUE_CONCRETE = create("light_blue_concrete", b -> b
+            .require(Items.LIGHT_BLUE_DYE)
+            .require(TFMGFluids.LIQUID_CONCRETE.getSource(), 8000)
+            .output(TFMGFluids.LIGHT_BLUE_LIQUID_CONCRETE.get(), 8000)
+            .duration(100)
+            .mixing()
+    ),
+
+    BLUE_CONCRETE = create("blue_concrete", b -> b
+            .require(Items.BLUE_DYE)
+            .require(TFMGFluids.LIQUID_CONCRETE.getSource(), 8000)
+            .output(TFMGFluids.BLUE_LIQUID_CONCRETE.get(), 8000)
+            .duration(100)
+            .mixing()
+    ),
+
+    PURPLE_CONCRETE = create("purple_concrete", b -> b
+            .require(Items.PURPLE_DYE)
+            .require(TFMGFluids.LIQUID_CONCRETE.getSource(), 8000)
+            .output(TFMGFluids.PURPLE_LIQUID_CONCRETE.get(), 8000)
+            .duration(100)
+            .mixing()
+    ),
+
+    MAGENTA_CONCRETE = create("magenta_concrete", b -> b
+            .require(Items.MAGENTA_DYE)
+            .require(TFMGFluids.LIQUID_CONCRETE.getSource(), 8000)
+            .output(TFMGFluids.MAGENTA_LIQUID_CONCRETE.get(), 8000)
+            .duration(100)
+            .mixing()
+    ),
+
+    PINK_CONCRETE = create("pink_concrete", b -> b
+            .require(Items.PINK_DYE)
+            .require(TFMGFluids.LIQUID_CONCRETE.getSource(), 8000)
+            .output(TFMGFluids.PINK_LIQUID_CONCRETE.get(), 8000)
+            .duration(100)
+            .mixing()
+    ),
+
+    ARC_FURNACE_STEEL = create("arc_furnace_steel", b -> b
+            .require(crushedRawIron())
+            .require(TFMGTags.Items.FLUX.tag)
+            .require(TFMGItems.COAL_COKE_DUST)
+            .output(0.9f, TFMGItems.COAL_COKE_DUST)
+            .output(TFMGFluids.MOLTEN_STEEL.get(), 90)
+            .output(TFMGFluids.MOLTEN_SLAG.get(), 160)
+            .duration(20)
+            .allowFireproof()
+            .minSize(9)
+            .arcBlasting()
+    ),
+
+    NEON = create("neon", b -> b
+            .require(TFMGFluids.AIR.get(), 1000)
+            .output(TFMGFluids.NEON.get(), 1)
+            .duration(10)
+            .centrifuge()
+            .allowAllVatTypes()
+    ),
+
+    SULFURIC_ACID = create("sulfuric_acid", b -> b
+            .require(SizedFluidIngredient.of(water(), 1000))
+            .require(sulfurDust())
+            .require(sulfurDust())
+            .require(sulfurDust())
+            .require(nitrateDust())
+            .output(sulfuricAcid(), 500)
+            .mixing()
+            .duration(5)
+            .allowAllVatTypes()
+    ),
+
+    RUBBER = create("rubber", b -> b
+            .require(SizedFluidIngredient.of(heavyOil(), 250))
+            .require(sulfurDust())
+            .output(rubber())
+            .mixing()
+            .allowAllVatTypes()
+            .duration(40)
+            .heatLevel(2)
+    ),
+
+    NAPHTHA = create("naphtha", b -> b
+            .require(SizedFluidIngredient.of(naphtha(), 500))
+            .output(ethylene(), 250)
+            .output(propylene(), 250)
+            .mixing()
+            .duration(20)
+            .allowAllVatTypes()
+            .heatLevel(2)
+    ),
+
+    PLASTIC_FROM_ETHYLENE = create("plastic_from_ethylene", b -> b
+            .require(SizedFluidIngredient.of(ethylene(), 500))
+            .output(liquidPlastic(), 500)
+            .mixing()
+            .allowAllVatTypes()
+            .duration(30)
+            .heatLevel(2)
+    ),
+
+    PLASTIC_FROM_PROPYLENE = create("plastic_from_propylene", b -> b
+            .require(SizedFluidIngredient.of(propylene(), 500))
+            .output(liquidPlastic(), 500)
+            .mixing()
+            .duration(30)
+            .allowAllVatTypes()
+            .heatLevel(2)
+    ),
+
+    ETCHED_CIRCUIT_BOARD = create("etched_circuit_board", b -> b
+            .require(TFMGItems.COATED_CIRCUIT_BOARD)
+            .require(TFMGFluids.SULFURIC_ACID.getSource(), 250)
+            .output(TFMGItems.ETCHED_CIRCUIT_BOARD)
+            .duration(100)
+            .mixing()
+            .allowAllVatTypes()
+    ),
+
+    ALUMINUM = create("aluminum", b -> b
+            .require(TFMGItems.BAUXITE_POWDER)
+            .require(TFMGItems.BAUXITE_POWDER)
+            .require(TFMGItems.BAUXITE_POWDER)
+            .require(TFMGItems.BAUXITE_POWDER)
+            .output(TFMGItems.ALUMINUM_INGOT)
+            .output(.5f, TFMGItems.ALUMINUM_NUGGET, 4)
+            .output(.25f, TFMGItems.ALUMINUM_NUGGET, 2)
+            .output(TFMGFluids.CARBON_DIOXIDE.get(), 500)
+            .duration(100)
+            .electrolysis()
+            .allowNonCastIron()
+            .heatLevel(2)
+    ),
+
+    //CBC
+    Nethersteel = create("nethersteel", b -> b.whenModLoaded("createbigcannons")
+            .require(Items.NETHERITE_SCRAP)
+            .require(TFMGTags.Fluids.MOLTEN_STEEL.tag, 360)
+            .output(CBCFluids.MOLTEN_NETHERSTEEL.get(), 360)
+            .arcBlasting()
+            .allowFireproof()
+            .heatLevel(2)
+    );
 
     public static class VatRecipeValues {
         public List<VatOperation> machines;
