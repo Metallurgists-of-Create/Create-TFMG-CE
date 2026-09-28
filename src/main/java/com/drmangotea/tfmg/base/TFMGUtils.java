@@ -46,7 +46,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.joml.Quaterniond;
 
 import java.util.Arrays;
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class TFMGUtils {
@@ -211,12 +213,40 @@ public class TFMGUtils {
 	
 	//for Sable stuff:
 	public static Vec3 rotateQuat(final Vec3 V, final Quaterniond Q) {
-		final Quaterniond q = new Quaterniond(V.x, V.y, V.z, 0.0f);
-		final Quaterniond Q2 = new Quaterniond(Q);
-		q.mul(Q2);
-		Q2.conjugate();
-		Q2.mul(q);
-		return new Vec3(Q2.x(), Q2.y(), Q2.z());
+		double
+			qww = Q.w*Q.w,
+			qwx = Q.w*Q.x, qxx = Q.x*Q.x, qxy = Q.x*Q.y,
+			qwy = Q.w*Q.y, qyy = Q.y*Q.y, qyz = Q.y*Q.z,
+			qwz = Q.w*Q.z, qzz = Q.z*Q.z, qzx = Q.x*Q.z;
+		
+		double
+			x = org.joml.Math.fma(V.x, qww + qxx - qyy - qzz, 2d * org.joml.Math.fma(V.y, qxy - qwz, V.z*(qzx + qwy))),
+			y = org.joml.Math.fma(V.y, qww + qyy - qzz - qxx, 2d * org.joml.Math.fma(V.z, qyz - qwx, V.x*(qxy + qwz))),
+			z = org.joml.Math.fma(V.z, qww + qzz - qxx - qyy, 2d * org.joml.Math.fma(V.x, qzx - qwy, V.y*(qyz + qwx)));
+		
+		return new Vec3(x, y, z);
+	}
+	
+	public static EnumMap<Direction, Vec3> getRotatedNormals(final Quaterniond Q) {
+		double
+			qww = Q.w*Q.w,
+			qwx = Q.w*Q.x, qxx = Q.x*Q.x, qxy = Q.x*Q.y,
+			qwy = Q.w*Q.y, qyy = Q.y*Q.y, qyz = Q.y*Q.z,
+			qwz = Q.w*Q.z, qzz = Q.z*Q.z, qzx = Q.x*Q.z;
+		
+		double
+			XX = qww + qxx - qyy - qzz, XY = 2d*(qxy - qwz), XZ = 2d*(qzx + qwy),
+			YY = qww + qyy - qzz - qxx, YZ = 2d*(qyz - qwx), YX = 2d*(qxy + qwz),
+			ZZ = qww + qzz - qxx - qyy, ZX = 2d*(qzx - qwy), ZY = 2d*(qyz + qwx);
+		
+		return new EnumMap<>(Map.of(
+			Direction.DOWN,  new Vec3(-XY,-YY,-ZY), //( 0,-1, 0)
+			Direction.UP,    new Vec3( XY, YY, ZY), //( 0, 1, 0)
+			Direction.NORTH, new Vec3(-XZ,-YZ,-ZZ), //( 0, 0,-1)
+			Direction.SOUTH, new Vec3( XZ, YZ, ZZ), //( 0, 0, 1)
+			Direction.WEST,  new Vec3(-XX,-YX,-ZX), //(-1, 0, 0)
+			Direction.EAST,  new Vec3( XX, YX, ZX)  //( 1, 0, 0)
+		));
 	}
 	
 	@Deprecated(since = "1.2.5")

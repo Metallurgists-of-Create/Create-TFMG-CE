@@ -30,6 +30,7 @@ Contributors:<br>
   - Scans 7x7 area rather than 5x5
   - Now can be picked up with shift and right-click of the wrench
   - Better visuals for rotating on sub-levels.
+  - Scanners now give off a redstone signal like navigation tables from Aeronautics.
 - Flamethrower
   - Fuel type now pulls fluid lang key instead of relying on a new key
 - `Rutile` Integration

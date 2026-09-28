@@ -41,7 +41,6 @@ public class SurfaceScannerBlock extends Block implements IBE<SurfaceScannerBloc
         return InteractionResult.PASS;
     }
 
-    //TODO: Make the redstone work
 	@Override
     public boolean isSignalSource(BlockState state) {
         return true;
@@ -49,11 +48,15 @@ public class SurfaceScannerBlock extends Block implements IBE<SurfaceScannerBloc
 
     @Override
     protected int getSignal(BlockState state, BlockGetter level, BlockPos pos, Direction side) {
-        final SurfaceScannerBlockEntity be = this.getBlockEntity(level, pos);
-        if (be == null || side.getAxis().isVertical())
-            return 0;
+		if (!(level.getBlockEntity(pos) instanceof SurfaceScannerBlockEntity be))
+			return 0;
         return be.getDirectionalSignal(side);
     }
+	
+	@Override
+	public int getDirectSignal(BlockState state, BlockGetter level, BlockPos pos, Direction direction) {
+		return this.getSignal(state, level, pos, direction);
+	}
 	
 	@Override
 	public boolean shouldCheckWeakPower(final BlockState state, final SignalGetter level, final BlockPos pos, final Direction side) {
