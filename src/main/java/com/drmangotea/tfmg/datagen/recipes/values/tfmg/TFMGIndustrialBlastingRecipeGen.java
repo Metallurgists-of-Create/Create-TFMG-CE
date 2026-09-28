@@ -2,6 +2,7 @@ package com.drmangotea.tfmg.datagen.recipes.values.tfmg;
 
 import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.datagen.recipes.builder.IndustrialBlastingRecipeGen;
+import com.drmangotea.tfmg.recipes.condition.TagFilledCondition;
 import com.drmangotea.tfmg.registry.TFMGFluids;
 import com.drmangotea.tfmg.registry.TFMGTags;
 import com.simibubi.create.AllItems;
@@ -43,6 +44,7 @@ public class TFMGIndustrialBlastingRecipeGen extends IndustrialBlastingRecipeGen
             .hotAirUsage(40)
     ),
     STEEL_DUST = create("steel_from_dust", b -> b
+            .withCondition(new TagFilledCondition(ironDust()))
             .require(ironDust())
             .require(TFMGTags.Items.FLUX.tag)
             .output(TFMGFluids.MOLTEN_STEEL.get(),90)

@@ -2,6 +2,7 @@ package com.drmangotea.tfmg.integration.jei.category;
 
 
 import com.drmangotea.tfmg.base.lang.TFMGLang;
+import com.drmangotea.tfmg.config.TFMGConfigs;
 import com.drmangotea.tfmg.integration.jei.render.BlastFurnace;
 import com.drmangotea.tfmg.recipes.IndustrialBlastingRecipe;
 import com.drmangotea.tfmg.registry.TFMGFluids;
@@ -39,9 +40,10 @@ public class IndustrialBlastingCategory extends CreateRecipeCategory<IndustrialB
                     .setBackground(getRenderedSlot(), -1, -1)
                     .addIngredients(recipe.getIngredients().get(1));
         }
+        int coalCokeAmount = Math.max(1, recipe.getProcessingDuration() / TFMGConfigs.common().machines.blastFurnaceFuelConsumption.get());
         builder.addSlot(RecipeIngredientRole.INPUT, 70, 13)
                 .setBackground(getRenderedSlot(), -1, -1)
-                .addItemStack(new ItemStack(TFMGItems.COAL_COKE_DUST.get()));
+                .addItemStack(new ItemStack(TFMGItems.COAL_COKE_DUST.get(), coalCokeAmount));
 
         //fluid
         addFluidSlot(builder, 140, 117, recipe.getFluidResults().get(0));
@@ -49,7 +51,8 @@ public class IndustrialBlastingCategory extends CreateRecipeCategory<IndustrialB
             addFluidSlot(builder, 160, 117, recipe.getFluidResults().get(1));
 
         if (recipe.hotAirUsage > 0) {
-            addFluidSlot(builder, 90, 13, SizedFluidIngredient.of(new FluidStack(FluidHelper.convertToStill(TFMGFluids.HOT_AIR.get()), recipe.hotAirUsage * recipe.getProcessingDuration() * 20))).addRichTooltipCallback((slotView, tooltip) -> tooltip.add(TFMGLang.translate("recipe.over_time", StringUtil.formatTickDuration(recipe.getProcessingDuration(), 1)).component()));
+            addFluidSlot(builder, 90, 13, SizedFluidIngredient.of(new FluidStack(FluidHelper.convertToStill(TFMGFluids.HOT_AIR.get()), recipe.hotAirUsage * recipe.getProcessingDuration() * 20)))
+                    .addRichTooltipCallback((slotView, tooltip) -> tooltip.add(TFMGLang.translate("recipe.over_time", StringUtil.formatTickDuration(recipe.getProcessingDuration(), 1)).component()));
         }
     }
 

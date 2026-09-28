@@ -1,4 +1,10 @@
 {
+  "neoforge:conditions": [
+    {
+      "type": "tfmg:tag_filled",
+      "tag": "c:dusts/iron"
+    }
+  ],
   "type": "tfmg:industrial_blasting",
   "hot_air_usage": 20,
   "ingredients": [

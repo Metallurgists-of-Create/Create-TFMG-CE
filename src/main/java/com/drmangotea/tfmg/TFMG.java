@@ -83,6 +83,7 @@ public class TFMG {
         TFMGRecipeTypes.register(modEventBus);
         TFMGColoredFires.register(modEventBus);
         TFMGFeatures.register(modEventBus);
+        TFMGConditionCodecs.register(modEventBus);
         TFMGMountedStorageTypes.register();
 
         NeoForge.EVENT_BUS.register(LevelDataHandler.instance);
