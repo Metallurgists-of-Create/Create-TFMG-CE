@@ -1,5 +1,6 @@
 package com.drmangotea.tfmg.recipes;
 
+import com.drmangotea.tfmg.recipes.input.HotBlastRecipeInput;
 import com.drmangotea.tfmg.registry.TFMGRecipeTypes;
 import com.simibubi.create.content.processing.recipe.ProcessingRecipeParams;
 import com.simibubi.create.content.processing.recipe.StandardProcessingRecipe;
@@ -8,7 +9,7 @@ import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient;
 import net.neoforged.neoforge.items.wrapper.RecipeWrapper;
 
-public class HotBlastRecipe extends StandardProcessingRecipe<RecipeWrapper> {
+public class HotBlastRecipe extends StandardProcessingRecipe<HotBlastRecipeInput> {
 
     public HotBlastRecipe(ProcessingRecipeParams params) {
         super(TFMGRecipeTypes.HOT_BLAST, params);
@@ -52,13 +53,9 @@ public class HotBlastRecipe extends StandardProcessingRecipe<RecipeWrapper> {
 
 
     @Override
-    public boolean matches(RecipeWrapper inv, Level worldIn) {
-        if (inv.isEmpty())
+    public boolean matches(HotBlastRecipeInput input, Level worldIn) {
+        if (input.isEmpty())
             return false;
-        return ingredients.get(0)
-                .test(inv.getItem(0));
+        return getPrimaryIngredient().test(input.air) && getSecondaryIngredient().test(input.fuel);
     }
-
-
-
 }

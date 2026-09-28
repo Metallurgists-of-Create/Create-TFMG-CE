@@ -18,10 +18,10 @@ public class TFMGHotBlastRecipeGen extends HotBlastRecipeGen {
 
 
 	HOT_AIR = create(TFMG.asResource("hot_air"), b ->b
-			.require(SizedFluidIngredient.of(air(),25))
-			.require(TFMGTags.Fluids.BLAST_STOVE_FUEL.tag,5)
-			.output(hotAir(), 25)
-			.output(carbonDioxide(), 25)
+			.require(SizedFluidIngredient.of(air(),50))
+			.require(TFMGTags.Fluids.BLAST_STOVE_FUEL.tag,10)
+			.output(hotAir(), 50)
+			.output(carbonDioxide(), 50)
 			.duration(200));
 	public TFMGHotBlastRecipeGen(PackOutput generator, CompletableFuture<HolderLookup.Provider> registries) {
 		super(generator, registries,TFMG.MOD_ID);

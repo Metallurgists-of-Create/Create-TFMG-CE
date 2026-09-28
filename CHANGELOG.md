@@ -14,7 +14,8 @@ Contributors:<br>
 - Rebar recipe now produces 2 per ingot instead of 4 to prevent duping.
 - Cooling Fluid Bottles and Oil Cans no-longer void their contents instantly.
 - Blast Furnace top hatches no-longer void items.
-- Copycat Cable Blocks now function as actual copy cats
+- Copycat Cable Blocks now function as actual copy cats.
+- Fixed recipe duration on Blast Stoves being unreliable and improved recipe checking.
 
 
 ### Changes:
