@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "tfmg:blasting/nickel_ingot_blasting"
+        "recipe": "tfmg:smelting/nickel_ingot_from_raw_blasting"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -26,7 +26,7 @@
   ],
   "rewards": {
     "recipes": [
-      "tfmg:blasting/nickel_ingot_blasting"
+      "tfmg:smelting/nickel_ingot_from_raw_blasting"
     ]
   }
 }

@@ -66,6 +66,11 @@ Contributors:<br>
 - Blast Furnace:
   - In cases where the fuel time for Coal Coke is lower than the recipe duration, the JEI category will now show an amount of dusts needed instead of 1.
   - `steel_from_dust` recipe now only loads if Iron Dust exists.
+- Recipes
+  - All recipes now use the `tfmg` namespace instead of some using `create`.
+  - Added proper crushing recipes for Lead & Nickel ores.
+  - Removed Create's crushing recipes for Lead & Nickel ores.
+  - Added ore smelting recipes for Lead, Lithium & Nickel ores.
 
 ### API Changes:
 - Removed `ILockablePipe`

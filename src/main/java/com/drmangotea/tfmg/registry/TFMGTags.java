@@ -85,6 +85,8 @@ public class TFMGTags {
         INGOTS_SILICON(COMMON, "ingots/silicon"),
         NUGGETS_CAST_IRON(COMMON, "nuggets/cast_iron"),
         NUGGETS_LITHIUM(COMMON, "nuggets/lithium"),
+        ORES_LEAD(COMMON, "ores/lead"),
+        ORES_NICKEL(COMMON, "ores/nickel"),
         ORES_LITHIUM(COMMON, "ores/lithium"),
         PLATES_CAST_IRON(COMMON, "plates/cast_iron"),
         RAW_LITHIUM(COMMON, "raw_materials/lithium"),

@@ -5,7 +5,7 @@
       "conditions": {
         "items": [
           {
-            "items": "tfmg:raw_nickel"
+            "items": "tfmg:raw_lithium"
           }
         ]
       },
@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "tfmg:smelting/nickel_ingot_blasting"
+        "recipe": "tfmg:smelting/lithium_ingot_from_raw"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -26,7 +26,7 @@
   ],
   "rewards": {
     "recipes": [
-      "tfmg:smelting/nickel_ingot_blasting"
+      "tfmg:smelting/lithium_ingot_from_raw"
     ]
   }
 }

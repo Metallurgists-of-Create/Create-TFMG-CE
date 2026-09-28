@@ -5,7 +5,7 @@
       "conditions": {
         "items": [
           {
-            "items": "tfmg:raw_lithium"
+            "items": "tfmg:raw_lead"
           }
         ]
       },
@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "tfmg:smelting/lithium_ingot"
+        "recipe": "tfmg:smelting/lead_ingot_from_raw"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -26,7 +26,7 @@
   ],
   "rewards": {
     "recipes": [
-      "tfmg:smelting/lithium_ingot"
+      "tfmg:smelting/lead_ingot_from_raw"
     ]
   }
 }

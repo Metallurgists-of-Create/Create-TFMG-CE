@@ -5,7 +5,7 @@
       "conditions": {
         "items": [
           {
-            "items": "tfmg:raw_lead"
+            "items": "tfmg:raw_nickel"
           }
         ]
       },
@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "tfmg:blasting/lead_ingot_blasting"
+        "recipe": "tfmg:blasting/nickel_ingot_from_raw_blasting"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -26,7 +26,7 @@
   ],
   "rewards": {
     "recipes": [
-      "tfmg:blasting/lead_ingot_blasting"
+      "tfmg:blasting/nickel_ingot_from_raw_blasting"
     ]
   }
 }

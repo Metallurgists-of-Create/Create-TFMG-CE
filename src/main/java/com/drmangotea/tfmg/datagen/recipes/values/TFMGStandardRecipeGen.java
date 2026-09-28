@@ -8,6 +8,7 @@ import com.drmangotea.tfmg.datagen.recipes.TFMGRecipeProvider;
 import com.drmangotea.tfmg.registry.TFMGBlocks;
 import com.drmangotea.tfmg.registry.TFMGFluids;
 import com.drmangotea.tfmg.registry.TFMGItems;
+import com.drmangotea.tfmg.registry.TFMGTags;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableList;
 import com.mojang.serialization.Codec;
@@ -1324,28 +1325,52 @@ public class TFMGStandardRecipeGen extends TFMGRecipeProvider {
             .viaCooking(() -> TFMGItems.UNFIRED_INSULATOR)
             .inFurnace(),
 
-    RAW_LEAD = create(TFMGItems.LEAD_INGOT::get)
+    LEAD = create(TFMGItems.LEAD_INGOT::get).withSuffix("_from_raw")
             .viaCooking(() -> TFMGItems.RAW_LEAD)
             .inFurnace(),
 
-    NICKEL = create(TFMGItems.NICKEL_INGOT::get)
+    LEAD_ORE = create(TFMGItems.LEAD_INGOT::get).withSuffix("_from_ore")
+            .viaCookingTag(() -> TFMGTags.Items.ORES_LEAD.tag)
+            .inFurnace(),
+
+    NICKEL = create(TFMGItems.NICKEL_INGOT::get).withSuffix("_from_raw")
             .viaCooking(() -> TFMGItems.RAW_NICKEL)
             .inFurnace(),
 
-    LITHIUM = create(TFMGItems.LITHIUM_INGOT::get)
+    NICKEL_ORE = create(TFMGItems.NICKEL_INGOT::get).withSuffix("_from_ore")
+            .viaCookingTag(() -> TFMGTags.Items.ORES_NICKEL.tag)
+            .inFurnace(),
+
+    LITHIUM = create(TFMGItems.LITHIUM_INGOT::get).withSuffix("_from_raw")
             .viaCooking(() -> TFMGItems.RAW_LITHIUM)
             .inFurnace(),
 
-    RAW_LEAD_BLASTING = create(TFMGItems.LEAD_INGOT::get).withSuffix("_blasting")
+    LITHIUM_ORE = create(TFMGItems.LITHIUM_INGOT::get).withSuffix("_from_ore")
+            .viaCookingTag(() -> TFMGTags.Items.ORES_LITHIUM.tag)
+            .inFurnace(),
+
+    RAW_LEAD_BLASTING = create(TFMGItems.LEAD_INGOT::get).withSuffix("_from_raw_blasting")
             .viaCooking(() -> TFMGItems.RAW_LEAD)
             .inBlastFurnace(),
 
-    NICKEL_LEAD_BLASTING = create(TFMGItems.NICKEL_INGOT::get).withSuffix("_blasting")
+    LEAD_ORE_BLASTING = create(TFMGItems.LEAD_INGOT::get).withSuffix("_from_ore_blasting")
+            .viaCookingTag(() -> TFMGTags.Items.ORES_LEAD.tag)
+            .inBlastFurnace(),
+
+    RAW_NICKEL_BLASTING = create(TFMGItems.NICKEL_INGOT::get).withSuffix("_from_raw_blasting")
             .viaCooking(() -> TFMGItems.RAW_NICKEL)
             .inBlastFurnace(),
 
-    LITHIUM_BLASTING = create(TFMGItems.LITHIUM_INGOT::get).withSuffix("_blasting")
+    NICKEL_ORE_BLASTING = create(TFMGItems.NICKEL_INGOT::get).withSuffix("_from_ore_blasting")
+            .viaCookingTag(() -> TFMGTags.Items.ORES_NICKEL.tag)
+            .inBlastFurnace(),
+
+    RAW_LITHIUM_BLASTING = create(TFMGItems.LITHIUM_INGOT::get).withSuffix("_from_raw_blasting")
             .viaCooking(() -> TFMGItems.RAW_LITHIUM)
+            .inBlastFurnace(),
+
+    LITHIUM_ORE_BLASTING = create(TFMGItems.LITHIUM_INGOT::get).withSuffix("_from_ore_blasting")
+            .viaCookingTag(() -> TFMGTags.Items.ORES_LITHIUM.tag)
             .inBlastFurnace(),
     //
 

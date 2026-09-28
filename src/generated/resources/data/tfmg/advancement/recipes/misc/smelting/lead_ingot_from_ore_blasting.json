@@ -5,7 +5,7 @@
       "conditions": {
         "items": [
           {
-            "items": "tfmg:raw_nickel"
+            "items": "#c:ores/lead"
           }
         ]
       },
@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "tfmg:smelting/nickel_ingot"
+        "recipe": "tfmg:smelting/lead_ingot_from_ore_blasting"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -26,7 +26,7 @@
   ],
   "rewards": {
     "recipes": [
-      "tfmg:smelting/nickel_ingot"
+      "tfmg:smelting/lead_ingot_from_ore_blasting"
     ]
   }
 }
