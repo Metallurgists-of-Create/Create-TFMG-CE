@@ -16,6 +16,7 @@ Contributors:<br>
 - Blast Furnace top hatches no-longer void items.
 - Copycat Cable Blocks now function as actual copy cats.
 - Fixed recipe duration on Blast Stoves being unreliable and improved recipe checking.
+- Fixed tick duration formatting in Industrial Blasting & Coking categories.
 
 
 ### Changes:
@@ -61,6 +62,9 @@ Contributors:<br>
   - Oil Branches no-longer replace air.
   - Oil Deposits now properly generate at the very bottom of the world.
   - Oil Deposits will not place if the origin point isn't bedrock.
+- Blast Furnace:
+  - In cases where the fuel time for Coal Coke is lower than the recipe duration, the JEI category will now show an amount of dusts needed instead of 1.
+  - `steel_from_dust` recipe now only loads if Iron Dust exists.
 
 ### API Changes:
 - Removed `ILockablePipe`
@@ -68,6 +72,7 @@ Contributors:<br>
 - Pipe Locking now uses the `tfmg:locked_pipe` data attachment.
 - Removed `ItemFluidTank`
 - `FluidContainingItem`'s constructor now takes in a `Predicate<FluidStack>` as a validator instead of a strict `FluidEntry<?>`.
+- Added `tfmg:tag_filled` condition.
 
 
 ### New Translations:

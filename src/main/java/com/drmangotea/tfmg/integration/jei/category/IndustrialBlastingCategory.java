@@ -14,6 +14,7 @@ import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.util.StringUtil;
 import net.minecraft.world.item.ItemStack;
@@ -52,7 +53,7 @@ public class IndustrialBlastingCategory extends CreateRecipeCategory<IndustrialB
 
         if (recipe.hotAirUsage > 0) {
             addFluidSlot(builder, 90, 13, SizedFluidIngredient.of(new FluidStack(FluidHelper.convertToStill(TFMGFluids.HOT_AIR.get()), recipe.hotAirUsage * recipe.getProcessingDuration() * 20)))
-                    .addRichTooltipCallback((slotView, tooltip) -> tooltip.add(TFMGLang.translate("recipe.over_time", StringUtil.formatTickDuration(recipe.getProcessingDuration(), 1)).component()));
+                    .addRichTooltipCallback((slotView, tooltip) -> tooltip.add(TFMGLang.translate("recipe.over_time", StringUtil.formatTickDuration(recipe.getProcessingDuration(), Minecraft.getInstance().level.tickRateManager().tickrate())).component()));
         }
     }
 
