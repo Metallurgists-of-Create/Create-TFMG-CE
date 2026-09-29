@@ -183,6 +183,7 @@
   "block.tfmg.encased_plastic_pipe": "Encased Plastic Pipe",
   "block.tfmg.encased_potentiometer": "Encased Potentiometer",
   "block.tfmg.encased_steel_pipe": "Encased Steel Pipe",
+  "block.tfmg.engine.tooltip.upgrades": "Upgrades:",
   "block.tfmg.engine_controller.tooltip.behaviour1": "R-Click the controller with a transmission item and then do the same with the engine.",
   "block.tfmg.engine_controller.tooltip.behaviour2": "Look in the Keybinds part of the minecraft settings specifically in the Create: The Factory Must Grow section",
   "block.tfmg.engine_controller.tooltip.condition1": "How to link to an engine",
