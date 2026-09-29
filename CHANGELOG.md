@@ -1,5 +1,6 @@
 # Create: TFMG Community Edition 1.3.2
 ## Rant:
+Wow, much changes! A few bug fixes but mostly changes to how things work.
 
 Contributors:<br>
 @pouffy @wolfieboy09 @ShallowAssumption
