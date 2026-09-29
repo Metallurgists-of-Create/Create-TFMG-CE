@@ -22,6 +22,7 @@ Contributors:<br>
 ### Changes:
 - Liquid Concrete now has it's dedicated colors for each dye type
 - TFMG now uses the standard `90mB ⇒ 1 ingot` fluid units in recipes.
+- Small Engines now have goggle info on applied upgrades for all connected engines
 - Blast Stove
   - Capacity now scales with volume.
   - Maximum height changed to 5.
@@ -85,4 +86,4 @@ Contributors:<br>
 
 
 ### New Translations:
-
+- `block.tfmg.engine.tooltip.upgrades` -> `Upgrades`
