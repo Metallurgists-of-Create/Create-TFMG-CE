@@ -16,10 +16,11 @@ Contributors:<br>
 - Copycat Cable Blocks now function as actual copy cats.
 - Fixed recipe duration on Blast Stoves being unreliable and improved recipe checking.
 - Fixed tick duration formatting in Industrial Blasting & Coking categories.
+- Fixed a bug where Bits n Bobs dyed pipes wouldn't render properly.
 
 
 ### Changes:
-- Liquid Concrete now has it's dedicated colors for each dye type
+- Liquid Concrete now has it's dedicated colours for each dye type.
 - TFMG now uses the standard `90mB ⇒ 1 ingot` fluid units in recipes.
 - Small Engines now have goggle info on applied upgrades for all connected engines
 - Blast Stove
