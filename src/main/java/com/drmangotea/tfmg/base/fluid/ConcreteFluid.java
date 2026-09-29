@@ -6,6 +6,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.LiquidBlock;
@@ -14,6 +15,7 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
 import net.neoforged.neoforge.fluids.BaseFlowingFluid;
 
+import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
@@ -22,6 +24,7 @@ public class ConcreteFluid extends BaseFlowingFluid {
     private static final String COLOR_SUFFIX = "_liquid_concrete";
 
     private Block solidifiedBlock;
+    protected @Nullable DyeColor dyeColor;
 
     protected ConcreteFluid(Properties properties) {
         super(properties);
@@ -55,19 +58,10 @@ public class ConcreteFluid extends BaseFlowingFluid {
     }
 
     private Block resolveSolidifiedBlock() {
-        ResourceLocation fluidId = BuiltInRegistries.FLUID.getKey(this);
-
-        String path = fluidId.getPath();
-        if (path.startsWith(FLOWING_PREFIX)) {
-            path = path.substring(FLOWING_PREFIX.length());
-        }
-
-        if (!path.endsWith(COLOR_SUFFIX)) {
+        if (dyeColor == null) {
             return TFMGBlocks.CONCRETE.block.get();
         }
-
-        String color = path.substring(0, path.length() - COLOR_SUFFIX.length());
-        MaterialSet coloredConcrete = TFMGBlocks.COLORED_CONCRETE.get(color);
+        MaterialSet coloredConcrete = TFMGBlocks.COLORED_CONCRETE.get(dyeColor);
         return coloredConcrete != null ? coloredConcrete.block.get() : TFMGBlocks.CONCRETE.block.get();
     }
 
@@ -97,6 +91,11 @@ public class ConcreteFluid extends BaseFlowingFluid {
     public static class Source extends ConcreteFluid {
         public Source(Properties properties) {
             super(properties);
+        }
+
+        public Source withColour(DyeColor dyeColor) {
+            this.dyeColor = dyeColor;
+            return this;
         }
     }
 }

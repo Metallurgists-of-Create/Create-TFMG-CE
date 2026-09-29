@@ -1,6 +1,7 @@
 package com.drmangotea.tfmg.registry;
 
 import com.drmangotea.tfmg.TFMG;
+import com.drmangotea.tfmg.base.dyes.DyedItemList;
 import com.drmangotea.tfmg.base.TFMGCreativeTabs;
 import com.drmangotea.tfmg.base.TFMGRegistrate;
 import com.drmangotea.tfmg.base.TFMGTiers;
@@ -47,6 +48,7 @@ import com.tterrag.registrate.util.nullness.NonNullBiConsumer;
 import net.minecraft.core.Holder;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
+import net.minecraft.data.recipes.ShapelessRecipeBuilder;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
@@ -56,7 +58,6 @@ import net.neoforged.neoforge.common.Tags;
 
 import java.util.*;
 
-import static com.drmangotea.tfmg.base.TFMGBuilderTransformers.COLORS;
 import static com.drmangotea.tfmg.content.items.weapons.explosives.thermite_grenades.ThermiteGrenade.ChemicalColor.*;
 import static com.simibubi.create.AllTags.AllItemTags.CREATE_INGOTS;
 import static com.simibubi.create.AllTags.AllItemTags.PLATES;
@@ -255,10 +256,7 @@ public class TFMGItems {
                     .properties(p -> p.stacksTo(1))
                     .register();
 
-    public static final ItemEntry<MultimeterItem> MULTIMETER = REGISTRATE.item("multimeter", MultimeterItem::new)
-            .register();
-
-    public static final Map<String, ItemEntry<MultimeterItem>> MULTIMETERS = multimeters();
+    public static final ItemEntry<MultimeterItem> MULTIMETER = REGISTRATE.item("multimeter", MultimeterItem::new).tag(Items.MULTIMETERS.tag).register();
 
     public static final ItemEntry<SequencedAssemblyItem>
             UNFINISHED_POTENTIOMETER = sequencedIngredient("unfinished_potentiometer", "block/potentiometer/unfinished"),
@@ -339,6 +337,22 @@ public class TFMGItems {
     public static final ItemEntry<ThermiteGrenadeItem>
             COPPER_GRENADE = thermiteGrenade("copper_grenade", BLUE);
 
+    //Dyed Items
+    public static final DyedItemList<MultimeterItem> MULTIMETERS = new DyedItemList<>(colour -> {
+        String colourName = colour.getSerializedName();
+        return REGISTRATE.item(colourName + "_multimeter", MultimeterItem::new)
+                .tag(Items.MULTIMETERS.tag)
+                .onRegister(item -> ItemDescription.referKey(item, () -> MULTIMETER))
+                .recipe((c, p) -> {
+                    ShapelessRecipeBuilder.shapeless(RecipeCategory.TOOLS, c.get())
+                            .requires(colour.getTag())
+                            .requires(Items.MULTIMETERS.tag)
+                            .unlockedBy("has_multimeter", RegistrateRecipeProvider.has(Items.MULTIMETERS.tag))
+                            .save(p, TFMG.asResource("crafting/materials/" + c.getName() + "_from_other_multimeter"));
+                })
+                .register();
+    });
+
     /// /////////////////////////
 
     private static ItemEntry<SequencedAssemblyItem> sequencedIngredient(String name, String model) {
@@ -362,21 +376,21 @@ public class TFMGItems {
 
         list.add(REGISTRATE.item(material + "_sword", p -> new SwordItem(tier, p))
                 .properties(p -> p.attributes(SwordItem.createAttributes(tier, 2, -2.4F)))
-                .tag(ItemTags.SWORDS)
+                .tag(ItemTags.SWORDS, Tags.Items.MELEE_WEAPON_TOOLS)
                 .model((ctx, prov) -> prov
                         .withExistingParent(material + "_sword", "minecraft:item/handheld")
                         .texture("layer0", "tfmg:item/" + material + "_sword"))
                 .register());
         list.add(REGISTRATE.item(material + "_pickaxe", p -> new PickaxeItem(tier, p))
                 .properties(p -> p.attributes(PickaxeItem.createAttributes(tier, 1, 1)))
-                .tag(ItemTags.PICKAXES)
+                .tag(ItemTags.PICKAXES, ItemTags.CLUSTER_MAX_HARVESTABLES, Tags.Items.MINING_TOOL_TOOLS)
                 .model((ctx, prov) -> prov
                         .withExistingParent(material + "_pickaxe", "minecraft:item/handheld")
                         .texture("layer0", "tfmg:item/" + material + "_pickaxe"))
                 .register());
         list.add(REGISTRATE.item(material + "_axe", p -> new AxeItem(tier, p))
                 .properties(p -> p.attributes(AxeItem.createAttributes(tier, 6.0F, -3.2F)))
-                .tag(ItemTags.AXES)
+                .tag(ItemTags.AXES, Tags.Items.MELEE_WEAPON_TOOLS)
                 .model((ctx, prov) -> prov
                         .withExistingParent(material + "_axe", "minecraft:item/handheld")
                         .texture("layer0", "tfmg:item/" + material + "_axe"))
@@ -411,21 +425,21 @@ public class TFMGItems {
         List<ItemEntry<?>> list = new ArrayList<>();
         list.add(REGISTRATE.item("lead_sword", p -> new LeadSwordItem(TFMGTiers.LEAD, p))
                 .properties(p -> p.attributes(SwordItem.createAttributes(TFMGTiers.LEAD, 2, -2.4F)))
-                .tag(ItemTags.SWORDS)
+                .tag(ItemTags.SWORDS, Tags.Items.MELEE_WEAPON_TOOLS)
                 .model((ctx, prov) -> prov
                         .withExistingParent("lead_sword", "minecraft:item/handheld")
                         .texture("layer0", "tfmg:item/lead_sword"))
                 .register());
         list.add(REGISTRATE.item("lead_pickaxe", p -> new PickaxeItem(TFMGTiers.LEAD, p))
                 .properties(p -> p.attributes(AxeItem.createAttributes(TFMGTiers.LEAD, 1,1)))
-                .tag(ItemTags.PICKAXES)
+                .tag(ItemTags.PICKAXES, ItemTags.CLUSTER_MAX_HARVESTABLES, Tags.Items.MINING_TOOL_TOOLS)
                 .model((ctx, prov) -> prov
                         .withExistingParent("lead_pickaxe", "minecraft:item/handheld")
                         .texture("layer0", "tfmg:item/lead_pickaxe"))
                 .register());
         list.add(REGISTRATE.item("lead_axe", p -> new LeadAxeItem(TFMGTiers.LEAD, p))
                 .properties(p -> p.attributes(AxeItem.createAttributes(TFMGTiers.LEAD, 6.0F, -3.2F)))
-                .tag(ItemTags.AXES)
+                .tag(ItemTags.AXES, Tags.Items.MELEE_WEAPON_TOOLS)
                 .model((ctx, prov) -> prov
                         .withExistingParent("lead_axe", "minecraft:item/handheld")
                         .texture("layer0", "tfmg:item/lead_axe"))
@@ -466,19 +480,6 @@ public class TFMGItems {
     public static ItemEntry<SequencedAssemblyItem> assemblyItem(String name) {
         return REGISTRATE.item(name, SequencedAssemblyItem::new)
                 .register();
-    }
-
-    public static Map<String, ItemEntry<MultimeterItem>> multimeters() {
-        Map<String, ItemEntry<MultimeterItem>> map = new HashMap<>();
-
-        for (String color : COLORS) {
-            ItemEntry<MultimeterItem> multimeter = REGISTRATE.item(color + "_multimeter", MultimeterItem::new)
-                    .onRegister(item -> ItemDescription.referKey(item, () -> MULTIMETER))
-                    .register();
-            map.put(color, multimeter);
-        }
-
-        return map;
     }
 
     public static ItemBuilder<SpoolItem, CreateRegistrate> spoolItem(String name, int barColor) {

@@ -79,6 +79,9 @@ Contributors:<br>
 - Removed `ItemFluidTank`
 - `FluidContainingItem`'s constructor now takes in a `Predicate<FluidStack>` as a validator instead of a strict `FluidEntry<?>`.
 - Added `tfmg:tag_filled` condition.
+- Added DyedItemList for dye-based registry.
+- Added DyedFluidList for dye-based registry.
+- Added DyedMaterialSetList for dye-based registry.
 
 
 ### New Translations:

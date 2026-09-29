@@ -2,13 +2,19 @@ package com.drmangotea.tfmg.registry;
 
 import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.base.TFMGUtils;
+import com.drmangotea.tfmg.base.dyes.DyedFluidList;
 import com.drmangotea.tfmg.base.fluid.AcidFluidType;
 import com.drmangotea.tfmg.base.fluid.AsphaltFluid;
 import com.drmangotea.tfmg.base.fluid.ConcreteFluid;
 import com.drmangotea.tfmg.base.fluid.HotFluidType;
+import com.drmangotea.tfmg.datagen.recipes.builder.VatRecipeGen;
+import com.drmangotea.tfmg.datagen.recipes.values.tfmg.TFMGVatRecipeGen;
+import com.drmangotea.tfmg.recipes.VatMachineRecipe;
+import com.drmangotea.tfmg.recipes.VatRecipeParams;
 import com.simibubi.create.AllFluids;
 import com.simibubi.create.content.fluids.VirtualFluid;
 import com.tterrag.registrate.builders.FluidBuilder;
+import com.tterrag.registrate.providers.ProviderType;
 import com.tterrag.registrate.util.entry.FluidEntry;
 import com.tterrag.registrate.util.nullness.NonNullFunction;
 import net.createmod.catnip.theme.Color;
@@ -22,6 +28,7 @@ import net.minecraft.world.level.material.FluidState;
 import net.neoforged.neoforge.fluids.BaseFlowingFluid;
 import org.joml.Vector3f;
 
+import java.util.List;
 import java.util.function.Supplier;
 
 import static com.drmangotea.tfmg.TFMG.REGISTRATE;
@@ -60,23 +67,23 @@ public class TFMGFluids {
             LIQUID_CONCRETE = concreteFluid("liquid_concrete", 0x5B5B59, ConcreteFluid.Source::new),
             LIQUID_ASPHALT = concreteFluid("liquid_asphalt", 0x010101, AsphaltFluid.Source::new);
 
-    public static final FluidEntry<BaseFlowingFluid.Flowing>
-            WHITE_LIQUID_CONCRETE = concreteFluid("white_liquid_concrete", 0xADAFAF, ConcreteFluid.Source::new),
-            LIGHT_GRAY_LIQUID_CONCRETE = concreteFluid("light_gray_liquid_concrete", 0x62625E, ConcreteFluid.Source::new),
-            GRAY_LIQUID_CONCRETE = concreteFluid("gray_liquid_concrete", 0x4F5051, ConcreteFluid.Source::new),
-            BLACK_LIQUID_CONCRETE = concreteFluid("black_liquid_concrete", 0x1D1F25, ConcreteFluid.Source::new),
-            BROWN_LIQUID_CONCRETE = concreteFluid("brown_liquid_concrete", 0x604E40, ConcreteFluid.Source::new),
-            RED_LIQUID_CONCRETE = concreteFluid("red_liquid_concrete", 0x7E4E4D, ConcreteFluid.Source::new),
-            ORANGE_LIQUID_CONCRETE = concreteFluid("orange_liquid_concrete", 0xA06136, ConcreteFluid.Source::new),
-            YELLOW_LIQUID_CONCRETE = concreteFluid("yellow_liquid_concrete", 0xB99C61, ConcreteFluid.Source::new),
-            LIME_LIQUID_CONCRETE = concreteFluid("lime_liquid_concrete", 0x718E56, ConcreteFluid.Source::new),
-            GREEN_LIQUID_CONCRETE = concreteFluid("green_liquid_concrete", 0x596246, ConcreteFluid.Source::new),
-            CYAN_LIQUID_CONCRETE = concreteFluid("cyan_liquid_concrete", 0x55787D, ConcreteFluid.Source::new),
-            LIGHT_BLUE_LIQUID_CONCRETE = concreteFluid("light_blue_liquid_concrete", 0x7393A5, ConcreteFluid.Source::new),
-            BLUE_LIQUID_CONCRETE = concreteFluid("blue_liquid_concrete", 0x4B4D7E, ConcreteFluid.Source::new),
-            PURPLE_LIQUID_CONCRETE = concreteFluid("purple_liquid_concrete", 0x6E5086, ConcreteFluid.Source::new),
-            MAGENTA_LIQUID_CONCRETE = concreteFluid("magenta_liquid_concrete", 0x894B83, ConcreteFluid.Source::new),
-            PINK_LIQUID_CONCRETE = concreteFluid("pink_liquid_concrete", 0xA1677D, ConcreteFluid.Source::new);
+    public static final DyedFluidList<BaseFlowingFluid.Flowing> COLOURED_CONCRETE = new DyedFluidList<>(colour -> {
+        String colourName = colour.getSerializedName();
+        return REGISTRATE.fluid(colourName + "_liquid_concrete", getLocation(colourName + "_liquid_concrete"), getLocationFlow(colourName + "_liquid_concrete"),
+                        SolidRenderedPlaceableFluidType.create(TFMGUtils.blendColours(new Color(colour.getFireworkColor()), new Color(0x5B5B59)).getRGB(), () -> 1f / 32f))
+                .lang(toHumanReadable(colourName + "_liquid_concrete"))
+                .properties(b -> b.viscosity(5000)
+                        .density(2500))
+                .fluidProperties(p -> p.levelDecreasePerBlock(1)
+                        .tickRate(99999)
+                        .slopeFindDistance(1)
+                        .explosionResistance(1000f))
+                .source((p) -> new ConcreteFluid.Source(p).withColour(colour))
+                .bucket()
+                .tag(ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", "buckets/" + colourName + "_liquid_concrete")))
+                .build()
+                .register();
+    });
 
     @SafeVarargs
     private static FluidEntry<BaseFlowingFluid.Flowing> fluid(String name, int fogColor, TagKey<Fluid>... tags) {

@@ -10,6 +10,7 @@ import com.drmangotea.tfmg.registry.TFMGItems;
 import com.drmangotea.tfmg.registry.TFMGTags;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.material.Fluids;
@@ -42,133 +43,22 @@ public class TFMGVatRecipeGen extends VatRecipeGen {
             .mixing()
     ),
 
-    WHITE_CONCRETE = create("white_concrete", b -> b
-            .require(Items.WHITE_DYE)
-            .require(TFMGFluids.LIQUID_CONCRETE.getSource(), 8000)
-            .output(TFMGFluids.WHITE_LIQUID_CONCRETE.get(), 8000)
-            .duration(100)
-            .mixing()
-    ),
-
-    LIGHT_GRAY_CONCRETE = create("light_gray_concrete", b -> b
-            .require(Items.LIGHT_GRAY_DYE)
-            .require(TFMGFluids.LIQUID_CONCRETE.getSource(), 8000)
-            .output(TFMGFluids.LIGHT_GRAY_LIQUID_CONCRETE.get(), 8000)
-            .duration(100)
-            .mixing()
-    ),
-
-    GRAY_CONCRETE = create("gray_concrete", b -> b
-            .require(Items.GRAY_DYE)
-            .require(TFMGFluids.LIQUID_CONCRETE.getSource(), 8000)
-            .output(TFMGFluids.GRAY_LIQUID_CONCRETE.get(), 8000)
-            .duration(100)
-            .mixing()
-    ),
-
-    BLACK_CONCRETE = create("black_concrete", b -> b
-            .require(Items.BLACK_DYE)
-            .require(TFMGFluids.LIQUID_CONCRETE.getSource(), 8000)
-            .output(TFMGFluids.BLACK_LIQUID_CONCRETE.get(), 8000)
-            .duration(100)
-            .mixing()
-    ),
-
-    BROWN_CONCRETE = create("brown_concrete", b -> b
-            .require(Items.BROWN_DYE)
-            .require(TFMGFluids.LIQUID_CONCRETE.getSource(), 8000)
-            .output(TFMGFluids.BROWN_LIQUID_CONCRETE.get(), 8000)
-            .duration(100)
-            .mixing()
-    ),
-
-    RED_CONCRETE = create("red_concrete", b -> b
-            .require(Items.RED_DYE)
-            .require(TFMGFluids.LIQUID_CONCRETE.getSource(), 8000)
-            .output(TFMGFluids.RED_LIQUID_CONCRETE.get(), 8000)
-            .duration(100)
-            .mixing()
-    ),
-
-    ORANGE_CONCRETE = create("orange_concrete", b -> b
-            .require(Items.ORANGE_DYE)
-            .require(TFMGFluids.LIQUID_CONCRETE.getSource(), 8000)
-            .output(TFMGFluids.ORANGE_LIQUID_CONCRETE.get(), 8000)
-            .duration(100)
-            .mixing()
-    ),
-
-    YELLOW_CONCRETE = create("yellow_concrete", b -> b
-            .require(Items.YELLOW_DYE)
-            .require(TFMGFluids.LIQUID_CONCRETE.getSource(), 8000)
-            .output(TFMGFluids.YELLOW_LIQUID_CONCRETE.get(), 8000)
-            .duration(100)
-            .mixing()
-    ),
-
-    LIME_CONCRETE = create("lime_concrete", b -> b
-            .require(Items.LIME_DYE)
-            .require(TFMGFluids.LIQUID_CONCRETE.getSource(), 8000)
-            .output(TFMGFluids.LIME_LIQUID_CONCRETE.get(), 8000)
-            .duration(100)
-            .mixing()
-    ),
-
-    GREEN_CONCRETE = create("green_concrete", b -> b
-            .require(Items.GREEN_DYE)
-            .require(TFMGFluids.LIQUID_CONCRETE.getSource(), 8000)
-            .output(TFMGFluids.GREEN_LIQUID_CONCRETE.get(), 8000)
-            .duration(100)
-            .mixing()
-    ),
-
-    CYAN_CONCRETE = create("cyan_concrete", b -> b
-            .require(Items.CYAN_DYE)
-            .require(TFMGFluids.LIQUID_CONCRETE.getSource(), 8000)
-            .output(TFMGFluids.CYAN_LIQUID_CONCRETE.get(), 8000)
-            .duration(100)
-            .mixing()
-    ),
-
-    LIGHT_BLUE_CONCRETE = create("light_blue_concrete", b -> b
-            .require(Items.LIGHT_BLUE_DYE)
-            .require(TFMGFluids.LIQUID_CONCRETE.getSource(), 8000)
-            .output(TFMGFluids.LIGHT_BLUE_LIQUID_CONCRETE.get(), 8000)
-            .duration(100)
-            .mixing()
-    ),
-
-    BLUE_CONCRETE = create("blue_concrete", b -> b
-            .require(Items.BLUE_DYE)
-            .require(TFMGFluids.LIQUID_CONCRETE.getSource(), 8000)
-            .output(TFMGFluids.BLUE_LIQUID_CONCRETE.get(), 8000)
-            .duration(100)
-            .mixing()
-    ),
-
-    PURPLE_CONCRETE = create("purple_concrete", b -> b
-            .require(Items.PURPLE_DYE)
-            .require(TFMGFluids.LIQUID_CONCRETE.getSource(), 8000)
-            .output(TFMGFluids.PURPLE_LIQUID_CONCRETE.get(), 8000)
-            .duration(100)
-            .mixing()
-    ),
-
-    MAGENTA_CONCRETE = create("magenta_concrete", b -> b
-            .require(Items.MAGENTA_DYE)
-            .require(TFMGFluids.LIQUID_CONCRETE.getSource(), 8000)
-            .output(TFMGFluids.MAGENTA_LIQUID_CONCRETE.get(), 8000)
-            .duration(100)
-            .mixing()
-    ),
-
-    PINK_CONCRETE = create("pink_concrete", b -> b
-            .require(Items.PINK_DYE)
-            .require(TFMGFluids.LIQUID_CONCRETE.getSource(), 8000)
-            .output(TFMGFluids.PINK_LIQUID_CONCRETE.get(), 8000)
-            .duration(100)
-            .mixing()
-    ),
+    WHITE_CONCRETE = concreteDyeing(DyeColor.WHITE),
+    LIGHT_GRAY_CONCRETE = concreteDyeing(DyeColor.LIGHT_GRAY),
+    GRAY_CONCRETE = concreteDyeing(DyeColor.GRAY),
+    BLACK_CONCRETE = concreteDyeing(DyeColor.BLACK),
+    BROWN_CONCRETE = concreteDyeing(DyeColor.BROWN),
+    RED_CONCRETE = concreteDyeing(DyeColor.RED),
+    ORANGE_CONCRETE = concreteDyeing(DyeColor.ORANGE),
+    YELLOW_CONCRETE = concreteDyeing(DyeColor.YELLOW),
+    LIME_CONCRETE = concreteDyeing(DyeColor.LIME),
+    GREEN_CONCRETE = concreteDyeing(DyeColor.GREEN),
+    CYAN_CONCRETE = concreteDyeing(DyeColor.CYAN),
+    LIGHT_BLUE_CONCRETE = concreteDyeing(DyeColor.LIGHT_BLUE),
+    BLUE_CONCRETE = concreteDyeing(DyeColor.BLUE),
+    PURPLE_CONCRETE = concreteDyeing(DyeColor.PURPLE),
+    MAGENTA_CONCRETE = concreteDyeing(DyeColor.MAGENTA),
+    PINK_CONCRETE = concreteDyeing(DyeColor.PINK),
 
     ARC_FURNACE_STEEL = create("arc_furnace_steel", b -> b
             .require(crushedRawIron())
@@ -274,6 +164,17 @@ public class TFMGVatRecipeGen extends VatRecipeGen {
             .allowFireproof()
             .heatLevel(2)
     );
+
+    public GeneratedRecipe concreteDyeing(DyeColor color) {
+        return create("dyeing_" + color.getSerializedName() + "_concrete", b -> b
+                .require(color.getTag())
+                .require(TFMGFluids.LIQUID_CONCRETE.getSource(), 8000)
+                .output(TFMGFluids.COLOURED_CONCRETE.getSource(color), 8000)
+                .mixing()
+                .duration(100)
+                .allowAllVatTypes()
+        );
+    }
 
     public static class VatRecipeValues {
         public List<VatOperation> machines;

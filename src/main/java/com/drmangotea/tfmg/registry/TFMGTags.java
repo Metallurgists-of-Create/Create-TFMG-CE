@@ -102,7 +102,9 @@ public class TFMGTags {
         WIRES_CONSTANTAN(COMMON, "wires/constantan"),
         WIRES_COPPER(COMMON, "wires/copper"),
         ENGINE_TURBINE(MOD, "engine/turbine"),
-        ENGINE_CYLINDER(MOD, "engine/cylinder")
+        ENGINE_CYLINDER(MOD, "engine/cylinder"),
+        MULTIMETERS(MOD),
+        CAUTION_BLOCKS(MOD)
         ;
 
         public final TagKey<Item> tag;
