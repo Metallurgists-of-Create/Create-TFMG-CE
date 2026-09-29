@@ -34,11 +34,18 @@ file="META-INF/accesstransformer.cfg"
     modId = "create"
     type = "required"
     versionRange = "[6.0.6,)"
+    ordering="AFTER"
     side = "BOTH"
 [[dependencies."${mod_id}"]]
     modId = "jei"
     type = "optional"
     versionRange = "[{jei_version},)"
+    side = "BOTH"
+[[dependencies."${mod_id}"]]
+    modId = "createbigcannons"
+    type = "optional"
+    versionRange = "[5.11.7,)"
+    ordering="AFTER"
     side = "BOTH"
 [[dependencies."${mod_id}"]]
     modId = "tfmgtweaks"
