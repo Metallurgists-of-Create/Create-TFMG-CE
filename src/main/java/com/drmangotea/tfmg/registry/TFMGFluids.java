@@ -7,14 +7,9 @@ import com.drmangotea.tfmg.base.fluid.AcidFluidType;
 import com.drmangotea.tfmg.base.fluid.AsphaltFluid;
 import com.drmangotea.tfmg.base.fluid.ConcreteFluid;
 import com.drmangotea.tfmg.base.fluid.HotFluidType;
-import com.drmangotea.tfmg.datagen.recipes.builder.VatRecipeGen;
-import com.drmangotea.tfmg.datagen.recipes.values.tfmg.TFMGVatRecipeGen;
-import com.drmangotea.tfmg.recipes.VatMachineRecipe;
-import com.drmangotea.tfmg.recipes.VatRecipeParams;
 import com.simibubi.create.AllFluids;
 import com.simibubi.create.content.fluids.VirtualFluid;
 import com.tterrag.registrate.builders.FluidBuilder;
-import com.tterrag.registrate.providers.ProviderType;
 import com.tterrag.registrate.util.entry.FluidEntry;
 import com.tterrag.registrate.util.nullness.NonNullFunction;
 import net.createmod.catnip.theme.Color;
@@ -28,7 +23,6 @@ import net.minecraft.world.level.material.FluidState;
 import net.neoforged.neoforge.fluids.BaseFlowingFluid;
 import org.joml.Vector3f;
 
-import java.util.List;
 import java.util.function.Supplier;
 
 import static com.drmangotea.tfmg.TFMG.REGISTRATE;
@@ -72,8 +66,7 @@ public class TFMGFluids {
         return REGISTRATE.fluid(colourName + "_liquid_concrete", getLocation(colourName + "_liquid_concrete"), getLocationFlow(colourName + "_liquid_concrete"),
                         SolidRenderedPlaceableFluidType.create(TFMGUtils.blendColours(new Color(colour.getFireworkColor()), new Color(0x5B5B59)).getRGB(), () -> 1f / 32f))
                 .lang(toHumanReadable(colourName + "_liquid_concrete"))
-                .properties(b -> b.viscosity(5000)
-                        .density(2500))
+                .properties(b -> b.viscosity(5000).density(2500))
                 .fluidProperties(p -> p.levelDecreasePerBlock(1)
                         .tickRate(99999)
                         .slopeFindDistance(1)

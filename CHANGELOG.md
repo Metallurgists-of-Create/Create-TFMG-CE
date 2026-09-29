@@ -1,7 +1,6 @@
 # Create: TFMG Community Edition 1.3.2
 ## Rant:
 
-
 Contributors:<br>
 @pouffy @wolfieboy09 @ShallowAssumption
 
