@@ -1,6 +1,7 @@
 package com.drmangotea.tfmg.content.electricity.experimental.content;
 
 import com.drmangotea.tfmg.base.TFMGShapes;
+import com.drmangotea.tfmg.base.annotation.NothingNullByDefault;
 import com.drmangotea.tfmg.content.electricity.experimental.IRealisticElectric;
 import com.drmangotea.tfmg.content.electricity.experimental.packets.AddElectricalComponentPacket;
 import com.drmangotea.tfmg.registry.TFMGBlockEntities;
@@ -20,6 +21,9 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
+import javax.annotation.Nullable;
+
+@NothingNullByDefault
 public class ThreePhaseGeneratorBlock extends DirectionalKineticBlock implements IBE<ThreePhaseGeneratorBlockEntity>{
     public ThreePhaseGeneratorBlock(Properties properties) {
         super(properties);
@@ -53,13 +57,14 @@ public class ThreePhaseGeneratorBlock extends DirectionalKineticBlock implements
         return face == state.getValue(FACING);
 
     }
+	
+	@Nullable
     public Direction getPreferredFacing(BlockPlaceContext context) {
-
-        if(super.getPreferredFacing(context)==null)
-            return null;
-
-        return super.getPreferredFacing(context).getOpposite();
+		Direction dir = super.getPreferredFacing(context);
+        if (dir == null) return null;
+        return dir.getOpposite();
     }
+	
     @Override
     public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
         IBE.onRemove(state, level, pos, newState);

@@ -1,16 +1,17 @@
 package com.drmangotea.tfmg.content.electricity.experimental.simulation.nodes;
 
-import com.drmangotea.tfmg.content.electricity.connection.cables.CablePos;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.Vec3;
 
-public class ConnectableElectricalNode extends ElectricalNode{
+public class ConnectableElectricalNode extends ElectricalNode {
 
-    public CablePos position = new CablePos(0,0,0);
+    public Vec3 position = new Vec3(0,0,0);
 
-    public ConnectableElectricalNode(long pos, int localId) {
+    public ConnectableElectricalNode(BlockPos pos, int localId) {
         super(pos, localId);
     }
 
-    public CablePos getPosition() {
+    public Vec3 getPosition() {
         return position;
     }
 }

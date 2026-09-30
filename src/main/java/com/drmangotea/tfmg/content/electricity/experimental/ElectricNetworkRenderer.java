@@ -13,7 +13,6 @@ import net.createmod.catnip.theme.Color;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
@@ -26,7 +25,6 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
-import org.joml.Vector3f;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,27 +48,26 @@ public class ElectricNetworkRenderer {
         if (player == null)
             return;
         RealElectricalNetwork network = RealElectricNetworkManager.getNetwork(mc.level);
-        LevelRenderer levelRenderer = event.getLevelRenderer();
         PoseStack ms = event.getPoseStack();
         MultiBufferSource.BufferSource buffer = mc.renderBuffers().bufferSource();
         VertexConsumer vc = buffer.getBuffer(RenderType.cutoutMipped());
         Camera camera = event.getCamera();
-        Vector3f playerPos = player.getEyePosition().toVector3f();
+        Vec3 playerPos = player.getEyePosition();
         // TFMG.LOGGER.debug(network.connections.size()+"");
-        renderWire(TFMGPartialModels.CABLE, new Vec3(0, -56, 0), new Vec3(0, -56, 10), camera, ms, vc, player, true);
+        renderWire(TFMGPartialModels.CABLE, new Vec3(0, -56, 0), new Vec3(0, -56, 10), camera, ms, vc, playerPos);
 
         for (WireConnection connection : network.connections) {
 			if (connection.render)
 				renderWire(
 					TFMGPartialModels.CABLE,
-					connection.node1().getPosition().add(Vec3.atLowerCornerOf(connection.node1().pos)),
-					connection.node2().getPosition().add(Vec3.atLowerCornerOf(connection.node2().pos)),
-					camera, ms, vc, player, false
+					connection.node1.getPosition().add(Vec3.atLowerCornerOf(connection.node1.pos)),
+					connection.node2.getPosition().add(Vec3.atLowerCornerOf(connection.node2.pos)),
+					camera, ms, vc, playerPos
 				);
         }
     }
 
-    public static void renderWire(PartialModel model, Vec3 pos1, Vec3 pos2, Camera camera, PoseStack ms, VertexConsumer vc, Player player, boolean debug) {
+    public static void renderWire(PartialModel model, Vec3 pos1, Vec3 pos2, Camera camera, PoseStack ms, VertexConsumer vc, Vec3 playerPos) {
 		Vec3 cameraInverse = Vec3.ZERO.subtract(camera.getPosition());
 
         int cableRenderDistance = 64;
@@ -96,7 +93,7 @@ public class ElectricNetworkRenderer {
 		DoubleUnaryOperator curveFunction   = x -> 0.2f * x * (x * reciprocal - 1);
 		DoubleUnaryOperator curveDerivative = x -> 0.2f * (2 * x * reciprocal - 1);
 
-		if ((vec1.distanceTo(player.getEyePosition()) > cableRenderDistance) && (v.distanceTo(player.getEyePosition()) > cableRenderDistance))
+		if ((vec1.distanceTo(playerPos) > cableRenderDistance) && (v.distanceTo(playerPos) > cableRenderDistance))
 			return;
 			
 		for (int i = 0; i < segmentCount; i++) {

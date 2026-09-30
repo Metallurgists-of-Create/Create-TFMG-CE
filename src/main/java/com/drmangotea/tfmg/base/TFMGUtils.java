@@ -1,6 +1,5 @@
 package com.drmangotea.tfmg.base;
 
-import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.TFMGRegistries;
 import com.drmangotea.tfmg.base.lang.TFMGLang;
 import com.drmangotea.tfmg.base.lang.TFMGTexts;
@@ -8,9 +7,7 @@ import com.drmangotea.tfmg.base.spark.ElectricSparkParticle;
 import com.drmangotea.tfmg.base.spark.Spark;
 import com.drmangotea.tfmg.content.electricity.connection.cable_type.CableType;
 import com.drmangotea.tfmg.content.electricity.experimental.IRealisticElectric;
-import com.drmangotea.tfmg.content.electricity.experimental.RealElectricNetworkManager;
 import com.drmangotea.tfmg.content.electricity.experimental.simulation.nodes.ConnectingElectricalNode;
-import com.drmangotea.tfmg.content.electricity.experimental.simulation.nodes.ElectricalNode;
 import com.drmangotea.tfmg.content.machinery.vat.electrode_holder.electrode.Electrode;
 import com.drmangotea.tfmg.registry.TFMGEntityTypes;
 import com.simibubi.create.content.fluids.tank.FluidTankBlockEntity;
@@ -52,11 +49,9 @@ import org.joml.Quaterniond;
 
 import java.util.Arrays;
 import java.util.EnumMap;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public class TFMGUtils {
@@ -70,41 +65,26 @@ public class TFMGUtils {
     }
 
     public static ConnectingElectricalNode closestNode(IRealisticElectric be, Vec3 clickPosition) {
-        Map<Vec3, ConnectingElectricalNode> connectors = new HashMap<>();
-
-        BlockPos pos = BlockPos.of(be.getPos());
-
-        be.getProperties().nodes.forEach(n -> {
-            if (n instanceof ConnectingElectricalNode node) {
-                CablePos position = node.getPosition().add(pos);
-                connectors.put(new Vec3(position.x(), position.y(), position.z()), node);
-            }
-        });
-        Map<Float, ConnectingElectricalNode> distances = new HashMap<>();
-        connectors.forEach((c, n) -> {
-            float distance = TFMGUtils.getDistance(clickPosition, c);
-            distances.put(distance, n);
-        });
-        AtomicReference<Float> closestDistance = new AtomicReference<>((float) 1000);
-        if(be.getProperties().nodes.get(0) instanceof ConnectingElectricalNode connectingNode) {
-
-            AtomicReference<ConnectingElectricalNode> closestConnector = new AtomicReference<>(connectingNode);
-            distances.forEach((f, n) -> {
-                if (f < closestDistance.get()) {
-                    closestDistance.set(f);
-                    closestConnector.set(n);
-                }
-            });
-
-            //for (ElectricalNode node : RealElectricNetworkManager.getNetwork(be.getWorld()).getNodes(be.getPos())) {
-            //    TFMG.LOGGER.debug("nodes are " + node.getNetworkId());
-            //}
-            return closestConnector.get();
-        }
-
-
-        return null;
-    }
+		if(!(be.getProperties().nodes.getFirst() instanceof ConnectingElectricalNode connectingNode))
+			return null;
+   
+		BlockPos pos = be.getPos();
+		AtomicReference<Float> closestDistance = new AtomicReference<>((float) 1000);
+		AtomicReference<ConnectingElectricalNode> closestConnector = new AtomicReference<>(connectingNode);
+		
+		be.getProperties().nodes.forEach(n -> {
+            if (!(n instanceof ConnectingElectricalNode node))
+				return;
+			
+			float distance = TFMGUtils.getDistance(clickPosition, node.getPosition().add(Vec3.atLowerCornerOf(pos)));
+			if (distance >= closestDistance.get())
+				return;
+			
+			closestDistance.set(distance);
+			closestConnector.set(node);
+		});
+		return closestConnector.get();
+	}
 
 	
     public static void createFireExplosion(Level level, Entity entity, Vec3 pos, int sparkAmount, float radius) {

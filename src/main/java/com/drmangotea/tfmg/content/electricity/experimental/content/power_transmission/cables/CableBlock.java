@@ -1,5 +1,6 @@
 package com.drmangotea.tfmg.content.electricity.experimental.content.power_transmission.cables;
 
+import com.drmangotea.tfmg.base.annotation.NothingNullByDefault;
 import com.drmangotea.tfmg.content.electricity.experimental.IRealisticElectric;
 import com.drmangotea.tfmg.content.electricity.experimental.packets.AddElectricalComponentPacket;
 import com.drmangotea.tfmg.registry.TFMGBlockEntities;
@@ -13,6 +14,7 @@ import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
+@NothingNullByDefault
 public class CableBlock extends RotatedPillarBlock implements IBE<CableBlockEntity> {
     public CableBlock(Properties properties) {
         super(properties);

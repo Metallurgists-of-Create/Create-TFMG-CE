@@ -37,9 +37,9 @@ public class ThreePhaseGeneratorProperties extends DirectionalElectricalProperti
         components.add(new IdealVoltageSource(L2r, N, 100,1000, 120, 1));
         components.add(new IdealVoltageSource(L3r, N, 100,1000, 240, 2));
 
-        components.add(new Resistance(L1,L1r,5,0,position));
-        components.add(new Resistance(L2,L2r,5,1,position));
-        components.add(new Resistance(L3,L3r,5,2,position));
+        components.add(new Resistance(L1,L1r,5,0, position));
+        components.add(new Resistance(L2,L2r,5,1, position));
+        components.add(new Resistance(L3,L3r,5,2, position));
         //components.add(new Resistance(L1, N, 10));
         //components.add(new Resistance(L1, N, 10));
 

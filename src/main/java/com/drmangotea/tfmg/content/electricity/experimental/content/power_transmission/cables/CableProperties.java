@@ -2,6 +2,7 @@ package com.drmangotea.tfmg.content.electricity.experimental.content.power_trans
 
 import com.drmangotea.tfmg.content.electricity.experimental.ElectricalProperties;
 import com.drmangotea.tfmg.content.electricity.experimental.simulation.nodes.DirectionalElectricalNode;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 
 import java.util.List;
@@ -10,7 +11,7 @@ public class CableProperties extends ElectricalProperties {
 
     List<Direction> directions;
 
-    public CableProperties(long pos, List<Direction> directions) {
+    public CableProperties(BlockPos pos, List<Direction> directions) {
         super(pos);
         this.directions = directions;
 

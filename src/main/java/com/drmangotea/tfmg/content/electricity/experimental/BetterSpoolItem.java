@@ -1,7 +1,7 @@
 package com.drmangotea.tfmg.content.electricity.experimental;
 
 import com.drmangotea.tfmg.TFMG;
-import com.drmangotea.tfmg.base.TFMGUtils;
+import com.drmangotea.tfmg.base.annotation.NothingNullByDefault;
 import com.drmangotea.tfmg.content.electricity.experimental.simulation.nodes.ConnectingElectricalNode;
 import com.drmangotea.tfmg.content.electricity.experimental.simulation.nodes.ElectricalNode;
 import com.drmangotea.tfmg.registry.TFMGDataComponents;
@@ -14,10 +14,10 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
 
 import static com.drmangotea.tfmg.base.TFMGUtils.closestNode;
 
+@NothingNullByDefault
 public class BetterSpoolItem extends Item {
     public BetterSpoolItem(Properties properties) {
         super(properties);
@@ -34,6 +34,8 @@ public class BetterSpoolItem extends Item {
 			return InteractionResult.PASS;
 		
 		ConnectingElectricalNode node1 = closestNode(be, clickPosition);
+		if (node1 == null) return InteractionResult.PASS;
+		
 		BlockPos pos2 = stack.get(TFMGDataComponents.POSITION);
 		if (pos2 == null) {
 			stack.set(TFMGDataComponents.POSITION, pos);
@@ -60,10 +62,6 @@ public class BetterSpoolItem extends Item {
 				}
 			}
 		}
-
 		return InteractionResult.SUCCESS;
-    }
-
-
-
+	}
 }

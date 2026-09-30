@@ -60,33 +60,33 @@ public interface IRealisticElectric extends IHaveMultimeterInformation {
         List<Pair<Pair<Integer, Integer>, Pair<Float, Float>>> list = new ArrayList<>();
 
         ElectricalProperties properties = getNetwork().members.get(getPos());
-        if (properties != null) {
-            List<Integer> voltageList = new ArrayList<>();
-            List<Integer> phaseOffsetList = new ArrayList<>();
-            List<Float> maxPowerList = new ArrayList<>();
-            List<Float> currentList = new ArrayList<>();
+		if (properties == null) return list;
+		
+		List<Integer> voltageList = new ArrayList<>();
+		List<Integer> phaseOffsetList = new ArrayList<>();
+		List<Float> maxPowerList = new ArrayList<>();
+		List<Float> currentList = new ArrayList<>();
+		
+		for (int i = 0; i < properties.components.size(); i++) {
+			ElectricalComponent component = properties.components.get(i);
 
-            for (int i = 0; i < properties.components.size(); i++) {
-                ElectricalComponent component = properties.components.get(i);
-
-                if (component instanceof IdealVoltageSource source) {
-                    voltageList.add((int) source.amplitude);
-                    phaseOffsetList.add((int) source.phaseOffset);
-                    maxPowerList.add((float) source.power);
-                }
-                if (component instanceof Resistance resistor) {
-                    currentList.add((float) (resistor.getVoltage(getWorld()) / resistor.resistance));
-                }
-            }
-            for (int i = 0; i < voltageList.size(); i++) {
-                int voltage = voltageList.get(i);
-                int phaseOffset = phaseOffsetList.get(i);
-                float maxPower = maxPowerList.get(i);
-                float current = currentList.get(i);
-                list.add(Pair.of(Pair.of(voltage, phaseOffset), Pair.of(maxPower, current)));
-            }
-        }
-        return list;
+			if (component instanceof IdealVoltageSource source) {
+				voltageList.add((int) source.amplitude);
+				phaseOffsetList.add((int) source.phaseOffset);
+				maxPowerList.add((float) source.power);
+			}
+			if (component instanceof Resistance resistor) {
+				currentList.add((float) (resistor.getVoltage(getWorld()) / resistor.resistance));
+			}
+		}
+		for (int i = 0; i < voltageList.size(); i++) {
+			int voltage = voltageList.get(i);
+			int phaseOffset = phaseOffsetList.get(i);
+			float maxPower = maxPowerList.get(i);
+			float current = currentList.get(i);
+			list.add(Pair.of(Pair.of(voltage, phaseOffset), Pair.of(maxPower, current)));
+		}
+		return list;
     }
 
      default void onUpdated(){}
@@ -103,7 +103,6 @@ public interface IRealisticElectric extends IHaveMultimeterInformation {
             float current = v.getSecond().getSecond();
 
             float power = voltage * current;
-
 
             TFMGTexts.Multimeter.voltageGenerated(voltage).forGoggles(tooltip, 1);
             TFMGTexts.Multimeter.phaseOffset(phaseOffset).forGoggles(tooltip, 1);
@@ -142,15 +141,15 @@ public interface IRealisticElectric extends IHaveMultimeterInformation {
     }
 
     default void onPlace() {
-        this.updateNetwork(BlockPos.of(getPos()));
+		BlockPos pos = getPos();
+        this.updateNetwork(pos);
         if (!(this instanceof CableBlockEntity))
             for (Direction facing : Direction.values()) {
-                if (getWorld().getBlockEntity(BlockPos.of(getPos()).relative(facing)) instanceof AbstractCableBlockEntity be) {
+                if (getWorld().getBlockEntity(pos.relative(facing)) instanceof AbstractCableBlockEntity be) {
                     be.connectToNeighbors();
                 }
             }
-        this.updateNetwork(BlockPos.of(getPos()));
-
+        this.updateNetwork(pos);
     }
 
     Level getWorld();

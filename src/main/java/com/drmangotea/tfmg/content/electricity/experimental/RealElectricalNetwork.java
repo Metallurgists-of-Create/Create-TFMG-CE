@@ -1,5 +1,6 @@
 package com.drmangotea.tfmg.content.electricity.experimental;
 
+import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.content.electricity.experimental.simulation.*;
 import com.drmangotea.tfmg.content.electricity.experimental.simulation.nodes.ElectricalNode;
 import com.drmangotea.tfmg.content.electricity.experimental.simulation.nodes.MergedNode;
@@ -282,18 +283,18 @@ public class RealElectricalNetwork {
             finalNodes.get(i).networkId = i;
         }
 
-        if (!RealElectricNetworkManager.getWorldFromNetwork(this).isClientSide()) {
-            TFMG.LOGGER.debug("node count " + finalNodes.size());
+        if (RealElectricNetworkManager.getWorldFromNetwork(this) instanceof LevelAccessor level && !level.isClientSide()) {
+			TFMG.LOGGER.debug("node count {}", finalNodes.size());
             for (int i = 0; i < finalNodes.size(); i++) {
                 ElectricalNode node = finalNodes.get(i);
                 if (node instanceof MergedNode m) {
-                    TFMG.LOGGER.debug("MergeNode " + i + " " + m.mergedNodes.size());
+					TFMG.LOGGER.debug("MergeNode {} {}", i, m.mergedNodes.size());
                     for (int i1 = 0; i1 < m.mergedNodes.size(); i1++) {
                         ElectricalNode n = m.mergedNodes.get(i1);
-                        TFMG.LOGGER.debug("  " + i1 + " " + n.localId);
+						TFMG.LOGGER.debug("  {} {}", i1, n.localId);
                     }
 
-                } else TFMG.LOGGER.debug("Node " + i + " local: " + finalNodes.get(i).localId);
+                } else TFMG.LOGGER.debug("Node {} local: {}", i, finalNodes.get(i).localId);
             }
         }
 
@@ -310,8 +311,7 @@ public class RealElectricalNetwork {
     }
 
 
-    public Resistance getResistance(long pos, int id) {
-
+    public Resistance getResistance(BlockPos pos, int id) {
         for (Resistance r : finalResistors) {
             if(r.pos == pos && r.localId == id){
                 return r;
@@ -373,12 +373,11 @@ public class RealElectricalNetwork {
             int localGroundAnchor = find(data.parent, i);
             ComplexValue voltage = finalVoltages[i].minus(finalVoltages[localGroundAnchor]);
             nodeVoltages.put(i, voltage);
-            TFMG.LOGGER.debug("node " + finalVoltages[i].abs() + " " + finalNodes.get(i).localId);
-
+            TFMG.LOGGER.debug("node {} {}", finalVoltages[i].abs(), finalNodes.get(i).localId);
         }
         for (int i = 0; i < finalSources.size(); i++) {
             IdealVoltageSource source = finalSources.get(i);
-            TFMG.LOGGER.debug("source " + i + " Network: " + source.nodeA.networkId + " " + source.nodeB.networkId + " Local: " + source.nodeA.localId + " " + source.nodeB.localId);
+			TFMG.LOGGER.debug("source {} Network: {} {} Local: {} {}", i, source.nodeA.networkId, source.nodeB.networkId, source.nodeA.localId, source.nodeB.localId);
         }
         for (int i = 0; i < finalResistors.size(); i++) {
             Resistance r = finalResistors.get(i);
@@ -388,9 +387,9 @@ public class RealElectricalNetwork {
             if (voltage1 != null && voltage2 != null) {
                 voltage = voltage1.minus(voltage2).abs();
             }
-
-
-            TFMG.LOGGER.debug("resistor " + i + " Network: " + r.nodeA.networkId + " " + r.nodeB.networkId + " Local: " + r.nodeA.localId + " " + r.nodeB.localId + " Voltage: " + voltage);
+			
+			
+			TFMG.LOGGER.debug("resistor {} Network: {} {} Local: {} {} Voltage: {}", i, r.nodeA.networkId, r.nodeB.networkId, r.nodeA.localId, r.nodeB.localId, voltage);
         }
 
         sendDataToMembers();
@@ -402,21 +401,15 @@ public class RealElectricalNetwork {
 
     public void sendDataToMembers() {
 
-        new HashMap<>(members).forEach((l, o) -> {
-
-
+        new HashMap<>(members).forEach((pos, o) -> {
             if (o.needsUpdateData()) {
                 LevelAccessor level = RealElectricNetworkManager.getWorldFromNetwork(this);
-                if (level != null) {
-                    if (level.getBlockEntity(BlockPos.of(l)) instanceof IRealisticElectric be) {
-                        be.onUpdated();
-                    }
+                if (level != null && level.getBlockEntity(pos) instanceof IRealisticElectric be) {
+					be.onUpdated();
                 }
             }
-
         });
     }
-
 
     public void solve() {
 

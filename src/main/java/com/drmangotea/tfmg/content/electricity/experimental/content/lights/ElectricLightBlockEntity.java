@@ -1,6 +1,5 @@
 package com.drmangotea.tfmg.content.electricity.experimental.content.lights;
 
-
 import com.drmangotea.tfmg.base.lang.TFMGLang;
 import com.drmangotea.tfmg.content.electricity.experimental.ElectricalProperties;
 import com.drmangotea.tfmg.content.electricity.experimental.IRealisticElectric;
@@ -24,17 +23,12 @@ import java.util.List;
 
 import static com.drmangotea.tfmg.content.electricity.experimental.content.lights.ElectricLightBlock.LIGHT;
 
-
 public class ElectricLightBlockEntity extends SmartBlockEntity implements IRealisticElectric {
 
     public LerpedFloat glow = LerpedFloat.linear();
-
     boolean signalChanged;
-
     boolean hasSignal;
-
     public DyeColor color = DyeColor.WHITE;
-
     LightProperties p;
 
     public float current = 0;
@@ -52,6 +46,7 @@ public class ElectricLightBlockEntity extends SmartBlockEntity implements IReali
     @Override
     public void tick() {
         super.tick();
+		if (level == null) return;
         if (!hasSignal) {
             glow.chase(current * 102.5, 0.1, LerpedFloat.Chaser.EXP);
             glow.tickChaser();
@@ -124,7 +119,7 @@ public class ElectricLightBlockEntity extends SmartBlockEntity implements IReali
     }
 
     public void neighbourChanged() {
-        if (!hasLevel())
+        if (level == null)
             return;
         boolean powered = level.getBestNeighborSignal(worldPosition) > 0;
         if (powered != hasSignal)
@@ -156,8 +151,8 @@ public class ElectricLightBlockEntity extends SmartBlockEntity implements IReali
 
 
     @Override
-    public long getPos() {
-        return getBlockPos().asLong();
+    public BlockPos getPos() {
+        return getBlockPos();
     }
 
     @Override

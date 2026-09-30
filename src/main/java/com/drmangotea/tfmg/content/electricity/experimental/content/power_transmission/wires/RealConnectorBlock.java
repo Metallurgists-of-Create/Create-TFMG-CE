@@ -1,9 +1,8 @@
 package com.drmangotea.tfmg.content.electricity.experimental.content.power_transmission.wires;
 
 import com.drmangotea.tfmg.base.TFMGShapes;
+import com.drmangotea.tfmg.base.annotation.NothingNullByDefault;
 import com.drmangotea.tfmg.base.blocks.WallMountBlock;
-import com.drmangotea.tfmg.content.electricity.connection.cables.CableConnectorBlock;
-import com.drmangotea.tfmg.content.electricity.connection.cables.IHaveCables;
 import com.drmangotea.tfmg.content.electricity.experimental.IRealisticElectric;
 import com.drmangotea.tfmg.content.electricity.experimental.packets.AddElectricalComponentPacket;
 import com.drmangotea.tfmg.registry.TFMGBlockEntities;
@@ -23,6 +22,7 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
+@NothingNullByDefault
 public class RealConnectorBlock extends WallMountBlock implements IBE<RealConnectorBlockEntity> {
 
     public static final BooleanProperty EXTENSION = BooleanProperty.create("extension");

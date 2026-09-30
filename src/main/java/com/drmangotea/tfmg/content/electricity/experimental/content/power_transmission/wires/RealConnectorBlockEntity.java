@@ -18,12 +18,14 @@ public class RealConnectorBlockEntity extends SmartBlockEntity implements IReali
     public RealConnectorBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
     }
+	
     @Override
     public void remove() {
         super.remove();
         this.removeBlock();
 
     }
+	
     @Override
     public void addBehaviours(List<BlockEntityBehaviour> behaviours) {
 
