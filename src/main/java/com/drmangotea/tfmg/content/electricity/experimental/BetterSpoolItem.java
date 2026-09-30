@@ -2,8 +2,8 @@ package com.drmangotea.tfmg.content.electricity.experimental;
 
 import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.base.TFMGUtils;
-import com.drmangotea.tfmg.content.electricity.experimental.simulation.ConnectingElectricalNode;
-import com.drmangotea.tfmg.content.electricity.experimental.simulation.ElectricalNode;
+import com.drmangotea.tfmg.content.electricity.experimental.simulation.nodes.ConnectingElectricalNode;
+import com.drmangotea.tfmg.content.electricity.experimental.simulation.nodes.ElectricalNode;
 import com.drmangotea.tfmg.registry.TFMGDataComponents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionResult;
@@ -15,6 +15,8 @@ import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
+
+import static com.drmangotea.tfmg.base.TFMGUtils.closestNode;
 
 public class BetterSpoolItem extends Item {
     public BetterSpoolItem(Properties properties) {
@@ -32,25 +34,23 @@ public class BetterSpoolItem extends Item {
 			return InteractionResult.PASS;
 		
 		ConnectingElectricalNode node1 = closestNode(be, clickPosition);
-		TFMG.LOGGER.debug("Closest node is " + node1.getNetworkId());
 		BlockPos pos2 = stack.get(TFMGDataComponents.POSITION);
 		if (pos2 == null) {
 			stack.set(TFMGDataComponents.POSITION, pos);
 			stack.set(TFMGDataComponents.CONNECTOR_ID, node1.getLocalId());
-			TFMG.LOGGER.debug("Saved node " + node1.getLocalId() + " " + node1.getNetworkId());
 		} else {
 			RealElectricalNetwork network = RealElectricNetworkManager.getNetwork(level);
 
 			int id = stack.getOrDefault(TFMGDataComponents.CONNECTOR_ID, 0);
-
+			
 			if (!(level.getBlockEntity(pos2) instanceof IRealisticElectric be2))
 				return InteractionResult.PASS;
 			
 			List<ElectricalNode> nodes = be2.getProperties().nodes;
-			
+
 			for (ElectricalNode n : nodes) {
 				if (n.getLocalId() == id && n instanceof ConnectingElectricalNode node2) {
-					network.connections.add(new WireConnection(node1, node2, 10));
+					network.connections.add(new WireConnection(node1, node2, 10, true));
 					network.update();
 					TFMG.ELECTRICAL_NETWORK_DATA.markDirty();
 					stack.remove(TFMGDataComponents.CONNECTOR_ID);
@@ -60,31 +60,10 @@ public class BetterSpoolItem extends Item {
 				}
 			}
 		}
-		
+
 		return InteractionResult.SUCCESS;
-	}
-
-    private ConnectingElectricalNode closestNode(IRealisticElectric be, Vec3 clickPosition) {
-		BlockPos pos = be.getPos();
-		AtomicReference<Float> closestDistance = new AtomicReference<>(1000f);
-		AtomicReference<ConnectingElectricalNode> closestConnector = new AtomicReference<>((ConnectingElectricalNode) be.getProperties().nodes.getFirst());
-
-        be.getProperties().nodes.forEach(n -> {
-            if (!(n instanceof ConnectingElectricalNode node)) return;
-			
-			Vec3 position = node.getPosition().add(pos.getX(), pos.getY(), pos.getZ());
-			float distance = TFMGUtils.getDistance(clickPosition, position);
-            if (distance < closestDistance.get()) {
-                closestDistance.set(distance);
-                closestConnector.set(node);
-            }
-        });
-
-        for (ElectricalNode node : RealElectricNetworkManager.getNetwork(be.getWorld()).getNodes(be.getPos())) {
-            TFMG.LOGGER.debug("nodes are " + node.getNetworkId());
-        }
-
-        return closestConnector.get();
     }
+
+
 
 }

@@ -1,8 +1,8 @@
 package com.drmangotea.tfmg.content.electricity.experimental;
 
 import com.drmangotea.tfmg.base.TFMGUtils;
-import com.drmangotea.tfmg.content.electricity.experimental.simulation.ConnectingElectricalNode;
-import com.drmangotea.tfmg.content.electricity.experimental.simulation.ElectricalNode;
+import com.drmangotea.tfmg.content.electricity.experimental.simulation.nodes.ConnectingElectricalNode;
+import com.drmangotea.tfmg.content.electricity.experimental.simulation.nodes.ElectricalNode;
 import com.drmangotea.tfmg.registry.TFMGPartialModels;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -60,12 +60,13 @@ public class ElectricNetworkRenderer {
         renderWire(TFMGPartialModels.CABLE, new Vec3(0, -56, 0), new Vec3(0, -56, 10), camera, ms, vc, player, true);
 
         for (WireConnection connection : network.connections) {
-            renderWire(
-				TFMGPartialModels.CABLE,
-				connection.node1().getPosition().add(Vec3.atLowerCornerOf(connection.node1().pos)),
-				connection.node2().getPosition().add(Vec3.atLowerCornerOf(connection.node2().pos)),
-				camera, ms, vc, player, false
-			);
+			if (connection.render)
+				renderWire(
+					TFMGPartialModels.CABLE,
+					connection.node1().getPosition().add(Vec3.atLowerCornerOf(connection.node1().pos)),
+					connection.node2().getPosition().add(Vec3.atLowerCornerOf(connection.node2().pos)),
+					camera, ms, vc, player, false
+				);
         }
     }
 
@@ -147,6 +148,8 @@ public class ElectricNetworkRenderer {
             }
 
             for (ConnectingElectricalNode node : connectors) {
+				if (node == null) continue;
+				
 				Vec3 cablePos = node.getPosition().add(Vec3.atLowerCornerOf(be.getPos()));
 
                 Vec3 corner1 = cablePos.add(0.1f, 0.1f, 0.1f);
@@ -154,7 +157,6 @@ public class ElectricNetworkRenderer {
 
                 TFMGUtils.createOutline(corner1, corner2, "connector_" + node.localId, Color.rainbowColor(AnimationTickHolder.getTicks() * 5));
             }
-
         }
 
     }

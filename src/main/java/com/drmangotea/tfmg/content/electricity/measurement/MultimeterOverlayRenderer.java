@@ -13,7 +13,6 @@ import com.simibubi.create.foundation.gui.RemovedGuiUtils;
 import com.simibubi.create.foundation.mixin.accessor.MouseHandlerAccessor;
 import com.simibubi.create.infrastructure.config.AllConfigs;
 import com.simibubi.create.infrastructure.config.CClient;
-import net.createmod.catnip.gui.element.BoxElement;
 import net.createmod.catnip.gui.element.GuiGameElement;
 import net.createmod.catnip.outliner.Outline;
 import net.createmod.catnip.outliner.Outliner;
@@ -29,6 +28,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.util.Mth;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
@@ -122,13 +122,24 @@ public class MultimeterOverlayRenderer {
         int animationTicks = wearingGoggles ? GoggleOverlayRenderer.hoverTicks : hoverTicks;
         float fade = Mth.clamp((animationTicks + deltaTracker.getGameTimeDeltaPartialTick(false)) / 24f, 0, 1);
         Boolean useCustom = cfg.overlayCustomColor.get();
-        Color colorBackground = useCustom ? new Color(cfg.overlayBackgroundColor.get())
-                : BoxElement.COLOR_VANILLA_BACKGROUND.scaleAlpha(.75f);
-        Color colorBorderTop = new Color(0x50_dbdb14);
-        Color colorBorderBot = new Color(0x50_bdbd0f);
+        //Color colorBackground = useCustom ? new Color(cfg.overlayBackgroundColor.get())
+        //        : BoxElement.COLOR_VANILLA_BACKGROUND.scaleAlpha(.75f);
+
+        ItemStack inMainHand = mc.player.getItemInHand(InteractionHand.MAIN_HAND);
+        ItemStack inOffHand = mc.player.getItemInHand(InteractionHand.OFF_HAND);
+
+        if(!(inMainHand.getItem() instanceof MultimeterItem || inOffHand.getItem() instanceof MultimeterItem))
+            return;
+
+        ItemStack multimeter = inMainHand.getItem() instanceof MultimeterItem ? inMainHand : inOffHand;
+        Color colorBackground = new Color(((MultimeterItem)multimeter.getItem()).color).setAlpha(100);
+
+        Color colorBorderTop = new Color(((MultimeterItem)multimeter.getItem()).color).setAlpha(100);
+        Color colorBorderBot = new Color(((MultimeterItem)multimeter.getItem()).color).setAlpha(100);
 
         if (fade < 1) {
             poseStack.translate(Math.pow(1 - fade, 3) * Math.signum(cfg.overlayOffsetX.get() + .5f) * 8, 0, 0);
+
             colorBackground.scaleAlpha(fade);
             colorBorderTop.scaleAlpha(fade);
             colorBorderBot.scaleAlpha(fade);
@@ -136,14 +147,14 @@ public class MultimeterOverlayRenderer {
 
         // Add a multimeter to indicate both items are being utilised
         if (wearingGoggles) {
-            GuiGameElement.of(multimeterItem)
+            GuiGameElement.of(multimeter)
                     .at(posX + 10, posY, 450)
                     .render(graphics);
             poseStack.popPose();
             return;
         }
 
-        GuiGameElement.of(multimeterItem)
+        GuiGameElement.of(multimeter)
                 .at(posX + 10, posY - 16, 450)
                 .render(graphics);
 

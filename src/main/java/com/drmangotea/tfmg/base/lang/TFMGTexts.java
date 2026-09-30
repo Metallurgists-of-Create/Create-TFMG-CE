@@ -46,6 +46,9 @@ public class TFMGTexts {
     public static String voltage(double value) {
         return TFMGUtils.formatUnits(value, "V");
     }
+    public static String degrees(double value) {
+        return TFMGUtils.formatUnits(value, "°");
+    }
     public static String current(double value) {
         return TFMGUtils.formatUnits(value, "A");
     }
@@ -139,9 +142,16 @@ public class TFMGTexts {
         public static LangBuilder voltageGenerated(double value) {
             return TFMGLang.translate("multimeter.voltage_generated", voltage(value)).color(VOLTAGE_DARK);
         }
+        public static LangBuilder maxPower(double value) {
+            return TFMGLang.translate("multimeter.max_power", power(value)).color(0x9B3784);
+        }
+        public static LangBuilder phaseOffset(double value) {
+            return TFMGLang.translate("multimeter.phase_offset", degrees(value)).color(0xEFB500);
+        }
         public static LangBuilder networkGeneration(double value) {
             return TFMGLang.translate("multimeter.network.generation", power(value)).color(POWER);
         }
+
         public static LangBuilder networkConsumption(double value) {
             return TFMGLang.translate("multimeter.network.consumption", power(value)).color(POWER);
         }
@@ -150,6 +160,9 @@ public class TFMGTexts {
         }
         public static LangBuilder voltage(double value) {
             return TFMGLang.text("   U = " + TFMGTexts.voltage(value)).color(VOLTAGE);
+        }
+        public static LangBuilder degrees(double value) {
+            return TFMGLang.text("         φ = " + TFMGTexts.degrees(value)).color(0xEA9570);
         }
         public static LangBuilder current(double value) {
             return TFMGLang.text("   I = " + TFMGTexts.current(value)).color(CURRENT);

@@ -5,6 +5,8 @@ import com.drmangotea.tfmg.TFMGClient;
 import com.drmangotea.tfmg.base.lang.TFMGLang;
 import com.drmangotea.tfmg.content.electricity.connection.cables.CableConnectorBlockEntity;
 import com.drmangotea.tfmg.content.electricity.experimental.ElectricNetworkRenderer;
+import com.drmangotea.tfmg.content.electricity.experimental.RealElectricNetworkManager;
+import com.drmangotea.tfmg.content.electricity.experimental.RealElectricalNetwork;
 import com.drmangotea.tfmg.content.electricity.measurement.MultimeterOverlayRenderer;
 import com.drmangotea.tfmg.content.electricity.network.transformer.small.TransformerBlockEntity;
 import com.drmangotea.tfmg.content.items.ScrewdriverItem;
@@ -85,6 +87,12 @@ public class TFMGClientEvents {
     }
 
     @SubscribeEvent
+    public static void PlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
+        RealElectricalNetwork network = RealElectricNetworkManager.getNetwork(event.getEntity().level());
+        network.update();
+    }
+
+    @SubscribeEvent
     public static void PlayerLoggedOut(PlayerEvent.PlayerLoggedOutEvent event) {
         Player player = event.getEntity();
 
@@ -92,9 +100,12 @@ public class TFMGClientEvents {
 			player.getPersistentData().remove("IsUsingEngineController");
 	}
 
-	public static void registerGuiOverlays(RegisterGuiLayersEvent event) {
-		event.registerAbove(VanillaGuiLayers.HOTBAR, TFMG.asResource("multimeter_info"), MultimeterOverlayRenderer.OVERLAY);
-	}
+    @SubscribeEvent
+    public static void registerGuiOverlays(RegisterGuiLayersEvent event) {
+
+        event.registerAbove(VanillaGuiLayers.HOTBAR, TFMG.asResource("multimeter_info"), MultimeterOverlayRenderer.OVERLAY);
+
+    }
 
 	protected static boolean isGameActive() {
 		return !(Minecraft.getInstance().level == null || Minecraft.getInstance().player == null);

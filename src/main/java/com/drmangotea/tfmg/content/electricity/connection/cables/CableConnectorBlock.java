@@ -126,6 +126,7 @@ public class CableConnectorBlock extends WallMountBlock implements IBE<CableConn
 
     @Override
     public BlockEntityType<? extends CableConnectorBlockEntity> getBlockEntityType() {
-        return TFMGBlockEntities.CABLE_CONNECTOR.get();
+    //    return TFMGBlockEntities.CABLE_CONNECTOR.get();
+        return null;
     }
 }

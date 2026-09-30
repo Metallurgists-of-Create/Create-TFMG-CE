@@ -6,8 +6,11 @@ import com.drmangotea.tfmg.content.decoration.tanks.steel.SteelTankBlockEntity;
 import com.drmangotea.tfmg.content.electricity.experimental.IRealisticElectric;
 import com.drmangotea.tfmg.content.electricity.experimental.RealElectricNetworkManager;
 import com.drmangotea.tfmg.content.electricity.experimental.RealElectricalNetwork;
-import com.drmangotea.tfmg.content.electricity.experimental.blocks.DebugResistorBlockEntity;
-import com.drmangotea.tfmg.content.electricity.experimental.blocks.ThreePhaseGeneratorBlockEntity;
+import com.drmangotea.tfmg.content.electricity.experimental.content.ThreePhaseGeneratorBlockEntity;
+import com.drmangotea.tfmg.content.electricity.experimental.content.devices.DebugResistorBlockEntity;
+import com.drmangotea.tfmg.content.electricity.experimental.testing.DebugSolving;
+import com.drmangotea.tfmg.content.electricity.experimental.testing.Resistor;
+import com.drmangotea.tfmg.content.electricity.experimental.testing.VoltageSource;
 import com.simibubi.create.Create;
 import com.drmangotea.tfmg.content.electricity.base.IElectric;
 import com.drmangotea.tfmg.content.electricity.connection.cables.CableConnectorBlockEntity;
@@ -17,6 +20,9 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
+
+import java.util.ArrayList;
 
 
 public class DebugCinderBlockItem extends Item {
@@ -40,40 +46,44 @@ public class DebugCinderBlockItem extends Item {
 
         if (level.getBlockEntity(pos) instanceof ThreePhaseGeneratorBlockEntity be) {
             RealElectricalNetwork network = RealElectricNetworkManager.getNetwork(be.getLevel());
-			
-			
-		}
-		if (level.getBlockEntity(pos) instanceof DebugResistorBlockEntity be) {
-			
-			RealElectricalNetwork network = RealElectricNetworkManager.getNetwork(be.getWorld());
-			
-			network.setResistance(be, 0, Create.RANDOM.nextInt(700));
-			
-			return InteractionResult.SUCCESS;
-		}
-		if (level.getBlockEntity(pos) instanceof IRealisticElectric be) {
-			//if (context.getPlayer() instanceof ServerPlayer serverPlayer) {
-			//    NetworkLoadPacket packet = new NetworkLoadPacket(RealElectricNetworkManager.networks.values().stream().toList());
-			//    CatnipServices.NETWORK.sendToClient(serverPlayer, packet);
-			//}
-			
-			RealElectricalNetwork network = RealElectricNetworkManager.getNetwork(be.getWorld());
-			
-			network.setVoltageGen(be, Create.RANDOM.nextInt(700));
-			
-			TFMG.LOGGER.debug("Member count: " + network.members.size());
-			TFMG.LOGGER.debug("Node Count: " + network.nodes.size());
-			TFMG.LOGGER.debug("Connection Count: " + network.connections.size());
-			TFMG.LOGGER.debug("This Block Node Count: " + be.getProperties().nodes.size());
-			
-			network.connections.forEach(c -> {
-				TFMG.LOGGER.debug("Connection1  " + c.node1().getPosition().x() + c.node1().getPosition().y() + c.node1().getPosition().z());
-                TFMG.LOGGER.debug("Connection2  " + c.node2().getPosition().x() + c.node2().getPosition().y() + c.node2().getPosition().z());
-            });
+
+
+        }
+        if (level.getBlockEntity(pos) instanceof DebugResistorBlockEntity be) {
+
+            RealElectricalNetwork network = RealElectricNetworkManager.getNetwork(be.getWorld());
+
+            network.setResistance(be, 0, Create.RANDOM.nextInt(700));
+
+            return InteractionResult.SUCCESS;
+        }
+        if (level.getBlockEntity(pos) instanceof IRealisticElectric be) {
+            //if (context.getPlayer() instanceof ServerPlayer serverPlayer) {
+            //    NetworkLoadPacket packet = new NetworkLoadPacket(RealElectricNetworkManager.networks.values().stream().toList());
+            //    CatnipServices.NETWORK.sendToClient(serverPlayer, packet);
+            //}
+
+            RealElectricalNetwork network = RealElectricNetworkManager.getNetwork(be.getWorld());
+
+            // network.setVoltageGen(be, Create.RANDOM.nextInt(700));
+
+
+            TFMG.LOGGER.debug("Member count: " + network.members.size());
+            TFMG.LOGGER.debug("Node Count: " + network.nodes.size());
+            TFMG.LOGGER.debug("Connection Count: " + network.connections.size());
+            TFMG.LOGGER.debug("Resistor Count: " + network.resistors.size());
+            TFMG.LOGGER.debug("This Block Node Count: " + be.getProperties().nodes.size());
+            // TFMG.LOGGER.debug("Voltage gen: " + be.getVoltageGeneration().getFirst().getFirst().getFirst());
+
+
+            // network.connections.forEach(c -> {
+            //     TFMG.LOGGER.debug("Connection1  " + c.node1().getPosition().x() + c.node1().getPosition().y() + c.node1().getPosition().z());
+            //     TFMG.LOGGER.debug("Connection2  " + c.node2().getPosition().x() + c.node2().getPosition().y() + c.node2().getPosition().z());
+            // });
 
             if (context.getPlayer().isCrouching()) {
-                TFMG.ELECTRICAL_NETWORK_DATA.markDirty();
-
+                //  TFMG.ELECTRICAL_NETWORK_DATA.markDirty();
+                network.update();
             }
 		}
 

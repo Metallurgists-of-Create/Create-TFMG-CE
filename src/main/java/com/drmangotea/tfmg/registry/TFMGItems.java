@@ -59,9 +59,11 @@ import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.block.Blocks;
+import net.neoforged.neoforge.client.event.RenderTooltipEvent;
 import net.neoforged.neoforge.common.Tags;
 
 import java.util.*;
+import java.awt.*;
 
 import static com.drmangotea.tfmg.content.items.weapons.explosives.thermite_grenades.ThermiteGrenade.ChemicalColor.*;
 import static com.simibubi.create.AllTags.AllItemTags.CREATE_INGOTS;
@@ -266,7 +268,7 @@ public class TFMGItems {
                     .properties(p -> p.stacksTo(1))
                     .register();
 
-    public static final ItemEntry<MultimeterItem> MULTIMETER = REGISTRATE.item("multimeter", MultimeterItem::new).tag(Items.MULTIMETERS.tag).register();
+    public static final ItemEntry<MultimeterItem> MULTIMETER = REGISTRATE.item("multimeter", p -> new MultimeterItem(p, 0xCFD300)).tag(Items.MULTIMETERS.tag).register();
 
     public static final ItemEntry<SequencedAssemblyItem>
             UNFINISHED_POTENTIOMETER = sequencedIngredient("unfinished_potentiometer", "block/potentiometer/unfinished"),
@@ -492,7 +494,45 @@ public class TFMGItems {
                 .register();
     }
 
-    public static ItemBuilder<SpoolItem, CreateRegistrate> spoolItem(String name, int barColor) {
+    public static Map<String, ItemEntry<MultimeterItem>> multimeters() {
+        Map<String, ItemEntry<MultimeterItem>> map = new HashMap<>();
+
+        for (String color : COLORS) {
+
+            map.put(color, REGISTRATE.item(color + "_multimeter", p -> new MultimeterItem(p,getMultimeterColor(color)))
+                    .register());
+        }
+
+        return map;
+    }
+
+    public static int getMultimeterColor(String color){
+
+        return switch (color){
+            case "black" -> 0x0B0B44;
+            case "gray" -> 0x5B5B5B;
+            case "light_gray" -> 0xB7CECE;
+            case "blue" -> 0x4E5EBA;
+            case "light_blue" -> 0x719DBA;
+            case "lime" -> 0x77916C;
+            case "green" -> 0x2B5A1A;
+            case "yellow" -> 0xCFD300;
+            case "brown" -> 0x4C2817;
+            case "orange" -> 0xDB9A74;
+            case "cyan" -> 0x4B5B60;
+            case "pink" -> 0xDB9CBB;
+            case "purple" -> 0xA53798;
+            case "magenta" -> 0x915BAE;
+            case "white" -> 0xB1C6CC;
+            case "red" -> 0x922B12;
+            default -> 0;
+        };
+
+
+
+    }
+
+	public static ItemBuilder<SpoolItem, CreateRegistrate> spoolItem(String name, int barColor) {
         return REGISTRATE.item(name + "_spool", p -> new SpoolItem(p, barColor, TFMG.asResource(name)))
                 .tag(Items.SPOOLS.tag)
                 .properties(p -> p.stacksTo(1));

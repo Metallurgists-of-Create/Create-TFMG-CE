@@ -2,7 +2,7 @@ package com.drmangotea.tfmg.content.electricity.lights.neon_tube;
 
 import com.drmangotea.tfmg.base.annotation.NothingNullByDefault;
 import com.drmangotea.tfmg.content.electricity.base.IElectric;
-import com.drmangotea.tfmg.content.electricity.lights.LightBulbBlock;
+import com.drmangotea.tfmg.content.electricity.experimental.content.lights.ElectricLightBlock;
 import com.drmangotea.tfmg.registry.TFMGBlockEntities;
 import com.drmangotea.tfmg.registry.TFMGBlocks;
 import com.mojang.serialization.MapCodec;
@@ -34,7 +34,7 @@ import net.minecraft.world.phys.Vec3;
 
 @NothingNullByDefault
 public class NeonTubeBlock extends PipeBlock implements IBE<NeonTubeBlockEntity>, IWrenchable {
-    public static final IntegerProperty LIGHT = LightBulbBlock.LIGHT;
+    public static final IntegerProperty LIGHT = ElectricLightBlock.LIGHT;
 
     public NeonTubeBlock(Properties properties) {
         super(0.3125F/2.5f, properties);
