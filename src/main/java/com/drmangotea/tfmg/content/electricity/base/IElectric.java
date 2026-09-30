@@ -7,13 +7,10 @@ import com.drmangotea.tfmg.base.lang.TFMGTexts;
 import com.drmangotea.tfmg.content.electricity.connection.CableHubBlockEntity;
 import com.drmangotea.tfmg.content.electricity.connection.cables.CableConnection;
 import com.drmangotea.tfmg.content.electricity.connection.cables.CableConnectorBlockEntity;
-import com.drmangotea.tfmg.content.electricity.measurement.MultimeterItem;
 import com.drmangotea.tfmg.content.electricity.network.large_switch.LargeSwitchBlockEntity;
 import com.drmangotea.tfmg.content.electricity.network.transformer.large.LargeTransformerBlockEntity;
-import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import net.createmod.catnip.platform.CatnipServices;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -22,8 +19,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.energy.IEnergyStorage;
 
@@ -35,7 +30,7 @@ import java.util.function.Consumer;
 /**
  * data and actions for electric blocks
  */
-public interface IElectric extends IHaveGoggleInformation {
+public interface IElectric extends IHaveMultimeterInformation {
 
     /**
      * block's world position
@@ -371,22 +366,6 @@ public interface IElectric extends IHaveGoggleInformation {
         getData().scheduledActions.add(method);
     }
 
-    /**
-     * Adds Multimeter Tooltip to UI
-     */
-    @Override @OnlyIn(Dist.CLIENT)
-    default boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
-        if (Minecraft.getInstance().player == null || !MultimeterItem.isHeldByPlayer(Minecraft.getInstance().player))
-            return false;
-        return makeMultimeterTooltip(tooltip, isPlayerSneaking);
-    }
-
-    /**
-     * Populates the Multimeter Tooltip from the IElectrics' Data
-     * @param tooltip The Tooltip to Populate
-     * @param isPlayerSneaking Whether the Player is Sneaking
-     * @return Whether the Tooltip should be displayed
-     */
     default boolean makeMultimeterTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
         TFMGTexts.header("multimeter").style(ChatFormatting.GRAY)
                 .forGoggles(tooltip);

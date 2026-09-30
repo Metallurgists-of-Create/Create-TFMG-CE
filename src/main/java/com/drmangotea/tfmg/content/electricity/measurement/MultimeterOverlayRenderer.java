@@ -1,6 +1,6 @@
 package com.drmangotea.tfmg.content.electricity.measurement;
 
-import com.drmangotea.tfmg.content.electricity.base.IElectric;
+import com.drmangotea.tfmg.content.electricity.base.IHaveMultimeterInformation;
 import com.drmangotea.tfmg.registry.TFMGItems;
 import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -32,10 +32,8 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.HitResult;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,8 +57,7 @@ public class MultimeterOverlayRenderer {
             return;
         }
 
-        HitResult objectMouseOver = mc.hitResult;
-        if (!(objectMouseOver instanceof BlockHitResult result)) {
+        if (!(mc.hitResult instanceof BlockHitResult result)) {
             lastHovered = null;
             hoverTicks = 0;
             return;
@@ -70,14 +67,14 @@ public class MultimeterOverlayRenderer {
             if (!entry.isAlive())
                 continue;
             Outline outline = entry.getOutline();
-            if (outline instanceof ValueBox && !((ValueBox) outline).isPassive)
+            if (outline instanceof ValueBox box && !box.isPassive)
                 return;
         }
 
         ClientLevel world = mc.level;
         BlockPos pos = result.getBlockPos();
 
-        if (!MultimeterItem.isHeldByPlayer(mc.player)) {
+        if (world == null || mc.player == null || !MultimeterItem.isHeldByPlayer(mc.player)) {
             lastHovered = null;
             hoverTicks = 0;
             return;
@@ -90,20 +87,14 @@ public class MultimeterOverlayRenderer {
 
         pos = proxiedOverlayPosition(world, pos);
 
-        BlockEntity be = world.getBlockEntity(pos);
-
-        boolean isShifting = mc.player.isShiftKeyDown();
-
-        boolean isElectricBlock = be instanceof IElectric;
-        if(!isElectricBlock)
+        if(!(world.getBlockEntity(pos) instanceof IHaveMultimeterInformation info))
             return;
 
         ItemStack multimeterItem = TFMGItems.MULTIMETER.asStack();
         List<Component> tooltip = new ArrayList<>();
 
         // The block entity is responsible for making it's own Tooltip.
-		((IElectric)be).makeMultimeterTooltip(tooltip,isShifting);
-
+		info.makeMultimeterTooltip(tooltip, mc.player.isShiftKeyDown());
 
         PoseStack poseStack = graphics.pose();
         poseStack.pushPose();
@@ -181,7 +172,6 @@ public class MultimeterOverlayRenderer {
         ((MouseHandlerAccessor) mouseHandler).create$setYPos(cursorY);
 
         poseStack.popPose();
-
     }
 
     public static BlockPos proxiedOverlayPosition(Level level, BlockPos pos) {
