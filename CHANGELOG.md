@@ -15,6 +15,8 @@ Contributors:<br>
 ### Changes:
 
 ### API Changes:
-
+- new `IHaveMultimeterInformation` interface
+  - `IElectric` now extends `IHaveMultimeterInformation` instead of `IHaveGoggleInformation`
+  - Multimeters can now display information from any block entity that implements this interface
 
 ### New Translations:
