@@ -1,5 +1,6 @@
 package com.drmangotea.tfmg.content.items.weapons.fire_extinguisher;
 
+import com.drmangotea.tfmg.base.TFMGUtils;
 import com.drmangotea.tfmg.base.spark.DryIceFlake;
 import com.drmangotea.tfmg.registry.TFMGEntityTypes;
 import com.drmangotea.tfmg.registry.TFMGSoundEvents;
@@ -8,7 +9,6 @@ import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -18,11 +18,14 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
+
 import static com.drmangotea.tfmg.registry.TFMGDataComponents.AMOUNT;
 
+@ParametersAreNonnullByDefault
 public class FireExtinguisherItem extends Item implements CustomArmPoseItem {
     public static final int DRY_ICE_CAPACITY = 500;
-
 
     public FireExtinguisherItem(Properties pProperties) {
         super(pProperties);
@@ -32,7 +35,7 @@ public class FireExtinguisherItem extends Item implements CustomArmPoseItem {
         int fillLevel = stack.getOrDefault(AMOUNT,0);
         if(fillLevel == 0) return;
 
-        Vec3 barrelPos = getGunBarrelVec(entity, entity.getUsedItemHand() == InteractionHand.MAIN_HAND,
+        Vec3 barrelPos = TFMGUtils.getGunBarrelVec(entity, entity.getUsedItemHand() == InteractionHand.MAIN_HAND,
                 new Vec3(.75f, -0.45f, 1.5f));
 
         DryIceFlake flake = TFMGEntityTypes.DRY_ICE_FLAKE.create(level);
@@ -46,15 +49,6 @@ public class FireExtinguisherItem extends Item implements CustomArmPoseItem {
         if (stack.getOrDefault(AMOUNT, 0) == 0) {
             entity.stopUsingItem();
         }
-    }
-
-    public static Vec3 getGunBarrelVec(LivingEntity entity, boolean mainHand, Vec3 rightHandForward) {
-        Vec3 start = entity.position().add(0, entity.getEyeHeight(), 0);
-        float yaw = (float) ((entity.getYRot()) / -180 * Math.PI);
-        float pitch = (float) ((entity.getXRot()) / -180 * Math.PI);
-        int flip = mainHand == (entity.getMainArm() == HumanoidArm.RIGHT) ? -1 : 1;
-        Vec3 barrelPosNoTransform = new Vec3(flip * rightHandForward.x, rightHandForward.y, rightHandForward.z);
-        return start.add(barrelPosNoTransform.xRot(pitch).yRot(yaw));
     }
 
     @Override
@@ -75,11 +69,10 @@ public class FireExtinguisherItem extends Item implements CustomArmPoseItem {
 
     @Override
     public int getBarWidth(ItemStack stack) {
-        float fillLevel = (float) stack.getOrDefault(AMOUNT, 0) / DRY_ICE_CAPACITY;
-        return Math.round(13.0f * fillLevel);
+        return Math.round(13.0f * stack.getOrDefault(AMOUNT, 0) / DRY_ICE_CAPACITY);
     }
 
-    @Override
+    @Override @Nonnull
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         if (player.getItemInHand(hand).getOrDefault(AMOUNT, 0) > 0) {
             TFMGSoundEvents.FIRE_EXTINGUISHER_START.playFrom(player, 1F, 0.04F);
@@ -120,7 +113,7 @@ public class FireExtinguisherItem extends Item implements CustomArmPoseItem {
         return 1000;
     }
 
-    @Override
+    @Override @Nonnull
     public UseAnim getUseAnimation(ItemStack pStack) {
         return UseAnim.NONE;
     }

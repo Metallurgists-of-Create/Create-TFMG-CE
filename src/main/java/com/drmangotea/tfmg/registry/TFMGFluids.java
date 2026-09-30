@@ -2,6 +2,7 @@ package com.drmangotea.tfmg.registry;
 
 import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.base.TFMGUtils;
+import com.drmangotea.tfmg.base.dyes.DyedFluidList;
 import com.drmangotea.tfmg.base.fluid.AcidFluidType;
 import com.drmangotea.tfmg.base.fluid.AsphaltFluid;
 import com.drmangotea.tfmg.base.fluid.ConcreteFluid;
@@ -28,8 +29,6 @@ import static com.drmangotea.tfmg.TFMG.REGISTRATE;
 import static com.drmangotea.tfmg.base.TFMGUtils.toHumanReadable;
 
 public class TFMGFluids {
-
-
     public static final FluidEntry<VirtualFluid>
             LPG = gasFuel("lpg", 0xfff5e687, TFMGTags.Fluids.LPG.tag, TFMGTags.Fluids.FIREBOX_FUEL.tag),
             BUTANE = gasFuel("butane", 0xffad77d4, TFMGTags.Fluids.FIREBOX_FUEL.tag),
@@ -42,7 +41,6 @@ public class TFMGFluids {
             CARBON_DIOXIDE = gas("carbon_dioxide", 0xff525252, TFMGTags.Fluids.EXHAUSTABLE.tag),
             AIR = gas("air", 0xffdfe6e5, TFMGTags.Fluids.AIR.tag),
             HOT_AIR = gas("hot_air", 0xffe8e1d5, TFMGTags.Fluids.HOT_AIR.tag);
-
 
     public static final FluidEntry<BaseFlowingFluid.Flowing>
             CRUDE_OIL = fluid("crude_oil", 0x010101, TFMGTags.Fluids.CRUDE_OIL.tag, TFMGTags.Fluids.FLAMMABLE.tag),
@@ -63,6 +61,22 @@ public class TFMGFluids {
             LIQUID_CONCRETE = concreteFluid("liquid_concrete", 0x5B5B59, ConcreteFluid.Source::new),
             LIQUID_ASPHALT = concreteFluid("liquid_asphalt", 0x010101, AsphaltFluid.Source::new);
 
+    public static final DyedFluidList<BaseFlowingFluid.Flowing> COLOURED_CONCRETE = new DyedFluidList<>(colour -> {
+        String colourName = colour.getSerializedName();
+        return REGISTRATE.fluid(colourName + "_liquid_concrete", getLocation(colourName + "_liquid_concrete"), getLocationFlow(colourName + "_liquid_concrete"),
+                        SolidRenderedPlaceableFluidType.create(TFMGUtils.blendColours(new Color(colour.getFireworkColor()), new Color(0x5B5B59)).getRGB(), () -> 1f / 32f))
+                .lang(toHumanReadable(colourName + "_liquid_concrete"))
+                .properties(b -> b.viscosity(5000).density(2500))
+                .fluidProperties(p -> p.levelDecreasePerBlock(1)
+                        .tickRate(99999)
+                        .slopeFindDistance(1)
+                        .explosionResistance(1000f))
+                .source((p) -> new ConcreteFluid.Source(p).withColour(colour))
+                .bucket()
+                .tag(ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", "buckets/" + colourName + "_liquid_concrete")))
+                .build()
+                .register();
+    });
 
     @SafeVarargs
     private static FluidEntry<BaseFlowingFluid.Flowing> fluid(String name, int fogColor, TagKey<Fluid>... tags) {
@@ -159,7 +173,6 @@ public class TFMGFluids {
                 .register();
     }
 
-
     @SafeVarargs
     public static FluidEntry<VirtualFluid> gas(String name, int color, TagKey<Fluid>... tags) {
         return REGISTRATE.gasFluid(name, color)
@@ -205,10 +218,8 @@ public class TFMGFluids {
     }
 
     public static class SolidRenderedPlaceableFluidType extends AllFluids.TintedFluidType {
-
         private Vector3f fogColor;
         private Supplier<Float> fogDistance;
-
 
         public static FluidBuilder.FluidTypeFactory create(int fogColor, Supplier<Float> fogDistance) {
             return (p, s, f) -> {
@@ -246,7 +257,6 @@ public class TFMGFluids {
         }
 
     }
-
 
     public static void init() {
     }

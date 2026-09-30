@@ -40,19 +40,22 @@ public class ComponentRemapper {
     }
 
     public static boolean flamethrower(ItemStack stack, RegistryAccess registryAccess) {
-        if (!stack.has(TFMGDataComponents.FLAMETHROWER_FUEL) && !stack.has(TFMGDataComponents.AMOUNT)) {
-            return false;
+        if (stack.has(TFMGDataComponents.FLAMETHROWER_FUEL)) {
+            int fuelAmount = 0;
+            if (stack.has(TFMGDataComponents.AMOUNT)) {
+                fuelAmount = stack.getOrDefault(TFMGDataComponents.AMOUNT, 0);
+                stack.remove(TFMGDataComponents.AMOUNT);
+            }
+            String fuelType = stack.getOrDefault(TFMGDataComponents.FLAMETHROWER_FUEL, "fallback");
+            if (fuelType.isEmpty()) {
+                fuelType = "fallback";
+            }
+            stack.remove(TFMGDataComponents.FLAMETHROWER_FUEL);
+            FlamethrowerFuel fuel = FlamethrowerFuel.createForLegacy(registryAccess, fuelType, fuelAmount);
+            stack.set(TFMGDataComponents.FLAMETHROWER, fuel);
+            return true;
         }
-        int fuelAmount = stack.getOrDefault(TFMGDataComponents.AMOUNT, 0);
-        String fuelType = stack.getOrDefault(TFMGDataComponents.FLAMETHROWER_FUEL, "fallback");
-        if (fuelType.isEmpty()) {
-            fuelType = "fallback";
-        }
-        FlamethrowerFuel fuel = FlamethrowerFuel.createForLegacy(registryAccess, fuelType, fuelAmount);
-        stack.set(TFMGDataComponents.FLAMETHROWER, fuel);
-        stack.remove(TFMGDataComponents.FLAMETHROWER_FUEL);
-        stack.remove(TFMGDataComponents.AMOUNT);
-        return true;
+        return false;
     }
 
 

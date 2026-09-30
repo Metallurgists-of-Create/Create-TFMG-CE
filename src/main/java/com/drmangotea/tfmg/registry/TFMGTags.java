@@ -85,6 +85,8 @@ public class TFMGTags {
         INGOTS_SILICON(COMMON, "ingots/silicon"),
         NUGGETS_CAST_IRON(COMMON, "nuggets/cast_iron"),
         NUGGETS_LITHIUM(COMMON, "nuggets/lithium"),
+        ORES_LEAD(COMMON, "ores/lead"),
+        ORES_NICKEL(COMMON, "ores/nickel"),
         ORES_LITHIUM(COMMON, "ores/lithium"),
         PLATES_CAST_IRON(COMMON, "plates/cast_iron"),
         RAW_LITHIUM(COMMON, "raw_materials/lithium"),
@@ -100,7 +102,9 @@ public class TFMGTags {
         WIRES_CONSTANTAN(COMMON, "wires/constantan"),
         WIRES_COPPER(COMMON, "wires/copper"),
         ENGINE_TURBINE(MOD, "engine/turbine"),
-        ENGINE_CYLINDER(MOD, "engine/cylinder")
+        ENGINE_CYLINDER(MOD, "engine/cylinder"),
+        MULTIMETERS(MOD),
+        CAUTION_BLOCKS(MOD)
         ;
 
         public final TagKey<Item> tag;
@@ -143,12 +147,10 @@ public class TFMGTags {
         MOLTEN_STEEL(COMMON),
         FUEL(COMMON),
 
-        //Chemica fix
-        BIODIESEL(COMMON),
-        ETHANOL(COMMON),
-        HIGH_CETANE_DIESEL(COMMON),
-        HIGH_OCTANE_GASOLINE(COMMON),
-        HYDROGEN_FUEL(COMMON)
+        //CBC
+        MOLTEN_CAST_IRON(COMMON),
+        MOLTEN_BRONZE(COMMON),
+        MOLTEN_NETHERSTEEL(COMMON)
 
         ;
 

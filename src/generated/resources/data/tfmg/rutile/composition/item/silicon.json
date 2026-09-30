@@ -1,0 +1,15 @@
+{
+  "compositions": [
+    {
+      "elements": [
+        {
+          "amount": 1,
+          "id": "rutile:silicon"
+        }
+      ]
+    }
+  ],
+  "contents": [
+    "tfmg:silicon_ingot"
+  ]
+}

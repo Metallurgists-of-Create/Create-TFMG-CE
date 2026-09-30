@@ -1,0 +1,21 @@
+{
+  "compositions": [
+    {
+      "elements": [
+        {
+          "amount": 1,
+          "id": "rutile:copper"
+        },
+        {
+          "amount": 1,
+          "id": "rutile:nickel"
+        }
+      ]
+    }
+  ],
+  "contents": [
+    "tfmg:constantan_block",
+    "tfmg:constantan_ingot",
+    "tfmg:constantan_nugget"
+  ]
+}

@@ -1,6 +1,7 @@
 package com.drmangotea.tfmg.content.machinery.misc.winding_machine;
 
 import com.drmangotea.tfmg.base.TFMGShapes;
+import com.drmangotea.tfmg.base.TFMGUtils;
 import com.drmangotea.tfmg.registry.TFMGBlockEntities;
 import com.simibubi.create.content.kinetics.base.HorizontalKineticBlock;
 import com.simibubi.create.content.kinetics.deployer.DeployerFakePlayer;
@@ -69,28 +70,37 @@ public class WindingMachineBlock extends HorizontalKineticBlock implements IBE<W
         if (level.getBlockEntity(pos) instanceof WindingMachineBlockEntity be) {
             ItemStack heldItem = player.getItemInHand(hand);
             if (heldItem.isEmpty()) {
-                if (!be.getOutput().isEmpty()) {
-                    player.setItemInHand(hand, be.getOutput());
-                    be.setOutput(ItemStack.EMPTY);
-                    return ItemInteractionResult.SUCCESS;
+                if (TFMGUtils.returnItemToInventory(be.outputInventory, 0, player, hand)) {
+                    return ItemInteractionResult.sidedSuccess(level.isClientSide);
                 }
-                if (!be.getInput().isEmpty() && !(player instanceof DeployerFakePlayer)) {
-                    player.setItemInHand(hand, be.getInput());
-                    be.setInput(ItemStack.EMPTY);
-                    return ItemInteractionResult.SUCCESS;
+                if (!(player instanceof DeployerFakePlayer) && TFMGUtils.returnItemToInventory(be.inventory, 0, player, hand)) {
+                    return ItemInteractionResult.sidedSuccess(level.isClientSide);
                 }
-                if (be.hasAnySpool() && (player.isShiftKeyDown() || !be.hasNonEmptySpool())) {
-                    player.setItemInHand(hand, be.getSpool());
-                    be.setSpool(ItemStack.EMPTY);
-                    return ItemInteractionResult.SUCCESS;
+                if ((player.isShiftKeyDown() || !be.hasNonEmptySpool()) && TFMGUtils.returnItemToInventory(be.spoolInventory, 0, player, hand)) {
+                    return ItemInteractionResult.sidedSuccess(level.isClientSide);
                 }
             } else {
-                if (be.getInput().isEmpty() && be.isWindingIngredient(heldItem)){
+                if (be.getInput().isEmpty()) {
                     ItemStack stack1 = heldItem.copy();
                     stack1.setCount(1);
                     be.setInput(stack1);
                     heldItem.shrink(1);
-                    return ItemInteractionResult.SUCCESS;
+                    return ItemInteractionResult.sidedSuccess(level.isClientSide);
+                }
+                if (heldItem.getItem() instanceof SpoolItem) {
+                    if (be.getSpool().isEmpty()) {
+                        ItemStack stack1 = heldItem.copy();
+                        stack1.setCount(1);
+                        be.setSpool(stack1);
+                        heldItem.shrink(1);
+                    } else if (SpoolItem.isDifferent(heldItem, be.getSpool())) {
+                        TFMGUtils.returnItemToInventory(be.spoolInventory, 0, player, hand);
+                        ItemStack stack1 = heldItem.copy();
+                        stack1.setCount(1);
+                        be.setSpool(stack1);
+                        heldItem.shrink(1);
+                    }
+                    return ItemInteractionResult.sidedSuccess(level.isClientSide);
                 }
             }
 

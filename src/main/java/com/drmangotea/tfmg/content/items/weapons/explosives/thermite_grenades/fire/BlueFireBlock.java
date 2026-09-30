@@ -1,10 +1,10 @@
 package com.drmangotea.tfmg.content.items.weapons.explosives.thermite_grenades.fire;
 
+import com.drmangotea.tfmg.base.annotation.NothingNullByDefault;
 import com.google.common.collect.ImmutableMap;
 import com.mojang.serialization.MapCodec;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
-import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -26,13 +26,11 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-@ParametersAreNonnullByDefault
-@MethodsReturnNonnullByDefault
+@NothingNullByDefault
 public class BlueFireBlock extends BaseFireBlock {
     public static final MapCodec<BlueFireBlock> CODEC = simpleCodec(BlueFireBlock::new);
     public static final IntegerProperty AGE = BlockStateProperties.AGE_15;

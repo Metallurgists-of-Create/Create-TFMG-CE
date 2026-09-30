@@ -5,6 +5,7 @@ import com.drmangotea.tfmg.content.machinery.vat.base.registry.functions.Drawabl
 import com.drmangotea.tfmg.content.machinery.vat.base.registry.functions.VatOperationDescriptor;
 import com.drmangotea.tfmg.content.machinery.vat.base.registry.types.VatType;
 import com.drmangotea.tfmg.recipes.VatMachineRecipe;
+import net.minecraft.Util;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.neoforged.bus.api.Event;
@@ -43,15 +44,16 @@ public class VatCategoryEvent extends Event implements IModBusEvent {
 
     public static void drawVatTypes(List<VatType> vatTypes, GuiGraphics graphics, double mouseX, double mouseY) {
         if (vatTypes.isEmpty()) return;
-        //TODO: Slowly shift between valid types
-        for (VatType type : vatTypes) {
-            for (Map.Entry<VatType, DrawableVatType> entry : RENDERED_VAT_TYPES.entrySet()) {
-                if (entry.getKey().equals(type)) {
-                    entry.getValue().draw(type, graphics, mouseX, mouseY);
-                    return;
-                }
-            }
-        }
+        // Filter by the rendered vat types to prevent crashes
+        // When a type is not registered
+        List<VatType> drawableTypes = vatTypes.stream()
+                .filter(RENDERED_VAT_TYPES::containsKey)
+                .toList();
+        if (drawableTypes.isEmpty()) return;
+        // Cycle every 2 seconds
+        int index = (int) ((Util.getMillis() / 2000) % drawableTypes.size());
+        VatType vatType = drawableTypes.get(index);
+        RENDERED_VAT_TYPES.get(vatType).draw(vatType, graphics, mouseX, mouseY);
     }
 
     public static void addDescriptor(VatOperation operation, VatMachineRecipe recipe, Consumer<Component> tooltip, double mouseX, double mouseY) {

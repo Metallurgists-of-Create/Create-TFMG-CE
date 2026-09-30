@@ -1,0 +1,15 @@
+{
+  "compositions": [
+    {
+      "elements": [
+        {
+          "amount": 1,
+          "id": "rutile:neon"
+        }
+      ]
+    }
+  ],
+  "contents": [
+    "tfmg:neon"
+  ]
+}

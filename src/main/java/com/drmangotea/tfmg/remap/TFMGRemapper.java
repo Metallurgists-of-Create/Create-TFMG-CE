@@ -1,16 +1,8 @@
 package com.drmangotea.tfmg.remap;
 
 import com.drmangotea.tfmg.TFMG;
-import com.drmangotea.tfmg.TFMGRegistries;
-import com.drmangotea.tfmg.base.data_storage.CylinderFuels;
-import com.drmangotea.tfmg.content.machinery.vat.electrode_holder.electrode.Electrode;
-import com.drmangotea.tfmg.registry.TFMGDataComponents;
-import com.drmangotea.tfmg.registry.TFMGEngineFuelTypes;
-import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -19,7 +11,6 @@ import net.neoforged.neoforge.registries.RegisterEvent;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 
 @EventBusSubscriber
@@ -51,37 +42,11 @@ public class TFMGRemapper {
         remaps.forEach((remap -> remap.remap(registry)));
     }
 
-    private static boolean sentChemicaMessage = false;
-
     @SubscribeEvent
     public static void modifyDefaultComponents(ModifyDefaultComponentsEvent event) {
-        for (Item item : event.getAllItems().toList()) {
-            var key = BuiltInRegistries.ITEM.getKey(item);
-            if (key.getNamespace().equals("chemica")) {
-                boolean didRemap = false;
-                CylinderFuels component = switch (key.getPath()) {
-                    case "biodiesel_engine_cylinder" -> new CylinderFuels(List.of(TFMGEngineFuelTypes.BIODIESEL));
-                    case "ethanol_engine_cylinder" -> new CylinderFuels(List.of(TFMGEngineFuelTypes.ETHANOL));
-                    case "high_cetane_engine_cylinder" -> new CylinderFuels(List.of(TFMGEngineFuelTypes.HIGH_CETANE_DIESEL));
-                    case "high_octane_engine_cylinder" -> new CylinderFuels(List.of(TFMGEngineFuelTypes.HIGH_OCTANE_GASOLINE));
-                    case "hydrogen_turbine_blade" -> new CylinderFuels(List.of(TFMGEngineFuelTypes.HYDROGEN_FUEL));
-                    default -> CylinderFuels.EMPTY;
-                };
-                if (!component.isEmpty()) {
-                    event.modify(item, (c) -> c.set(TFMGDataComponents.ENGINE_CYLINDER, component));
-                    didRemap = true;
-                }
-                if (key.getPath().equals("platinum_electrode")) {
-                    Optional<Holder.Reference<Electrode>> electrodeHolder = TFMGRegistries.ELECTRODE_REGISTRY.getHolder(TFMG.asResource("chemica:electrode"));
-                    electrodeHolder.ifPresent(holder -> event.modify(item, (c) -> c.set(TFMGDataComponents.ELECTRODE, new Electrode.Stored(holder))));
-                    didRemap = true;
-                }
-                if (didRemap && !sentChemicaMessage) {
-                    TFMG.LOGGER.info("[TFMG Remapper] Remapped old Chemica default components");
-                    sentChemicaMessage = true;
-                }
-            }
-        }
+        //for (Item item : event.getAllItems().toList()) {
+        //    var key = BuiltInRegistries.ITEM.getKey(item);
+        //}
     }
 
     public static void remapComponents(ItemStack stack, RegistryAccess registryAccess) {

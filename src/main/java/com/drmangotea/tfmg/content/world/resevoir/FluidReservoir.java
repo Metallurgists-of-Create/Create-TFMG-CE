@@ -89,7 +89,6 @@ public class FluidReservoir {
 
     public void removeEmptyDeposits(Level level) {
         if (!this.isEmpty()) return; //just in case
-		
 		this.deposits.forEach((pos) -> level.setBlockAndUpdate(pos, Blocks.BEDROCK.defaultBlockState()));
 	}
 }

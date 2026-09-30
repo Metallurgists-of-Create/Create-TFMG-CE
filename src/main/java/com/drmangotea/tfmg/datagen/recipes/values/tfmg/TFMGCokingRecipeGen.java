@@ -12,6 +12,7 @@ import java.util.concurrent.CompletableFuture;
 
 import static com.drmangotea.tfmg.datagen.recipes.TFMGRecipeProvider.I.log;
 
+@SuppressWarnings("unused")
 public class TFMGCokingRecipeGen extends CokingRecipeGen {
 
 	GeneratedRecipe

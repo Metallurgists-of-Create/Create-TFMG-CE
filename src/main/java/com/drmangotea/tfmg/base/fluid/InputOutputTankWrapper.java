@@ -1,12 +1,11 @@
 package com.drmangotea.tfmg.base.fluid;
 
-import net.minecraft.MethodsReturnNonnullByDefault;
+import com.drmangotea.tfmg.base.annotation.NothingNullByDefault;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 
-import javax.annotation.ParametersAreNonnullByDefault;
 
-@MethodsReturnNonnullByDefault @ParametersAreNonnullByDefault
+@NothingNullByDefault
 public class InputOutputTankWrapper implements IFluidHandler {
 	protected final IFluidHandler input, output;
 	
@@ -51,6 +50,7 @@ public class InputOutputTankWrapper implements IFluidHandler {
 	
 	@Override
 	public FluidStack drain(int maxDrain, FluidAction action) {
+		if (maxDrain == 0) return FluidStack.EMPTY;
 		return output.drain(maxDrain, action);
 	}
 	

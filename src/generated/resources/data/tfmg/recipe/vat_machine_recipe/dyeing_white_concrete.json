@@ -1,0 +1,24 @@
+{
+  "type": "tfmg:vat_machine_recipe",
+  "ingredients": [
+    {
+      "tag": "c:dyes/white"
+    },
+    {
+      "type": "neoforge:single",
+      "amount": 8000,
+      "fluid": "tfmg:liquid_concrete"
+    }
+  ],
+  "machines": [
+    "tfmg:mixing"
+  ],
+  "min_size": 1,
+  "processing_time": 100,
+  "results": [
+    {
+      "amount": 8000,
+      "id": "tfmg:white_liquid_concrete"
+    }
+  ]
+}

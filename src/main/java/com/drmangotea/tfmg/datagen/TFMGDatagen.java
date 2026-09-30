@@ -3,7 +3,9 @@ package com.drmangotea.tfmg.datagen;
 import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.TFMGRegistries;
 import com.drmangotea.tfmg.content.engines.types.EngineType;
+import com.drmangotea.tfmg.datagen.integration.TFMGBigCannonsProvider;
 import com.drmangotea.tfmg.datagen.integration.TFMGReburnedProvider;
+import com.drmangotea.tfmg.datagen.integration.TFMGRutileProvider;
 import com.drmangotea.tfmg.datagen.recipes.TFMGRecipeProvider;
 import com.drmangotea.tfmg.datagen.recipes.values.TFMGStandardRecipeGen;
 import com.drmangotea.tfmg.datagen.recipes.values.create.TFMGMechanicalCraftingRecipeGen;
@@ -21,6 +23,7 @@ import net.createmod.ponder.foundation.PonderIndex;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
+import net.neoforged.fml.loading.LoadingModList;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
 
 import java.util.Map;
@@ -55,7 +58,18 @@ public class TFMGDatagen {
         generator.addProvider(event.includeServer(),new TFMGStandardRecipeGen(output, lookupProvider));
         generator.addProvider(event.includeServer(), new TFMGMechanicalCraftingRecipeGen(output, lookupProvider));
         generator.addProvider(event.includeServer(), new TFMGSequencedAssemblyRecipeGen(output, lookupProvider));
-        generator.addProvider(event.includeServer(), new TFMGReburnedProvider(output));
+
+        // Maybe use ModList instead?
+        if (LoadingModList.get().getModFileById("createliquidfuel") != null) {
+            generator.addProvider(event.includeServer(), new TFMGReburnedProvider(output));
+        }
+        if (LoadingModList.get().getModFileById("rutile") != null) {
+            generator.addProvider(event.includeServer(), new TFMGRutileProvider.Item(output, lookupProvider));
+            generator.addProvider(event.includeServer(), new TFMGRutileProvider.Fluid(output, lookupProvider));
+        }
+        if (LoadingModList.get().getModFileById("createbigcannons") != null) {
+            generator.addProvider(event.includeServer(), new TFMGBigCannonsProvider.Melting(output, lookupProvider));
+        }
 
         if (event.includeServer()) {
             TFMGRecipeProvider.registerAllProcessing(generator, output, lookupProvider);

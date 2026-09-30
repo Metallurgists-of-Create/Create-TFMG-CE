@@ -64,6 +64,10 @@ public record FlamethrowerFuel(@Nullable ResourceKey<FlamethrowerFuelType> fuelT
 
         if (fuelType() == null || fuelType == null || fuelType == fallback || !this.hasFuel()) return;
 
+        Fluid displayFluid = fuelType.fluids().get(0).value();
+        // Just needs to pull the lang key for the fluid so amount does not matter
+        Component fluidName = displayFluid.getFluidType().getDescription(new FluidStack(displayFluid, 1));
+
         String _spread = "flamethrower.fuel.spread";
         String _speed = "flamethrower.fuel.speed";
         String _amount = "flamethrower.fuel.amount";
@@ -72,7 +76,7 @@ public record FlamethrowerFuel(@Nullable ResourceKey<FlamethrowerFuelType> fuelT
         String _capacity = "flamethrower.fuel.capacity";
 
         tooltip.accept(CommonComponents.EMPTY);
-        tooltip.accept(Component.translatable(fuelType().location().toLanguageKey("flamethrower_fuel")).append(Component.literal(":")).withStyle(ChatFormatting.GRAY));
+        tooltip.accept(fluidName.copy().append(Component.literal(":")).withStyle(ChatFormatting.GRAY));
         MutableComponent spacing = CommonComponents.space();
         ChatFormatting green = ChatFormatting.GREEN;
         ChatFormatting darkGreen = ChatFormatting.DARK_GREEN;

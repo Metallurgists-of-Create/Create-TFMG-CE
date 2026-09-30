@@ -2,11 +2,13 @@ package com.drmangotea.tfmg.datagen.recipes.values;
 
 import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.base.TFMGRegistrate;
+import com.drmangotea.tfmg.base.annotation.NothingNullByDefault;
 import com.drmangotea.tfmg.content.decoration.pipes.TFMGPipes;
 import com.drmangotea.tfmg.datagen.recipes.TFMGRecipeProvider;
 import com.drmangotea.tfmg.registry.TFMGBlocks;
 import com.drmangotea.tfmg.registry.TFMGFluids;
 import com.drmangotea.tfmg.registry.TFMGItems;
+import com.drmangotea.tfmg.registry.TFMGTags;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableList;
 import com.mojang.serialization.Codec;
@@ -22,7 +24,6 @@ import com.tterrag.registrate.util.entry.BlockEntry;
 import com.tterrag.registrate.util.entry.ItemEntry;
 import com.tterrag.registrate.util.entry.ItemProviderEntry;
 import net.createmod.catnip.registry.RegisteredObjectsHelper;
-import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.advancements.critereon.ItemPredicate;
@@ -50,7 +51,6 @@ import net.neoforged.neoforge.common.conditions.ModLoadedCondition;
 import net.neoforged.neoforge.common.conditions.NotCondition;
 import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -62,7 +62,7 @@ import java.util.function.UnaryOperator;
 
 import static com.drmangotea.tfmg.datagen.recipes.TFMGRecipeProvider.I.*;
 
-
+@SuppressWarnings("unused")
 public class TFMGStandardRecipeGen extends TFMGRecipeProvider {
     private Marker MATERIALS = enterFolder("materials");
     public static final Map<String, ItemLike> DYES_FROM_COLOR = new HashMap<>();
@@ -1325,28 +1325,52 @@ public class TFMGStandardRecipeGen extends TFMGRecipeProvider {
             .viaCooking(() -> TFMGItems.UNFIRED_INSULATOR)
             .inFurnace(),
 
-    RAW_LEAD = create(TFMGItems.LEAD_INGOT::get)
+    LEAD = create(TFMGItems.LEAD_INGOT::get).withSuffix("_from_raw")
             .viaCooking(() -> TFMGItems.RAW_LEAD)
             .inFurnace(),
 
-    NICKEL = create(TFMGItems.NICKEL_INGOT::get)
+    LEAD_ORE = create(TFMGItems.LEAD_INGOT::get).withSuffix("_from_ore")
+            .viaCookingTag(() -> TFMGTags.Items.ORES_LEAD.tag)
+            .inFurnace(),
+
+    NICKEL = create(TFMGItems.NICKEL_INGOT::get).withSuffix("_from_raw")
             .viaCooking(() -> TFMGItems.RAW_NICKEL)
             .inFurnace(),
 
-    LITHIUM = create(TFMGItems.LITHIUM_INGOT::get)
+    NICKEL_ORE = create(TFMGItems.NICKEL_INGOT::get).withSuffix("_from_ore")
+            .viaCookingTag(() -> TFMGTags.Items.ORES_NICKEL.tag)
+            .inFurnace(),
+
+    LITHIUM = create(TFMGItems.LITHIUM_INGOT::get).withSuffix("_from_raw")
             .viaCooking(() -> TFMGItems.RAW_LITHIUM)
             .inFurnace(),
 
-    RAW_LEAD_BLASTING = create(TFMGItems.LEAD_INGOT::get).withSuffix("_blasting")
+    LITHIUM_ORE = create(TFMGItems.LITHIUM_INGOT::get).withSuffix("_from_ore")
+            .viaCookingTag(() -> TFMGTags.Items.ORES_LITHIUM.tag)
+            .inFurnace(),
+
+    RAW_LEAD_BLASTING = create(TFMGItems.LEAD_INGOT::get).withSuffix("_from_raw_blasting")
             .viaCooking(() -> TFMGItems.RAW_LEAD)
             .inBlastFurnace(),
 
-    NICKEL_LEAD_BLASTING = create(TFMGItems.NICKEL_INGOT::get).withSuffix("_blasting")
+    LEAD_ORE_BLASTING = create(TFMGItems.LEAD_INGOT::get).withSuffix("_from_ore_blasting")
+            .viaCookingTag(() -> TFMGTags.Items.ORES_LEAD.tag)
+            .inBlastFurnace(),
+
+    RAW_NICKEL_BLASTING = create(TFMGItems.NICKEL_INGOT::get).withSuffix("_from_raw_blasting")
             .viaCooking(() -> TFMGItems.RAW_NICKEL)
             .inBlastFurnace(),
 
-    LITHIUM_BLASTING = create(TFMGItems.LITHIUM_INGOT::get).withSuffix("_blasting")
+    NICKEL_ORE_BLASTING = create(TFMGItems.NICKEL_INGOT::get).withSuffix("_from_ore_blasting")
+            .viaCookingTag(() -> TFMGTags.Items.ORES_NICKEL.tag)
+            .inBlastFurnace(),
+
+    RAW_LITHIUM_BLASTING = create(TFMGItems.LITHIUM_INGOT::get).withSuffix("_from_raw_blasting")
             .viaCooking(() -> TFMGItems.RAW_LITHIUM)
+            .inBlastFurnace(),
+
+    LITHIUM_ORE_BLASTING = create(TFMGItems.LITHIUM_INGOT::get).withSuffix("_from_ore_blasting")
+            .viaCookingTag(() -> TFMGTags.Items.ORES_LITHIUM.tag)
             .inBlastFurnace(),
     //
 
@@ -1950,427 +1974,7 @@ public class TFMGStandardRecipeGen extends TFMGRecipeProvider {
             .unlockedBy(() -> TFMGItems.STEEL_INGOT)
             .viaShapeless(b -> b
                     .requires(heavyMachineryCasing())
-                    .requires(ItemTags.WOODEN_DOORS)),
-
-
-    ////////
-
-    WHITE_MULTIMETER = create(TFMGItems.MULTIMETERS.get("white")::get)
-            .unlockedBy(() -> TFMGItems.MULTIMETER)
-            .viaShapeless(b -> b
-                    .requires(TFMGItems.MULTIMETER)
-                    .requires(DYES_FROM_COLOR.get("white"))),
-
-    YELLOW_MULTIMETER = create(TFMGItems.MULTIMETERS.get("yellow")::get)
-            .unlockedBy(() -> TFMGItems.MULTIMETER)
-            .viaShapeless(b -> b
-                    .requires(TFMGItems.MULTIMETER)
-                    .requires(DYES_FROM_COLOR.get("yellow"))),
-
-    BROWN_MULTIMETER = create(TFMGItems.MULTIMETERS.get("brown")::get)
-            .unlockedBy(() -> TFMGItems.MULTIMETER)
-            .viaShapeless(b -> b
-                    .requires(TFMGItems.MULTIMETER)
-                    .requires(DYES_FROM_COLOR.get("brown"))),
-
-    ORANGE_MULTIMETER = create(TFMGItems.MULTIMETERS.get("orange")::get)
-            .unlockedBy(() -> TFMGItems.MULTIMETER)
-            .viaShapeless(b -> b
-                    .requires(TFMGItems.MULTIMETER)
-                    .requires(DYES_FROM_COLOR.get("orange"))),
-
-    BLACK_MULTIMETER = create(TFMGItems.MULTIMETERS.get("black")::get)
-            .unlockedBy(() -> TFMGItems.MULTIMETER)
-            .viaShapeless(b -> b
-                    .requires(TFMGItems.MULTIMETER)
-                    .requires(DYES_FROM_COLOR.get("black"))),
-
-    CYAN_MULTIMETER = create(TFMGItems.MULTIMETERS.get("cyan")::get)
-            .unlockedBy(() -> TFMGItems.MULTIMETER)
-            .viaShapeless(b -> b
-                    .requires(TFMGItems.MULTIMETER)
-                    .requires(DYES_FROM_COLOR.get("cyan"))),
-
-    BLUE_MULTIMETER = create(TFMGItems.MULTIMETERS.get("blue")::get)
-            .unlockedBy(() -> TFMGItems.MULTIMETER)
-            .viaShapeless(b -> b
-                    .requires(TFMGItems.MULTIMETER)
-                    .requires(DYES_FROM_COLOR.get("blue"))),
-
-    LIGHT_BLUE_MULTIMETER = create(TFMGItems.MULTIMETERS.get("light_blue")::get)
-            .unlockedBy(() -> TFMGItems.MULTIMETER)
-            .viaShapeless(b -> b
-                    .requires(TFMGItems.MULTIMETER)
-                    .requires(DYES_FROM_COLOR.get("light_blue"))),
-
-    GRAY_MULTIMETER = create(TFMGItems.MULTIMETERS.get("gray")::get)
-            .unlockedBy(() -> TFMGItems.MULTIMETER)
-            .viaShapeless(b -> b
-                    .requires(TFMGItems.MULTIMETER)
-                    .requires(DYES_FROM_COLOR.get("gray"))),
-
-    LIGHT_GRAY_MULTIMETER = create(TFMGItems.MULTIMETERS.get("light_gray")::get)
-            .unlockedBy(() -> TFMGItems.MULTIMETER)
-            .viaShapeless(b -> b
-                    .requires(TFMGItems.MULTIMETER)
-                    .requires(DYES_FROM_COLOR.get("light_gray"))),
-
-    GREEN_MULTIMETER = create(TFMGItems.MULTIMETERS.get("green")::get)
-            .unlockedBy(() -> TFMGItems.MULTIMETER)
-            .viaShapeless(b -> b
-                    .requires(TFMGItems.MULTIMETER)
-                    .requires(DYES_FROM_COLOR.get("green"))),
-
-    LIME_MULTIMETER = create(TFMGItems.MULTIMETERS.get("lime")::get)
-            .unlockedBy(() -> TFMGItems.MULTIMETER)
-            .viaShapeless(b -> b
-                    .requires(TFMGItems.MULTIMETER)
-                    .requires(DYES_FROM_COLOR.get("lime"))),
-
-    PINK_MULTIMETER = create(TFMGItems.MULTIMETERS.get("pink")::get)
-            .unlockedBy(() -> TFMGItems.MULTIMETER)
-            .viaShapeless(b -> b
-                    .requires(TFMGItems.MULTIMETER)
-                    .requires(DYES_FROM_COLOR.get("pink"))),
-
-    PURPLE_MULTIMETER = create(TFMGItems.MULTIMETERS.get("purple")::get)
-            .unlockedBy(() -> TFMGItems.MULTIMETER)
-            .viaShapeless(b -> b
-                    .requires(TFMGItems.MULTIMETER)
-                    .requires(DYES_FROM_COLOR.get("purple"))),
-
-    MAGENTA_MULTIMETER = create(TFMGItems.MULTIMETERS.get("magenta")::get)
-            .unlockedBy(() -> TFMGItems.MULTIMETER)
-            .viaShapeless(b -> b
-                    .requires(TFMGItems.MULTIMETER)
-                    .requires(DYES_FROM_COLOR.get("magenta"))),
-
-    RED_MULTIMETER = create(TFMGItems.MULTIMETERS.get("red")::get)
-            .unlockedBy(() -> TFMGItems.MULTIMETER)
-            .viaShapeless(b -> b
-                    .requires(TFMGItems.MULTIMETER)
-                    .requires(DYES_FROM_COLOR.get("red"))),
-
-
-
-    ////////
-
-
- WHITE_CONCRETE = create(TFMGBlocks.COLORED_CONCRETE.get("white").block).returns(8)
-         .unlockedBy(TFMGBlocks.CONCRETE.block::get)
-         .viaShaped(b -> b
-                 .define('D', DYES_FROM_COLOR.get("white"))
-                 .define('C', TFMGBlocks.CONCRETE.block)
-                 .pattern("CCC")
-                 .pattern("CDC")
-                 .pattern("CCC")),
-
-
- BLACK_CONCRETE = create(TFMGBlocks.COLORED_CONCRETE.get("black").block).returns(8)
-         .unlockedBy(TFMGBlocks.CONCRETE.block::get)
-         .viaShaped(b -> b
-                 .define('D', DYES_FROM_COLOR.get("black"))
-                 .define('C', TFMGBlocks.CONCRETE.block)
-                 .pattern("CCC")
-                 .pattern("CDC")
-                 .pattern("CCC")),
-
- ORANGE_CONCRETE = create(TFMGBlocks.COLORED_CONCRETE.get("orange").block).returns(8)
-         .unlockedBy(TFMGBlocks.CONCRETE.block::get)
-         .viaShaped(b -> b
-                 .define('D', DYES_FROM_COLOR.get("orange"))
-                 .define('C', TFMGBlocks.CONCRETE.block)
-                 .pattern("CCC")
-                 .pattern("CDC")
-                 .pattern("CCC")),
-
-
- RED_CONCRETE = create(TFMGBlocks.COLORED_CONCRETE.get("red").block).returns(8)
-         .unlockedBy(TFMGBlocks.CONCRETE.block::get)
-         .viaShaped(b -> b
-                 .define('D', DYES_FROM_COLOR.get("red"))
-                 .define('C', TFMGBlocks.CONCRETE.block)
-                 .pattern("CCC")
-                 .pattern("CDC")
-                 .pattern("CCC")),
-
-
- GRAY_CONCRETE = create(TFMGBlocks.COLORED_CONCRETE.get("gray").block).returns(8)
-         .unlockedBy(TFMGBlocks.CONCRETE.block::get)
-         .viaShaped(b -> b
-                 .define('D', DYES_FROM_COLOR.get("gray"))
-                 .define('C', TFMGBlocks.CONCRETE.block)
-                 .pattern("CCC")
-                 .pattern("CDC")
-                 .pattern("CCC")),
-
-
- LIGHT_GRAY_CONCRETE = create(TFMGBlocks.COLORED_CONCRETE.get("light_gray").block).returns(8)
-         .unlockedBy(TFMGBlocks.CONCRETE.block::get)
-         .viaShaped(b -> b
-                 .define('D', DYES_FROM_COLOR.get("light_gray"))
-                 .define('C', TFMGBlocks.CONCRETE.block)
-                 .pattern("CCC")
-                 .pattern("CDC")
-                 .pattern("CCC")),
-
-
- BLUE_CONCRETE = create(TFMGBlocks.COLORED_CONCRETE.get("blue").block).returns(8)
-         .unlockedBy(TFMGBlocks.CONCRETE.block::get)
-         .viaShaped(b -> b
-                 .define('D', DYES_FROM_COLOR.get("blue"))
-                 .define('C', TFMGBlocks.CONCRETE.block)
-                 .pattern("CCC")
-                 .pattern("CDC")
-                 .pattern("CCC")),
-
-
- LIGHT_BLUE_CONCRETE = create(TFMGBlocks.COLORED_CONCRETE.get("light_blue").block).returns(8)
-         .unlockedBy(TFMGBlocks.CONCRETE.block::get)
-         .viaShaped(b -> b
-                 .define('D', DYES_FROM_COLOR.get("light_blue"))
-                 .define('C', TFMGBlocks.CONCRETE.block)
-                 .pattern("CCC")
-                 .pattern("CDC")
-                 .pattern("CCC")),
-
-
- CYAN_CONCRETE = create(TFMGBlocks.COLORED_CONCRETE.get("cyan").block).returns(8)
-         .unlockedBy(TFMGBlocks.CONCRETE.block::get)
-         .viaShaped(b -> b
-                 .define('D', DYES_FROM_COLOR.get("cyan"))
-                 .define('C', TFMGBlocks.CONCRETE.block)
-                 .pattern("CCC")
-                 .pattern("CDC")
-                 .pattern("CCC")),
-
-
- GREEN_CONCRETE = create(TFMGBlocks.COLORED_CONCRETE.get("green").block).returns(8)
-         .unlockedBy(TFMGBlocks.CONCRETE.block::get)
-         .viaShaped(b -> b
-                 .define('D', DYES_FROM_COLOR.get("green"))
-                 .define('C', TFMGBlocks.CONCRETE.block)
-                 .pattern("CCC")
-                 .pattern("CDC")
-                 .pattern("CCC")),
-
-
- LIME_CONCRETE = create(TFMGBlocks.COLORED_CONCRETE.get("lime").block).returns(8)
-         .unlockedBy(TFMGBlocks.CONCRETE.block::get)
-         .viaShaped(b -> b
-                 .define('D', DYES_FROM_COLOR.get("lime"))
-                 .define('C', TFMGBlocks.CONCRETE.block)
-                 .pattern("CCC")
-                 .pattern("CDC")
-                 .pattern("CCC")),
-
-
- PINK_CONCRETE = create(TFMGBlocks.COLORED_CONCRETE.get("pink").block).returns(8)
-         .unlockedBy(TFMGBlocks.CONCRETE.block::get)
-         .viaShaped(b -> b
-                 .define('D', DYES_FROM_COLOR.get("pink"))
-                 .define('C', TFMGBlocks.CONCRETE.block)
-                 .pattern("CCC")
-                 .pattern("CDC")
-                 .pattern("CCC")),
-
-
- PURPLE_CONCRETE = create(TFMGBlocks.COLORED_CONCRETE.get("purple").block).returns(8)
-         .unlockedBy(TFMGBlocks.CONCRETE.block::get)
-         .viaShaped(b -> b
-                 .define('D', DYES_FROM_COLOR.get("purple"))
-                 .define('C', TFMGBlocks.CONCRETE.block)
-                 .pattern("CCC")
-                 .pattern("CDC")
-                 .pattern("CCC")),
-
-
- MAGENTA_CONCRETE = create(TFMGBlocks.COLORED_CONCRETE.get("magenta").block).returns(8)
-         .unlockedBy(TFMGBlocks.CONCRETE.block::get)
-         .viaShaped(b -> b
-                 .define('D', DYES_FROM_COLOR.get("magenta"))
-                 .define('C', TFMGBlocks.CONCRETE.block)
-                 .pattern("CCC")
-                 .pattern("CDC")
-                 .pattern("CCC")),
-
-
- BROWN_CONCRETE = create(TFMGBlocks.COLORED_CONCRETE.get("brown").block).returns(8)
-         .unlockedBy(TFMGBlocks.CONCRETE.block::get)
-         .viaShaped(b -> b
-                 .define('D', DYES_FROM_COLOR.get("brown"))
-                 .define('C', TFMGBlocks.CONCRETE.block)
-                 .pattern("CCC")
-                 .pattern("CDC")
-                 .pattern("CCC")),
-
-
- YELLOW_CONCRETE = create(TFMGBlocks.COLORED_CONCRETE.get("yellow").block).returns(8)
-         .unlockedBy(TFMGBlocks.CONCRETE.block::get)
-         .viaShaped(b -> b
-                 .define('D', DYES_FROM_COLOR.get("yellow"))
-                 .define('C', TFMGBlocks.CONCRETE.block)
-                 .pattern("CCC")
-                 .pattern("CDC")
-                 .pattern("CCC")),
- ///  ////////////////////////////////////////
- WHITE_REBAR_CONCRETE = create(TFMGBlocks.COLORED_REBAR_CONCRETE.get("white").block).returns(8)
-         .unlockedBy(TFMGBlocks.CONCRETE.block::get)
-         .viaShaped(b -> b
-                 .define('D', DYES_FROM_COLOR.get("white"))
-                 .define('C', TFMGBlocks.REBAR_CONCRETE.block)
-                 .pattern("CCC")
-                 .pattern("CDC")
-                 .pattern("CCC")),
-
-
- BLACK_REBAR_CONCRETE = create(TFMGBlocks.COLORED_REBAR_CONCRETE.get("black").block).returns(8)
-         .unlockedBy(TFMGBlocks.CONCRETE.block::get)
-         .viaShaped(b -> b
-                 .define('D', DYES_FROM_COLOR.get("black"))
-                 .define('C', TFMGBlocks.REBAR_CONCRETE.block)
-                 .pattern("CCC")
-                 .pattern("CDC")
-                 .pattern("CCC")),
-
- ORANGE_REBAR_CONCRETE = create(TFMGBlocks.COLORED_REBAR_CONCRETE.get("orange").block).returns(8)
-         .unlockedBy(TFMGBlocks.CONCRETE.block::get)
-         .viaShaped(b -> b
-                 .define('D', DYES_FROM_COLOR.get("orange"))
-                 .define('C', TFMGBlocks.REBAR_CONCRETE.block)
-                 .pattern("CCC")
-                 .pattern("CDC")
-                 .pattern("CCC")),
-
-
- RED_REBAR_CONCRETE = create(TFMGBlocks.COLORED_REBAR_CONCRETE.get("red").block).returns(8)
-         .unlockedBy(TFMGBlocks.CONCRETE.block::get)
-         .viaShaped(b -> b
-                 .define('D', DYES_FROM_COLOR.get("red"))
-                 .define('C', TFMGBlocks.REBAR_CONCRETE.block)
-                 .pattern("CCC")
-                 .pattern("CDC")
-                 .pattern("CCC")),
-
-
- GRAY_REBAR_CONCRETE = create(TFMGBlocks.COLORED_REBAR_CONCRETE.get("gray").block).returns(8)
-         .unlockedBy(TFMGBlocks.CONCRETE.block::get)
-         .viaShaped(b -> b
-                 .define('D', DYES_FROM_COLOR.get("gray"))
-                 .define('C', TFMGBlocks.REBAR_CONCRETE.block)
-                 .pattern("CCC")
-                 .pattern("CDC")
-                 .pattern("CCC")),
-
-
- LIGHT_REBAR_GRAY_CONCRETE = create(TFMGBlocks.COLORED_REBAR_CONCRETE.get("light_gray").block).returns(8)
-         .unlockedBy(TFMGBlocks.CONCRETE.block::get)
-         .viaShaped(b -> b
-                 .define('D', DYES_FROM_COLOR.get("light_gray"))
-                 .define('C', TFMGBlocks.REBAR_CONCRETE.block)
-                 .pattern("CCC")
-                 .pattern("CDC")
-                 .pattern("CCC")),
-
-
- BLUE_REBAR_CONCRETE = create(TFMGBlocks.COLORED_REBAR_CONCRETE.get("blue").block).returns(8)
-         .unlockedBy(TFMGBlocks.CONCRETE.block::get)
-         .viaShaped(b -> b
-                 .define('D', DYES_FROM_COLOR.get("blue"))
-                 .define('C', TFMGBlocks.REBAR_CONCRETE.block)
-                 .pattern("CCC")
-                 .pattern("CDC")
-                 .pattern("CCC")),
-
-
- LIGHT_BLUE_REBAR_CONCRETE = create(TFMGBlocks.COLORED_REBAR_CONCRETE.get("light_blue").block).returns(8)
-         .unlockedBy(TFMGBlocks.CONCRETE.block::get)
-         .viaShaped(b -> b
-                 .define('D', DYES_FROM_COLOR.get("light_blue"))
-                 .define('C', TFMGBlocks.REBAR_CONCRETE.block)
-                 .pattern("CCC")
-                 .pattern("CDC")
-                 .pattern("CCC")),
-
-
- CYAN_REBAR_CONCRETE = create(TFMGBlocks.COLORED_REBAR_CONCRETE.get("cyan").block).returns(8)
-         .unlockedBy(TFMGBlocks.CONCRETE.block::get)
-         .viaShaped(b -> b
-                 .define('D', DYES_FROM_COLOR.get("cyan"))
-                 .define('C', TFMGBlocks.REBAR_CONCRETE.block)
-                 .pattern("CCC")
-                 .pattern("CDC")
-                 .pattern("CCC")),
-
-
- GREEN_REBAR_CONCRETE = create(TFMGBlocks.COLORED_REBAR_CONCRETE.get("green").block).returns(8)
-         .unlockedBy(TFMGBlocks.CONCRETE.block::get)
-         .viaShaped(b -> b
-                 .define('D', DYES_FROM_COLOR.get("green"))
-                 .define('C', TFMGBlocks.REBAR_CONCRETE.block)
-                 .pattern("CCC")
-                 .pattern("CDC")
-                 .pattern("CCC")),
-
-
- LIME_REBAR_CONCRETE = create(TFMGBlocks.COLORED_REBAR_CONCRETE.get("lime").block).returns(8)
-         .unlockedBy(TFMGBlocks.CONCRETE.block::get)
-         .viaShaped(b -> b
-                 .define('D', DYES_FROM_COLOR.get("lime"))
-                 .define('C', TFMGBlocks.REBAR_CONCRETE.block)
-                 .pattern("CCC")
-                 .pattern("CDC")
-                 .pattern("CCC")),
-
-
- PINK_REBAR_CONCRETE = create(TFMGBlocks.COLORED_REBAR_CONCRETE.get("pink").block).returns(8)
-         .unlockedBy(TFMGBlocks.CONCRETE.block::get)
-         .viaShaped(b -> b
-                 .define('D', DYES_FROM_COLOR.get("pink"))
-                 .define('C', TFMGBlocks.REBAR_CONCRETE.block)
-                 .pattern("CCC")
-                 .pattern("CDC")
-                 .pattern("CCC")),
-
-
- PURPLE_REBAR_CONCRETE = create(TFMGBlocks.COLORED_REBAR_CONCRETE.get("purple").block).returns(8)
-         .unlockedBy(TFMGBlocks.CONCRETE.block::get)
-         .viaShaped(b -> b
-                 .define('D', DYES_FROM_COLOR.get("purple"))
-                 .define('C', TFMGBlocks.REBAR_CONCRETE.block)
-                 .pattern("CCC")
-                 .pattern("CDC")
-                 .pattern("CCC")),
-
-
- MAGENTA_REBAR_CONCRETE = create(TFMGBlocks.COLORED_REBAR_CONCRETE.get("magenta").block).returns(8)
-         .unlockedBy(TFMGBlocks.CONCRETE.block::get)
-         .viaShaped(b -> b
-                 .define('D', DYES_FROM_COLOR.get("magenta"))
-                 .define('C', TFMGBlocks.REBAR_CONCRETE.block)
-                 .pattern("CCC")
-                 .pattern("CDC")
-                 .pattern("CCC")),
-
-
- BROWN_REBAR_CONCRETE = create(TFMGBlocks.COLORED_REBAR_CONCRETE.get("brown").block).returns(8)
-         .unlockedBy(TFMGBlocks.CONCRETE.block::get)
-         .viaShaped(b -> b
-                 .define('D', DYES_FROM_COLOR.get("brown"))
-                 .define('C', TFMGBlocks.REBAR_CONCRETE.block)
-                 .pattern("CCC")
-                 .pattern("CDC")
-                 .pattern("CCC")),
-
-
- YELLOW_REBAR_CONCRETE = create(TFMGBlocks.COLORED_REBAR_CONCRETE.get("yellow").block).returns(8)
-         .unlockedBy(TFMGBlocks.CONCRETE.block::get)
-         .viaShaped(b -> b
-                 .define('D', DYES_FROM_COLOR.get("yellow"))
-                 .define('C', TFMGBlocks.REBAR_CONCRETE.block)
-                 .pattern("CCC")
-                 .pattern("CDC")
-                 .pattern("CCC"));
+                    .requires(ItemTags.WOODEN_DOORS));
 
     /// ////////////////////
 
@@ -2687,8 +2291,7 @@ public class TFMGStandardRecipeGen extends TFMGRecipeProvider {
         super(output, registries);
     }
 
-    @ParametersAreNonnullByDefault
-    @MethodsReturnNonnullByDefault
+    @NothingNullByDefault
     private static class ModdedCookingRecipeOutputShim implements Recipe<RecipeInput> {
 
         private static final Map<RecipeType<?>, ModdedCookingRecipeOutputShim.Serializer> serializers = new ConcurrentHashMap<>();
@@ -2787,8 +2390,7 @@ public class TFMGStandardRecipeGen extends TFMGRecipeProvider {
         }
     }
 
-    @ParametersAreNonnullByDefault
-    @MethodsReturnNonnullByDefault
+    @NothingNullByDefault
     private record ModdedCookingRecipeOutput(RecipeOutput wrapped, ResourceLocation outputOverride) implements RecipeOutput {
 
         @Override

@@ -13,28 +13,43 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.Mth;
 import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Quaterniond;
 
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 
 public class SurfaceScannerBlockEntity extends SmartBlockEntity implements IHaveGoggleInformation {
     private long lastScanTick = Long.MIN_VALUE;
     private ChunkPos lastScanPos = null;
 	private BlockPos nearestDeposit = null;
-	private int[] signals = new int[4];
+	private EnumMap<Direction, Integer> signals = blankSignal();
 	private boolean operational = false;
 	
-    public boolean[][] grid = new boolean[5][5];
+    public boolean[][] grid = new boolean[7][7];
 
     public SurfaceScannerBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
         setLazyTickRate(20);
     }
+	
+	private static EnumMap<Direction, Integer> blankSignal() {
+		return new EnumMap<>(Map.of(
+			Direction.DOWN, 0,
+			Direction.UP, 0,
+			Direction.NORTH,0,
+			Direction.SOUTH, 0,
+			Direction.WEST, 0,
+			Direction.EAST, 0
+		));
+	}
 
     @Override
     public void addBehaviours(List<BlockEntityBehaviour> behaviours) {}
@@ -45,8 +60,8 @@ public class SurfaceScannerBlockEntity extends SmartBlockEntity implements IHave
 		BlockPos actualPosition = SurfaceScannerSable.getActualPosition(this);
 		ChunkPos chunkPos = level.getChunk(actualPosition).getPos();
 		
-        for (int x = 0; x < 5; x++) { for (int z = 0; z < 5; z++) {
-			ChunkAccess chunk = level.getChunk(chunkPos.x + x - 2, chunkPos.z + z - 2);
+        for (int x = 0; x < 7; x++) { for (int z = 0; z < 7; z++) {
+			ChunkAccess chunk = level.getChunk(chunkPos.x + x - 3, chunkPos.z + z - 3);
 			boolean oil = chunk.hasData(TFMGDataAttachments.FLUID_RESERVOIR);
 			grid[x][z] = oil;
 			if (!oil) continue;
@@ -102,13 +117,13 @@ public class SurfaceScannerBlockEntity extends SmartBlockEntity implements IHave
 		} else {
 			if (operational) { //logic when power is lost
 				operational = false;
-				grid = new boolean[5][5];
+				grid = new boolean[7][7];
 				nearestDeposit = null;
 				//so that you don't need to wait for rescan right after regaining power
 				lastScanTick = Long.MIN_VALUE;
 				//zero out redstone
-				signals = new int[4];
-				setChanged();
+				signals = blankSignal();
+				notifyUpdate();
 			}
 		}
 		
@@ -118,7 +133,6 @@ public class SurfaceScannerBlockEntity extends SmartBlockEntity implements IHave
 		ChunkPos actualChunkPos = level.getChunk(actualPosition).getPos();
 		Quaterniond currentRot = SurfaceScannerSable.getSublevelRot(this);
 		recalculateSignals(actualPosition, currentRot);
-		setChanged();
 		boolean moved = lastScanPos == null || !lastScanPos.equals(actualChunkPos);
 		long currentTick = level.getGameTime();
 		boolean intervalElapsed = lastScanTick == Long.MIN_VALUE || (currentTick - lastScanTick) >= 2400;
@@ -132,41 +146,41 @@ public class SurfaceScannerBlockEntity extends SmartBlockEntity implements IHave
 	
 	public int getDirectionalSignal (Direction side) {
 		if (!operational) return 0;
-		return switch (side) {
-			case DOWN, UP -> 0;
-			case NORTH -> signals[0];
-			case SOUTH -> signals[1];
-			case WEST -> signals[2];
-			case EAST -> signals[3];
-		};
+		return signals.get(side);
 	}
 	
 	private void recalculateSignals (BlockPos actualPosition, Quaterniond rot) {
+		if (level == null) return;
 		if (nearestDeposit == null) {
-			signals = new int[4];
+			signals = blankSignal();
 			return;
 		}
 		
 		Vec3 toNearest = Vec3.atLowerCornerOf(actualPosition.subtract(nearestDeposit));
 		//2d distance:
-		double dist = Math.sqrt(toNearest.x()*toNearest.x() + toNearest.z()*toNearest.z());
+		double invDist = Mth.invSqrt(toNearest.x() * toNearest.x() + toNearest.z() * toNearest.z());
 		//normalized vector towards nearest deposit:
-		toNearest =  new Vec3(toNearest.x() / dist, 0, toNearest.z() / dist);
+		Vec3 toNearestNormalized =  new Vec3(toNearest.x() * invDist, 0, toNearest.z() * invDist);
 		
-		signals[0] = getSignalForSide(Direction.NORTH, toNearest, rot);
-		signals[1] = getSignalForSide(Direction.SOUTH, toNearest, rot);
-		signals[2] = getSignalForSide(Direction.WEST, toNearest, rot);
-		signals[3] = getSignalForSide(Direction.EAST, toNearest, rot);
+		EnumMap<Direction,Vec3> normals = TFMGUtils.getRotatedNormals(rot);
 		
-		setChanged();
-	}
-	
-	private int getSignalForSide (Direction side, Vec3 toNearest, Quaterniond rot) {
-		//normalized direction vector, rotated to sublevel orientation:
-		Vec3 direction = TFMGUtils.rotateQuat(Vec3.atLowerCornerOf(side.getNormal()), rot);
-		//cosine of the angle can be given by the dot product, since both are normalized
-		double cosine = toNearest.dot(direction);
-		//how Aero does it
-		return (int) Math.max(0, 30 * Math.asin(cosine) / Math.PI);
+		double maxSignal = 30d / Math.PI;
+		Block block = getBlockState().getBlock();
+		boolean update = false;
+		for (Map.Entry<Direction, Integer> e : signals.entrySet()) {
+			Direction d = e.getKey();
+			if (d == Direction.DOWN || d == Direction.UP) continue;
+			int signal = (int) Math.max(0, maxSignal * Math.asin(toNearestNormalized.dot(normals.get(d))));
+			if (e.getValue() == signal) continue;
+			
+			update = true;
+			signals.put(d, signal);
+			level.updateNeighborsAt(worldPosition.relative(d), block);
+		}
+		
+		if (update) {
+			notifyUpdate();
+			level.updateNeighborsAt(worldPosition, block);
+		}
 	}
 }

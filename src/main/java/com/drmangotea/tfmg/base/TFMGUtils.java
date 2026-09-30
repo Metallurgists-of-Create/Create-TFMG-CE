@@ -30,6 +30,8 @@ import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.HumanoidArm;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -44,7 +46,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.joml.Quaterniond;
 
 import java.util.Arrays;
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class TFMGUtils {
@@ -57,24 +61,24 @@ public class TFMGUtils {
         };
     }
 	
-    public static void createFireExplosion(Level level, Entity entity, BlockPos pos, int sparkAmount, float radius) {
-
+    public static void createFireExplosion(Level level, Entity entity, Vec3 pos, int sparkAmount, float radius) {
         if (level.isClientSide && entity != null) level.broadcastEntityEvent(entity, (byte) 3);
 
         for (int i = 0; i < sparkAmount; i++) {
-            float x = level.random.nextFloat() * 360;
-            float y = level.random.nextFloat() * 360;
-            float z = level.random.nextFloat() * 360;
+            float x = level.random.nextFloat() * Mth.TWO_PI;
+            float y = level.random.nextFloat() * Mth.TWO_PI;
+            float z = level.random.nextFloat() * Mth.TWO_PI;
             Spark spark = TFMGEntityTypes.SPARK.create(level);
-            spark.moveTo(pos.getX(), pos.getY() + 1, pos.getZ());
+			if (spark == null) continue;
+            spark.moveTo(pos.x(), pos.y() + 1, pos.z());
 
-            float f = -Mth.sin(y * ((float) Math.PI / 180F)) * Mth.cos(x * ((float) Math.PI / 180F));
-            float f1 = -Mth.sin((x + z) * ((float) Math.PI / 180F));
-            float f2 = Mth.cos(y * ((float) Math.PI / 180F)) * Mth.cos(x * ((float) Math.PI / 180F));
+            float f = -Mth.sin(y) * Mth.cos(x);
+            float f1 = -Mth.sin(x + z);
+            float f2 = Mth.cos(y) * Mth.cos(x);
             spark.shoot(f, f1, f2, 0.3f, 1);
             level.addFreshEntity(spark);
         }
-        level.explode(null, pos.getX(), pos.getY(), pos.getZ(), radius, Level.ExplosionInteraction.BLOCK);
+        level.explode(null, pos.x(), pos.y(), pos.z(), radius, Level.ExplosionInteraction.BLOCK);
     }
 	
     public static void playSound(Level level, BlockPos pos, SoundEvent sound, SoundSource source){
@@ -86,33 +90,31 @@ public class TFMGUtils {
     public static void playSound(Level level, BlockPos pos, SoundEvent sound, SoundSource source, float volume, float pitch){
         playSound(level,pos,sound,source,volume,pitch,null);
     }
-    public static void playSound(Level level, BlockPos pos, SoundEvent sound, SoundSource source, float volume, float pitch, Player player){
+    public static void playSound(Level level, BlockPos pos, SoundEvent sound, SoundSource source, float volume, float pitch, Player player) {
         level.playSound(player,pos,sound,source,volume,pitch);
     }
 
+	//what is this even for?
     public static void blowUpTank(FluidTankBlockEntity tank, int power) {
-        if (tank == null || tank.getControllerBE() == null) return;
+        if (tank == null) return;
         FluidTankBlockEntity be = tank.getControllerBE();
+		if (be == null) return;
+		BlockPos pos = be.getBlockPos();
+		Level level = be.getLevel();
+		if (level == null) return;
 
-        for (int xOffset = 0; xOffset < be.getWidth(); xOffset++) {
-            for (int zOffset = 0; zOffset < be.getWidth(); zOffset++) {
-                for (int yOffset = 0; yOffset < be.getHeight(); yOffset++) {
+        for (int X = 0; X < be.getWidth(); X++) { for (int Z = 0; Z < be.getWidth(); Z++) { for (int Y = 0; Y < be.getHeight(); Y++) {
+			level.destroyBlock(pos.offset(X, Y, Z), false);
+		} } }
 
-                    BlockPos pos = be.getBlockPos().offset(xOffset, yOffset, zOffset);
-
-                    be.getLevel().destroyBlock(pos, false);
-                }
-            }
-        }
-
-        createFireExplosion(be.getLevel(), null, new BlockPos(be.getBlockPos().getX() + (be.getWidth() / 2), be.getBlockPos().getY() + (be.getHeight() / 2), be.getBlockPos().getZ() + (be.getWidth() / 2)), power * 15, (float) power);
+        createFireExplosion(level, null, Vec3.atLowerCornerWithOffset(pos, be.getWidth()  * 0.5f, be.getHeight()  * 0.5f, be.getWidth() * 0.5f), power * 15, (float) power);
     }
 
-    public static void createOutline(Vec3 pos1, Vec3 pos2,String name,Color color){
-        createOutline(pos1,pos2,name,color,1/32f);
+    public static void createOutline(Vec3 pos1, Vec3 pos2, String name, Color color) {
+        createOutline(pos1, pos2, name, color, 1/32f);
     }
 
-    public static void createOutline(Vec3 pos1, Vec3 pos2,String name,Color color,float width){
+    public static void createOutline(Vec3 pos1, Vec3 pos2, String name, Color color, float width) {
         Outliner.getInstance().showAABB(name, new AABB(pos1, pos2))
                 .lineWidth(width)
                 .colored(color);
@@ -209,14 +211,51 @@ public class TFMGUtils {
         return (float) Math.sqrt(x * x + z * z + (is2d ? 0: y * y));
     }
 	
+	public static Vec3 getGunBarrelVec(LivingEntity entity, boolean mainHand, Vec3 rightHandForward) {
+		Vec3 start = entity.position().add(0, entity.getEyeHeight(), 0);
+		int flip = mainHand == (entity.getMainArm() == HumanoidArm.RIGHT) ? -1 : 1;
+		Vec3 barrelPosNoTransform = new Vec3(flip * rightHandForward.x, rightHandForward.y, rightHandForward.z)
+			.xRot(-entity.getXRot() * Mth.DEG_TO_RAD)
+			.yRot(-entity.getYRot() * Mth.DEG_TO_RAD);
+		return start.add(barrelPosNoTransform);
+	}
+	
 	//for Sable stuff:
 	public static Vec3 rotateQuat(final Vec3 V, final Quaterniond Q) {
-		final Quaterniond q = new Quaterniond((float) V.x, (float) V.y, (float) V.z, 0.0f);
-		final Quaterniond Q2 = new Quaterniond(Q);
-		q.mul(Q2);
-		Q2.conjugate();
-		Q2.mul(q);
-		return new Vec3(Q2.x(), Q2.y(), Q2.z());
+		double
+			qww = Q.w*Q.w,
+			qwx = Q.w*Q.x, qxx = Q.x*Q.x, qxy = Q.x*Q.y,
+			qwy = Q.w*Q.y, qyy = Q.y*Q.y, qyz = Q.y*Q.z,
+			qwz = Q.w*Q.z, qzz = Q.z*Q.z, qzx = Q.x*Q.z;
+		
+		double
+			x = org.joml.Math.fma(V.x, qww + qxx - qyy - qzz, 2d * org.joml.Math.fma(V.y, qxy - qwz, V.z*(qzx + qwy))),
+			y = org.joml.Math.fma(V.y, qww + qyy - qzz - qxx, 2d * org.joml.Math.fma(V.z, qyz - qwx, V.x*(qxy + qwz))),
+			z = org.joml.Math.fma(V.z, qww + qzz - qxx - qyy, 2d * org.joml.Math.fma(V.x, qzx - qwy, V.y*(qyz + qwx)));
+		
+		return new Vec3(x, y, z);
+	}
+	
+	public static EnumMap<Direction, Vec3> getRotatedNormals(final Quaterniond Q) {
+		double
+			qww = Q.w*Q.w,
+			qwx = Q.w*Q.x, qxx = Q.x*Q.x, qxy = Q.x*Q.y,
+			qwy = Q.w*Q.y, qyy = Q.y*Q.y, qyz = Q.y*Q.z,
+			qwz = Q.w*Q.z, qzz = Q.z*Q.z, qzx = Q.x*Q.z;
+		
+		double
+			XX = qww + qxx - qyy - qzz, XY = 2d*(qxy - qwz), XZ = 2d*(qzx + qwy),
+			YY = qww + qyy - qzz - qxx, YZ = 2d*(qyz - qwx), YX = 2d*(qxy + qwz),
+			ZZ = qww + qzz - qxx - qyy, ZX = 2d*(qzx - qwy), ZY = 2d*(qyz + qwx);
+		
+		return new EnumMap<>(Map.of(
+			Direction.DOWN,  new Vec3(-XY,-YY,-ZY), //( 0,-1, 0)
+			Direction.UP,    new Vec3( XY, YY, ZY), //( 0, 1, 0)
+			Direction.NORTH, new Vec3(-XZ,-YZ,-ZZ), //( 0, 0,-1)
+			Direction.SOUTH, new Vec3( XZ, YZ, ZZ), //( 0, 0, 1)
+			Direction.WEST,  new Vec3(-XX,-YX,-ZX), //(-1, 0, 0)
+			Direction.EAST,  new Vec3( XX, YX, ZX)  //( 1, 0, 0)
+		));
 	}
 	
 	@Deprecated(since = "1.2.5")
@@ -233,56 +272,27 @@ public class TFMGUtils {
 
         IFluidHandler handler = be.getLevel().getCapability(Capabilities.FluidHandler.BLOCK, be.getBlockPos(), null);
 
-        if (handler == null || handler.getTanks() == 0)
-            return false;
-
-        LangBuilder mb = CreateLang.translate("generic.unit.millibuckets");
-        TFMGLang.translate("goggles.fluid_storage")
-                .forGoggles(tooltip);
-
-        boolean isEmpty = true;
-        for (int i = 0; i < handler.getTanks(); i++) {
-            FluidStack fluidStack = handler.getFluidInTank(i);
-            if (fluidStack.isEmpty())
-                continue;
-
-            CreateLang.fluidName(fluidStack)
-                    .style(ChatFormatting.GRAY)
-                    .forGoggles(tooltip, 1);
-
-            CreateLang.builder()
-                    .add(CreateLang.number(fluidStack.getAmount())
-                            .add(mb)
-                            .style(ChatFormatting.DARK_GREEN))
-                    .text(ChatFormatting.GRAY, " / ")
-                    .add(CreateLang.number(handler.getTankCapacity(i))
-                            .add(mb)
-                            .style(ChatFormatting.DARK_GRAY))
-                    .forGoggles(tooltip, 1);
-
-            isEmpty = false;
-        }
-
-        if (handler.getTanks() > 1) {
-            if (isEmpty) tooltip.removeLast();
-            return true;
-        }
-
-        if (!isEmpty)
-            return true;
-
-        CreateLang.translate("gui.goggles.fluid_container.capacity")
-                .add(CreateLang.number(handler.getTankCapacity(0))
-                        .add(mb)
-                        .style(ChatFormatting.DARK_GREEN))
-                .style(ChatFormatting.GRAY)
-                .forGoggles(tooltip, 1);
-
-        return true;
+		return createFluidTooltip(tooltip, handler);
     }
 	
-	/// Populates a tooltip with all the fluid tanks given to it
+	public static LangBuilder fluidOutOfCapacity(int volume, ChatFormatting style, int capacity) {
+		LangBuilder mb = CreateLang.translate("generic.unit.millibuckets");
+		
+		return TFMGLang.builder()
+			.add(TFMGLang.number(volume).add(mb).style(style))
+			.text(ChatFormatting.GRAY, " / ")
+			.add(TFMGLang.number(capacity).add(mb).style(ChatFormatting.DARK_GRAY));
+	}
+	
+	/// Populates a tooltip with all the fluid tanks given to it.
 	public static boolean createFluidTooltip(List<Component> tooltip, IFluidHandler... handlers) {
+		return createFluidTooltip(tooltip, false, handlers);
+	}
+	
+	/** Populates a tooltip with all the fluid tanks given to it
+	 * @param showIfEmpty determines whether fluid handling is noted if the fluid tanks are empty.
+	 * **/
+	public static boolean createFluidTooltip(List<Component> tooltip, boolean showIfEmpty, IFluidHandler... handlers) {
 		LangBuilder mb = CreateLang.translate("generic.unit.millibuckets");
 		TFMGLang.translate("goggles.fluid_storage").forGoggles(tooltip);
 		
@@ -293,27 +303,20 @@ public class TFMGUtils {
 			
 			for (int i = 0; i < handler.getTanks(); i++) {
 				FluidStack fluidStack = handler.getFluidInTank(i);
-				if (fluidStack.isEmpty()) continue;
+				if (fluidStack.isEmpty() && !showIfEmpty) continue;
+				//todo: find or create lang key for empty tank
+				LangBuilder name = fluidStack.isEmpty() ? TFMGLang.text("Empty") : TFMGLang.fluidName(fluidStack);
 				
-				CreateLang.fluidName(fluidStack)
-					.style(ChatFormatting.GRAY)
-					.forGoggles(tooltip, 1);
+				name.style(ChatFormatting.GRAY).forGoggles(tooltip, 1);
 				
-				CreateLang.builder()
-					.add(CreateLang.number(fluidStack.getAmount())
-						.add(mb)
-						.style(ChatFormatting.DARK_GREEN))
-					.text(ChatFormatting.GRAY, " / ")
-					.add(CreateLang.number(handler.getTankCapacity(i))
-						.add(mb)
-						.style(ChatFormatting.DARK_GRAY))
-					.forGoggles(tooltip, 1);
+				fluidOutOfCapacity(fluidStack.getAmount(), ChatFormatting.DARK_GREEN, handler.getTankCapacity(i))
+					.forGoggles(tooltip, 2);
 				
 				isEmpty = false;
 			}
 		}
 		
-		if (isEmpty) {
+		if (isEmpty & !showIfEmpty) {
 			tooltip.removeLast();
 			if (handlers.length == 1 && handlers[0].getTanks() == 1) {
 				CreateLang.translate("gui.goggles.fluid_container.capacity")
@@ -337,29 +340,7 @@ public class TFMGUtils {
 		
 		IItemHandler handler = be.getLevel().getCapability(Capabilities.ItemHandler.BLOCK, be.getBlockPos(), null);
 		
-		if (handler == null)
-			return false;
-		
-		if (handler.getSlots() == 0)
-			return false;
-		
-		CreateLang.translate("goggles.item_storage").forGoggles(tooltip);
-		boolean isEmpty = true;
-		for (int i = 0; i < handler.getSlots(); i++) {
-			ItemStack itemStack = handler.getStackInSlot(i);
-			
-			if (itemStack.isEmpty()) continue;
-			CreateLang.itemName(itemStack).style(ChatFormatting.GRAY).add(Component.literal(" x " + itemStack.getCount()).withStyle(ChatFormatting.DARK_GREEN)).forGoggles(tooltip, 1);
-			isEmpty = false;
-		}
-		if (handler.getSlots() > 1) {
-			if (isEmpty) tooltip.removeLast();
-			return true;
-		}
-		if (!isEmpty) return true;
-		
-		CreateLang.translate("item_attributes.shulker_level.empty").style(ChatFormatting.DARK_GRAY).forGoggles(tooltip, 1);
-		return true;
+		return createItemTooltip(tooltip, handler);
 	}
 	
 	/// Populates a tooltip with information about the items contained
@@ -467,5 +448,31 @@ public class TFMGUtils {
             }
         }
         return false;
+    }
+
+    public static Color blendColours(Color... c) {
+        if (c == null || c.length == 0) {
+            return null;
+        }
+        float ratio = 1f / ((float) c.length);
+
+        int a = 0;
+        int r = 0;
+        int g = 0;
+        int b = 0;
+
+        for (Color color : c) {
+            int rgb = color.getRGB();
+            int a1 = (rgb >> 24 & 0xff);
+            int r1 = ((rgb & 0xff0000) >> 16);
+            int g1 = ((rgb & 0xff00) >> 8);
+            int b1 = (rgb & 0xff);
+            a = (int) (a + (a1 * ratio));
+            r = (int) (r + (r1 * ratio));
+            g = (int) (g + (g1 * ratio));
+            b = (int) (b + (b1 * ratio));
+        }
+
+        return new Color(a << 24 | r << 16 | g << 8 | b);
     }
 }

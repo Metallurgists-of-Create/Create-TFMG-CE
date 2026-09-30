@@ -10,7 +10,6 @@
     "FluidPipeBlockMixin",
     "ItemStackMixin",
     "MobEffectInstanceMixin",
-    "PipeAttachmentModelMixin",
     "UtilMixin",
     "accessor.ChunkMapAccessor",
     "accessor.FluidTankBlockEntityAccessor",

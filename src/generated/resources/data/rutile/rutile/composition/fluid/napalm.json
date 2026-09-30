@@ -1,0 +1,27 @@
+{
+  "compositions": [
+    {
+      "elements": [
+        {
+          "amount": 12,
+          "id": "rutile:carbon"
+        },
+        {
+          "amount": 5,
+          "id": "rutile:hydrogen"
+        }
+      ]
+    },
+    {
+      "elements": [
+        {
+          "amount": 1,
+          "id": "rutile:aluminum"
+        }
+      ]
+    }
+  ],
+  "contents": [
+    "tfmg:napalm"
+  ]
+}

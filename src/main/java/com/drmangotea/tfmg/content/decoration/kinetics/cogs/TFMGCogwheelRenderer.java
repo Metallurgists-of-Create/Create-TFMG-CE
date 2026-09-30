@@ -19,6 +19,9 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
 import net.minecraft.core.Direction.AxisDirection;
+import net.minecraft.util.Mth;
+
+import static com.simibubi.create.content.kinetics.base.KineticBlockEntityVisual.rotationOffset;
 
 public class TFMGCogwheelRenderer extends KineticBlockEntityRenderer<SimpleKineticBlockEntity> {
 
@@ -54,17 +57,8 @@ public class TFMGCogwheelRenderer extends KineticBlockEntityRenderer<SimpleKinet
 
 	public static float getAngleForLargeCogShaft(SimpleKineticBlockEntity be, Axis axis) {
 		BlockPos pos = be.getBlockPos();
-		float offset = getShaftAngleOffset(axis, pos);
+		float offset = rotationOffset(be.getBlockState(), axis, pos);
 		float time = AnimationTickHolder.getRenderTime(be.getLevel());
-        return ((time * be.getSpeed() * 3f / 10 + offset) % 360) / 180 * (float) Math.PI;
-	}
-
-	public static float getShaftAngleOffset(Axis axis, BlockPos pos) {
-		float offset = 0;
-		double d = (((axis == Axis.X) ? 0 : pos.getX()) + ((axis == Axis.Y) ? 0 : pos.getY())
-			+ ((axis == Axis.Z) ? 0 : pos.getZ())) % 2;
-		if (d == 0)
-			offset = 22.5f;
-		return offset;
+        return ((time * be.getSpeed() * .3f + offset) % 360) * Mth.DEG_TO_RAD;
 	}
 }

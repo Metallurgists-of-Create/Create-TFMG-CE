@@ -22,6 +22,7 @@ import mezz.jei.api.recipe.RecipeIngredientRole;
 import net.createmod.catnip.data.Pair;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -113,6 +114,7 @@ public class ChemicalVatCategory extends CreateRecipeCategory<VatMachineRecipe> 
         }
     }
 
+    //TODO: Add better visualisation of vat configuration required for a recipe
     public void draw(VatMachineRecipe recipe, IRecipeSlotsView iRecipeSlotsView, GuiGraphics graphics, double mouseX, double mouseY) {
         List<VatType> allowedVatTypes = recipe.allowedVatTypes.isEmpty() ? VatRecipeParams.allVatTypes() : recipe.allowedVatTypes;
         TFMGGuiTextures.VAT.render(graphics, 0, 24);
@@ -142,6 +144,10 @@ public class ChemicalVatCategory extends CreateRecipeCategory<VatMachineRecipe> 
         for (int i = 0; i < condensedIngredients.size(); i++) {
             TFMGGuiTextures.SLOT.render(graphics, posItem - widthItem, recipe.getFluidIngredients().isEmpty() ? 70 : 62);
             posItem += 21;
+        }
+
+        if (recipe.minSize > 1) {
+            graphics.drawString(Minecraft.getInstance().font, TFMGLang.translate("recipe.vat.minsize", recipe.minSize).component(), 122, 45, 16579836);
         }
     }
 

@@ -65,7 +65,7 @@ public class LithiumBladeItem extends SwordItem {
                 LithiumSpark spark = TFMGEntityTypes.LITHIUM_SPARK.create(pLevel);
                 if (spark == null) continue;
                 spark.setPos(player.getX(), player.getY() + 1.3, player.getZ());
-                spark.burst(player.getLookAngle().x, player.getLookAngle().y, player.getLookAngle().z, 1, 30);
+                spark.burst(player.getLookAngle(), 1, 30);
                 pLevel.addFreshEntity(spark);
             }
             player.getCooldowns().addCooldown(TFMGItems.LITHIUM_BLADE.get(), 60);

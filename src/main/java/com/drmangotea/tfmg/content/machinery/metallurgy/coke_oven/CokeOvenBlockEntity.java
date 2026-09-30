@@ -31,7 +31,6 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.ChunkPos;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
@@ -202,7 +201,7 @@ public class CokeOvenBlockEntity extends SmartBlockEntity implements IHaveGoggle
 					.style(ChatFormatting.GOLD)
 					.forGoggles(tooltip);
 		
-		TFMGUtils.createFluidTooltip(tooltip, controllerOven.secondaryTank, controllerOven.primaryTank);
+		TFMGUtils.createFluidTooltip(tooltip, true, controllerOven.secondaryTank, controllerOven.primaryTank);
 		TFMGUtils.createItemTooltip(tooltip, controllerOven.inventory);
         return true;
     }
@@ -223,70 +222,72 @@ public class CokeOvenBlockEntity extends SmartBlockEntity implements IHaveGoggle
     }
 
     public void createMultiblock() {
-        if(level == null)
-            return;
-        int maxSize = TFMGConfigs.common().machines.cokeOvenMaxSize.get();
-        Direction facing = getBlockState().getValue(FACING);
-		BlockPos basePos = getBlockPos();
-        if(isOven(basePos.relative(facing)) || isOven(basePos.below()))
-            return;
+		if(level == null)
+			return;
+		int maxSize = TFMGConfigs.common().machines.cokeOvenMaxSize.get();
+		Direction facing = getBlockState().getValue(FACING);
+		if(isOven(worldPosition.relative(facing)) || isOven(worldPosition.below()))
+			return;
 		
 		//reset existing multiblocks
-		for (BlockPos pos : getRange(basePos, facing, this.size-1)) {
+		for (BlockPos pos : getRangeAbove(worldPosition, facing, this.size-1)) {
 			if (level.getBlockEntity(pos) instanceof CokeOvenBlockEntity be && be.controller!=be.getBlockPos()) {
 				be.controller = be.getBlockPos();
 				be.refreshCapability();
 				be.forceOpen = false;
 				be.doorAngle.setValue(0);
-				setControllerState(level, be.getBlockPos(), CokeOvenBlock.ControllerType.CASUAL);
+				setControllerState(be.getBlockPos(), CokeOvenBlock.ControllerType.CASUAL);
 			}
 		}
 		
 		//get new size
 		int size = 1;
 		SizeLoop:
-		for (int i = 1; i <= maxSize; i++) {
-			for(BlockPos pos : getRange(basePos, facing, i)) {
-				if (!isOven(pos)) break SizeLoop;
+		for (int i = 1; i<=maxSize; i++) {
+			for(BlockPos pos : getRangeAbove(worldPosition, facing, i)) {
+				if (!isOven(pos))
+					break SizeLoop;
 				if (level.getBlockState(pos).getValue(FACING) != facing)
 					break SizeLoop;
 			}
 			size++;
 		}
-  
-		//apply new size
-		for(BlockPos pos : getRange(basePos, facing, size - 1)) {
-			if(level.getBlockEntity(pos) instanceof CokeOvenBlockEntity be){
-                be.controller = basePos;
-                be.refreshCapability();
-            }
-        }
+		
+		//apply size
+		for(BlockPos pos : getRangeAbove(worldPosition, facing, size-1)) {
+			if(level.getBlockEntity(pos) instanceof CokeOvenBlockEntity be) {
+				be.controller = worldPosition;
+				be.refreshCapability();
+			}
+		}
 		
 		//set door blockstates
 		if (size > 1) {
-			setControllerState(level, basePos, CokeOvenBlock.ControllerType.BOTTOM_ON);
-			setControllerState(level, basePos.above(size - 1), CokeOvenBlock.ControllerType.TOP_ON);
-			for (int i = 1; i < size - 1; i++) {
-				setControllerState(level, basePos.above(i), CokeOvenBlock.ControllerType.MIDDLE_ON);
+			setControllerState(worldPosition, CokeOvenBlock.ControllerType.BOTTOM_ON);
+			setControllerState(worldPosition.above(size - 1), CokeOvenBlock.ControllerType.TOP_ON);
+			for(int i = 1; i < size - 1; i++) {
+				setControllerState(worldPosition.above(i), CokeOvenBlock.ControllerType.MIDDLE_ON);
 			}
-		} else {
-			setControllerState(level, basePos, CokeOvenBlock.ControllerType.CASUAL);
-		}
+		} else setControllerState(worldPosition, CokeOvenBlock.ControllerType.CASUAL);
 		
 		this.size = size;
     }
 	
 	boolean isOven (BlockPos pos) {
-		assert level != null;
-		return level.getBlockState(pos).is(TFMGBlocks.COKE_OVEN.get());
+		return level != null && level.getBlockState(pos).is(TFMGBlocks.COKE_OVEN.get());
 	}
 	
-	Iterable<BlockPos> getRange(BlockPos pos, Direction facing, int size) {
+	Iterable<BlockPos> getRangeAbove(BlockPos pos, Direction facing, int size) {
 		return BlockPos.betweenClosed(pos, pos.above(size).relative(facing.getOpposite(),size));
 	}
 	
-	void setControllerState (Level level, BlockPos pos, CokeOvenBlock.ControllerType type) {
-		BlockState state = level.getBlockState(pos).setValue(CokeOvenBlock.CONTROLLER_TYPE, type);
+	Iterable<BlockPos> getRangeBelow(BlockPos pos, Direction facing, int size) {
+		return BlockPos.betweenClosed(pos, pos.below(size).relative(facing.getOpposite(),size));
+	}
+	
+	void setControllerState (BlockPos pos, CokeOvenBlock.ControllerType type) {
+		if (level == null) return;
+		BlockState state = getBlockState().setValue(CokeOvenBlock.CONTROLLER_TYPE, type);
 		level.setBlock(pos, state, 2);
 	}
 	
@@ -314,7 +315,7 @@ public class CokeOvenBlockEntity extends SmartBlockEntity implements IHaveGoggle
         if (level == null) return;
         int maxSize = TFMGConfigs.common().machines.cokeOvenMaxSize.get();
         Direction facing = getBlockState().getValue(FACING);
-        for(BlockPos pos : getRange(getBlockPos(), facing, maxSize)) {
+        for(BlockPos pos : getRangeBelow(getBlockPos(), facing, maxSize)) {
             if (level.getBlockEntity(pos) instanceof CokeOvenBlockEntity be) {
                 be.createMultiblock();
             }

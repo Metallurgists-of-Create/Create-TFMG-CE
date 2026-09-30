@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "tfmg:block/gray_liquid_concrete"
+    }
+  }
+}

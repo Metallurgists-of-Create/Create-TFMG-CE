@@ -2,7 +2,7 @@ plugins {
     id("java-library")
     id("maven-publish")
     id("idea")
-    id("net.neoforged.moddev") version "2.0.89"
+    id("net.neoforged.moddev") version "2.0.147"
 }
 
 val baseArchivesName = project.property("mod_id").toString()
@@ -104,10 +104,13 @@ repositories {
     maven("https://mvn.devos.one/snapshots") // Registrate
     maven("https://raw.githubusercontent.com/Fuzss/modresources/main/maven/") // ForgeConfigAPIPort
     maven("https://maven.blamejared.com") // JEI, Vazkii's Mods
-    maven("https://maven.ryanhcode.dev/releases")
+    maven("https://maven.ryanhcode.dev/releases") //Sable Companion
     maven("https://api.modrinth.com/maven")
     maven("https://dl.cloudsmith.io/public/wolfieboy09/liquid-fuel-reburned/maven/")
-
+    maven {
+        name = "Krystals Releases Maven"
+        url = uri("https://krystalsmaven.oreostack.uk/releases") // Rutile
+    }
     maven {
         name = "DevAuth Maven"
         url = uri("https://pkgs.dev.azure.com/djtheredstoner/DevAuth/_packaging/public/maven/v1")
@@ -139,18 +142,20 @@ dependencies {
     compileOnly("dev.engine-room.flywheel:flywheel-neoforge-api-${property("minecraft_version")}:${property("flywheel_version")}")
     runtimeOnly("dev.engine-room.flywheel:flywheel-neoforge-${property("minecraft_version")}:${property("flywheel_version")}")
 
-    implementation("maven.modrinth:createaddition:neoforge-1.21.1-1.6.0")
-    implementation("maven.modrinth:spark:1.10.124-neoforge-1.21.1")
-
-    implementation("mezz.jei:jei-${property("jei_minecraft_version")}-neoforge:${property("jei_version")}")
+    implementation("mezz.jei:jei-${property("minecraft_version")}-neoforge:${property("jei_version")}")
     implementation("com.tterrag.registrate:Registrate:${property("registrate_version")}")
 
-    compileOnly("dev.wolfieboy09.createliquidfuel:createliquidfuel:${property("minecraft_version")}-${property("clf_reburned_version")}") { isTransitive = false }
-    runtimeOnly("dev.wolfieboy09.createliquidfuel:createliquidfuel:${property("minecraft_version")}-${property("clf_reburned_version")}") { isTransitive = false }
+    implementation("dev.wolfieboy09.createliquidfuel:createliquidfuel:${property("minecraft_version")}-${property("clf_reburned_version")}") { isTransitive = false }
+    implementation("dev.metallurgists:rutile:${property("minecraft_version")}-${property("rutile_version")}") { isTransitive = false }
 
+    implementation("maven.modrinth:create-big-cannons:bOiDu0LS") //Create: Big Cannons (CBC)
+    runtimeOnly("maven.modrinth:rpl:hZ6B2Z0x") //RPL, so CBC can run
+    
     runtimeOnly("me.djtheredstoner:DevAuth-neoforge:1.2.1")
+    runtimeOnly("maven.modrinth:createaddition:neoforge-1.21.1-1.6.0")
+    runtimeOnly("maven.modrinth:spark:1.10.124-neoforge-1.21.1")
     runtimeOnly("maven.modrinth:lhGA9TYQ:1IiqEQGl") //architectury, for CPG
-    runtimeOnly("maven.modrinth:power-grid:ip4gJrgx") //Create: Power Grid 0.6.1
+    runtimeOnly("maven.modrinth:power-grid:jCkPHjmP") //Create: Power Grid 0.6.2
 }
 
 val generateModMetadata by tasks.registering(ProcessResources::class) {
@@ -167,7 +172,8 @@ val generateModMetadata by tasks.registering(ProcessResources::class) {
         "mod_version" to project.findProperty("mod_version") as String,
         "mod_authors" to project.findProperty("mod_authors") as String,
         "mod_credits" to project.findProperty("mod_credits") as String,
-        "mod_description" to project.findProperty("mod_description") as String
+        "mod_description" to project.findProperty("mod_description") as String,
+        "jei_version" to project.findProperty("jei_version") as String,
     )
     inputs.properties(replaceProperties)
     expand(replaceProperties)

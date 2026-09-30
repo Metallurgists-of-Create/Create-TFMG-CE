@@ -2,12 +2,12 @@ package com.drmangotea.tfmg.content.electricity.connection.diagonal;
 
 
 import com.drmangotea.tfmg.base.TFMGShapes;
+import com.drmangotea.tfmg.base.annotation.NothingNullByDefault;
 import com.drmangotea.tfmg.content.electricity.base.IElectric;
 import com.drmangotea.tfmg.registry.TFMGBlockEntities;
 import com.mojang.serialization.MapCodec;
 import com.simibubi.create.content.equipment.wrench.IWrenchable;
 import com.simibubi.create.foundation.block.IBE;
-import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionResult;
@@ -29,14 +29,11 @@ import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-
 import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Objects;
 
 @SuppressWarnings({"unused"})
-@ParametersAreNonnullByDefault
-@MethodsReturnNonnullByDefault
+@NothingNullByDefault
 public class DiagonalCableBlock extends DirectionalBlock implements SimpleWaterloggedBlock, IWrenchable, IBE<DiagonalCableBlockEntity> {
     public static final MapCodec<DiagonalCableBlock> CODEC = simpleCodec(DiagonalCableBlock::new);
 

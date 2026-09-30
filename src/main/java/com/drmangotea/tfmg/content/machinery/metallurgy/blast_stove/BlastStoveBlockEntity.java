@@ -1,23 +1,23 @@
 package com.drmangotea.tfmg.content.machinery.metallurgy.blast_stove;
 
+import com.drmangotea.tfmg.base.TFMGUtils;
 import com.drmangotea.tfmg.base.fluid.ForceableFluidTank;
 import com.drmangotea.tfmg.base.fluid.InputOutputTankWrapper;
 import com.drmangotea.tfmg.base.lang.TFMGLang;
 import com.drmangotea.tfmg.base.lang.TFMGTexts;
 import com.drmangotea.tfmg.recipes.HotBlastRecipe;
+import com.drmangotea.tfmg.recipes.input.HotBlastRecipeInput;
 import com.drmangotea.tfmg.registry.TFMGBlockEntities;
 import com.drmangotea.tfmg.registry.TFMGRecipeTypes;
+import com.drmangotea.tfmg.registry.TFMGTags;
 import com.simibubi.create.api.connectivity.ConnectivityHandler;
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.foundation.blockEntity.IMultiBlockEntityContainer;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.fluid.CombinedTankWrapper;
-import com.simibubi.create.foundation.recipe.RecipeConditions;
-import com.simibubi.create.foundation.recipe.RecipeFinder;
 import com.simibubi.create.foundation.utility.CreateLang;
 import com.simibubi.create.infrastructure.config.AllConfigs;
-import net.createmod.catnip.lang.LangBuilder;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -25,8 +25,9 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluids;
@@ -35,7 +36,7 @@ import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
-import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Objects;
@@ -47,7 +48,8 @@ public class BlastStoveBlockEntity extends SmartBlockEntity implements IHaveGogg
 	
 	protected IFluidHandler
 		primaryCapability,
-		secondaryCapability;
+		secondaryCapability,
+		combinedCapability;
 	protected ForceableFluidTank
 		primaryOutputTank,
 		exhaustOutputTank,
@@ -57,13 +59,15 @@ public class BlastStoveBlockEntity extends SmartBlockEntity implements IHaveGogg
     protected BlockPos lastKnownPos;
     public boolean updateConnectivity;
     protected boolean updateCapability;
-    private static final Object HotBlastRecipesKey = new Object();
-    private static final int SYNC_RATE = 8;
-	private HotBlastRecipe recipe;
+    private static final int SYNC_RATE = 4;
     protected int syncCooldown;
     protected boolean queuedSync;
 	protected int height = 1, width = 1;
-    public int timer = 0;
+
+    private final RecipeManager.CachedCheck<HotBlastRecipeInput, HotBlastRecipe> quickCheck;
+    protected int recipeDuration;
+    int timer = 0;
+    public HotBlastRecipe currentRecipe;
 
     public BlastStoveBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
@@ -71,12 +75,14 @@ public class BlastStoveBlockEntity extends SmartBlockEntity implements IHaveGogg
 		int capacity = getCapacityMultiplier();
         primaryOutputTank = new ForceableFluidTank(capacity, this::onFluidStackChanged).blockInsertion(); //output (hot air)
         exhaustOutputTank = new ForceableFluidTank(capacity, this::onFluidStackChanged).blockInsertion();
-        AirInputTank = new ForceableFluidTank(capacity, this::onFluidStackChanged).blockExtraction(); //input (air)
-        fuelInputTank = new ForceableFluidTank(capacity, this::onFluidStackChanged).blockExtraction();
+        AirInputTank = new ForceableFluidTank(capacity, this::onFluidStackChanged).blockExtraction();
+        fuelInputTank = new ForceableFluidTank(capacity, this::onFluidStackChanged).blockExtraction()
+			.withValidator(f -> f.is(TFMGTags.Fluids.BLAST_STOVE_FUEL.tag));
         primaryCapability = new InputOutputTankWrapper(primaryOutputTank, fuelInputTank);
         secondaryCapability = new InputOutputTankWrapper(exhaustOutputTank, AirInputTank);
+		combinedCapability = new CombinedTankWrapper(primaryCapability, secondaryCapability);
 		updateConnectivity = false;
-		recipe = null;
+        this.quickCheck = RecipeManager.createCheck(TFMGRecipeTypes.HOT_BLAST.getType());
         updateCapability = false;
         refreshCapability();
     }
@@ -86,22 +92,12 @@ public class BlastStoveBlockEntity extends SmartBlockEntity implements IHaveGogg
         if (!isController() || level == null)
             return;
 
-        for (int yOffset = 0; yOffset < height; yOffset++)
-            for (int xOffset = 0; xOffset < width; xOffset++)
-                for (int zOffset = 0; zOffset < width; zOffset++)
-                    if (level.getBlockEntity(
-                            worldPosition.offset(xOffset, yOffset, zOffset)) instanceof BlastStoveBlockEntity fbe)
-                        fbe.refreshCapability();
-
-
         if (level.isClientSide)
             return;
-        refreshCapability();
 
         ConnectivityHandler.formMulti(this);
-		updateRecipe();
+        currentRecipe = findRecipe();
     }
-
 
     @Override
 	public void tick() {
@@ -111,40 +107,13 @@ public class BlastStoveBlockEntity extends SmartBlockEntity implements IHaveGogg
             updateCapability = false;
             refreshCapability();
         }
-
-		if(!(level.isClientSide && !isVirtual()) &&
-			isController() &&
-			!AirInputTank.isEmpty() &&
-			!fuelInputTank.isEmpty() &&
-			primaryOutputTank.getSpace() != 0 &&
-			exhaustOutputTank.getSpace() != 0
-		) {
-			if (recipe == null) updateRecipe();
-			if (recipe != null) {
-				if (timer >= getSpeed()) {
-					if (
-						(primaryOutputTank.isEmpty() || isSameFluidSameComponents(primaryOutputTank.getFluid(), recipe.getPrimaryResult())) &&
-						(exhaustOutputTank.isEmpty() || isSameFluidSameComponents(exhaustOutputTank.getFluid(), recipe.getSecondaryResult()))  &&
-						primaryOutputTank.getSpace() >= recipe.getPrimaryResult().getAmount() &&
-						exhaustOutputTank.getSpace() >= recipe.getSecondaryResult().getAmount()
-					) {
-						AirInputTank.forceDrain(recipe.getPrimaryIngredient().amount(), IFluidHandler.FluidAction.EXECUTE);
-						fuelInputTank.forceDrain(recipe.getSecondaryIngredient().amount(), IFluidHandler.FluidAction.EXECUTE);
-						primaryOutputTank.forceFill(recipe.getPrimaryResult(), IFluidHandler.FluidAction.EXECUTE);
-						exhaustOutputTank.forceFill(recipe.getSecondaryResult(), IFluidHandler.FluidAction.EXECUTE);
-					}
-					timer = 0;
-				} else { timer++; }
-			}
-        }
+        manageRecipe();
 
         if (syncCooldown > 0) {
             syncCooldown--;
             if (syncCooldown == 0 && queuedSync)
                 sendData();
         }
-
-
 
         if (lastKnownPos == null)
             lastKnownPos = getBlockPos();
@@ -157,10 +126,32 @@ public class BlastStoveBlockEntity extends SmartBlockEntity implements IHaveGogg
             updateConnectivity();
     }
 
+    public void manageRecipe() {
+        if (level == null || !this.isController() || currentRecipe == null || level.isClientSide && !isVirtual())
+            return;
+        if (timer >= currentRecipe.getProcessingDuration()) {
+            HotBlastRecipe activeRecipe = currentRecipe;
+            if ((primaryOutputTank.isEmpty() || isSameFluidSameComponents(primaryOutputTank.getFluid(), activeRecipe.getPrimaryResult())) && (exhaustOutputTank.isEmpty() || isSameFluidSameComponents(exhaustOutputTank.getFluid(), activeRecipe.getSecondaryResult()))  &&
+                    primaryOutputTank.getSpace() >= activeRecipe.getPrimaryResult().getAmount() && exhaustOutputTank.getSpace() >= activeRecipe.getSecondaryResult().getAmount()) {
+                AirInputTank.forceDrain(activeRecipe.getPrimaryIngredient().amount(), IFluidHandler.FluidAction.EXECUTE);
+                fuelInputTank.forceDrain(activeRecipe.getSecondaryIngredient().amount(), IFluidHandler.FluidAction.EXECUTE);
+                primaryOutputTank.forceFill(activeRecipe.getPrimaryResult(), IFluidHandler.FluidAction.EXECUTE);
+                exhaustOutputTank.forceFill(activeRecipe.getSecondaryResult(), IFluidHandler.FluidAction.EXECUTE);
+                currentRecipe = null;
+                timer = 0;
+                recipeDuration = -1;
+            }
+        } else {
+            timer+= getTotalTankSize();
+        }
+    }
+
     @Override
     public void lazyTick() {
         super.lazyTick();
-		updateRecipe();
+        if (currentRecipe == null) {
+            currentRecipe = findRecipe();
+        }
         updateConnectivity = true;
     }
 	
@@ -168,29 +159,26 @@ public class BlastStoveBlockEntity extends SmartBlockEntity implements IHaveGogg
 		return width * width * height;
 	}
 
+	//TODO: Rework heat system
     public int getSpeed () {
-        return (int) (1000f / (getTotalTankSize() * 3));
+        //return 20 / getTotalTankSize(); //max size is 2x2x5
+		return (int) (1000f / (getTotalTankSize() * 3));
     }
 
-    protected Object getRecipeCacheKey() {
-        return HotBlastRecipesKey;
-    }
-
-    protected void updateRecipe() {
-        List<RecipeHolder<? extends Recipe<?>>> list = RecipeFinder.get(getRecipeCacheKey(), level, RecipeConditions.isOfType(TFMGRecipeTypes.HOT_BLAST.getType()));
-
-        for (RecipeHolder<? extends Recipe<?>> recipeHolder : list) {
-            HotBlastRecipe r = (HotBlastRecipe) recipeHolder.value();
-            if (
-				r.getPrimaryIngredient().test(AirInputTank.getFluid()) &&
-				r.getSecondaryIngredient().test(fuelInputTank.getFluid())
-			) {
-				recipe = r;
-                return;
-			}
+    public @Nullable HotBlastRecipe findRecipe() {
+        if (level == null)
+            return null;
+        RecipeHolder<HotBlastRecipe> recipeholder;
+        if (!AirInputTank.isEmpty() && !fuelInputTank.isEmpty()) {
+            recipeholder = quickCheck.getRecipeFor(new HotBlastRecipeInput(AirInputTank.getFluid(), fuelInputTank.getFluid()), level).orElse(null);
+        } else {
+            return null;
         }
-		
-		recipe = null;
+        if(recipeholder == null) {
+            return null;
+        }
+        recipeDuration = recipeholder.value().getProcessingDuration();
+        return recipeholder.value();
     }
 
     @Override
@@ -200,8 +188,7 @@ public class BlastStoveBlockEntity extends SmartBlockEntity implements IHaveGogg
 
     @Override
     public boolean isController() {
-        return controller == null || worldPosition.getX() == controller.getX()
-                && worldPosition.getY() == controller.getY() && worldPosition.getZ() == controller.getZ();
+        return controller == null || worldPosition.equals(controller);
     }
 
     @Override
@@ -218,18 +205,22 @@ public class BlastStoveBlockEntity extends SmartBlockEntity implements IHaveGogg
     }
 
     protected void onFluidStackChanged(FluidStack newFluidStack) {
-        if (level == null)
-            return;
-        if (!level.isClientSide) {
-            setChanged();
-            sendData();
-        }
-    }
+        if (level == null || level.isClientSide) return;
+		
+		setChanged();
+		sendData();
+	}
 
     @Override
     public void invalidate() {
         super.invalidate();
         invalidateCapabilities();
+    }
+
+    @Override
+    public void destroy() {
+        getControllerBE().updateCapability = true;
+        super.destroy();
     }
 
     @SuppressWarnings("unchecked")
@@ -242,8 +233,15 @@ public class BlastStoveBlockEntity extends SmartBlockEntity implements IHaveGogg
         return null;
     }
 
+	//TODO: This alone isn't enough to get things working properly
+	// Blast Stoves, having four fluid tanks, might require their own custom Connectivity Handler.
     public void applyFluidTankSize(int blocks) {
-
+		int capacity = getCapacityMultiplier() * blocks;
+		
+		primaryOutputTank.withCapacity(capacity);
+		exhaustOutputTank.withCapacity(capacity);
+		AirInputTank.withCapacity(capacity);
+		fuelInputTank.withCapacity(capacity);
     }
 
     public void removeController(boolean keepFluids) {
@@ -294,21 +292,18 @@ public class BlastStoveBlockEntity extends SmartBlockEntity implements IHaveGogg
     }
 
     public void refreshCapability() {
-        primaryCapability = handlerForPrimaryCapability();
-        secondaryCapability = handlerForSecondaryCapability();
+		BlastStoveBlockEntity controller = getControllerBE();
+		if (isController() || controller == null) {
+			primaryCapability = new InputOutputTankWrapper(primaryOutputTank, fuelInputTank);
+			secondaryCapability = new InputOutputTankWrapper(exhaustOutputTank, AirInputTank);
+			combinedCapability = new CombinedTankWrapper(primaryCapability, secondaryCapability);
+		} else {
+			controller.updateCapability = true; //controller will refresh next tick
+			primaryCapability = null;
+			secondaryCapability = null;
+			combinedCapability = null;
+		}
         invalidateCapabilities();
-    }
-
-    private IFluidHandler handlerForPrimaryCapability() {
-		if (isController() || getControllerBE() == null)
-			return new InputOutputTankWrapper(primaryOutputTank, fuelInputTank);
-		return getControllerBE().handlerForPrimaryCapability();
-    }
-
-    private IFluidHandler handlerForSecondaryCapability() {
-		if (isController() || getControllerBE() == null)
-			return new InputOutputTankWrapper(exhaustOutputTank, AirInputTank);
-        return getControllerBE().handlerForSecondaryCapability();
     }
 
     @Override
@@ -325,6 +320,53 @@ public class BlastStoveBlockEntity extends SmartBlockEntity implements IHaveGogg
     }
 
 
+
+
+    public int getProgressPercentage() {
+        return recipeDuration <= 0 ? -1 : Math.min(100, (int) (100f * timer / recipeDuration));
+    }
+
+    public MutableComponent getProgressComponent() {
+        int progress = getProgressPercentage();
+        if (progress == -1)
+            return null;
+        return TFMGLang.translateDirect("goggles.progress", Component.literal(progress + "%").withStyle(ChatFormatting.GOLD)).withStyle(ChatFormatting.GRAY);
+    }
+
+    @Override
+	public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
+		BlastStoveBlockEntity controller = getControllerBE();
+        if (controller == null) { return false; }
+        if (!isController()) {
+            return controller.addToGoggleTooltip(tooltip, isPlayerSneaking);
+        }
+		
+		IFluidHandler pri = controller.primaryCapability;
+		IFluidHandler sec = controller.secondaryCapability;
+		
+		int capacity = getCapacityMultiplier() * controller.getTotalTankSize();
+
+        TFMGTexts.header("blast_stove").forGoggles(tooltip);
+        MutableComponent progressComp = getProgressComponent();
+        if (progressComp != null) {
+            CreateLang.builder().add(progressComp).forGoggles(tooltip, 1);
+        }
+        tankTooltip(tooltip, "goggles.blast_stove.tank1", sec.getFluidInTank(1), capacity, ChatFormatting.DARK_GREEN); //input (air)
+        tankTooltip(tooltip, "goggles.blast_stove.tank2", pri.getFluidInTank(1), capacity, ChatFormatting.DARK_GREEN); //fuel
+        tankTooltip(tooltip, "goggles.blast_stove.tank3", pri.getFluidInTank(0), capacity, ChatFormatting.GOLD);       //output (hot air)
+        tankTooltip(tooltip, "goggles.blast_stove.tank4", sec.getFluidInTank(0), capacity, ChatFormatting.GOLD);       //output (exhaust)
+        return true;
+    }
+	
+	private void tankTooltip (List<Component> tooltip, String key, FluidStack fluid, int capacity, ChatFormatting color) {
+		TFMGLang.builder().add(TFMGLang.translate(key))
+			.add(fluid.getFluid() == Fluids.EMPTY
+				? TFMGLang.text("")
+				:  TFMGLang.text(" "+fluid.getHoverName().getString())
+			).style(color).forGoggles(tooltip, 1);
+		TFMGUtils.fluidOutOfCapacity(fluid.getAmount(), ChatFormatting.GRAY, capacity).forGoggles(tooltip, 2);
+	}
+
     @Override
     protected void read(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {
         super.read(compound, registries, clientPacket);
@@ -334,31 +376,22 @@ public class BlastStoveBlockEntity extends SmartBlockEntity implements IHaveGogg
         int prevHeight = height;
 
         updateConnectivity = compound.contains("Uninitialized");
-        controller = null;
-        lastKnownPos = null;
-
-        if (compound.contains("LastKnownPos"))
-            lastKnownPos = NbtUtils.readBlockPos(compound, "LastKnownPos").get();
-        if (compound.contains("Controller"))
-            controller = NbtUtils.readBlockPos(compound, "Controller").get();
+        lastKnownPos = NbtUtils.readBlockPos(compound, "LastKnownPos").orElse(null);
+        controller = NbtUtils.readBlockPos(compound, "Controller").orElse(null);
 
         if (isController()) {
             width = compound.getInt("Size");
             height = compound.getInt("Height");
-            primaryOutputTank.readFromNBT(registries, compound.getCompound("primaryOutputInventory"));
-            AirInputTank.readFromNBT(registries, compound.getCompound("primaryInputInventory"));
-            exhaustOutputTank.readFromNBT(registries, compound.getCompound("secondaryOutputInventory"));
-            fuelInputTank.readFromNBT(registries, compound.getCompound("secondaryInputInventory"));
-            if (primaryOutputTank.getSpace() < 0)
-                primaryOutputTank.drain(-primaryOutputTank.getSpace(), IFluidHandler.FluidAction.EXECUTE);
-
+            applyFluidTankSize(width * width * height); //set capacity before fluids are filled
+            primaryOutputTank.read(registries, compound.getCompound("primaryOutputInventory"));
+            AirInputTank.read(registries, compound.getCompound("primaryInputInventory"));
+            exhaustOutputTank.read(registries, compound.getCompound("secondaryOutputInventory"));
+            fuelInputTank.read(registries, compound.getCompound("secondaryInputInventory"));
+            timer = compound.getInt("Timer");
+            recipeDuration = compound.getInt("RecipeDuration");
             updateCapability = true;
         }
-
-        timer = compound.getInt("Timer");
-
-        if (!clientPacket)
-            return;
+        if (!clientPacket) return;
 
         boolean changeOfController = !Objects.equals(controllerBefore, controller);
         if (changeOfController || prevSize != width || prevHeight != height) {
@@ -369,39 +402,9 @@ public class BlastStoveBlockEntity extends SmartBlockEntity implements IHaveGogg
     }
 
     @Override
-	public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
-        if (getControllerBE() == null) { return false; }
-		
-		IFluidHandler pri = getControllerBE().primaryCapability;
-		IFluidHandler sec = getControllerBE().secondaryCapability;
-
-        TFMGTexts.header("blast_stove").forGoggles(tooltip);
-        tankTooltip(tooltip, "goggles.blast_stove.tank1", sec.getFluidInTank(1), ChatFormatting.DARK_GREEN); //input (air)
-        tankTooltip(tooltip, "goggles.blast_stove.tank2", pri.getFluidInTank(1), ChatFormatting.DARK_GREEN); //fuel
-        tankTooltip(tooltip, "goggles.blast_stove.tank3", pri.getFluidInTank(0), ChatFormatting.YELLOW);     //output (hot air)
-        tankTooltip(tooltip, "goggles.blast_stove.tank4", sec.getFluidInTank(0), ChatFormatting.YELLOW);     //output (exhaust)
-        return true;
-    }
-	
-	private void tankTooltip (List<Component> tooltip, String key, FluidStack fluid, ChatFormatting color) {
-		LangBuilder mb = CreateLang.translate("generic.unit.millibuckets");
-		LangBuilder name = fluid.getFluid() == Fluids.EMPTY ? TFMGLang.text("") :  TFMGLang.text(" "+fluid.getHoverName().getString());
-	
-		TFMGLang.builder()
-			.add(TFMGLang.translate(key))
-			.add(TFMGLang.number(fluid.getAmount()).add(mb).add(name).style(color))
-			.text(ChatFormatting.GRAY, " / ")
-			.add(TFMGLang.number(getCapacityMultiplier()).add(mb).style(ChatFormatting.DARK_GRAY))
-			.forGoggles(tooltip, 1);
-	}
-
-
-    @Override
     public void write(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {
-
         if (updateConnectivity)
             compound.putBoolean("Uninitialized", true);
-
         if (lastKnownPos != null)
             compound.put("LastKnownPos", NbtUtils.writeBlockPos(lastKnownPos));
         if (!isController())
@@ -413,12 +416,11 @@ public class BlastStoveBlockEntity extends SmartBlockEntity implements IHaveGogg
             compound.put("secondaryInputInventory", fuelInputTank.writeToNBT(registries, new CompoundTag()));
             compound.putInt("Size", width);
             compound.putInt("Height", height);
+            compound.putInt("Timer", timer);
+            compound.putInt("RecipeDuration", recipeDuration);
         }
 
-        compound.putInt("Timer", timer);
-
         forEachBehaviour(tb -> tb.write(compound, registries, clientPacket));
-
         if (!clientPacket)
             return;
         if (queuedSync)
@@ -428,19 +430,18 @@ public class BlastStoveBlockEntity extends SmartBlockEntity implements IHaveGogg
     public static void registerCapabilities(RegisterCapabilitiesEvent event) {
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, TFMGBlockEntities.BLAST_STOVE.get(),
 			(be, dir) -> {
-                BlastStoveBlockEntity controller = be.getControllerBE();
-                if (controller == null)
-                    return null;
+				if (be.getControllerBE() instanceof BlastStoveBlockEntity controller)
+					be = controller;
 
-                if (controller.primaryCapability == null || controller.secondaryCapability == null)
-                    controller.refreshCapability();
+                if (be.primaryCapability == null || be.secondaryCapability == null || be.combinedCapability == null)
+                    be.refreshCapability();
 				
 				if (dir == null)
-					return new CombinedTankWrapper(controller.primaryCapability, controller.secondaryCapability);
+					return be.combinedCapability;
 				if (dir.getAxis().isVertical())
-                    return controller.primaryCapability;
+					return be.primaryCapability;
                 if (be.getController().getY() == be.getBlockPos().getY())
-                    return controller.secondaryCapability;
+                    return be.secondaryCapability;
 				
 				return null;
 			}
@@ -462,20 +463,13 @@ public class BlastStoveBlockEntity extends SmartBlockEntity implements IHaveGogg
 	@Override
 	public void addBehaviours(List<BlockEntityBehaviour> behaviours) { }
 
-    public FluidTank getTank () {
-        return primaryOutputTank;
-    }
-	
-	public FluidStack getFluid () {
-		return primaryOutputTank.getFluid().copy();
-	}
-	
-	public static int getCapacityMultiplier() {
+    public static int getCapacityMultiplier() {
+		//TODO: should this have its own config?
 		return AllConfigs.server().fluids.fluidTankCapacity.get() * 1000;
 	}
 
     public static int getMaxHeight() {
-        return AllConfigs.server().fluids.fluidTankMaxHeight.get();
+        return 5;
     }
 
     @Override
@@ -488,6 +482,10 @@ public class BlastStoveBlockEntity extends SmartBlockEntity implements IHaveGogg
         onFluidStackChanged(primaryOutputTank.getFluid());
         setChanged();
         updateConnectivity = true;
+		
+		if (isController()) {
+			applyFluidTankSize(width * width * height);
+		}
 
         sendData();
         setChanged();

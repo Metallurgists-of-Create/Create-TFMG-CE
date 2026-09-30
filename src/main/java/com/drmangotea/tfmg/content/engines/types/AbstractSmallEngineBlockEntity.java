@@ -14,6 +14,7 @@ import com.drmangotea.tfmg.registry.TFMGDataComponents;
 import com.drmangotea.tfmg.registry.TFMGFluids;
 import com.drmangotea.tfmg.registry.TFMGItems;
 import com.simibubi.create.AllBlocks;
+import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.foundation.fluid.CombinedTankWrapper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -36,6 +37,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -46,9 +48,9 @@ import static com.drmangotea.tfmg.content.engines.base.EngineBlock.EngineState.S
 import static com.drmangotea.tfmg.content.engines.base.EngineBlock.SHAFT_FACING;
 import static com.simibubi.create.content.kinetics.base.HorizontalKineticBlock.HORIZONTAL_FACING;
 
-public abstract class AbstractSmallEngineBlockEntity extends AbstractEngineBlockEntity implements Clearable {
+public abstract class AbstractSmallEngineBlockEntity extends AbstractEngineBlockEntity implements Clearable, IHaveGoggleInformation {
     public Optional<? extends EngineUpgrade> upgrade = Optional.empty();
-
+    private List<Component> cachedUpgradeLines = null;
     public int oil = 0;
     public int coolingFluid = 0;
 
@@ -60,7 +62,6 @@ public abstract class AbstractSmallEngineBlockEntity extends AbstractEngineBlock
 
     public List<BlockPos> engines = new ArrayList<>();
     public int engineNumber = 0;
-
 
 
     public AbstractSmallEngineBlockEntity(BlockEntityType<?> typeIn, BlockPos pos, BlockState state) {
@@ -78,7 +79,36 @@ public abstract class AbstractSmallEngineBlockEntity extends AbstractEngineBlock
         return (int) ((12.5f * (1 / efficiencyModifier()) * getSpeedEfficiency() * highestSignal / 15 * oilModifier * coolingFluidModifier) * (engineLength() )+ 1);
     }
 
-    public void detachEngines() {
+    public void detachEngines() {}
+
+    private List<Component> getUpgradeLines() {
+        if (cachedUpgradeLines != null)
+            return cachedUpgradeLines;
+
+        List<Component> lines = new ArrayList<>();
+        for (AbstractSmallEngineBlockEntity be : getEngines()) {
+            be.upgrade.ifPresent(engineUpgrade -> lines.add(Component.literal("- ").withStyle(ChatFormatting.DARK_GRAY)
+                    .append(engineUpgrade.getItem().getDescription().copy()
+                            .withStyle(ChatFormatting.AQUA))));
+        }
+        cachedUpgradeLines = lines;
+        return lines;
+    }
+
+    public void invalidateUpgradeCache() {
+        cachedUpgradeLines = null;
+        if (level != null && !isController() && level.getBlockEntity(controller) instanceof AbstractSmallEngineBlockEntity c) {
+            c.cachedUpgradeLines = null;
+        }
+    }
+
+    @Override
+    public boolean addToTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
+        List<Component> lines = getControllerBE().getUpgradeLines();
+        if (lines.isEmpty()) return false;
+        tooltip.add(Component.translatable("block.tfmg.engine.tooltip.upgrades").withStyle(ChatFormatting.GOLD));
+        tooltip.addAll(lines);
+        return true;
     }
 
     public void setBlockStates(AbstractSmallEngineBlockEntity be, BlockPos last) {
@@ -103,14 +133,14 @@ public abstract class AbstractSmallEngineBlockEntity extends AbstractEngineBlock
     @Override
     public int voltageGeneration() {
         if (upgrade.isPresent() && upgrade.get().getItem() == TFMGBlocks.GENERATOR.asItem())
-            return (int) (20 * (rpm / 500));
+            return (int) (rpm / 25f);
         return 0;
     }
 
     @Override
     public float powerGeneration() {
         if (upgrade.isPresent() && upgrade.get().getItem() == TFMGBlocks.GENERATOR.asItem())
-            return (int) rpm;
+            return rpm;
         return 0;
     }
 
@@ -161,8 +191,8 @@ public abstract class AbstractSmallEngineBlockEntity extends AbstractEngineBlock
     @Override
     public void onLoad() {
         super.onLoad();
-        if (this.hasUpgrade() && this.upgrade.get().getItem() == TFMGBlocks.INDUSTRIAL_PIPE.asItem()) {
-            ((EnginePipingUpgrade) this.upgrade.get()).findTank(this);
+        if (this.upgrade.isPresent() && this.upgrade.get() instanceof EnginePipingUpgrade pipe) {
+            pipe.findTank(this);
         }
     }
 
@@ -187,6 +217,7 @@ public abstract class AbstractSmallEngineBlockEntity extends AbstractEngineBlock
         componentsInventory.deserializeNBT(registries, compound.getCompound("Components"));
         super.read(compound, registries, clientPacket);
         controller = NbtUtils.readBlockPos(compound, "Controller").orElse(getBlockPos());
+        invalidateUpgradeCache();
     }
 
     public int engineLength() {
@@ -277,7 +308,7 @@ public abstract class AbstractSmallEngineBlockEntity extends AbstractEngineBlock
             allEngines.forEach(pos -> {
                 if (level == null) return;
                 if (level.getBlockEntity(pos) instanceof AbstractEngineBlockEntity be) {
-                    be.rpm = 4000 * speedModifier() * highestSignal ;
+                    be.rpm = 4000 * speedModifier() * highestSignal;
                     be.torque = 15 * torqueModifier() * highestSignal;
                     be.updateGeneratedRotation();
                 }

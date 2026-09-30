@@ -1,12 +1,11 @@
 package com.drmangotea.tfmg.content.engines.base;
 
 import com.drmangotea.tfmg.base.TFMGShapes;
+import com.drmangotea.tfmg.base.annotation.NothingNullByDefault;
 import com.drmangotea.tfmg.content.engines.types.AbstractSmallEngineBlockEntity;
 import com.drmangotea.tfmg.content.engines.types.radial_engine.RadialEngineBlockEntity;
 import com.drmangotea.tfmg.content.engines.types.turbine_engine.TurbineEngineBlockEntity;
 import com.drmangotea.tfmg.content.engines.upgrades.EnginePipingUpgrade;
-import com.drmangotea.tfmg.registry.TFMGBlocks;
-import com.mojang.logging.annotations.MethodsReturnNonnullByDefault;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.kinetics.base.HorizontalKineticBlock;
 import net.minecraft.core.BlockPos;
@@ -36,7 +35,7 @@ import java.util.Optional;
 import static com.drmangotea.tfmg.content.engines.base.EngineBlock.EngineState.NORMAL;
 import static com.drmangotea.tfmg.content.engines.base.EngineBlock.EngineState.SHAFT;
 
-@MethodsReturnNonnullByDefault
+@NothingNullByDefault
 public class EngineBlock extends HorizontalKineticBlock {
     public static final EnumProperty<EngineState> ENGINE_STATE = EnumProperty.create("engine_state", EngineState.class);
 
@@ -98,7 +97,7 @@ public class EngineBlock extends HorizontalKineticBlock {
 
 
     @Override
-    public VoxelShape getShape(BlockState state, BlockGetter p_60556_, BlockPos pos, CollisionContext p_60558_) {
+    public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return state.getValue(ENGINE_STATE) == SHAFT ? TFMGShapes.ENGINE_FRONT.get(state.getValue(HORIZONTAL_FACING).getOpposite()) : TFMGShapes.ENGINE.get(state.getValue(HORIZONTAL_FACING));
     }
 
@@ -116,8 +115,8 @@ public class EngineBlock extends HorizontalKineticBlock {
     @Override
     public void neighborChanged(BlockState state, Level level, BlockPos pos, Block block, BlockPos neighbor, boolean b) {
         if (level.getBlockEntity(pos) instanceof AbstractSmallEngineBlockEntity be) {
-            if (be.hasUpgrade() && be.upgrade.get().getItem() == TFMGBlocks.INDUSTRIAL_PIPE.asItem()) {
-                ((EnginePipingUpgrade) be.upgrade.get()).findTank(be);
+            if (be.upgrade.isPresent() && be.upgrade.get() instanceof EnginePipingUpgrade pipe) {
+				pipe.findTank(be);
             }
         }
 

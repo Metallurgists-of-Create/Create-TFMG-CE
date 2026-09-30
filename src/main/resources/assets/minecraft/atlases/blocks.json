@@ -1,176 +1,79 @@
 {
   "sources": [
-    {
-      "type": "single",
-      "resource": "tfmg:fluid/crude_oil_flow"
-    },
-    {
-      "type": "single",
-      "resource": "tfmg:fluid/crude_oil_still"
-    },
-    {
-      "type": "single",
-      "resource": "tfmg:fluid/air"
-    },
-    {
-      "type": "single",
-      "resource": "tfmg:fluid/butane"
-    },
-    {
-      "type": "single",
-      "resource": "tfmg:fluid/carbon_dioxide"
-    },
-    {
-      "type": "single",
-      "resource": "tfmg:fluid/cooling_fluid_flow"
-    },
-    {
-      "type": "single",
-      "resource": "tfmg:fluid/cooling_fluid_still"
-    },
-    {
-      "type": "single",
-      "resource": "tfmg:fluid/creosote_flow"
-    },
-    {
-      "type": "single",
-      "resource": "tfmg:fluid/creosote_still"
-    },
-    {
-      "type": "single",
-      "resource": "tfmg:fluid/diesel_flow"
-    },
-    {
-      "type": "single",
-      "resource": "tfmg:fluid/diesel_still"
-    },
-    {
-      "type": "single",
-      "resource": "tfmg:fluid/gasoline_flow"
-    },
-    {
-      "type": "single",
-      "resource": "tfmg:fluid/gasoline_still"
-    },
-    {
-      "type": "single",
-      "resource": "tfmg:fluid/ethylene"
-    },
-    {
-      "type": "single",
-      "resource": "tfmg:fluid/propylene"
-    },
-    {
-      "type": "single",
-      "resource": "tfmg:fluid/heavy_oil_flow"
-    },
-    {
-      "type": "single",
-      "resource": "tfmg:fluid/heavy_oil_still"
-    },
-    {
-      "type": "single",
-      "resource": "tfmg:fluid/kerosene_flow"
-    },
-    {
-      "type": "single",
-      "resource": "tfmg:fluid/kerosene_still"
-    },
-    {
-      "type": "single",
-      "resource": "tfmg:fluid/liquid_asphalt_still"
-    },
-    {
-      "type": "single",
-      "resource": "tfmg:fluid/liquid_asphalt_flow"
-    },
-    {
-      "type": "single",
-      "resource": "tfmg:fluid/liquid_concrete_still"
-    },
-    {
-      "type": "single",
-      "resource": "tfmg:fluid/liquid_concrete_flow"
-    },
-    {
-      "type": "single",
-      "resource": "tfmg:fluid/molten_plastic_flow"
-    },
-    {
-      "type": "single",
-      "resource": "tfmg:fluid/molten_plastic_still"
-    },
-    {
-      "type": "single",
-      "resource": "tfmg:fluid/lubrication_oil_flow"
-    },
-    {
-      "type": "single",
-      "resource": "tfmg:fluid/lubrication_oil_still"
-    },
-    {
-      "type": "single",
-      "resource": "tfmg:fluid/molten_slag_flow"
-    },
-    {
-      "type": "single",
-      "resource": "tfmg:fluid/molten_slag_still"
-    },
-    {
-      "type": "single",
-      "resource": "tfmg:fluid/molten_steel_flow"
-    },
-    {
-      "type": "single",
-      "resource": "tfmg:fluid/molten_steel_still"
-    },
-    {
-      "type": "single",
-      "resource": "tfmg:fluid/napalm_flow"
-    },
-    {
-      "type": "single",
-      "resource": "tfmg:fluid/napalm_still"
-    },
-    {
-      "type": "single",
-      "resource": "tfmg:fluid/liquid_silicon_flow"
-    },
-    {
-      "type": "single",
-      "resource": "tfmg:fluid/liquid_silicon_still"
-    },
-    {
-      "type": "single",
-      "resource": "tfmg:fluid/naphtha_flow"
-    },
-    {
-      "type": "single",
-      "resource": "tfmg:fluid/naphtha_still"
-    },
-    {
-      "type": "single",
-      "resource": "tfmg:fluid/sulfuric_acid_flow"
-    },
-    {
-      "type": "single",
-      "resource": "tfmg:fluid/sulfuric_acid_still"
-    },
-    {
-      "type": "single",
-      "resource": "tfmg:fluid/propane"
-    },
-    {
-      "type": "single",
-      "resource": "tfmg:fluid/lpg"
-    },
-    {
-      "type": "single",
-      "resource": "tfmg:fluid/neon"
-    },
-    {
-      "type": "single",
-      "resource": "tfmg:fluid/gas_texture"
-    }
+    {"type": "single", "resource": "tfmg:fluid/crude_oil_flow"},
+    {"type": "single", "resource": "tfmg:fluid/crude_oil_still"},
+    {"type": "single", "resource": "tfmg:fluid/air"},
+    {"type": "single", "resource": "tfmg:fluid/butane"},
+    {"type": "single", "resource": "tfmg:fluid/carbon_dioxide"},
+    {"type": "single", "resource": "tfmg:fluid/cooling_fluid_flow"},
+    {"type": "single", "resource": "tfmg:fluid/cooling_fluid_still"},
+    {"type": "single", "resource": "tfmg:fluid/creosote_flow"},
+    {"type": "single", "resource": "tfmg:fluid/creosote_still"},
+    {"type": "single", "resource": "tfmg:fluid/diesel_flow"},
+    {"type": "single", "resource": "tfmg:fluid/diesel_still"},
+    {"type": "single", "resource": "tfmg:fluid/gasoline_flow"},
+    {"type": "single", "resource": "tfmg:fluid/gasoline_still"},
+    {"type": "single", "resource": "tfmg:fluid/ethylene"},
+    {"type": "single", "resource": "tfmg:fluid/propylene"},
+    {"type": "single", "resource": "tfmg:fluid/heavy_oil_flow"},
+    {"type": "single", "resource": "tfmg:fluid/heavy_oil_still"},
+    {"type": "single", "resource": "tfmg:fluid/kerosene_flow"},
+    {"type": "single", "resource": "tfmg:fluid/kerosene_still"},
+    {"type": "single", "resource": "tfmg:fluid/liquid_asphalt_still"},
+    {"type": "single", "resource": "tfmg:fluid/liquid_asphalt_flow"},
+    {"type": "single", "resource": "tfmg:fluid/liquid_concrete_still"},
+    {"type": "single", "resource": "tfmg:fluid/liquid_concrete_flow"},
+    {"type": "single", "resource": "tfmg:fluid/white_liquid_concrete_still"},
+    {"type": "single", "resource": "tfmg:fluid/white_liquid_concrete_flow"},
+    {"type": "single", "resource": "tfmg:fluid/light_gray_liquid_concrete_still"},
+    {"type": "single", "resource": "tfmg:fluid/light_gray_liquid_concrete_flow"},
+    {"type": "single", "resource": "tfmg:fluid/gray_liquid_concrete_still"},
+    {"type": "single", "resource": "tfmg:fluid/gray_liquid_concrete_flow"},
+    {"type": "single", "resource": "tfmg:fluid/black_liquid_concrete_still"},
+    {"type": "single", "resource": "tfmg:fluid/black_liquid_concrete_flow"},
+    {"type": "single", "resource": "tfmg:fluid/brown_liquid_concrete_still"},
+    {"type": "single", "resource": "tfmg:fluid/brown_liquid_concrete_flow"},
+    {"type": "single", "resource": "tfmg:fluid/red_liquid_concrete_still"},
+    {"type": "single", "resource": "tfmg:fluid/red_liquid_concrete_flow"},
+    {"type": "single", "resource": "tfmg:fluid/orange_liquid_concrete_still"},
+    {"type": "single", "resource": "tfmg:fluid/orange_liquid_concrete_flow"},
+    {"type": "single", "resource": "tfmg:fluid/yellow_liquid_concrete_still"},
+    {"type": "single", "resource": "tfmg:fluid/yellow_liquid_concrete_flow"},
+    {"type": "single", "resource": "tfmg:fluid/lime_liquid_concrete_still"},
+    {"type": "single", "resource": "tfmg:fluid/lime_liquid_concrete_flow"},
+    {"type": "single", "resource": "tfmg:fluid/green_liquid_concrete_still"},
+    {"type": "single", "resource": "tfmg:fluid/green_liquid_concrete_flow"},
+    {"type": "single", "resource": "tfmg:fluid/cyan_liquid_concrete_still"},
+    {"type": "single", "resource": "tfmg:fluid/cyan_liquid_concrete_flow"},
+    {"type": "single", "resource": "tfmg:fluid/light_blue_liquid_concrete_still"},
+    {"type": "single", "resource": "tfmg:fluid/light_blue_liquid_concrete_flow"},
+    {"type": "single", "resource": "tfmg:fluid/blue_liquid_concrete_still"},
+    {"type": "single", "resource": "tfmg:fluid/blue_liquid_concrete_flow"},
+    {"type": "single", "resource": "tfmg:fluid/purple_liquid_concrete_still"},
+    {"type": "single", "resource": "tfmg:fluid/purple_liquid_concrete_flow"},
+    {"type": "single", "resource": "tfmg:fluid/magenta_liquid_concrete_still"},
+    {"type": "single", "resource": "tfmg:fluid/magenta_liquid_concrete_flow"},
+    {"type": "single", "resource": "tfmg:fluid/pink_liquid_concrete_still"},
+    {"type": "single", "resource": "tfmg:fluid/pink_liquid_concrete_flow"},
+    {"type": "single", "resource": "tfmg:fluid/molten_plastic_flow"},
+    {"type": "single", "resource": "tfmg:fluid/molten_plastic_still"},
+    {"type": "single", "resource": "tfmg:fluid/lubrication_oil_flow"},
+    {"type": "single", "resource": "tfmg:fluid/lubrication_oil_still"},
+    {"type": "single", "resource": "tfmg:fluid/molten_slag_flow"},
+    {"type": "single", "resource": "tfmg:fluid/molten_slag_still"},
+    {"type": "single", "resource": "tfmg:fluid/molten_steel_flow"},
+    {"type": "single", "resource": "tfmg:fluid/molten_steel_still"},
+    {"type": "single", "resource": "tfmg:fluid/napalm_flow"},
+    {"type": "single", "resource": "tfmg:fluid/napalm_still"},
+    {"type": "single", "resource": "tfmg:fluid/liquid_silicon_flow"},
+    {"type": "single", "resource": "tfmg:fluid/liquid_silicon_still"},
+    {"type": "single", "resource": "tfmg:fluid/naphtha_flow"},
+    {"type": "single", "resource": "tfmg:fluid/naphtha_still"},
+    {"type": "single", "resource": "tfmg:fluid/sulfuric_acid_flow"},
+    {"type": "single", "resource": "tfmg:fluid/sulfuric_acid_still"},
+    {"type": "single", "resource": "tfmg:fluid/propane"},
+    {"type": "single", "resource": "tfmg:fluid/lpg"},
+    {"type": "single", "resource": "tfmg:fluid/neon"},
+    {"type": "single", "resource": "tfmg:fluid/gas_texture"}
   ]
 }

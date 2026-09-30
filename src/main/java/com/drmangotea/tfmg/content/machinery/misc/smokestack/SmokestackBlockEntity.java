@@ -30,7 +30,7 @@ public class SmokestackBlockEntity extends SmartBlockEntity {
 
     public SmokestackBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
-        tankInventory = new ForceableFluidTank(8000, this::onFluidStackChanged)
+        tankInventory = new ForceableFluidTank(16000, this::onFluidStackChanged)
 			.allowInsertion().blockExtraction()
 			.withValidator((stack) -> stack.is(TFMGTags.Fluids.EXHAUSTABLE.tag));
         fluidCapability = tankInventory;
@@ -90,8 +90,8 @@ public class SmokestackBlockEntity extends SmartBlockEntity {
             return;
 
         if (getBlockState().getValue(TOP)) {
-            tankInventory.forceDrain(150, IFluidHandler.FluidAction.EXECUTE);
-            smokeTimer = 40;
+            tankInventory.forceDrain(1000, IFluidHandler.FluidAction.EXECUTE);
+            smokeTimer = 500;
         }
 
         if (level != null && level.getBlockEntity(getBlockPos().above()) instanceof SmokestackBlockEntity be) {
