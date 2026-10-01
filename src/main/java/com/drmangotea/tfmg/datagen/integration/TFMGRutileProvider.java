@@ -48,7 +48,7 @@ public class TFMGRutileProvider {
 
     public static class Fluid extends FluidCompositionProvider {
         public Fluid(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {
-            super(Rutile.ID, output, registries);
+            super(TFMG.MOD_ID, output, registries);
         }
 
         @Override
