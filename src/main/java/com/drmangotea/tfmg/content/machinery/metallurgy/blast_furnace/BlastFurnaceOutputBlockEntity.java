@@ -335,17 +335,32 @@ public class BlastFurnaceOutputBlockEntity extends SmartBlockEntity implements I
                 itemStack.shrink(1);
                 continue;
             }
-            if (itemStack.is(TFMGTags.Items.FLUX.tag) && fluxInventory.getItem(0).getCount() < itemStack.getMaxStackSize()) {
-                if (fluxInventory.isEmpty() || fluxInventory.getItem(0).is(itemStack.getItem())) {
-                    fluxInventory.setItem(0, new ItemStack(itemStack.getItem(), fluxInventory.getItem(0).getCount() + 1));
+
+            if (itemStack.is(TFMGTags.Items.FLUX.tag)) {
+                if (fluxInventory.isEmpty()) {
+                    fluxInventory.setItem(0, itemStack.copyWithCount(1));
                     itemStack.shrink(1);
-                    continue;
+                } else {
+                    ItemStack fluxItem = fluxInventory.getItem(0).copy();
+                    if (fluxItem.getCount() < itemStack.getMaxStackSize()) {
+                        if (ItemStack.isSameItemSameComponents(fluxItem, itemStack)) {
+                            fluxInventory.setItem(0, fluxItem.copyWithCount(fluxItem.getCount() + 1));
+                            itemStack.shrink(1);
+                        }
+                    }
                 }
             }
-            if (inputInventory.getItem(0).getCount() < itemStack.getMaxStackSize()) {
-                if (inputInventory.isEmpty() || inputInventory.getItem(0).is(itemStack.getItem())) {
-                    inputInventory.setItem(0, new ItemStack(itemStack.getItem(), inputInventory.getItem(0).getCount() + 1));
-                    itemStack.shrink(1);
+
+            if (inputInventory.isEmpty()) {
+                inputInventory.setItem(0, itemStack.copyWithCount(1));
+                itemStack.shrink(1);
+            } else {
+                ItemStack inputItem = inputInventory.getItem(0).copy();
+                if (inputItem.getCount() < itemStack.getMaxStackSize()) {
+                    if (ItemStack.isSameItemSameComponents(inputItem, itemStack)) {
+                        inputInventory.setItem(0, inputItem.copyWithCount(inputItem.getCount() + 1));
+                        itemStack.shrink(1);
+                    }
                 }
             }
         }
