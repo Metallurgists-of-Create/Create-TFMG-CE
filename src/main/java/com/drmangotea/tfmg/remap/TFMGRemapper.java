@@ -3,6 +3,7 @@ package com.drmangotea.tfmg.remap;
 import com.drmangotea.tfmg.TFMG;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -34,6 +35,13 @@ public class TFMGRemapper {
         remaps.add(Remap.block("heavy_casing_encased_large_aluminum_cogwheel", TFMG.asResource("heavy_encased_large_aluminum_cogwheel")));
 
         remaps.add(Remap.item("lit_lithium_blade", TFMG.asResource("lithium_blade")));
+
+        for (DyeColor color : DyeColor.values()) {
+            remaps.add(Remap.item(color.getName() + "_liquid_concrete_bucket", TFMG.asResource("liquid_" + color.getName() + "_concrete_bucket")));
+            remaps.add(Remap.fluid(color.getName() + "_liquid_concrete", TFMG.asResource("liquid_" + color.getName() + "_concrete")));
+            remaps.add(Remap.fluid("flowing_" + color.getName() + "_liquid_concrete", TFMG.asResource("flowing_liquid_" + color.getName() + "_concrete")));
+            remaps.add(Remap.block(color.getName() + "_liquid_concrete", TFMG.asResource("liquid_" + color.getName() + "_concrete")));
+        }
     }
 
     @SubscribeEvent
