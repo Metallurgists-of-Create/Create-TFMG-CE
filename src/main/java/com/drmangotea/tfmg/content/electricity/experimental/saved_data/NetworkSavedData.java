@@ -1,13 +1,10 @@
 package com.drmangotea.tfmg.content.electricity.experimental.saved_data;
 
+import com.drmangotea.tfmg.base.annotation.NothingNullByDefault;
 import com.drmangotea.tfmg.content.electricity.experimental.ElectricalProperties;
 import com.drmangotea.tfmg.content.electricity.experimental.RealElectricNetworkManager;
 import com.drmangotea.tfmg.content.electricity.experimental.RealElectricalNetwork;
 import com.drmangotea.tfmg.content.electricity.experimental.WireConnection;
-import com.drmangotea.tfmg.content.electricity.experimental.blocks.ConnectorProperties;
-import com.drmangotea.tfmg.content.electricity.experimental.blocks.DebugResistorProperties;
-import com.drmangotea.tfmg.content.electricity.experimental.blocks.DirectionalElectricalProperties;
-import com.drmangotea.tfmg.content.electricity.experimental.blocks.ThreePhaseGeneratorProperties;
 import com.drmangotea.tfmg.content.electricity.experimental.simulation.*;
 import net.minecraft.core.BlockPos;
 import com.drmangotea.tfmg.content.electricity.experimental.content.DirectionalElectricalProperties;
@@ -41,10 +38,8 @@ public class NetworkSavedData extends SavedData {
 
     public NetworkSavedData() {}
 
-    @Override
+    @Override @NothingNullByDefault
     public CompoundTag save(CompoundTag compound, HolderLookup.Provider provider) {
-
-
         List<RealElectricalNetwork> list = RealElectricNetworkManager.networks.values().stream().toList();
 
         compound = new CompoundTag();

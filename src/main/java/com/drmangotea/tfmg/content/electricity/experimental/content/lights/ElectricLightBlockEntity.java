@@ -35,7 +35,7 @@ public class ElectricLightBlockEntity extends SmartBlockEntity implements IReali
 
     public ElectricLightBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
-        p = new LightProperties(pos.asLong());
+        p = new LightProperties(pos);
     }
 
     @Override

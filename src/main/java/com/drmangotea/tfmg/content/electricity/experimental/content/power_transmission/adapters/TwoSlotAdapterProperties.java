@@ -1,17 +1,17 @@
 package com.drmangotea.tfmg.content.electricity.experimental.content.power_transmission.adapters;
 
-import com.drmangotea.tfmg.content.electricity.connection.cables.CablePos;
 import com.drmangotea.tfmg.content.electricity.experimental.content.DirectionalElectricalProperties;
 import com.drmangotea.tfmg.content.electricity.experimental.simulation.nodes.ConnectingElectricalNode;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class TwoSlotAdapterProperties extends DirectionalElectricalProperties {
 
-
-    public TwoSlotAdapterProperties(long pos, Direction direction) {
+    public TwoSlotAdapterProperties(BlockPos pos, Direction direction) {
         super(pos, direction);
 
 
@@ -38,15 +38,15 @@ public class TwoSlotAdapterProperties extends DirectionalElectricalProperties {
     }
 
     @Override
-    public List<CablePos> getRotation(Direction direction) {
-        List<CablePos> positions = new ArrayList<>();
+    public List<Vec3> getRotation(Direction direction) {
+        List<Vec3> positions = new ArrayList<>();
 
         switch (direction) {
             case DOWN, UP, NORTH, SOUTH, WEST, EAST -> {
-                positions.add(new CablePos(0, 0, 0));
-                positions.add(new CablePos(1, 0, 0));
-                positions.add(new CablePos(0, 1, 0));
-                positions.add(new CablePos(0, 0, 1));
+                positions.add(new Vec3(0, 0, 0));
+                positions.add(new Vec3(1, 0, 0));
+                positions.add(new Vec3(0, 1, 0));
+                positions.add(new Vec3(0, 0, 1));
             }
         }
 

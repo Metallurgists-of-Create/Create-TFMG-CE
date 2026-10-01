@@ -12,7 +12,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
 import static com.drmangotea.tfmg.base.blocks.WallMountBlock.FACING;
-import static com.drmangotea.tfmg.content.electricity.lights.LightBulbBlock.LIGHT;
+import static com.drmangotea.tfmg.content.electricity.experimental.content.lights.ElectricLightBlock.LIGHT;
 
 public class LightBulbBlockEntity extends ElectricBlockEntity {
     public LerpedFloat glow = LerpedFloat.linear();

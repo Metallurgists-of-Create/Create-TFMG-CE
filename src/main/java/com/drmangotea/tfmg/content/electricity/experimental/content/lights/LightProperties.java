@@ -3,12 +3,11 @@ package com.drmangotea.tfmg.content.electricity.experimental.content.lights;
 import com.drmangotea.tfmg.content.electricity.experimental.ElectricalProperties;
 import com.drmangotea.tfmg.content.electricity.experimental.simulation.Resistance;
 import com.drmangotea.tfmg.content.electricity.experimental.simulation.nodes.ConnectableElectricalNode;
-import com.drmangotea.tfmg.content.electricity.experimental.simulation.nodes.ConnectingElectricalNode;
 import com.drmangotea.tfmg.content.electricity.experimental.simulation.nodes.ElectricalNode;
-import net.minecraft.core.Direction;
+import net.minecraft.core.BlockPos;
 
 public class LightProperties extends ElectricalProperties {
-    public LightProperties(long pos) {
+    public LightProperties(BlockPos pos) {
         super(pos);
         ElectricalNode N = new ConnectableElectricalNode(position, 0);
         ElectricalNode L1 = new ConnectableElectricalNode(position, 1);

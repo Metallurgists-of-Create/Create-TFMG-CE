@@ -1,18 +1,17 @@
 package com.drmangotea.tfmg.content.electricity.experimental.content.power_transmission.adapters;
 
-import com.drmangotea.tfmg.content.electricity.connection.cables.CablePos;
 import com.drmangotea.tfmg.content.electricity.experimental.content.DirectionalElectricalProperties;
 import com.drmangotea.tfmg.content.electricity.experimental.simulation.nodes.ConnectingElectricalNode;
-import com.drmangotea.tfmg.content.electricity.experimental.simulation.nodes.DirectionalElectricalNode;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class FourSlotAdapterProperties extends DirectionalElectricalProperties {
 
-
-    public FourSlotAdapterProperties(long pos, Direction direction) {
+    public FourSlotAdapterProperties(BlockPos pos, Direction direction) {
         super(pos, direction);
 
 
@@ -40,45 +39,45 @@ public class FourSlotAdapterProperties extends DirectionalElectricalProperties {
     }
 
     @Override
-    public List<CablePos> getRotation(Direction direction) {
-        List<CablePos> positions = new ArrayList<>();
+    public List<Vec3> getRotation(Direction direction) {
+        List<Vec3> positions = new ArrayList<>();
 
         switch (direction) {
             case DOWN -> {
-                positions.add(new CablePos(8/16f, 12/16f, 10/16f));
-                positions.add(new CablePos(11/16f, 12/16f, 7/16f));
-                positions.add(new CablePos(8/16f, 12/16f, 7/16f));
-                positions.add(new CablePos(5/16f, 12/16f, 7/16f));
+                positions.add(new Vec3(8/16f, 12/16f, 10/16f));
+                positions.add(new Vec3(11/16f, 12/16f, 7/16f));
+                positions.add(new Vec3(8/16f, 12/16f, 7/16f));
+                positions.add(new Vec3(5/16f, 12/16f, 7/16f));
             }
             case UP ->{
-                positions.add(new CablePos(8/16f, 4/16f, 6/16f));
-                positions.add(new CablePos(5/16f, 4/16f, 9/16f));
-                positions.add(new CablePos(8/16f, 4/16f, 9/16f));
-                positions.add(new CablePos(11/16f, 4/16f, 9/16f));
+                positions.add(new Vec3(8/16f, 4/16f, 6/16f));
+                positions.add(new Vec3(5/16f, 4/16f, 9/16f));
+                positions.add(new Vec3(8/16f, 4/16f, 9/16f));
+                positions.add(new Vec3(11/16f, 4/16f, 9/16f));
             }
             case NORTH ->{
-                positions.add(new CablePos(8/16f, 6/16f, 12/16f));
-                positions.add(new CablePos(5/16f, 9/16f, 12/16f));
-                positions.add(new CablePos(8/16f, 9/16f, 12/16f));
-                positions.add(new CablePos(11/16f, 9/16f, 12/16f));
+                positions.add(new Vec3(8/16f, 6/16f, 12/16f));
+                positions.add(new Vec3(5/16f, 9/16f, 12/16f));
+                positions.add(new Vec3(8/16f, 9/16f, 12/16f));
+                positions.add(new Vec3(11/16f, 9/16f, 12/16f));
             }
             case SOUTH ->{
-                positions.add(new CablePos(8/16f, 6/16f,  4/16f));
-                positions.add(new CablePos(11/16f, 9/16f, 4/16f));
-                positions.add(new CablePos(8/16f, 9/16f, 4/16f));
-                positions.add(new CablePos(5/16f, 9/16f, 4/16f));
+                positions.add(new Vec3(8/16f, 6/16f,  4/16f));
+                positions.add(new Vec3(11/16f, 9/16f, 4/16f));
+                positions.add(new Vec3(8/16f, 9/16f, 4/16f));
+                positions.add(new Vec3(5/16f, 9/16f, 4/16f));
             }
             case EAST ->{
-                positions.add(new CablePos(4/16f, 6/16f, 8/16f));
-                positions.add(new CablePos(4/16f, 9/16f, 11/16f));
-                positions.add(new CablePos(4/16f, 9/16f, 8/16f));
-                positions.add(new CablePos(4/16f, 9/16f, 5/16f));
+                positions.add(new Vec3(4/16f, 6/16f, 8/16f));
+                positions.add(new Vec3(4/16f, 9/16f, 11/16f));
+                positions.add(new Vec3(4/16f, 9/16f, 8/16f));
+                positions.add(new Vec3(4/16f, 9/16f, 5/16f));
             }
             case WEST ->{
-                positions.add(new CablePos(12/16f, 6/16f, 8/16f));
-                positions.add(new CablePos(12/16f, 9/16f, 5/16f));
-                positions.add(new CablePos(12/16f, 9/16f, 8/16f));
-                positions.add(new CablePos(12/16f, 9/16f, 11/16f));
+                positions.add(new Vec3(12/16f, 6/16f, 8/16f));
+                positions.add(new Vec3(12/16f, 9/16f, 5/16f));
+                positions.add(new Vec3(12/16f, 9/16f, 8/16f));
+                positions.add(new Vec3(12/16f, 9/16f, 11/16f));
             }
         }
 
