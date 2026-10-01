@@ -280,8 +280,8 @@ public class TFMGBlocks {
             .properties(p -> p.sound(SoundType.NETHERITE_BLOCK))
             .properties(BlockBehaviour.Properties::noOcclusion)
             .addLayer(() -> RenderType::cutoutMipped)
-            .item()
-            .build()
+			.blockstate((c, p) -> p.models().cubeAll("cable_hub", TFMG.asResource("block/steel_cable_hub")))
+            .item().build()
             .register();
     //------------------ENGINES------------------//
     public static final BlockEntry<TurbineEngineBlock> TURBINE_ENGINE = REGISTRATE.block("turbine_engine", TurbineEngineBlock::new)

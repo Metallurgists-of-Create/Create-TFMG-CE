@@ -81,6 +81,7 @@
   "block.tfmg.cable_connector.tooltip.condition1": "When 2 cable insulators are right clicked with a copper/aluminum/constantan spool",
   "block.tfmg.cable_connector.tooltip.condition2": "When wrenched",
   "block.tfmg.cable_connector.tooltip.summary": "Transfers power",
+  "block.tfmg.cable_hub": "Cable Hub",
   "block.tfmg.cable_tube": "Cable Tube",
   "block.tfmg.cast_iron_bars": "Cast Iron Bars",
   "block.tfmg.cast_iron_block": "Block of Cast Iron",
