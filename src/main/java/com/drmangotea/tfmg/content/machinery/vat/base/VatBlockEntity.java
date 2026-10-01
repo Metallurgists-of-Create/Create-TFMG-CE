@@ -1338,6 +1338,7 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
     @Override
     public void invalidate() {
         super.invalidate();
+        invalidateCapabilities();
     }
 
 
