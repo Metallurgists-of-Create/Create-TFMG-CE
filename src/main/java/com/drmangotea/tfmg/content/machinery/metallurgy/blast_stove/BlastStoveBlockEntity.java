@@ -143,6 +143,7 @@ public class BlastStoveBlockEntity extends SmartBlockEntity implements IHaveGogg
             }
         } else {
             timer+= getTotalTankSize();
+            sendData();
         }
     }
 
@@ -319,20 +320,6 @@ public class BlastStoveBlockEntity extends SmartBlockEntity implements IHaveGogg
             return super.createRenderBoundingBox();
     }
 
-
-
-
-    public int getProgressPercentage() {
-        return recipeDuration <= 0 ? -1 : Math.min(100, (int) (100f * timer / recipeDuration));
-    }
-
-    public MutableComponent getProgressComponent() {
-        int progress = getProgressPercentage();
-        if (progress == -1)
-            return null;
-        return TFMGLang.translateDirect("goggles.progress", Component.literal(progress + "%").withStyle(ChatFormatting.GOLD)).withStyle(ChatFormatting.GRAY);
-    }
-
     @Override
 	public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
 		BlastStoveBlockEntity controller = getControllerBE();
@@ -347,10 +334,7 @@ public class BlastStoveBlockEntity extends SmartBlockEntity implements IHaveGogg
 		int capacity = getCapacityMultiplier() * controller.getTotalTankSize();
 
         TFMGTexts.header("blast_stove").forGoggles(tooltip);
-        MutableComponent progressComp = getProgressComponent();
-        if (progressComp != null) {
-            CreateLang.builder().add(progressComp).forGoggles(tooltip, 1);
-        }
+        TFMGTexts.progress(timer, recipeDuration).forGoggles(tooltip, 1);
         tankTooltip(tooltip, "goggles.blast_stove.tank1", sec.getFluidInTank(1), capacity, ChatFormatting.DARK_GREEN); //input (air)
         tankTooltip(tooltip, "goggles.blast_stove.tank2", pri.getFluidInTank(1), capacity, ChatFormatting.DARK_GREEN); //fuel
         tankTooltip(tooltip, "goggles.blast_stove.tank3", pri.getFluidInTank(0), capacity, ChatFormatting.GOLD);       //output (hot air)

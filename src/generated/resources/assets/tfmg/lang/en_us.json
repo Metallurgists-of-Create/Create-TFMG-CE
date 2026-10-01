@@ -967,6 +967,7 @@
   "tfmg.goggles.generator.production": "Energy Production: %1$s fe/t",
   "tfmg.goggles.heat_status": "Heat Status: ",
   "tfmg.goggles.heated": "Heated",
+  "tfmg.goggles.idle": "Idle",
   "tfmg.goggles.invalid_machine": "Machine Invalid",
   "tfmg.goggles.item_storage_empty": "*Empty*",
   "tfmg.goggles.machine_input.info": "Machine Input Info",

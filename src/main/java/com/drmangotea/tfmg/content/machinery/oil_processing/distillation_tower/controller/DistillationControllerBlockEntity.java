@@ -176,6 +176,7 @@ public class DistillationControllerBlockEntity extends SmartBlockEntity implemen
             recipeDuration = -1;
         } else {
             timer+= controllerBe.activeHeat;
+            sendData();
         }
     }
 
@@ -222,17 +223,6 @@ public class DistillationControllerBlockEntity extends SmartBlockEntity implemen
         }
     }
 
-    public int getProgressPercentage() {
-        return recipeDuration <= 0 ? -1 : Math.min(100, (int) (100f * timer / recipeDuration));
-    }
-
-    public MutableComponent getProgressComponent() {
-        int progress = getProgressPercentage();
-        if (progress == -1)
-            return null;
-        return TFMGLang.translateDirect("goggles.progress", Component.literal(getProgressPercentage() + "%").withStyle(ChatFormatting.GOLD)).withStyle(ChatFormatting.GRAY);
-    }
-
     @Override
     public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
         if (level == null)
@@ -242,10 +232,7 @@ public class DistillationControllerBlockEntity extends SmartBlockEntity implemen
             SteelTankBlockEntity controllerBe = be.getControllerBE() == null ? be : be.getControllerBE();
 
             TFMGTexts.header("distillation_tower").style(ChatFormatting.GRAY).forGoggles(tooltip, 1);
-            MutableComponent progressComp = getProgressComponent();
-            if (progressComp != null) {
-                CreateLang.builder().add(getProgressComponent()).forGoggles(tooltip, 1);
-            }
+            TFMGTexts.progress(timer, recipeDuration).forGoggles(tooltip, 1);
             TFMGTexts.Distillation.level(controllerBe.activeHeat).forGoggles(tooltip, 1);
             TFMGTexts.Distillation.outputs(outputs.size()).forGoggles(tooltip, 1);
         } else
