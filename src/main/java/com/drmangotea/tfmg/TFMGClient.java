@@ -39,7 +39,7 @@ public class TFMGClient {
 
         modEventBus.addListener(TFMGClient::clientInit);
         modEventBus.addListener(TFMGParticleTypes::registerFactories);
-        modEventBus.addListener(TFMGClientEvents::registerGuiOverlays);
+        //modEventBus.addListener(TFMGClientEvents::registerGuiOverlays);
 
         QUAD_POTATO_CANNON_RENDER_HANDLER.registerListeners(neoEventBus);
         ADVANCED_POTATO_CANNON_RENDER_HANDLER.registerListeners(neoEventBus);

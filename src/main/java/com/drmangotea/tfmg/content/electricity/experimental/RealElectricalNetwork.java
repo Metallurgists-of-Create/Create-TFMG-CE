@@ -44,7 +44,9 @@ public class RealElectricalNetwork {
     public Map<Integer, ComplexValue> nodeVoltages = new HashMap<>();
 
     public List<ElectricalNode> getNodes(BlockPos pos) {
-		return members.get(pos).nodes;
+		if (members.get(pos) instanceof ElectricalProperties member)
+			return member.nodes;
+		return List.of();
     }
 
 
