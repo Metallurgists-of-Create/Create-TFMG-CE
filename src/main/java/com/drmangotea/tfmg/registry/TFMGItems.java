@@ -136,7 +136,7 @@ public class TFMGItems {
             ASPHALT_MIXTURE = REGISTRATE.item("asphalt_mixture", Item::new).register(),
             MAGNETIC_ALLOY_INGOT = REGISTRATE.item("magnetic_alloy_ingot", Item::new).register(),
             MAGNETIC_ALLOY_SHEET = REGISTRATE.item("magnetic_alloy_sheet", Item::new).register(),
-            BAUXITE_POWDER = REGISTRATE.item("bauxite_powder", Item::new).register(),
+            BAUXITE_POWDER = REGISTRATE.item("bauxite_powder", Item::new).tag(Items.DUSTS_BAUXITE.tag).register(),
             EMPTY_CIRCUIT_BOARD = REGISTRATE.item("empty_circuit_board", Item::new).register(),
             COATED_CIRCUIT_BOARD = REGISTRATE.item("coated_circuit_board", Item::new).register(),
             ETCHED_CIRCUIT_BOARD = REGISTRATE.item("etched_circuit_board", Item::new).register(),

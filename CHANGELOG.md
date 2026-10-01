@@ -11,6 +11,9 @@ Contributors:<br>
 - Blast Furnace Outputs no-longer reset item components.
 
 ### Changes:
+- Recipe inputs now use tags where applicable.
+- Added compositions for Crushed Lead & Nickel
+- Fluid Compositions are now created under the `tfmg` namespace.
 
 ### API Changes:
 - new `IHaveMultimeterInformation` interface

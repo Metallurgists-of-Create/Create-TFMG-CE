@@ -2,12 +2,14 @@ package com.drmangotea.tfmg.datagen.recipes.values.create;
 
 import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.registry.TFMGItems;
+import com.drmangotea.tfmg.registry.TFMGTags;
 import com.simibubi.create.AllRecipeTypes;
 import com.simibubi.create.api.data.recipe.CompactingRecipeGen;
 import com.simibubi.create.content.processing.recipe.HeatCondition;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
+import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.common.conditions.FalseCondition;
 import net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient;
 
@@ -21,7 +23,7 @@ public class TFMGCompactingRecipeGen extends CompactingRecipeGen {
 
     GeneratedRecipe
             BITUMEN = create(TFMG.asResource("bitumen"), b -> b
-            .require(SizedFluidIngredient.of(heavyOil(),1000))
+            .require(SizedFluidIngredient.of(TFMGTags.Fluids.HEAVY_OIL.tag,1000))
             .output(bitumen(), 1)
             .requiresHeat(HeatCondition.HEATED)
             ),
@@ -33,7 +35,7 @@ public class TFMGCompactingRecipeGen extends CompactingRecipeGen {
                     .output(TFMGItems.CINDERFLOURBLOCK)
             ),
             CAST_IRON = create(TFMG.asResource("cast_iron"), b -> b
-                    .require(ironIngot())
+                    .require(Tags.Items.INGOTS_IRON)
                     .require(coal())
                     .output(TFMGItems.CAST_IRON_INGOT, 1)
                     .requiresHeat(HeatCondition.HEATED)

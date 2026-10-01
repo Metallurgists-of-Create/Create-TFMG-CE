@@ -2,9 +2,9 @@
   "type": "tfmg:hot_blast",
   "ingredients": [
     {
-      "type": "neoforge:single",
+      "type": "neoforge:tag",
       "amount": 50,
-      "fluid": "tfmg:air"
+      "tag": "c:air"
     },
     {
       "type": "neoforge:tag",

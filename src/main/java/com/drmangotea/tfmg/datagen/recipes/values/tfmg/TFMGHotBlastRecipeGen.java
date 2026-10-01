@@ -18,7 +18,7 @@ public class TFMGHotBlastRecipeGen extends HotBlastRecipeGen {
 
 
 	HOT_AIR = create(TFMG.asResource("hot_air"), b ->b
-			.require(SizedFluidIngredient.of(air(),50))
+			.require(SizedFluidIngredient.of(TFMGTags.Fluids.AIR.tag,50))
 			.require(TFMGTags.Fluids.BLAST_STOVE_FUEL.tag,10)
 			.output(hotAir(), 50)
 			.output(carbonDioxide(), 50)

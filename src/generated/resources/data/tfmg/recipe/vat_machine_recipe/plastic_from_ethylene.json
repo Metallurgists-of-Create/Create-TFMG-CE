@@ -3,9 +3,9 @@
   "heat_level": 2,
   "ingredients": [
     {
-      "type": "neoforge:single",
+      "type": "neoforge:tag",
       "amount": 500,
-      "fluid": "tfmg:ethylene"
+      "tag": "c:ethylene"
     }
   ],
   "machines": [

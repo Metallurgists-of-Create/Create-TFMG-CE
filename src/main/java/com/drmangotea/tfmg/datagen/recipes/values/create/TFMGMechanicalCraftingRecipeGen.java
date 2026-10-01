@@ -3,6 +3,7 @@ package com.drmangotea.tfmg.datagen.recipes.values.create;
 import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.registry.TFMGBlocks;
 import com.drmangotea.tfmg.registry.TFMGItems;
+import com.drmangotea.tfmg.registry.TFMGTags;
 import com.simibubi.create.api.data.recipe.MechanicalCraftingRecipeGen;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
@@ -83,7 +84,7 @@ public class TFMGMechanicalCraftingRecipeGen extends MechanicalCraftingRecipeGen
 
     ADVANCED_POTATO_CANNON = create(TFMGItems.ADVANCED_POTATO_CANNON::get)
             .recipe(b -> b
-                    .key('O', rebar())
+                    .key('O', TFMGTags.Items.RODS_STEEL.tag)
                     .key('C', circuitBoard())
                     .key('T', steelTank())
                     .key('P', steelPipe())

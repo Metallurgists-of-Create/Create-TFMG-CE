@@ -77,6 +77,7 @@ public class TFMGTags {
         DUSTS_IRON(COMMON, "dusts/iron"),
         DUSTS_SALTPETER(COMMON, "dusts/saltpeter"),
         DUSTS_SULFUR(COMMON, "dusts/sulfur"),
+        DUSTS_BAUXITE(COMMON, "dusts/bauxite"),
         FLUX,
         INGOTS_CAST_IRON(COMMON, "ingots/cast_iron"),
         INGOTS_LITHIUM(COMMON, "ingots/lithium"),
@@ -146,6 +147,10 @@ public class TFMGTags {
         CRUDE_OIL(COMMON),
         MOLTEN_STEEL(COMMON),
         FUEL(COMMON),
+        ETHYLENE(COMMON),
+        PROPYLENE(COMMON),
+
+        SULFURIC_ACID(COMMON),
 
         //CBC
         MOLTEN_CAST_IRON(COMMON),
