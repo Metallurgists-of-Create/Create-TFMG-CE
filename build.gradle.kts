@@ -5,9 +5,9 @@ plugins {
     id("net.neoforged.moddev") version "2.0.147"
 }
 
-val baseArchivesName = project.property("mod_id").toString()
+val modID : String = project.property("mod_id").toString()
 base {
-    archivesName.set(project.property("mod_id").toString())
+    archivesName.set(modID)
 }
 val ci = System.getenv("CI") != null && System.getenv("CI").toBoolean()
 val release = System.getenv("RELEASE") != null && System.getenv("RELEASE").toBoolean()
@@ -32,7 +32,7 @@ tasks.withType<Javadoc>().configureEach {
     (options as StandardJavadocDocletOptions).addStringOption("Xdoclint:none", "-quiet")
 }
 
-val localRuntime: Configuration by configurations.creating
+val localRuntime: Configuration = configurations.create("localRuntime")
 configurations.runtimeClasspath {
     extendsFrom(localRuntime)
 }
@@ -50,24 +50,24 @@ neoForge {
             client()
 
             // Comma-separated list of namespaces to load gametests from. Empty = all namespaces.
-            systemProperty("neoforge.enabledGameTestNamespaces", project.property("mod_id").toString())
+            systemProperty("neoforge.enabledGameTestNamespaces", modID)
         }
 
         register("server") {
             server()
             programArgument("--nogui")
-            systemProperty("neoforge.enabledGameTestNamespaces", project.property("mod_id").toString())
+            systemProperty("neoforge.enabledGameTestNamespaces", modID)
         }
 
         register("gameTestServer") {
             type = "gameTestServer"
-            systemProperty("neoforge.enabledGameTestNamespaces", project.property("mod_id").toString())
+            systemProperty("neoforge.enabledGameTestNamespaces", modID)
         }
 
         register("data") {
             data()
             programArguments.addAll(
-                "--mod", project.property("mod_id").toString(),
+                "--mod", modID,
                 "--all",
                 "--output", file("src/generated/resources/").absolutePath,
                 "--existing", file("src/main/resources/").absolutePath
@@ -81,7 +81,7 @@ neoForge {
     }
 
     mods {
-        create("${property("mod_id")}") {
+        create(modID) {
             sourceSet(sourceSets.main.get())
         }
     }
@@ -151,7 +151,7 @@ dependencies {
     runtimeOnly("maven.modrinth:power-grid:jCkPHjmP") //Create: Power Grid 0.6.2
 }
 
-val generateModMetadata by tasks.registering(ProcessResources::class) {
+val generateModMetadata = tasks.register<ProcessResources>("generateModMetadata") {
     description = "You want a description IDEA? You get one! Leave me alone!!!"
     val replaceProperties = mapOf(
         "minecraft_version" to project.findProperty("minecraft_version") as String,
