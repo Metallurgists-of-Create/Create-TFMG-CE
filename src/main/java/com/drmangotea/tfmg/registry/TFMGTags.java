@@ -104,8 +104,9 @@ public class TFMGTags {
         WIRES_COPPER(COMMON, "wires/copper"),
         ENGINE_TURBINE(MOD, "engine/turbine"),
         ENGINE_CYLINDER(MOD, "engine/cylinder"),
-        MULTIMETERS(MOD),
-        CAUTION_BLOCKS(MOD)
+        MULTIMETERS,
+        CAUTION_BLOCKS,
+		CURIOS_BELT("curios","belt")
         ;
 
         public final TagKey<Item> tag;
@@ -116,10 +117,14 @@ public class TFMGTags {
         Items(NameSpace namespace) {
             this(namespace, null);
         }
-        Items(NameSpace namespace, String path) {
-            ResourceLocation id = ResourceLocation.fromNamespaceAndPath(namespace.id, path == null ? TFMGLang.asId(name()) : path);
-            this.tag = ItemTags.create(id);
-        }
+		Items(NameSpace namespace, String path) {
+			ResourceLocation id = ResourceLocation.fromNamespaceAndPath(namespace.id, path == null ? TFMGLang.asId(name()) : path);
+			this.tag = ItemTags.create(id);
+		}
+		Items(String namespace, String path) {
+			ResourceLocation id = ResourceLocation.fromNamespaceAndPath(namespace, path == null ? TFMGLang.asId(name()) : path);
+			this.tag = ItemTags.create(id);
+		}
     }
 
     public enum Fluids {

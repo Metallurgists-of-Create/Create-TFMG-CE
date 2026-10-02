@@ -366,6 +366,7 @@ public interface IElectric extends IHaveMultimeterInformation {
         getData().scheduledActions.add(method);
     }
 
+	/// Populates the Multimeter Tooltip from the IElectrics' Data
     default boolean makeMultimeterTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
         TFMGTexts.header("multimeter").style(ChatFormatting.GRAY)
                 .forGoggles(tooltip);

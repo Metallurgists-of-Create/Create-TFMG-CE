@@ -256,7 +256,9 @@ public class TFMGItems {
                     .properties(p -> p.stacksTo(1))
                     .register();
 
-    public static final ItemEntry<MultimeterItem> MULTIMETER = REGISTRATE.item("multimeter", MultimeterItem::new).tag(Items.MULTIMETERS.tag).register();
+    public static final ItemEntry<MultimeterItem> MULTIMETER =
+		REGISTRATE.item("multimeter", p -> new MultimeterItem(p, 0xCFD300)) //todo: make a more gold-ish color
+			.tag(Items.MULTIMETERS.tag, Items.CURIOS_BELT.tag).register();
 
     public static final ItemEntry<SequencedAssemblyItem>
             UNFINISHED_POTENTIOMETER = sequencedIngredient("unfinished_potentiometer", "block/potentiometer/unfinished"),
@@ -340,8 +342,8 @@ public class TFMGItems {
     //Dyed Items
     public static final DyedItemList<MultimeterItem> MULTIMETERS = new DyedItemList<>(colour -> {
         String colourName = colour.getSerializedName();
-        return REGISTRATE.item(colourName + "_multimeter", MultimeterItem::new)
-                .tag(Items.MULTIMETERS.tag)
+        return REGISTRATE.item(colourName + "_multimeter", p -> new MultimeterItem(p, colour.getTextureDiffuseColor()))
+                .tag(Items.MULTIMETERS.tag, Items.CURIOS_BELT.tag)
                 .onRegister(item -> ItemDescription.referKey(item, () -> MULTIMETER))
                 .recipe((c, p) -> {
                     ShapelessRecipeBuilder.shapeless(RecipeCategory.TOOLS, c.get())

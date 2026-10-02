@@ -115,19 +115,9 @@ repositories {
         name = "DevAuth Maven"
         url = uri("https://pkgs.dev.azure.com/djtheredstoner/DevAuth/_packaging/public/maven/v1")
     }
-
-    // Needed because CLF Reburned is making Gradle complain
-    maven("https://maven.latvian.dev/releases") {
-        content {
-            includeGroup("dev.latvian.mods")
-            includeGroup("dev.latvian.apps")
-        }
-    }
-
-    maven("https://jitpack.io") {
-        content {
-            includeGroup("com.github.rtyley")
-        }
+    maven {
+        name = "Illusive Soulworks maven" //Curios
+        url = uri("https://maven.theillusivec4.top/")
     }
 }
 
@@ -147,6 +137,9 @@ dependencies {
 
     implementation("dev.wolfieboy09.createliquidfuel:createliquidfuel:${property("minecraft_version")}-${property("clf_reburned_version")}") { isTransitive = false }
     implementation("dev.metallurgists:rutile:${property("minecraft_version")}-${property("rutile_version")}") { isTransitive = false }
+
+    compileOnly("top.theillusivec4.curios:curios-neoforge:${property("curios_version")}:api")
+    runtimeOnly("top.theillusivec4.curios:curios-neoforge:${property("curios_version")}")
 
     implementation("maven.modrinth:create-big-cannons:bOiDu0LS") //Create: Big Cannons (CBC)
     runtimeOnly("maven.modrinth:rpl:hZ6B2Z0x") //RPL, so CBC can run

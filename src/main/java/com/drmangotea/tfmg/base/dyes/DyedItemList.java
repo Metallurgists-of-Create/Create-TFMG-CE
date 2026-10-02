@@ -1,5 +1,6 @@
 package com.drmangotea.tfmg.base.dyes;
 
+import com.drmangotea.tfmg.base.annotation.NothingNullByDefault;
 import com.tterrag.registrate.util.entry.ItemEntry;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
@@ -40,7 +41,7 @@ public class DyedItemList<T extends Item> implements Iterable<ItemEntry<T>> {
         return (ItemEntry<T>[]) Arrays.copyOf(values, values.length);
     }
 
-    @Override
+    @Override @NothingNullByDefault
     public Iterator<ItemEntry<T>> iterator() {
         return new Iterator<>() {
             private int index = 0;
