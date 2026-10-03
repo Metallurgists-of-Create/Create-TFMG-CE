@@ -75,12 +75,9 @@ public class MultimeterCurios {
 	public static class Renderer implements ICurioRenderer {
 		ItemRenderer itemRenderer = Minecraft.getInstance().getItemRenderer();
 
-		@SuppressWarnings("unchecked")
         @Override
 		public <T extends LivingEntity, M extends EntityModel<T>> void render(ItemStack itemStack, SlotContext slotContext, PoseStack poseStack, RenderLayerParent<T, M> renderLayerParent, MultiBufferSource renderTypeBuffer, int light, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
-			if (renderLayerParent.getModel() instanceof HumanoidModel<?>) {
-				var humanoidModel = (HumanoidModel<LivingEntity>) renderLayerParent.getModel();
-
+			if (renderLayerParent.getModel() instanceof HumanoidModel<? extends LivingEntity> humanoidModel) {
 				poseStack.pushPose();
 				humanoidModel.body.translateAndRotate(poseStack);
 				poseStack.scale(0.35f, 0.35f, 0.35f);
