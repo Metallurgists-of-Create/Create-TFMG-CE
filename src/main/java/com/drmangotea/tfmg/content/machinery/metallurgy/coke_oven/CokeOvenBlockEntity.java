@@ -48,6 +48,7 @@ import javax.annotation.Nonnull;
 import java.util.List;
 
 import static net.minecraft.world.level.block.HorizontalDirectionalBlock.FACING;
+import static net.neoforged.neoforge.fluids.FluidStack.isSameFluidSameComponents;
 
 public class CokeOvenBlockEntity extends SmartBlockEntity implements IHaveGoggleInformation, Clearable {
 
@@ -125,10 +126,13 @@ public class CokeOvenBlockEntity extends SmartBlockEntity implements IHaveGoggle
 
             onContentsChanged();
         } else {
-            if (primaryTank.getSpace() != 0 && secondaryTank.getSpace() != 0) {
-                primaryTank.forceFill(activeRecipe.getPrimaryResult(), IFluidHandler.FluidAction.EXECUTE);
-                secondaryTank.forceFill(activeRecipe.getSecondaryResult(), IFluidHandler.FluidAction.EXECUTE);
-                timer++;
+            FluidStack primary = activeRecipe.getPrimaryResult().copyWithAmount(activeRecipe.getPrimaryResult().getAmount() * size);
+            FluidStack secondary = activeRecipe.getSecondaryResult().copyWithAmount(activeRecipe.getSecondaryResult().getAmount() * size);
+            if ((primaryTank.isEmpty() || isSameFluidSameComponents(primaryTank.getFluid(), primary)) && (secondaryTank.isEmpty() || isSameFluidSameComponents(secondaryTank.getFluid(), secondary))  &&
+                    primaryTank.getSpace() >= primary.getAmount() && secondaryTank.getSpace() >= secondary.getAmount()) {
+                primaryTank.forceFill(primary, IFluidHandler.FluidAction.EXECUTE);
+                secondaryTank.forceFill(secondary, IFluidHandler.FluidAction.EXECUTE);
+                timer += size;
                 sendData();
             }
         }
