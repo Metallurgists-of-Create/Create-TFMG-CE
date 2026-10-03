@@ -1261,8 +1261,6 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
             });
             inputInventory.deserializeNBT(registries, compound.getCompound("InputItems"));
             outputInventory.deserializeNBT(registries, compound.getCompound("OutputItems"));
-            inputTank.read(compound.getCompound("InputTanks"), registries, clientPacket);
-            outputTank.read(compound.getCompound("OutputTanks"), registries, clientPacket);
             timer = compound.getInt("Timer");
             heatLevel = compound.getInt("HeatLevel");
             recipeDuration = compound.getInt("RecipeDuration");
@@ -1317,13 +1315,6 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
             compound.putInt("HeatLevel", heatLevel);
             compound.putInt("RecipeDuration", recipe != null ? recipe.getProcessingDuration() : 0);
             pressure.save(compound);
-            CompoundTag inputTankData = new CompoundTag();
-            inputTank.write(inputTankData, registries, clientPacket);
-            compound.put("InputTanks", inputTankData);
-
-            CompoundTag outputTankData = new CompoundTag();
-            outputTank.write(outputTankData, registries, clientPacket);
-            compound.put("OutputTanks", outputTankData);
         } else {
             compound.put("Controller", NbtUtils.writeBlockPos(controller));
         }
