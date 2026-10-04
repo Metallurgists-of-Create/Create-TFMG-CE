@@ -56,7 +56,6 @@ file="META-INF/accesstransformer.cfg"
     modId = "tfmgtweaks"
     type = "optional"
     versionRange = "[2.1.2,)"
-    ordering="AFTER"
     side = "BOTH"
 
 # Incompatible mods
