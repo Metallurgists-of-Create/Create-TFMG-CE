@@ -1,5 +1,6 @@
 package com.drmangotea.tfmg.base.dyes;
 
+import com.drmangotea.tfmg.base.annotation.NothingNullByDefault;
 import com.drmangotea.tfmg.base.MaterialSet;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.Block;
@@ -10,15 +11,10 @@ import java.util.NoSuchElementException;
 import java.util.function.Function;
 
 public class DyedMaterialSetList implements Iterable<MaterialSet> {
-
-    private static final int COLOR_AMOUNT = DyeColor.values().length;
-
-    private final MaterialSet[] values = new MaterialSet[COLOR_AMOUNT];
+    private final MaterialSet[] values;
 
     public DyedMaterialSetList(Function<DyeColor, MaterialSet> filler) {
-        for (DyeColor color : DyeColor.values()) {
-            values[color.ordinal()] = filler.apply(color);
-        }
+		values = Arrays.stream(DyeColor.values()).map(filler).toArray(MaterialSet[]::new);
     }
 
     public MaterialSet get(DyeColor color) {
@@ -38,7 +34,7 @@ public class DyedMaterialSetList implements Iterable<MaterialSet> {
         return Arrays.copyOf(values, values.length);
     }
 
-    @Override
+    @Override @NothingNullByDefault
     public Iterator<MaterialSet> iterator() {
         return new Iterator<>() {
             private int index = 0;
