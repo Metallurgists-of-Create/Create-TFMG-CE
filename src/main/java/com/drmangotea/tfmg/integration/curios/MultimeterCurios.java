@@ -2,7 +2,6 @@ package com.drmangotea.tfmg.integration.curios;
 
 import com.drmangotea.tfmg.content.electricity.measurement.MultimeterItem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Axis;
 import com.simibubi.create.compat.Mods;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.EntityModel;
@@ -21,6 +20,7 @@ import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+import org.joml.Quaternionf;
 import top.theillusivec4.curios.api.CuriosApi;
 import top.theillusivec4.curios.api.SlotContext;
 import top.theillusivec4.curios.api.client.CuriosRendererRegistry;
@@ -74,21 +74,28 @@ public class MultimeterCurios {
 	@OnlyIn(Dist.CLIENT)
 	public static class Renderer implements ICurioRenderer {
 		ItemRenderer itemRenderer = Minecraft.getInstance().getItemRenderer();
+		static final Quaternionf orientation = //rotate 180deg around Z, then 90deg around Y
+			new Quaternionf(-0.5f * Mth.SQRT_OF_TWO, 0, 0.5f * Mth.SQRT_OF_TWO, 0);
 
         @Override
-		public <T extends LivingEntity, M extends EntityModel<T>> void render(ItemStack itemStack, SlotContext slotContext, PoseStack poseStack, RenderLayerParent<T, M> renderLayerParent, MultiBufferSource renderTypeBuffer, int light, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
-			if (renderLayerParent.getModel() instanceof HumanoidModel<? extends LivingEntity> humanoidModel) {
-				poseStack.pushPose();
-				humanoidModel.body.translateAndRotate(poseStack);
-				poseStack.scale(0.35f, 0.35f, 0.35f);
-				float offset = !slotContext.entity().getItemBySlot(EquipmentSlot.LEGS).isEmpty() ?  0.1f : 0f;
-				poseStack.translate(-0.75 - offset, 2.0, 0.0);
-				poseStack.mulPose(Axis.ZP.rotationDegrees(180f));
-				poseStack.mulPose(Axis.YP.rotationDegrees(90f));
+		public <T extends LivingEntity, M extends EntityModel<T>> void render(
+			ItemStack itemStack, SlotContext slotContext, PoseStack poseStack,
+			RenderLayerParent<T, M> renderLayerParent, MultiBufferSource renderTypeBuffer,
+			int light, float limbSwing, float limbSwingAmount, float partialTicks,
+			float ageInTicks, float netHeadYaw, float headPitch
+		) {
+			if (!(renderLayerParent.getModel() instanceof HumanoidModel<? extends LivingEntity> humanoidModel))
+				return;
+			
+			poseStack.pushPose();
+			humanoidModel.body.translateAndRotate(poseStack);
+			poseStack.scale(0.35f, 0.35f, 0.35f);
+			float offset = !slotContext.entity().getItemBySlot(EquipmentSlot.LEGS).isEmpty() ?  0.1f : 0f;
+			poseStack.translate(-0.75 - offset, 2.0, 0.0);
+			poseStack.mulPose(orientation);
 
-				itemRenderer.renderStatic(itemStack, ItemDisplayContext.FIXED, light, OverlayTexture.NO_OVERLAY, poseStack, renderTypeBuffer, null, 0);
-				poseStack.popPose();
-			}
+			itemRenderer.renderStatic(itemStack, ItemDisplayContext.FIXED, light, OverlayTexture.NO_OVERLAY, poseStack, renderTypeBuffer, null, 0);
+			poseStack.popPose();
 		}
 	}
 }
