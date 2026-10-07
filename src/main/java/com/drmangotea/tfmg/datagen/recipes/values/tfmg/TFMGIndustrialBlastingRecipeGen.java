@@ -8,7 +8,6 @@ import com.drmangotea.tfmg.registry.TFMGTags;
 import com.simibubi.create.AllItems;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
-import net.minecraft.world.item.Items;
 import net.neoforged.neoforge.common.Tags;
 
 import javax.annotation.Nonnull;

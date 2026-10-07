@@ -1,7 +1,6 @@
 package com.drmangotea.tfmg.datagen.recipes.values.create;
 
 import com.drmangotea.tfmg.TFMG;
-
 import com.drmangotea.tfmg.recipes.WindingRecipe;
 import com.drmangotea.tfmg.registry.TFMGBlocks;
 import com.drmangotea.tfmg.registry.TFMGItems;
@@ -20,7 +19,6 @@ import net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient;
 import javax.annotation.Nonnull;
 import java.util.concurrent.CompletableFuture;
 
-import static com.drmangotea.tfmg.datagen.recipes.TFMGRecipeProvider.F.lubricationOil;
 import static com.drmangotea.tfmg.datagen.recipes.TFMGRecipeProvider.I.*;
 
 @SuppressWarnings("unused")

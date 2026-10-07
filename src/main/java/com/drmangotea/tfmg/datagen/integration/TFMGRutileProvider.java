@@ -6,7 +6,6 @@ import com.drmangotea.tfmg.registry.TFMGFluids;
 import com.drmangotea.tfmg.registry.TFMGItems;
 import com.drmangotea.tfmg.registry.TFMGPaletteStoneTypes;
 import com.simibubi.create.AllItems;
-import dev.metallurgists.rutile.Rutile;
 import dev.metallurgists.rutile.api.data.provider.composition.FluidCompositionProvider;
 import dev.metallurgists.rutile.api.data.provider.composition.ItemCompositionProvider;
 import dev.metallurgists.rutile.registry.RutileElements;

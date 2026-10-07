@@ -1,12 +1,12 @@
 package com.drmangotea.tfmg.registry;
 
 import com.drmangotea.tfmg.TFMG;
-import com.drmangotea.tfmg.base.dyes.DyedItemList;
 import com.drmangotea.tfmg.base.TFMGCreativeTabs;
 import com.drmangotea.tfmg.base.TFMGRegistrate;
 import com.drmangotea.tfmg.base.TFMGTiers;
 import com.drmangotea.tfmg.base.data_storage.CylinderFuels;
 import com.drmangotea.tfmg.base.debug.DebugCinderBlockItem;
+import com.drmangotea.tfmg.base.dyes.DyedItemList;
 import com.drmangotea.tfmg.content.decoration.kinetics.gearbox.SteelVerticalGearboxItem;
 import com.drmangotea.tfmg.content.decoration.pipes.TFMGPipes;
 import com.drmangotea.tfmg.content.electricity.configuration_wrench.ElectriciansWrenchItem;
@@ -56,7 +56,9 @@ import net.minecraft.world.item.*;
 import net.minecraft.world.level.block.Blocks;
 import net.neoforged.neoforge.common.Tags;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import static com.drmangotea.tfmg.content.items.weapons.explosives.thermite_grenades.ThermiteGrenade.ChemicalColor.*;
 import static com.simibubi.create.AllTags.AllItemTags.CREATE_INGOTS;

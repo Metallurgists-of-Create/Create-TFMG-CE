@@ -9,7 +9,8 @@ import net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient;
 
 import java.util.concurrent.CompletableFuture;
 
-import static com.drmangotea.tfmg.datagen.recipes.TFMGRecipeProvider.F.*;
+import static com.drmangotea.tfmg.datagen.recipes.TFMGRecipeProvider.F.carbonDioxide;
+import static com.drmangotea.tfmg.datagen.recipes.TFMGRecipeProvider.F.hotAir;
 
 @SuppressWarnings("unused")
 public class TFMGHotBlastRecipeGen extends HotBlastRecipeGen {

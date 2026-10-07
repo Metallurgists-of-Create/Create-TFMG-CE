@@ -3,8 +3,6 @@ package com.drmangotea.tfmg.base.fluid;
 import com.drmangotea.tfmg.base.MaterialSet;
 import com.drmangotea.tfmg.registry.TFMGBlocks;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.Level;

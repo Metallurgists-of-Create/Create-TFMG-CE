@@ -24,7 +24,8 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 import static com.drmangotea.tfmg.datagen.recipes.TFMGRecipeProvider.F.*;
-import static com.drmangotea.tfmg.datagen.recipes.TFMGRecipeProvider.I.*;
+import static com.drmangotea.tfmg.datagen.recipes.TFMGRecipeProvider.I.crushedRawIron;
+import static com.drmangotea.tfmg.datagen.recipes.TFMGRecipeProvider.I.rubber;
 
 @SuppressWarnings("unused")
 public class TFMGVatRecipeGen extends VatRecipeGen {

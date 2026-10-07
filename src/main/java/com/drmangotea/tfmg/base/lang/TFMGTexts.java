@@ -7,8 +7,6 @@ import com.simibubi.create.content.processing.recipe.HeatCondition;
 import net.createmod.catnip.lang.LangBuilder;
 import net.createmod.catnip.theme.Color;
 import net.minecraft.ChatFormatting;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.material.Fluid;
 

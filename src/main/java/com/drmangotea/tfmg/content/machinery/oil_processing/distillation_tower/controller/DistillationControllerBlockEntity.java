@@ -1,49 +1,44 @@
     package com.drmangotea.tfmg.content.machinery.oil_processing.distillation_tower.controller;
 
-import com.drmangotea.tfmg.base.TFMGUtils;
-import com.drmangotea.tfmg.base.lang.TFMGLang;
-import com.drmangotea.tfmg.base.lang.TFMGTexts;
-import com.drmangotea.tfmg.content.decoration.tanks.steel.SteelTankBlock;
-import com.drmangotea.tfmg.content.decoration.tanks.steel.SteelTankBlockEntity;
-import com.drmangotea.tfmg.content.machinery.oil_processing.distillation_tower.output.DistillationOutputBlockEntity;
-import com.drmangotea.tfmg.mixin.accessor.FluidTankBlockEntityAccessor;
-import com.drmangotea.tfmg.recipes.DistillationRecipe;
-import com.drmangotea.tfmg.recipes.input.DistillationRecipeInput;
-import com.drmangotea.tfmg.registry.TFMGBlockEntities;
-import com.drmangotea.tfmg.registry.TFMGRecipeTypes;
-import com.drmangotea.tfmg.registry.TFMGTags;
-import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
-import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
-import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
-import com.simibubi.create.foundation.fluid.SmartFluidTank;
+    import com.drmangotea.tfmg.base.TFMGUtils;
+    import com.drmangotea.tfmg.base.lang.TFMGTexts;
+    import com.drmangotea.tfmg.content.decoration.tanks.steel.SteelTankBlock;
+    import com.drmangotea.tfmg.content.decoration.tanks.steel.SteelTankBlockEntity;
+    import com.drmangotea.tfmg.content.machinery.oil_processing.distillation_tower.output.DistillationOutputBlockEntity;
+    import com.drmangotea.tfmg.mixin.accessor.FluidTankBlockEntityAccessor;
+    import com.drmangotea.tfmg.recipes.DistillationRecipe;
+    import com.drmangotea.tfmg.recipes.input.DistillationRecipeInput;
+    import com.drmangotea.tfmg.registry.TFMGBlockEntities;
+    import com.drmangotea.tfmg.registry.TFMGRecipeTypes;
+    import com.drmangotea.tfmg.registry.TFMGTags;
+    import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
+    import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
+    import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
+    import com.simibubi.create.foundation.fluid.SmartFluidTank;
+    import net.createmod.catnip.animation.LerpedFloat;
+    import net.minecraft.ChatFormatting;
+    import net.minecraft.core.BlockPos;
+    import net.minecraft.core.HolderLookup;
+    import net.minecraft.nbt.CompoundTag;
+    import net.minecraft.nbt.NbtUtils;
+    import net.minecraft.network.chat.Component;
+    import net.minecraft.world.item.crafting.RecipeHolder;
+    import net.minecraft.world.item.crafting.RecipeManager;
+    import net.minecraft.world.level.block.entity.BlockEntity;
+    import net.minecraft.world.level.block.entity.BlockEntityType;
+    import net.minecraft.world.level.block.state.BlockState;
+    import net.neoforged.neoforge.capabilities.Capabilities;
+    import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
+    import net.neoforged.neoforge.fluids.FluidStack;
+    import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+    import org.jetbrains.annotations.Nullable;
 
-import com.simibubi.create.foundation.utility.CreateLang;
-import net.createmod.catnip.animation.LerpedFloat;
-import net.minecraft.ChatFormatting;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtUtils;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.world.item.crafting.RecipeHolder;
-import net.minecraft.world.item.crafting.RecipeManager;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
-import net.neoforged.neoforge.fluids.FluidStack;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
-import org.jetbrains.annotations.Nullable;
+    import java.util.ArrayList;
+    import java.util.List;
 
+    import static com.drmangotea.tfmg.content.machinery.oil_processing.distillation_tower.controller.DistillationControllerBlock.getFacing;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import static com.drmangotea.tfmg.content.machinery.oil_processing.distillation_tower.controller.DistillationControllerBlock.getFacing;
-
-public class DistillationControllerBlockEntity extends SmartBlockEntity implements IHaveGoggleInformation {
+    public class DistillationControllerBlockEntity extends SmartBlockEntity implements IHaveGoggleInformation {
 
     LerpedFloat angle = LerpedFloat.angular();
 

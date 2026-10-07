@@ -7,7 +7,6 @@ import com.simibubi.create.content.processing.recipe.StandardProcessingRecipe;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient;
-import net.neoforged.neoforge.items.wrapper.RecipeWrapper;
 
 public class HotBlastRecipe extends StandardProcessingRecipe<HotBlastRecipeInput> {
 

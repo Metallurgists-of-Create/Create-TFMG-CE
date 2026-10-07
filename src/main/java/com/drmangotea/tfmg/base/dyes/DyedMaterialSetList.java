@@ -1,7 +1,7 @@
 package com.drmangotea.tfmg.base.dyes;
 
-import com.drmangotea.tfmg.base.annotation.NothingNullByDefault;
 import com.drmangotea.tfmg.base.MaterialSet;
+import com.drmangotea.tfmg.base.annotation.NothingNullByDefault;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.Block;
 
