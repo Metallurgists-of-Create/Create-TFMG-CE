@@ -11,6 +11,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
+import net.neoforged.fml.loading.FMLLoader;
 
 
 public class DebugCinderBlockItem extends Item {
@@ -28,19 +29,20 @@ public class DebugCinderBlockItem extends Item {
         BlockPos pos = context.getClickedPos();
         Level level = context.getLevel();
 		
-		if (level.getBlockEntity(pos) instanceof CableConnectorBlockEntity be) {
+		if (!FMLLoader.isProduction() && level.getBlockEntity(pos) instanceof CableConnectorBlockEntity be) {
 			TFMG.LOGGER.info("{}:\n {}", pos, be.connections);
 		}
 
-        if (level.getBlockEntity(pos) instanceof IElectric be) {
+        if (context.getPlayer() != null && level.getBlockEntity(pos) instanceof IElectric be) {
 			if(context.getPlayer().isCrouching()){
 				  be.recalculateNetworkResistance();
 			}else {
 			  //  be.getOrCreateElectricNetwork().add(be);
 				be.updateNextTick();
-	
-				TFMG.LOGGER.debug(""+ BlockPos.of(be.getData().electricalNetworkId));
-				TFMG.LOGGER.debug(""+be.getOrCreateElectricNetwork().members.size());
+
+                if (!FMLLoader.isProduction()) {
+                    TFMG.LOGGER.debug("Network at {} with size {}", BlockPos.of(be.getData().electricalNetworkId), be.getOrCreateElectricNetwork().members.size());
+                }
 			}
         }
 
