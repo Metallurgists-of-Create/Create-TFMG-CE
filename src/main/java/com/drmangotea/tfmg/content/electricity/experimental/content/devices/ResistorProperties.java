@@ -1,7 +1,7 @@
 package com.drmangotea.tfmg.content.electricity.experimental.content.devices;
 
-import com.drmangotea.tfmg.content.electricity.experimental.simulation.nodes.ConnectingElectricalNode;
 import com.drmangotea.tfmg.content.electricity.experimental.content.DirectionalElectricalProperties;
+import com.drmangotea.tfmg.content.electricity.experimental.simulation.nodes.ConnectingElectricalNode;
 import com.drmangotea.tfmg.content.electricity.experimental.simulation.Resistance;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -10,10 +10,10 @@ import net.minecraft.world.phys.Vec3;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DebugResistorProperties extends DirectionalElectricalProperties {
+public class ResistorProperties extends DirectionalElectricalProperties {
 
 
-    public DebugResistorProperties(BlockPos pos, Direction direction) {
+    public ResistorProperties(BlockPos pos, Direction direction) {
         super(pos, direction);
         ConnectingElectricalNode node1 = new ConnectingElectricalNode(position, 0, getRotation(this.direction).getFirst());
         ConnectingElectricalNode node2 = new ConnectingElectricalNode(position, 1, getRotation(this.direction).get(1));

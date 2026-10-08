@@ -65,12 +65,9 @@ public class TFMGUtils {
     }
 
     public static ConnectingElectricalNode closestNode(IRealisticElectric be, Vec3 clickPosition) {
-		if(!(be.getProperties().nodes.getFirst() instanceof ConnectingElectricalNode connectingNode))
-			return null;
-   
 		BlockPos pos = be.getPos();
 		AtomicReference<Float> closestDistance = new AtomicReference<>((float) 1000);
-		AtomicReference<ConnectingElectricalNode> closestConnector = new AtomicReference<>(connectingNode);
+		AtomicReference<ConnectingElectricalNode> closestConnector = new AtomicReference<>(null);
 		
 		be.getProperties().nodes.forEach(n -> {
             if (!(n instanceof ConnectingElectricalNode node))
@@ -106,18 +103,21 @@ public class TFMGUtils {
         }
         level.explode(null, pos.x(), pos.y(), pos.z(), radius, Level.ExplosionInteraction.BLOCK);
     }
-	
-    public static void playSound(Level level, BlockPos pos, SoundEvent sound, SoundSource source){
-        playSound(level,pos,sound,source,1,1,null);
+
+    public static void playSound(Level level, BlockPos pos, SoundEvent sound, SoundSource source) {
+        playSound(level, pos, sound, source, 1, 1, null);
     }
-    public static void playSound(Level level, BlockPos pos, SoundEvent sound, SoundSource source, Player player){
-        playSound(level,pos,sound,source,1,1,player);
+
+    public static void playSound(Level level, BlockPos pos, SoundEvent sound, SoundSource source, Player player) {
+        playSound(level, pos, sound, source, 1, 1, player);
     }
-    public static void playSound(Level level, BlockPos pos, SoundEvent sound, SoundSource source, float volume, float pitch){
-        playSound(level,pos,sound,source,volume,pitch,null);
+
+    public static void playSound(Level level, BlockPos pos, SoundEvent sound, SoundSource source, float volume, float pitch) {
+        playSound(level, pos, sound, source, volume, pitch, null);
     }
+
     public static void playSound(Level level, BlockPos pos, SoundEvent sound, SoundSource source, float volume, float pitch, Player player) {
-        level.playSound(player,pos,sound,source,volume,pitch);
+        level.playSound(player, pos, sound, source, volume, pitch);
     }
 
 	//what is this even for?
@@ -137,7 +137,7 @@ public class TFMGUtils {
     }
 
     public static void createOutline(Vec3 pos1, Vec3 pos2, String name, Color color) {
-        createOutline(pos1, pos2, name, color, 1/32f);
+        createOutline(pos1, pos2, name, color, 1 / 32f);
     }
 
     public static void createOutline(Vec3 pos1, Vec3 pos2, String name, Color color, float width) {

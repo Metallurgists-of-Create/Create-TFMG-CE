@@ -40,6 +40,11 @@ public class ThreePhaseGeneratorBlock extends DirectionalKineticBlock implements
 
         }
     }
+    @Override
+    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
+        IBE.onRemove(state, level, pos, newState);
+        super.onRemove(state,level,pos,newState,isMoving);
+    }
 
     @Override
     public VoxelShape getShape(BlockState pState, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
@@ -63,12 +68,6 @@ public class ThreePhaseGeneratorBlock extends DirectionalKineticBlock implements
 		Direction dir = super.getPreferredFacing(context);
         if (dir == null) return null;
         return dir.getOpposite();
-    }
-	
-    @Override
-    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
-        IBE.onRemove(state, level, pos, newState);
-        super.onRemove(state,level,pos,newState,isMoving);
     }
 
     @Override

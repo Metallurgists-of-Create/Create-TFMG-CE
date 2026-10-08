@@ -6,6 +6,8 @@ import com.drmangotea.tfmg.content.electricity.experimental.simulation.nodes.Ele
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 
+import java.util.List;
+
 public class Resistance extends ElectricalComponent {
 
     public double resistance;
@@ -29,6 +31,23 @@ public class Resistance extends ElectricalComponent {
             return new ComplexValue(0, 0);
         }
         return cvA.minus(cvB);
+    }
+
+    @Override
+    public List<ElectricalNode> getConnectedNodes() { return List.of(nodeA, nodeB); }
+
+    @Override
+    public void stamp(ComplexValue[][] G, ComplexValue[] I, int extraRowOffset) {
+        int idxA = nodeA.networkId;
+        int idxB = nodeB.networkId;
+        ComplexValue conductance = new ComplexValue(1.0 / resistance, 0.0);
+
+        if (idxA != 0) G[idxA][idxA] = G[idxA][idxA].plus(conductance);
+        if (idxB != 0) G[idxB][idxB] = G[idxB][idxB].plus(conductance);
+        if (idxA != 0 && idxB != 0) {
+            G[idxA][idxB] = G[idxA][idxB].minus(conductance);
+            G[idxB][idxA] = G[idxB][idxA].minus(conductance);
+        }
     }
 
     public double getVoltage(Level level) {
