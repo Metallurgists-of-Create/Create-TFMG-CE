@@ -18,6 +18,7 @@ config = "${mod_id}.mixins.json"
 [[accessTransformers]]
 file="META-INF/accesstransformer.cfg"
 
+# Requirements
 [[dependencies."${mod_id}"]]
     modId = "neoforge"
     type = "required"
@@ -36,6 +37,8 @@ file="META-INF/accesstransformer.cfg"
     versionRange = "[6.0.6,)"
     ordering="AFTER"
     side = "BOTH"
+
+# Optional/Extra compat
 [[dependencies."${mod_id}"]]
     modId = "jei"
     type = "optional"
@@ -47,12 +50,15 @@ file="META-INF/accesstransformer.cfg"
     versionRange = "[5.11.7,)"
     ordering="AFTER"
     side = "BOTH"
+
+# This version onwards is permitted since it removes bug fixes
 [[dependencies."${mod_id}"]]
     modId = "tfmgtweaks"
-    type = "incompatible"
-    reason = "TFMW adds mixins to fix bugs that we have already fixed ourselves."
-    ordering="AFTER"
+    type = "optional"
+    versionRange = "[2.1.2,)"
     side = "BOTH"
+
+# Incompatible mods
 [[dependencies."${mod_id}"]]
     modId = "tfmgfixfuel"
     type = "incompatible"

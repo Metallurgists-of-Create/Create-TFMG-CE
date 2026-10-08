@@ -103,6 +103,12 @@ public class TFMGTexts {
                 .color(heatCondition == HeatCondition.NONE ? 0x7a7a77 : heatCondition == HeatCondition.HEATED ? 0xdea216 : 0x16c7de);
     }
 
+    public static LangBuilder progress(int timer, int duration) {
+        int percent = duration <= 0 ? -1 : Math.min(100, (int) (100f * timer / duration));
+        if (percent == -1) return TFMGLang.translate("goggles.idle").style(ChatFormatting.GRAY);
+        return TFMGLang.translate("goggles.progress", TFMGLang.text(percent + "%").style(ChatFormatting.GOLD)).style(ChatFormatting.GRAY);
+    }
+
     public static class CommonMachines {
         public static LangBuilder state(String state) {
             return TFMGLang.translate("goggles.machine_state", TFMGLang.translateDirect(state));

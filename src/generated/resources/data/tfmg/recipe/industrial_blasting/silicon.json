@@ -2,7 +2,7 @@
   "type": "tfmg:industrial_blasting",
   "ingredients": [
     {
-      "item": "minecraft:quartz"
+      "tag": "c:gems/quartz"
     }
   ],
   "processing_time": 5,

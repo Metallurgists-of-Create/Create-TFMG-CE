@@ -4,6 +4,7 @@ import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.TFMGRegistries;
 import com.drmangotea.tfmg.content.engines.types.EngineType;
 import com.drmangotea.tfmg.datagen.integration.TFMGBigCannonsProvider;
+import com.drmangotea.tfmg.datagen.integration.TFMGCuriosProvider;
 import com.drmangotea.tfmg.datagen.integration.TFMGReburnedProvider;
 import com.drmangotea.tfmg.datagen.integration.TFMGRutileProvider;
 import com.drmangotea.tfmg.datagen.recipes.TFMGRecipeProvider;
@@ -16,6 +17,7 @@ import com.drmangotea.tfmg.datagen.tags.TFMGRegistrateTags;
 import com.drmangotea.tfmg.ponder.TFMGPonderPlugin;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.simibubi.create.compat.Mods;
 import com.simibubi.create.foundation.utility.FilesHelper;
 import com.tterrag.registrate.providers.ProviderType;
 import com.tterrag.registrate.providers.RegistrateTagsProvider;
@@ -24,6 +26,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
 import net.neoforged.fml.loading.LoadingModList;
+import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
 
 import java.util.Map;
@@ -46,13 +49,14 @@ public class TFMGDatagen {
         DataGenerator generator = event.getGenerator();
         PackOutput output = generator.getPackOutput();
         CompletableFuture<HolderLookup.Provider> lookupProvider = event.getLookupProvider();
+		ExistingFileHelper fileHelper = event.getExistingFileHelper();
 
         TFMGGeneratedEntriesProvider generatedEntriesProvider = new TFMGGeneratedEntriesProvider(output, lookupProvider);
         lookupProvider = generatedEntriesProvider.getRegistryProvider();
         generator.addProvider(event.includeServer(), generatedEntriesProvider);
 
-        generator.addProvider(event.includeServer(), new TFMGEngineFuelTags(output, lookupProvider, event.getExistingFileHelper()));
-        generator.addProvider(event.includeServer(), new TFMGFlamethrowerFuelTags(output, lookupProvider, event.getExistingFileHelper()));
+        generator.addProvider(event.includeServer(), new TFMGEngineFuelTags(output, lookupProvider, fileHelper));
+        generator.addProvider(event.includeServer(), new TFMGFlamethrowerFuelTags(output, lookupProvider, fileHelper));
 
         generator.addProvider(event.includeServer(),new TFMGDataMapProvider(output, lookupProvider));
         generator.addProvider(event.includeServer(),new TFMGStandardRecipeGen(output, lookupProvider));
@@ -70,6 +74,9 @@ public class TFMGDatagen {
         if (LoadingModList.get().getModFileById("createbigcannons") != null) {
             generator.addProvider(event.includeServer(), new TFMGBigCannonsProvider.Melting(output, lookupProvider));
         }
+		if (Mods.CURIOS.isLoaded()) {
+			generator.addProvider(event.includeServer(), new TFMGCuriosProvider(output, lookupProvider, fileHelper));
+		}
 
         if (event.includeServer()) {
             TFMGRecipeProvider.registerAllProcessing(generator, output, lookupProvider);

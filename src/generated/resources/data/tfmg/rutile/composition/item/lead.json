@@ -15,6 +15,7 @@
     "tfmg:raw_lead",
     "tfmg:lead_ingot",
     "tfmg:lead_nugget",
-    "tfmg:lead_sheet"
+    "tfmg:lead_sheet",
+    "create:crushed_raw_lead"
   ]
 }

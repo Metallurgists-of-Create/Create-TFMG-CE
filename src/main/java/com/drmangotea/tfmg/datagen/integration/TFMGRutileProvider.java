@@ -5,7 +5,7 @@ import com.drmangotea.tfmg.registry.TFMGBlocks;
 import com.drmangotea.tfmg.registry.TFMGFluids;
 import com.drmangotea.tfmg.registry.TFMGItems;
 import com.drmangotea.tfmg.registry.TFMGPaletteStoneTypes;
-import dev.metallurgists.rutile.Rutile;
+import com.simibubi.create.AllItems;
 import dev.metallurgists.rutile.api.data.provider.composition.FluidCompositionProvider;
 import dev.metallurgists.rutile.api.data.provider.composition.ItemCompositionProvider;
 import dev.metallurgists.rutile.registry.RutileElements;
@@ -25,8 +25,8 @@ public class TFMGRutileProvider {
         @Override
         public void generate(HolderLookup.Provider registries) {
             addData("sulfur", List.of(TFMGBlocks.SULFUR.asItem(), TFMGItems.SULFUR_DUST.asItem()), c -> c.element(RutileElements.S));
-            addData("nickel", List.of(TFMGBlocks.RAW_NICKEL_BLOCK.asItem(), TFMGBlocks.NICKEL_BLOCK.asItem(), TFMGItems.RAW_NICKEL.asItem(), TFMGItems.NICKEL_INGOT.asItem(), TFMGItems.NICKEL_NUGGET.asItem(), TFMGItems.NICKEL_SHEET.asItem()), c -> c.element(RutileElements.Ni));
-            addData("lead", List.of(TFMGBlocks.RAW_LEAD_BLOCK.asItem(), TFMGBlocks.LEAD_BLOCK.asItem(), TFMGItems.RAW_LEAD.asItem(), TFMGItems.LEAD_INGOT.asItem(), TFMGItems.LEAD_NUGGET.asItem(), TFMGItems.LEAD_SHEET.asItem()), c -> c.element(RutileElements.Pb));
+            addData("nickel", List.of(TFMGBlocks.RAW_NICKEL_BLOCK.asItem(), TFMGBlocks.NICKEL_BLOCK.asItem(), TFMGItems.RAW_NICKEL.asItem(), TFMGItems.NICKEL_INGOT.asItem(), TFMGItems.NICKEL_NUGGET.asItem(), TFMGItems.NICKEL_SHEET.asItem(), AllItems.CRUSHED_NICKEL.asItem()),c -> c.element(RutileElements.Ni));
+            addData("lead", List.of(TFMGBlocks.RAW_LEAD_BLOCK.asItem(), TFMGBlocks.LEAD_BLOCK.asItem(), TFMGItems.RAW_LEAD.asItem(), TFMGItems.LEAD_INGOT.asItem(), TFMGItems.LEAD_NUGGET.asItem(), TFMGItems.LEAD_SHEET.asItem(), AllItems.CRUSHED_LEAD.asItem()), c -> c.element(RutileElements.Pb));
             addData("lithium", List.of(TFMGBlocks.RAW_LITHIUM_BLOCK.asItem(), TFMGBlocks.LITHIUM_BLOCK.asItem(), TFMGItems.RAW_LITHIUM.asItem(), TFMGItems.LITHIUM_INGOT.asItem(), TFMGItems.LITHIUM_NUGGET.asItem(), TFMGItems.CRUSHED_LITHIUM.asItem()), c -> c.element(RutileElements.Li));
             addData("steel", List.of(TFMGBlocks.STEEL_BLOCK.asItem(), TFMGItems.STEEL_INGOT.asItem(), TFMGItems.STEEL_NUGGET.asItem(), TFMGItems.HEAVY_PLATE.asItem()), c -> c.element(RutileElements.Fe));
             addData("cast_iron", List.of(TFMGBlocks.CAST_IRON_BLOCK.asItem(), TFMGItems.CAST_IRON_INGOT.asItem(), TFMGItems.CAST_IRON_NUGGET.asItem(), TFMGItems.CAST_IRON_SHEET.asItem()), c -> c.element(RutileElements.Fe));
@@ -48,7 +48,7 @@ public class TFMGRutileProvider {
 
     public static class Fluid extends FluidCompositionProvider {
         public Fluid(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {
-            super(Rutile.ID, output, registries);
+            super(TFMG.MOD_ID, output, registries);
         }
 
         @Override

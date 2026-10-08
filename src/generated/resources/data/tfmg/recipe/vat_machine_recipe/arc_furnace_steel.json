@@ -11,7 +11,7 @@
       "tag": "tfmg:flux"
     },
     {
-      "item": "tfmg:coal_coke_dust"
+      "tag": "c:dusts/coal_coke"
     }
   ],
   "machines": [

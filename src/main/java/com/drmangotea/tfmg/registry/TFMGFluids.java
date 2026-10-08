@@ -35,8 +35,8 @@ public class TFMGFluids {
             PROPANE = gasFuel("propane", 0xff88bf80, TFMGTags.Fluids.FIREBOX_FUEL.tag),
             HYDROGEN = gasFuel("hydrogen", 0xffd0f2f5),
             FURNACE_GAS = gasFuel("furnace_gas", 0xff5c5555, TFMGTags.Fluids.BLAST_STOVE_FUEL.tag, TFMGTags.Fluids.FURNACE_GAS.tag),
-            ETHYLENE = gas("ethylene", 0xffbcadcc),
-            PROPYLENE = gas("propylene", 0xffc0d1b4),
+            ETHYLENE = gas("ethylene", 0xffbcadcc, TFMGTags.Fluids.ETHYLENE.tag),
+            PROPYLENE = gas("propylene", 0xffc0d1b4, TFMGTags.Fluids.PROPYLENE.tag),
             NEON = gas("neon", 0xff9dede9),
             CARBON_DIOXIDE = gas("carbon_dioxide", 0xff525252, TFMGTags.Fluids.EXHAUSTABLE.tag),
             AIR = gas("air", 0xffdfe6e5, TFMGTags.Fluids.AIR.tag),
@@ -57,15 +57,15 @@ public class TFMGFluids {
             LUBRICATION_OIL = fluid("lubrication_oil", 0x9D945F, TFMGTags.Fluids.LUBRICATION_OIL.tag, TFMGTags.Fluids.FLAMMABLE.tag),
             COOLING_FLUID = fluid("cooling_fluid", 0x7BC1C1, TFMGTags.Fluids.COOLING_FLUID.tag),
             NAPALM = fluid("napalm", 0xC0CA97),
-            SULFURIC_ACID = acidFluid("sulfuric_acid", 0xE9E7CC),
+            SULFURIC_ACID = acidFluid("sulfuric_acid", 0xE9E7CC,  TFMGTags.Fluids.SULFURIC_ACID.tag),
             LIQUID_CONCRETE = concreteFluid("liquid_concrete", 0x5B5B59, ConcreteFluid.Source::new),
             LIQUID_ASPHALT = concreteFluid("liquid_asphalt", 0x010101, AsphaltFluid.Source::new);
 
     public static final DyedFluidList<BaseFlowingFluid.Flowing> COLOURED_CONCRETE = new DyedFluidList<>(colour -> {
         String colourName = colour.getSerializedName();
-        return REGISTRATE.fluid(colourName + "_liquid_concrete", getLocation(colourName + "_liquid_concrete"), getLocationFlow(colourName + "_liquid_concrete"),
+        return REGISTRATE.fluid("liquid_" + colourName + "_concrete", getLocation(colourName + "_liquid_concrete"), getLocationFlow(colourName + "_liquid_concrete"),
                         SolidRenderedPlaceableFluidType.create(TFMGUtils.blendColours(new Color(colour.getFireworkColor()), new Color(0x5B5B59)).getRGB(), () -> 1f / 32f))
-                .lang(toHumanReadable(colourName + "_liquid_concrete"))
+                .lang(toHumanReadable("liquid_" + colourName + "_concrete"))
                 .properties(b -> b.viscosity(5000).density(2500))
                 .fluidProperties(p -> p.levelDecreasePerBlock(1)
                         .tickRate(99999)
@@ -73,7 +73,7 @@ public class TFMGFluids {
                         .explosionResistance(1000f))
                 .source((p) -> new ConcreteFluid.Source(p).withColour(colour))
                 .bucket()
-                .tag(ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", "buckets/" + colourName + "_liquid_concrete")))
+                .tag(ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", "buckets/liquid_" + colourName + "_concrete")))
                 .build()
                 .register();
     });

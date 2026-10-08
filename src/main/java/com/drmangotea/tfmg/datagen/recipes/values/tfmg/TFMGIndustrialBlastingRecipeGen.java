@@ -8,7 +8,7 @@ import com.drmangotea.tfmg.registry.TFMGTags;
 import com.simibubi.create.AllItems;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
-import net.minecraft.world.item.Items;
+import net.neoforged.neoforge.common.Tags;
 
 import javax.annotation.Nonnull;
 import java.util.concurrent.CompletableFuture;
@@ -20,7 +20,7 @@ public class TFMGIndustrialBlastingRecipeGen extends IndustrialBlastingRecipeGen
     GeneratedRecipe
 
     SILICON = create("silicon", b -> b
-            .require(Items.QUARTZ)
+            .require(Tags.Items.GEMS_QUARTZ)
             .output(TFMGFluids.LIQUID_SILICON.get(),40)
             .duration(5)
     ),
@@ -35,7 +35,7 @@ public class TFMGIndustrialBlastingRecipeGen extends IndustrialBlastingRecipeGen
             .hotAirUsage(20)
     ),
     STEEL_RAW = create("steel_from_raw_iron", b -> b
-            .require(Items.RAW_IRON)
+            .require(Tags.Items.RAW_MATERIALS_IRON)
             .require(TFMGTags.Items.FLUX.tag)
             .output(TFMGFluids.MOLTEN_STEEL.get(),180)
             .output(TFMGFluids.MOLTEN_SLAG.get(),160)

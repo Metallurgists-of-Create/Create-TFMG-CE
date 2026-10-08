@@ -1,5 +1,6 @@
 package com.drmangotea.tfmg.base.dyes;
 
+import com.drmangotea.tfmg.base.annotation.NothingNullByDefault;
 import com.tterrag.registrate.util.entry.ItemEntry;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
@@ -10,20 +11,15 @@ import java.util.NoSuchElementException;
 import java.util.function.Function;
 
 public class DyedItemList<T extends Item> implements Iterable<ItemEntry<T>> {
+	private final ItemEntry<T>[] values;
 
-    private static final int COLOR_AMOUNT = DyeColor.values().length;
-
-    private final ItemEntry<?>[] values = new ItemEntry<?>[COLOR_AMOUNT];
-
-    public DyedItemList(Function<DyeColor, ItemEntry<? extends T>> filler) {
-        for (DyeColor color : DyeColor.values()) {
-            values[color.ordinal()] = filler.apply(color);
-        }
+	@SuppressWarnings("unchecked")
+    public DyedItemList(Function<DyeColor, ItemEntry<T>> filler) {
+		values = Arrays.stream(DyeColor.values()).map(filler).toArray(ItemEntry[]::new);
     }
 
-    @SuppressWarnings("unchecked")
     public ItemEntry<T> get(DyeColor color) {
-        return (ItemEntry<T>) values[color.ordinal()];
+        return values[color.ordinal()];
     }
 
     public boolean contains(Item item) {
@@ -35,12 +31,11 @@ public class DyedItemList<T extends Item> implements Iterable<ItemEntry<T>> {
         return false;
     }
 
-    @SuppressWarnings("unchecked")
     public ItemEntry<T>[] toArray() {
-        return (ItemEntry<T>[]) Arrays.copyOf(values, values.length);
+        return Arrays.copyOf(values, values.length);
     }
 
-    @Override
+    @Override @NothingNullByDefault
     public Iterator<ItemEntry<T>> iterator() {
         return new Iterator<>() {
             private int index = 0;
@@ -50,12 +45,11 @@ public class DyedItemList<T extends Item> implements Iterable<ItemEntry<T>> {
                 return index < values.length;
             }
 
-            @SuppressWarnings("unchecked")
             @Override
             public ItemEntry<T> next() {
                 if (!hasNext())
                     throw new NoSuchElementException();
-                return (ItemEntry<T>) values[index++];
+                return values[index++];
             }
         };
     }

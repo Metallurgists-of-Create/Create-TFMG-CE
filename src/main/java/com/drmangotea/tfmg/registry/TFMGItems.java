@@ -1,12 +1,12 @@
 package com.drmangotea.tfmg.registry;
 
 import com.drmangotea.tfmg.TFMG;
-import com.drmangotea.tfmg.base.dyes.DyedItemList;
 import com.drmangotea.tfmg.base.TFMGCreativeTabs;
 import com.drmangotea.tfmg.base.TFMGRegistrate;
 import com.drmangotea.tfmg.base.TFMGTiers;
 import com.drmangotea.tfmg.base.data_storage.CylinderFuels;
 import com.drmangotea.tfmg.base.debug.DebugCinderBlockItem;
+import com.drmangotea.tfmg.base.dyes.DyedItemList;
 import com.drmangotea.tfmg.content.decoration.kinetics.gearbox.SteelVerticalGearboxItem;
 import com.drmangotea.tfmg.content.decoration.pipes.TFMGPipes;
 import com.drmangotea.tfmg.content.electricity.configuration_wrench.ElectriciansWrenchItem;
@@ -58,7 +58,9 @@ import net.minecraft.world.item.*;
 import net.minecraft.world.level.block.Blocks;
 import net.neoforged.neoforge.common.Tags;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import static com.drmangotea.tfmg.content.items.weapons.explosives.thermite_grenades.ThermiteGrenade.ChemicalColor.*;
 import static com.simibubi.create.AllTags.AllItemTags.CREATE_INGOTS;
@@ -138,7 +140,7 @@ public class TFMGItems {
             ASPHALT_MIXTURE = REGISTRATE.item("asphalt_mixture", Item::new).register(),
             MAGNETIC_ALLOY_INGOT = REGISTRATE.item("magnetic_alloy_ingot", Item::new).register(),
             MAGNETIC_ALLOY_SHEET = REGISTRATE.item("magnetic_alloy_sheet", Item::new).register(),
-            BAUXITE_POWDER = REGISTRATE.item("bauxite_powder", Item::new).register(),
+            BAUXITE_POWDER = REGISTRATE.item("bauxite_powder", Item::new).tag(Items.DUSTS_BAUXITE.tag).register(),
             EMPTY_CIRCUIT_BOARD = REGISTRATE.item("empty_circuit_board", Item::new).register(),
             COATED_CIRCUIT_BOARD = REGISTRATE.item("coated_circuit_board", Item::new).register(),
             ETCHED_CIRCUIT_BOARD = REGISTRATE.item("etched_circuit_board", Item::new).register(),
@@ -263,7 +265,9 @@ public class TFMGItems {
                     .properties(p -> p.stacksTo(1))
                     .register();
 
-    public static final ItemEntry<MultimeterItem> MULTIMETER = REGISTRATE.item("multimeter", p -> new MultimeterItem(p, 0xCFD300)).tag(Items.MULTIMETERS.tag).register();
+    public static final ItemEntry<MultimeterItem> MULTIMETER =
+		REGISTRATE.item("multimeter", p -> new MultimeterItem(p, 0xCFD300)) //todo: make a more gold-ish color
+			.tag(Items.MULTIMETERS.tag, Items.CURIOS_BELT.tag).register();
 
     public static final ItemEntry<SequencedAssemblyItem>
             UNFINISHED_POTENTIOMETER = sequencedIngredient("unfinished_potentiometer", "block/potentiometer/unfinished"),
@@ -348,7 +352,7 @@ public class TFMGItems {
     public static final DyedItemList<MultimeterItem> MULTIMETERS = new DyedItemList<>(colour -> {
         String colourName = colour.getSerializedName();
         return REGISTRATE.item(colourName + "_multimeter", p -> new MultimeterItem(p, colour.getTextureDiffuseColor()))
-                .tag(Items.MULTIMETERS.tag)
+                .tag(Items.MULTIMETERS.tag, Items.CURIOS_BELT.tag)
                 .onRegister(item -> ItemDescription.referKey(item, () -> MULTIMETER))
                 .recipe((c, p) -> {
                     ShapelessRecipeBuilder.shapeless(RecipeCategory.TOOLS, c.get())

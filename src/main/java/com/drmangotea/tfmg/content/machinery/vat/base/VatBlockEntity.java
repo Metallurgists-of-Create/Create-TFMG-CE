@@ -4,7 +4,6 @@ import com.drmangotea.tfmg.base.TFMGBlockConnectivityHandler;
 import com.drmangotea.tfmg.base.TFMGUtils;
 import com.drmangotea.tfmg.base.capabilities.TFMGCapabilities;
 import com.drmangotea.tfmg.base.capabilities.pressure.IPressureHandler;
-import com.drmangotea.tfmg.base.lang.TFMGLang;
 import com.drmangotea.tfmg.base.lang.TFMGTexts;
 import com.drmangotea.tfmg.base.pressure.Pressure;
 import com.drmangotea.tfmg.base.pressure.behaviour.SmartPressureTankBehaviour;
@@ -196,10 +195,6 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
         TFMGBlockConnectivityHandler.formMulti(this);
     }
 
-    public int getProgressPercentage() {
-        return recipeDuration <= 0 ? -1 : Math.min(100, (int) (100f * timer / recipeDuration));
-    }
-
     public int getRecipeDuration() {
         return recipeDuration;
     }
@@ -211,13 +206,6 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
 
     public MutableComponent getPressureComponent(boolean forGoggles) {
         return componentHelper("pressure", pressure.getValue(), forGoggles);
-    }
-
-    public MutableComponent getProgressComponent() {
-        int progress = getProgressPercentage();
-        if (progress == -1)
-            return null;
-        return TFMGLang.translateDirect("goggles.progress", Component.literal(getProgressPercentage() + "%").withStyle(ChatFormatting.GOLD)).withStyle(ChatFormatting.GRAY);
     }
 
     private MutableComponent componentHelper(String label, int level, boolean forGoggles, ChatFormatting... styles) {
@@ -850,12 +838,8 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
                 }
             }
         }
-
-        if (!level.isClientSide) {
-            setChanged();
-            sendData();
-        }
-
+        setChanged();
+        sendData();
     }
 
     protected void setLuminosity(int luminosity) {
@@ -1219,10 +1203,7 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
 
         TFMGTexts.header("vat").style(ChatFormatting.GRAY).forGoggles(tooltip);
 
-        MutableComponent progressComp = getProgressComponent();
-        if (progressComp != null) {
-            CreateLang.builder().add(getProgressComponent()).forGoggles(tooltip, 1);
-        }
+        TFMGTexts.progress(timer, recipeDuration).forGoggles(tooltip, 1);
 
         CreateLang.builder().add(getPressureComponent(true)).forGoggles(tooltip, 1);
         CreateLang.builder().add(getHeatComponent(true)).forGoggles(tooltip, 1);
@@ -1280,8 +1261,6 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
             });
             inputInventory.deserializeNBT(registries, compound.getCompound("InputItems"));
             outputInventory.deserializeNBT(registries, compound.getCompound("OutputItems"));
-            inputTank.read(compound.getCompound("InputTanks"), registries, clientPacket);
-            outputTank.read(compound.getCompound("OutputTanks"), registries, clientPacket);
             timer = compound.getInt("Timer");
             heatLevel = compound.getInt("HeatLevel");
             recipeDuration = compound.getInt("RecipeDuration");
@@ -1336,13 +1315,6 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
             compound.putInt("HeatLevel", heatLevel);
             compound.putInt("RecipeDuration", recipe != null ? recipe.getProcessingDuration() : 0);
             pressure.save(compound);
-            CompoundTag inputTankData = new CompoundTag();
-            inputTank.write(inputTankData, registries, clientPacket);
-            compound.put("InputTanks", inputTankData);
-
-            CompoundTag outputTankData = new CompoundTag();
-            outputTank.write(outputTankData, registries, clientPacket);
-            compound.put("OutputTanks", outputTankData);
         } else {
             compound.put("Controller", NbtUtils.writeBlockPos(controller));
         }
@@ -1357,6 +1329,7 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
     @Override
     public void invalidate() {
         super.invalidate();
+        invalidateCapabilities();
     }
 
 

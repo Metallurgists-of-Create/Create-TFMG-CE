@@ -3,7 +3,7 @@ package com.drmangotea.tfmg.content.electricity.network.transformer.large;
 import com.drmangotea.tfmg.base.TFMGUtils;
 import com.drmangotea.tfmg.base.lang.TFMGTexts;
 import com.drmangotea.tfmg.content.electricity.base.IElectric;
-import com.drmangotea.tfmg.content.electricity.base.KineticElectricBlockEntity;
+import com.drmangotea.tfmg.content.electricity.base.ElectricBlockEntity;
 import com.drmangotea.tfmg.content.electricity.base.UpdateInFrontPacket;
 import com.simibubi.create.foundation.data.recipe.CommonMetal;
 import net.createmod.catnip.platform.CatnipServices;
@@ -31,11 +31,10 @@ import static com.drmangotea.tfmg.content.electricity.network.large_switch.Large
 import static com.drmangotea.tfmg.datagen.recipes.TFMGRecipeProvider.F.lubricationOil;
 import static com.simibubi.create.content.kinetics.base.HorizontalKineticBlock.HORIZONTAL_FACING;
 
-public class LargeTransformerBlockEntity extends KineticElectricBlockEntity {
+public class LargeTransformerBlockEntity extends ElectricBlockEntity {
     public boolean updateInFront = false;
     public float turnRatio = 1;
     public int resistanceTimer = -1;
-
 
     final boolean isMainPart;
 

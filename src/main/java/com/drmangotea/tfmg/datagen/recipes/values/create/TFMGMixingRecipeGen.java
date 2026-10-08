@@ -2,12 +2,14 @@ package com.drmangotea.tfmg.datagen.recipes.values.create;
 
 import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.registry.TFMGItems;
+import com.drmangotea.tfmg.registry.TFMGTags;
 import com.simibubi.create.api.data.recipe.MixingRecipeGen;
 import com.simibubi.create.content.decoration.palettes.AllPaletteStoneTypes;
 import com.simibubi.create.content.processing.recipe.HeatCondition;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
+import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.common.conditions.FalseCondition;
 import net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient;
 
@@ -43,7 +45,7 @@ public class TFMGMixingRecipeGen extends MixingRecipeGen {
 	),
 
 	ASPHALT_MIXTURE = create("asphalt_mixture", b -> b
-			.require(sand())
+			.require(Tags.Items.SANDS_COLORLESS)
 			.require(bitumen())
 			.require(gravel())
 			.output(asphaltMixture(),16)
@@ -57,7 +59,7 @@ public class TFMGMixingRecipeGen extends MixingRecipeGen {
 	),
 
 	CONCRETE_MIXTURE = create("concrete_mixture", b -> b
-			.require(sand())
+			.require(Tags.Items.SANDS_COLORLESS)
 			.require(cement())
 			.require(gravel())
 			.output(concreteMixture(),16)
@@ -71,7 +73,7 @@ public class TFMGMixingRecipeGen extends MixingRecipeGen {
 	),
 
 	COPPER_SULFATE = create("copper_sulfate", b -> b
-			.require(SizedFluidIngredient.of(sulfuricAcid(),500))
+			.require(SizedFluidIngredient.of(TFMGTags.Fluids.SULFURIC_ACID.tag,500))
 			.require(copperIngot())
 			.output(copperSulfate())
 	),
@@ -90,35 +92,35 @@ public class TFMGMixingRecipeGen extends MixingRecipeGen {
 
 	P_SEMICONDUCTOR = create("p_semiconductor", b -> b
 			.require(aluminumIngot())
-			.require(TFMGItems.SILICON_INGOT)
+			.require(TFMGTags.Items.INGOTS_SILICON.tag)
 			.output(TFMGItems.P_SEMICONDUCTOR)
 	),
 
 	N_SEMICONDUCTOR = create("n_semiconductor", b -> b
-			.require(sulfurDust())
-			.require(TFMGItems.SILICON_INGOT)
+			.require(TFMGTags.Items.DUSTS_SULFUR.tag)
+			.require(TFMGTags.Items.INGOTS_SILICON.tag)
 			.output(TFMGItems.N_SEMICONDUCTOR)
 	),
 
 	GUNPOWDER = create("gunpowder", b -> b
-			.require(nitrateDust())
-			.require(nitrateDust())
-			.require(nitrateDust())
+			.require(TFMGTags.Items.DUSTS_SALTPETER.tag)
+			.require(TFMGTags.Items.DUSTS_SALTPETER.tag)
+			.require(TFMGTags.Items.DUSTS_SALTPETER.tag)
 			.require(charcoal())
 			.require(charcoal())
-			.require(sulfurDust())
+			.require(TFMGTags.Items.DUSTS_SULFUR.tag)
 			.output(gunpowder(),3)
 	),
 
 	NAPALM = create("napalm", b -> b
-			.require(SizedFluidIngredient.of(gasoline(),1000))
+			.require(SizedFluidIngredient.of(TFMGTags.Fluids.GASOLINE.tag, 1000))
 			.require(aluminumIngot())
 			.output(napalm(),250)
 	),
 
 	COOLING_FLUID = create("cooling_fluid", b -> b
 			.require(SizedFluidIngredient.of(water(),250))
-			.require(SizedFluidIngredient.of(ethylene(),1000))
+			.require(SizedFluidIngredient.of(TFMGTags.Fluids.ETHYLENE.tag, 1000))
 			.output(coolingFluid(),250)
 	),
 

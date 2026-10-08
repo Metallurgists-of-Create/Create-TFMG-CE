@@ -79,9 +79,9 @@
           "item": "tfmg:unfinished_potentiometer"
         },
         {
-          "type": "neoforge:single",
+          "type": "neoforge:tag",
           "amount": 50,
-          "fluid": "tfmg:lubrication_oil"
+          "tag": "c:lubrication_oil"
         }
       ],
       "results": [

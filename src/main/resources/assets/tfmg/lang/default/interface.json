@@ -36,6 +36,7 @@
   "tfmg.pumpjack_deposit_amount": "%1$s Buckets",
   "tfmg.goggles.zero": "Machine Invalid",
   "tfmg.goggles.progress": "Progress: %1$s",
+  "tfmg.goggles.idle": "Idle",
   "tfmg.goggles.invalid_machine": "Machine Invalid",
   "tfmg.voltage": "Voltage: %1$s",
   "tfmg.fe": "FE: %1$s",

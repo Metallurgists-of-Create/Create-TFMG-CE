@@ -14,6 +14,7 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.material.Fluids;
+import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient;
 import rbasamoyai.createbigcannons.index.CBCFluids;
 
@@ -23,7 +24,8 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 import static com.drmangotea.tfmg.datagen.recipes.TFMGRecipeProvider.F.*;
-import static com.drmangotea.tfmg.datagen.recipes.TFMGRecipeProvider.I.*;
+import static com.drmangotea.tfmg.datagen.recipes.TFMGRecipeProvider.I.crushedRawIron;
+import static com.drmangotea.tfmg.datagen.recipes.TFMGRecipeProvider.I.rubber;
 
 @SuppressWarnings("unused")
 public class TFMGVatRecipeGen extends VatRecipeGen {
@@ -34,7 +36,7 @@ public class TFMGVatRecipeGen extends VatRecipeGen {
 
     GeneratedRecipe
             CONCRETE = create("concrete", b -> b
-            .require(Blocks.SAND.asItem())
+            .require(Tags.Items.SANDS_COLORLESS)
             .require(Blocks.GRAVEL.asItem())
             .require(TFMGItems.LIMESAND)
             .require(Fluids.WATER, 250)
@@ -63,7 +65,7 @@ public class TFMGVatRecipeGen extends VatRecipeGen {
     ARC_FURNACE_STEEL = create("arc_furnace_steel", b -> b
             .require(crushedRawIron())
             .require(TFMGTags.Items.FLUX.tag)
-            .require(TFMGItems.COAL_COKE_DUST)
+            .require(TFMGTags.Items.DUSTS_COAL_COKE.tag)
             .output(0.9f, TFMGItems.COAL_COKE_DUST)
             .output(TFMGFluids.MOLTEN_STEEL.get(), 90)
             .output(TFMGFluids.MOLTEN_SLAG.get(), 160)
@@ -74,7 +76,7 @@ public class TFMGVatRecipeGen extends VatRecipeGen {
     ),
 
     NEON = create("neon", b -> b
-            .require(TFMGFluids.AIR.get(), 1000)
+            .require(TFMGTags.Fluids.AIR.tag, 1000)
             .output(TFMGFluids.NEON.get(), 1)
             .duration(10)
             .centrifuge()
@@ -83,10 +85,10 @@ public class TFMGVatRecipeGen extends VatRecipeGen {
 
     SULFURIC_ACID = create("sulfuric_acid", b -> b
             .require(SizedFluidIngredient.of(water(), 1000))
-            .require(sulfurDust())
-            .require(sulfurDust())
-            .require(sulfurDust())
-            .require(nitrateDust())
+            .require(TFMGTags.Items.DUSTS_SULFUR.tag)
+            .require(TFMGTags.Items.DUSTS_SULFUR.tag)
+            .require(TFMGTags.Items.DUSTS_SULFUR.tag)
+            .require(TFMGTags.Items.DUSTS_SALTPETER.tag)
             .output(sulfuricAcid(), 500)
             .mixing()
             .duration(5)
@@ -94,8 +96,8 @@ public class TFMGVatRecipeGen extends VatRecipeGen {
     ),
 
     RUBBER = create("rubber", b -> b
-            .require(SizedFluidIngredient.of(heavyOil(), 250))
-            .require(sulfurDust())
+            .require(SizedFluidIngredient.of(TFMGTags.Fluids.HEAVY_OIL.tag, 250))
+            .require(TFMGTags.Items.DUSTS_SULFUR.tag)
             .output(rubber())
             .mixing()
             .allowAllVatTypes()
@@ -104,7 +106,7 @@ public class TFMGVatRecipeGen extends VatRecipeGen {
     ),
 
     NAPHTHA = create("naphtha", b -> b
-            .require(SizedFluidIngredient.of(naphtha(), 500))
+            .require(SizedFluidIngredient.of(TFMGTags.Fluids.NAPHTHA.tag, 500))
             .output(ethylene(), 250)
             .output(propylene(), 250)
             .mixing()
@@ -114,7 +116,7 @@ public class TFMGVatRecipeGen extends VatRecipeGen {
     ),
 
     PLASTIC_FROM_ETHYLENE = create("plastic_from_ethylene", b -> b
-            .require(SizedFluidIngredient.of(ethylene(), 500))
+            .require(SizedFluidIngredient.of(TFMGTags.Fluids.ETHYLENE.tag, 500))
             .output(liquidPlastic(), 500)
             .mixing()
             .allowAllVatTypes()
@@ -123,7 +125,7 @@ public class TFMGVatRecipeGen extends VatRecipeGen {
     ),
 
     PLASTIC_FROM_PROPYLENE = create("plastic_from_propylene", b -> b
-            .require(SizedFluidIngredient.of(propylene(), 500))
+            .require(SizedFluidIngredient.of(TFMGTags.Fluids.PROPYLENE.tag, 500))
             .output(liquidPlastic(), 500)
             .mixing()
             .duration(30)
@@ -141,10 +143,10 @@ public class TFMGVatRecipeGen extends VatRecipeGen {
     ),
 
     ALUMINUM = create("aluminum", b -> b
-            .require(TFMGItems.BAUXITE_POWDER)
-            .require(TFMGItems.BAUXITE_POWDER)
-            .require(TFMGItems.BAUXITE_POWDER)
-            .require(TFMGItems.BAUXITE_POWDER)
+            .require(TFMGTags.Items.DUSTS_BAUXITE.tag)
+            .require(TFMGTags.Items.DUSTS_BAUXITE.tag)
+            .require(TFMGTags.Items.DUSTS_BAUXITE.tag)
+            .require(TFMGTags.Items.DUSTS_BAUXITE.tag)
             .output(TFMGItems.ALUMINUM_INGOT)
             .output(.5f, TFMGItems.ALUMINUM_NUGGET, 4)
             .output(.25f, TFMGItems.ALUMINUM_NUGGET, 2)

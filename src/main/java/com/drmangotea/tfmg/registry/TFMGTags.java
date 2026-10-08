@@ -77,6 +77,7 @@ public class TFMGTags {
         DUSTS_IRON(COMMON, "dusts/iron"),
         DUSTS_SALTPETER(COMMON, "dusts/saltpeter"),
         DUSTS_SULFUR(COMMON, "dusts/sulfur"),
+        DUSTS_BAUXITE(COMMON, "dusts/bauxite"),
         FLUX,
         INGOTS_CAST_IRON(COMMON, "ingots/cast_iron"),
         INGOTS_LITHIUM(COMMON, "ingots/lithium"),
@@ -103,8 +104,9 @@ public class TFMGTags {
         WIRES_COPPER(COMMON, "wires/copper"),
         ENGINE_TURBINE(MOD, "engine/turbine"),
         ENGINE_CYLINDER(MOD, "engine/cylinder"),
-        MULTIMETERS(MOD),
-        CAUTION_BLOCKS(MOD)
+        MULTIMETERS,
+        CAUTION_BLOCKS,
+		CURIOS_BELT("curios","belt")
         ;
 
         public final TagKey<Item> tag;
@@ -115,10 +117,14 @@ public class TFMGTags {
         Items(NameSpace namespace) {
             this(namespace, null);
         }
-        Items(NameSpace namespace, String path) {
-            ResourceLocation id = ResourceLocation.fromNamespaceAndPath(namespace.id, path == null ? TFMGLang.asId(name()) : path);
-            this.tag = ItemTags.create(id);
-        }
+		Items(NameSpace namespace, String path) {
+			ResourceLocation id = ResourceLocation.fromNamespaceAndPath(namespace.id, path == null ? TFMGLang.asId(name()) : path);
+			this.tag = ItemTags.create(id);
+		}
+		Items(String namespace, String path) {
+			ResourceLocation id = ResourceLocation.fromNamespaceAndPath(namespace, path == null ? TFMGLang.asId(name()) : path);
+			this.tag = ItemTags.create(id);
+		}
     }
 
     public enum Fluids {
@@ -146,6 +152,10 @@ public class TFMGTags {
         CRUDE_OIL(COMMON),
         MOLTEN_STEEL(COMMON),
         FUEL(COMMON),
+        ETHYLENE(COMMON),
+        PROPYLENE(COMMON),
+
+        SULFURIC_ACID(COMMON),
 
         //CBC
         MOLTEN_CAST_IRON(COMMON),
