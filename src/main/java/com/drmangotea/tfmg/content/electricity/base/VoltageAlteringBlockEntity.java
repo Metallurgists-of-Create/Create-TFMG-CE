@@ -48,26 +48,11 @@ public class VoltageAlteringBlockEntity extends ElectricBlockEntity {
         return 100;
     }
 
-    //@Override
-    //public int getPowerUsage() {
-    //    getOrCreateElectricNetwork().checkForLoops(getBlockPos());
-    //    Direction facing = getDirection();
-    //    if (level.getBlockEntity(getBlockPos().relative(facing)) instanceof IElectric be && be.getData().getId() != data.getId()) {
-    //        if (be.hasElectricitySlot(facing.getOpposite()))
-//
-    //            return Math.max(be.getNetworkPowerUsage(this), 0);
-//
-    //    }
-//
-    //    return 0;
-//
-    //}
-
-
     public IElectric getControlledBlock() {
-        if (level == null) return null;
-        Direction facing = getBlockState().hasProperty(DirectionalBlock.FACING) ? getBlockState().getValue(DirectionalBlock.FACING) : getBlockState().getValue(HorizontalDirectionalBlock.FACING).getCounterClockWise();
-        if (level.getBlockEntity(getBlockPos().relative(facing)) instanceof IElectric be && be.getData().getId() != data.getId()) {
+        if (level != null
+			&& level.getBlockEntity(getBlockPos().relative(getDirection())) instanceof IElectric be
+			&& be.getData().getId() != data.getId()
+		) {
             return be;
         }
         return null;
@@ -77,15 +62,17 @@ public class VoltageAlteringBlockEntity extends ElectricBlockEntity {
     public float resistance() {
         if (level == null) return 0;
         Direction facing = getDirection();
-        if (level.getBlockEntity(getBlockPos().relative(facing)) instanceof IElectric be && be.getData().getId() != data.getId()) {
-            if (be.hasElectricitySlot(facing.getOpposite())) {
-                int count = getBlocksConnectedToNetworkCount(getControlledBlock().getData().getId());
-                if (count != 0)
-                    return Math.max((be.getNetworkResistance() * count)*getVoltageRatio(), 0);
-            }
-        }
-        return 0;
-    }
+        if (level.getBlockEntity(getBlockPos().relative(facing)) instanceof IElectric be
+			&& be.getData().getId() != data.getId()
+			&& be.hasElectricitySlot(facing.getOpposite())
+		) {
+			int count = getBlocksConnectedToNetworkCount(getControlledBlock().getData().getId());
+			if (count == 0 || be.getData().getVoltage() == 0) return 0;
+			float voltageRatio = (float) getData().getVoltage() / (float) be.getData().getVoltage();
+			return Math.max(be.getNetworkResistance() * count * voltageRatio, 0);
+		}
+		return 0;
+	}
 
     public float getVoltageRatio() {
         if (level == null) return 0;

@@ -22,13 +22,11 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-
 @NothingNullByDefault
 public class TransformerBlock extends TFMGHorizontalDirectionalBlock implements IBE<TransformerBlockEntity>, IVoltageChanger {
-    public TransformerBlock(Properties p_54120_) {
-        super(p_54120_);
+    public TransformerBlock(Properties p) {
+        super(p);
     }
-
 
     @Override
     public VoxelShape getShape(BlockState p_60555_, BlockGetter p_60556_, BlockPos p_60557_, CollisionContext p_60558_) {
@@ -38,39 +36,34 @@ public class TransformerBlock extends TFMGHorizontalDirectionalBlock implements 
     @Override
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
 
-        if(hand == InteractionHand.OFF_HAND)
+        if (hand == InteractionHand.OFF_HAND)
             return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
 
         ItemStack inHand = player.getItemInHand(hand);
-        if(level.getBlockEntity(pos) instanceof TransformerBlockEntity be){
-        Direction facing = state.getValue(FACING);
-        Direction lookingDirection = TransformerBlockEntity.getCoilDirections(level,pos,hitResult).getFirst();
-        boolean primary =lookingDirection == facing.getClockWise();
-        ItemStack coil = primary  ? be.primaryCoil : be.secondaryCoil;
-
+        if (level.getBlockEntity(pos) instanceof TransformerBlockEntity be) {
+        	Direction facing = state.getValue(FACING);
+			Direction lookingDirection = TransformerBlockEntity.getCoilDirections(level,pos,hitResult).getFirst();
+			boolean primary =lookingDirection == facing.getClockWise();
+			ItemStack coil = primary ? be.primaryCoil : be.secondaryCoil;
 
             if(inHand.is(TFMGItems.ELECTROMAGNETIC_COIL.get())){
                 if(coil.isEmpty()) {
-                    if(primary){
+                    if (primary) {
                         be.primaryCoil = inHand;
-                    }else be.secondaryCoil = inHand;
+                    } else be.secondaryCoil = inHand;
                     player.setItemInHand(hand,ItemStack.EMPTY);
                     withBlockEntityDo(level, pos, TransformerBlockEntity::updateCoils);
                     return ItemInteractionResult.SUCCESS;
                 }
-
-
-            }else if(inHand.isEmpty()){
+            } else if(inHand.isEmpty()){
                 if(!coil.isEmpty()) {
                     player.setItemInHand(hand,coil);
                     if(primary){
                         be.primaryCoil = ItemStack.EMPTY;
                     }else be.secondaryCoil = ItemStack.EMPTY;
                     withBlockEntityDo(level, pos, TransformerBlockEntity::updateCoils);
-
                     return ItemInteractionResult.SUCCESS;
                 }
-
             }
         }
 
