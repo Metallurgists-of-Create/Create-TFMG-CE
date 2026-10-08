@@ -347,6 +347,7 @@ public class TFMGItems {
         return REGISTRATE.item(colourName + "_multimeter", p -> new MultimeterItem(p, colour.getTextureDiffuseColor()))
                 .tag(Items.MULTIMETERS.tag, Items.CURIOS_BELT.tag)
                 .onRegister(item -> ItemDescription.referKey(item, () -> MULTIMETER))
+                .model((ctx, prov) -> prov.generated(ctx::get, TFMG.asResource("item/multimeter/" + colourName)))
                 .recipe((c, p) -> {
                     ShapelessRecipeBuilder.shapeless(RecipeCategory.TOOLS, c.get())
                             .requires(colour.getTag())

@@ -1897,7 +1897,6 @@ public class TFMGBlocks {
         String colourName = colour.getSerializedName();
         return REGISTRATE.block(colourName + "_caution_block", TFMGHorizontalDirectionalBlock::new)
                 .initialProperties(() -> Blocks.COPPER_BLOCK)
-
                 .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
                 .properties(p -> p.sound(SoundType.NETHERITE_BLOCK))
                 .transform(pickaxeOnly())

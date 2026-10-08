@@ -16,10 +16,11 @@ import net.neoforged.neoforge.client.model.generators.ModelFile;
 
 public class TFMGVanillaBlockStates {
     //WALL
-    public static void generateWallBlockState(
-		DataGenContext<Block, WallBlock> ctx, RegistrateBlockstateProvider prov, String name
-	) {
+    public static void generateWallBlockState(DataGenContext<Block, WallBlock> ctx, RegistrateBlockstateProvider prov, String name) {
         prov.wallBlock(ctx.get(), name, TFMG.asResource("block/" + name));
+    }
+    public static void generateWallBlockState(DataGenContext<Block, WallBlock> ctx, RegistrateBlockstateProvider prov, String name, String texture) {
+        prov.wallBlock(ctx.get(), name, TFMG.asResource("block/" + texture));
     }
 
     public static ItemBuilder<BlockItem, BlockBuilder<WallBlock, CreateRegistrate>> transformWallItem(
@@ -30,10 +31,11 @@ public class TFMGVanillaBlockStates {
     }
 
     //STAIR
-    public static void generateStairBlockState(
-		DataGenContext<Block, StairBlock> ctx, RegistrateBlockstateProvider prov, String name
-	) {
+    public static void generateStairBlockState(DataGenContext<Block, StairBlock> ctx, RegistrateBlockstateProvider prov, String name) {
         prov.stairsBlock(ctx.get(), name, TFMG.asResource("block/" + name));
+    }
+    public static void generateStairBlockState(DataGenContext<Block, StairBlock> ctx, RegistrateBlockstateProvider prov, String name, String texture) {
+        prov.stairsBlock(ctx.get(), name, TFMG.asResource("block/" + texture));
     }
 
     public static ItemBuilder<BlockItem, BlockBuilder<StairBlock, CreateRegistrate>> transformStairItem(
@@ -43,15 +45,16 @@ public class TFMGVanillaBlockStates {
     }
 
     //SLAB
-    public static void generateSlabBlockState(
-		DataGenContext<Block, SlabBlock> ctx, RegistrateBlockstateProvider prov, String name
-	) {
-		ResourceLocation texture = TFMG.asResource("block/" + name);
+    public static void generateSlabBlockState(DataGenContext<Block, SlabBlock> ctx, RegistrateBlockstateProvider prov, String name) {
+		generateSlabBlockState(ctx, prov, name, name);
+    }
+    public static void generateSlabBlockState(DataGenContext<Block, SlabBlock> ctx, RegistrateBlockstateProvider prov, String name, String texture) {
+        ResourceLocation textureRl = TFMG.asResource("block/" + texture);
 
         ModelFile bottom = prov.models()
-                .slab(name + "_bottom", texture, texture, texture);
+                .slab(name + "_bottom", textureRl, textureRl, textureRl);
         ModelFile top = prov.models()
-                .slabTop(name + "_top", texture, texture, texture);
+                .slabTop(name + "_top", textureRl, textureRl, textureRl);
         ModelFile doubleSlab = prov.models()
                 .getExistingFile(prov.modLoc("block/" + name));
 

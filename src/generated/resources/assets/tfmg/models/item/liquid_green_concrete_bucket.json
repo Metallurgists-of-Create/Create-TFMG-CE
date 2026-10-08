@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "tfmg:item/liquid_green_concrete_bucket"
+    "layer0": "tfmg:item/concrete_bucket/green"
   }
 }
