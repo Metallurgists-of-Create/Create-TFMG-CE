@@ -284,7 +284,7 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
                 if (!operationalMachinesMap.getOrDefault(pos, true))
                     continue;
                 if (level.getBlockEntity(pos) instanceof IndustrialMixerBlockEntity mixer) {
-                    if (mixer.getOperationId().is(TFMGVatOperations.MIXING.get()) || mixer.getOperationId().is(TFMGVatOperations.CENTRIFUGE.get())) {
+                    if (mixer.getOperationId().is(TFMGVatOperations.MIXER.get()) || mixer.getOperationId().is(TFMGVatOperations.CENTRIFUGE.get())) {
                         targetSpeed += Math.abs(mixer.getSpeed());
                     }
                 }

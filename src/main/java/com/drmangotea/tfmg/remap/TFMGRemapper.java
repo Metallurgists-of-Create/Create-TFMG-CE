@@ -1,6 +1,7 @@
 package com.drmangotea.tfmg.remap;
 
 import com.drmangotea.tfmg.TFMG;
+import com.drmangotea.tfmg.TFMGRegistries;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.world.item.DyeColor;
@@ -42,6 +43,9 @@ public class TFMGRemapper {
             remaps.add(Remap.fluid("flowing_" + color.getName() + "_liquid_concrete", TFMG.asResource("flowing_liquid_" + color.getName() + "_concrete")));
             remaps.add(Remap.block(color.getName() + "_liquid_concrete", TFMG.asResource("liquid_" + color.getName() + "_concrete")));
         }
+
+        remaps.add(new Remap("freezing", TFMG.asResource("freezer")).forTypes(TFMGRegistries.VAT_OPERATION));
+        remaps.add(new Remap("mixing", TFMG.asResource("mixer")).forTypes(TFMGRegistries.VAT_OPERATION));
     }
 
     @SubscribeEvent

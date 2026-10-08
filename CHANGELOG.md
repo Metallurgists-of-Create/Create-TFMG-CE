@@ -21,5 +21,8 @@ Contributors:<br>
 - new `IHaveMultimeterInformation` interface
   - `IElectric` now extends `IHaveMultimeterInformation` instead of `IHaveGoggleInformation`
   - Multimeters can now display information from any block entity that implements this interface
+- Vat Operations
+  - Renamed `tfmg:mixing` to `tfmg:mixer` & `TFMGVatOperations#MIXING` to `TFMGVatOperations#MIXER`
+  - Renamed `tfmg:freezing` to `tfmg:freezer` & `TFMGVatOperations#FREEZING` to `TFMGVatOperations#FREEZER`
 
 ### New Translations:

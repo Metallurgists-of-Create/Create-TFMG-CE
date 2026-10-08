@@ -17,7 +17,7 @@
     }
   ],
   "machines": [
-    "tfmg:mixing"
+    "tfmg:mixer"
   ],
   "min_size": 1,
   "results": [

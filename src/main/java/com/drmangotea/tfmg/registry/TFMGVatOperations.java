@@ -12,9 +12,9 @@ public class TFMGVatOperations {
     public static final VatOperationEntry COMPRESSOR = register("compressor");
     public static final VatOperationEntry ELECTRODE = register("electrode");
     public static final VatOperationEntry GRAPHITE_ELECTRODE = register("graphite_electrode");
-    public static final VatOperationEntry MIXING = register("mixing");
+    public static final VatOperationEntry MIXER = register("mixer");
     public static final VatOperationEntry CENTRIFUGE = register("centrifuge");
-    public static final VatOperationEntry FREEZING = register("freezing");
+    public static final VatOperationEntry FREEZER = register("freezer");
 
     private static VatOperationEntry register(String name) {
         return REGISTRATE.vatOperation(name, VatOperation::new).register();
