@@ -1,5 +1,6 @@
 {
   "values": [
+    "tfmg:voltmeter",
     "tfmg:light_bulb",
     "tfmg:turbine_engine",
     "tfmg:regular_engine",
@@ -89,7 +90,6 @@
     "tfmg:encased_potentiometer",
     "tfmg:electric_pump",
     "tfmg:voltage_observer",
-    "tfmg:voltmeter",
     "tfmg:electric_measurement_block",
     "tfmg:polarizer",
     "tfmg:rotor",

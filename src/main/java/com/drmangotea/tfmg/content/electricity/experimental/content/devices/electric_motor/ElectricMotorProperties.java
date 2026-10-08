@@ -1,13 +1,13 @@
 package com.drmangotea.tfmg.content.electricity.experimental.content.devices.electric_motor;
 
 import com.drmangotea.tfmg.config.TFMGConfigs;
-import com.drmangotea.tfmg.content.electricity.connection.cables.CablePos;
 import com.drmangotea.tfmg.content.electricity.experimental.content.DirectionalElectricalProperties;
 import com.drmangotea.tfmg.content.electricity.experimental.simulation.Resistance;
 import com.drmangotea.tfmg.content.electricity.experimental.simulation.nodes.ConnectingElectricalNode;
 import com.drmangotea.tfmg.content.electricity.experimental.simulation.nodes.ElectricalNode;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,15 +15,14 @@ import java.util.List;
 public class ElectricMotorProperties extends DirectionalElectricalProperties {
 
 
-    public ElectricMotorProperties(long pos1, Direction direction) {
+    public ElectricMotorProperties(BlockPos pos1, Direction direction) {
         super(pos1, direction);
+		List<Vec3> positions = getRotation(direction);
 
-        BlockPos pos = BlockPos.of(position);
-
-        ElectricalNode N = new ConnectingElectricalNode(position, 0,   getRotation(direction).get(0));
-        ElectricalNode L1 = new ConnectingElectricalNode(position, 1, getRotation(direction).get(1));
-        ElectricalNode L2 = new ConnectingElectricalNode(position, 2, getRotation(direction).get(2));
-        ElectricalNode L3 = new ConnectingElectricalNode(position, 3, getRotation(direction).get(3));
+        ElectricalNode N  = new ConnectingElectricalNode(position, 0, positions.get(0));
+        ElectricalNode L1 = new ConnectingElectricalNode(position, 1, positions.get(1));
+        ElectricalNode L2 = new ConnectingElectricalNode(position, 2, positions.get(2));
+        ElectricalNode L3 = new ConnectingElectricalNode(position, 3, positions.get(3));
 
         nodes.add(N);
         nodes.add(L1);
@@ -46,18 +45,17 @@ public class ElectricMotorProperties extends DirectionalElectricalProperties {
     }
 
     @Override
-    public List<CablePos> getRotation(Direction direction) {
-        List<CablePos> positions = new ArrayList<>();
+    public List<Vec3> getRotation(Direction direction) {
+        List<Vec3> positions = new ArrayList<>();
 
         switch (direction) {
             case UP, DOWN, EAST, WEST, NORTH, SOUTH -> {
-                positions.add(new CablePos(0, 7/16f,    3/16f));
-                positions.add(new CablePos(0, 13 / 16f, 3 / 16f));
-                positions.add(new CablePos(0, 13 / 16f, 8 / 16f));
-                positions.add(new CablePos(0, 13 / 16f, 13 / 16f));
+                positions.add(new Vec3(0, 7/16f,    3/16f));
+                positions.add(new Vec3(0, 13 / 16f, 3 / 16f));
+                positions.add(new Vec3(0, 13 / 16f, 8 / 16f));
+                positions.add(new Vec3(0, 13 / 16f, 13 / 16f));
             }
         }
-        ;
 
         return positions;
     }

@@ -2,8 +2,6 @@ package com.drmangotea.tfmg.content.electricity.experimental.content.power_trans
 
 import com.drmangotea.tfmg.base.TFMGUtils;
 import com.drmangotea.tfmg.base.lang.TFMGTexts;
-import com.drmangotea.tfmg.content.electricity.base.IElectric;
-import com.drmangotea.tfmg.content.electricity.base.VoltageAlteringBlockEntity;
 import com.drmangotea.tfmg.base.blocks.TFMGHorizontalDirectionalBlock;
 import com.drmangotea.tfmg.content.electricity.experimental.ElectricalProperties;
 import com.drmangotea.tfmg.content.electricity.experimental.IRealisticElectric;
@@ -14,7 +12,6 @@ import com.drmangotea.tfmg.registry.TFMGBlocks;
 import com.drmangotea.tfmg.registry.TFMGDataComponents;
 import com.drmangotea.tfmg.registry.TFMGItems;
 
-import com.simibubi.create.content.kinetics.base.DirectionalKineticBlock;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import net.createmod.catnip.animation.AnimationTickHolder;
@@ -22,14 +19,12 @@ import net.createmod.catnip.math.VecHelper;
 import net.createmod.catnip.placement.IPlacementHelper;
 import net.createmod.catnip.theme.Color;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
@@ -44,11 +39,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-
-
 public class TransformerBlockEntity extends SmartBlockEntity implements IRealisticElectric {
-    boolean updateInFront = false;
-
     public ItemStack primaryCoil = ItemStack.EMPTY;
     public ItemStack secondaryCoil = ItemStack.EMPTY;
 
@@ -83,7 +74,7 @@ public class TransformerBlockEntity extends SmartBlockEntity implements IRealist
             double resistance = secondaryResistance.resistance;
             double voltage = secondaryResistance.getVoltage(level);
             secondaryCurrent = (float) (voltage / resistance);
-            secondaryPower = Math.pow(secondaryPower, 2) * resistance;
+            secondaryPower = Math.pow(secondaryCurrent, 2) * resistance;
         }
         Resistance primaryResistance = network.getResistance(getPos(), 1);
         if (primaryResistance != null) {
@@ -95,11 +86,6 @@ public class TransformerBlockEntity extends SmartBlockEntity implements IRealist
 
             
         }
-
-
-
-
-
     }
 
     @Override
@@ -123,8 +109,8 @@ public class TransformerBlockEntity extends SmartBlockEntity implements IRealist
     }
 
     @Override
-    public long getPos() {
-        return getBlockPos().asLong();
+    public BlockPos getPos() {
+        return getBlockPos();
     }
 
     public void updateCoils() {
@@ -139,7 +125,7 @@ public class TransformerBlockEntity extends SmartBlockEntity implements IRealist
 
     @Override
     public boolean makeMultimeterTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
-        super.makeMultimeterTooltip(tooltip, isPlayerSneaking);
+        IRealisticElectric.super.makeMultimeterTooltip(tooltip, isPlayerSneaking);
 
         if (coilRatio!=0) {
             TFMGTexts.Multimeter.separator().forGoggles(tooltip);
@@ -147,38 +133,6 @@ public class TransformerBlockEntity extends SmartBlockEntity implements IRealist
         }
         return true;
     }
-
-    @Override
-    public float resistance() {
-        if (level == null || coilRatio == 0) return 0;
-        Direction facing = getDirection();
-        if (level.getBlockEntity(getBlockPos().relative(facing)) instanceof IElectric be
-			&& be.getData().getId() != data.getId()
-			&& be.hasElectricitySlot(facing.getOpposite())
-		) {
-			int count = getBlocksConnectedToNetworkCount(getControlledBlock().getData().getId());
-			if(count == 0) return 0;
-			return Math.max(be.getNetworkResistance()*count / coilRatio, 0);
-        }
-        return 0;
-    }
-
-    @Override
-    public boolean hasElectricitySlot(Direction direction) {
-        return direction == getBlockState().getValue(FACING).getClockWise();
-    }
-    @Override
-    public void onNetworkChanged(int oldVoltage, float oldPower) {
-        super.onNetworkChanged(oldVoltage, oldPower);
-        if (oldVoltage != getData().getVoltage() || oldPower != getPowerUsage()) {
-            updateInFront = true;
-        }
-        sendStuff();
-        setChanged();
-    }
-
-    }
-
 
     @Override
     public Level getWorld() {

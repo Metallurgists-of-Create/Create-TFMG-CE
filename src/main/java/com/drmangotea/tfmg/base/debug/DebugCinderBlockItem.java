@@ -9,10 +9,6 @@ import com.drmangotea.tfmg.content.electricity.experimental.RealElectricNetworkM
 import com.drmangotea.tfmg.content.electricity.experimental.RealElectricalNetwork;
 import com.drmangotea.tfmg.content.electricity.experimental.content.ThreePhaseGeneratorBlockEntity;
 import com.drmangotea.tfmg.content.electricity.experimental.content.devices.DebugResistorBlockEntity;
-import com.drmangotea.tfmg.content.electricity.experimental.testing.DebugSolving;
-import com.drmangotea.tfmg.content.electricity.experimental.testing.Resistor;
-import com.drmangotea.tfmg.content.electricity.experimental.testing.VoltageSource;
-import com.simibubi.create.Create;
 import com.drmangotea.tfmg.content.electricity.base.IElectric;
 import com.drmangotea.tfmg.content.electricity.connection.cables.CableConnectorBlockEntity;
 import net.minecraft.core.BlockPos;
@@ -22,9 +18,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
-
-import java.util.ArrayList;
 
 @NothingNullByDefault
 public class DebugCinderBlockItem extends Item {
@@ -56,7 +49,7 @@ public class DebugCinderBlockItem extends Item {
 
             RealElectricalNetwork network = RealElectricNetworkManager.getNetwork(be.getWorld());
 
-            network.setResistance(be, 0, Create.RANDOM.nextInt(700));
+            network.setResistance(be, 0, TFMG.RANDOM.nextInt(700));
 
             return InteractionResult.SUCCESS;
         }
@@ -84,7 +77,7 @@ public class DebugCinderBlockItem extends Item {
             //     TFMG.LOGGER.debug("Connection2  " + c.node2().getPosition().x() + c.node2().getPosition().y() + c.node2().getPosition().z());
             // });
 
-            if (context.getPlayer().isCrouching()) {
+            if (player != null && player.isCrouching()) {
                 //  TFMG.ELECTRICAL_NETWORK_DATA.markDirty();
                 network.update();
             }

@@ -1,7 +1,7 @@
 package com.drmangotea.tfmg.ponder.scenes;
 
-import com.drmangotea.tfmg.content.electricity.network.transformer.large.LargeTransformerBlock;
-import com.drmangotea.tfmg.content.electricity.network.transformer.large.LargeTransformerBlockEntity;
+import com.drmangotea.tfmg.content.electricity.experimental.content.power_transmission.transformers.large.LargeTransformerBlock;
+import com.drmangotea.tfmg.content.electricity.experimental.content.power_transmission.transformers.large.LargeTransformerBlockEntity;
 import com.drmangotea.tfmg.content.machinery.misc.winding_machine.WindingMachineBlockEntity;
 import com.drmangotea.tfmg.registry.TFMGBlocks;
 import com.drmangotea.tfmg.registry.TFMGDataComponents;

@@ -454,11 +454,11 @@ public class TFMGBlockEntities {
             .validBlocks(TFMGBlocks.CREATIVE_GENERATOR)
             .register();
 
-    public static final BlockEntityEntry<VoltMeterBlockEntity> VOLTMETER = REGISTRATE
+    /*public static final BlockEntityEntry<VoltMeterBlockEntity> VOLTMETER = REGISTRATE
             .blockEntity("voltmeter", VoltMeterBlockEntity::new)
             .validBlocks(TFMGBlocks.VOLTMETER, TFMGBlocks.ELECTRIC_MEASUREMENT_BLOCK)
             .renderer(() -> VoltMeterRenderer::new)
-            .register();
+            .register();*/
 
     public static final BlockEntityEntry<TrafficLightBlockEntity> TRAFFIC_LIGHT = REGISTRATE
             .blockEntity("traffic_light", TrafficLightBlockEntity::new)

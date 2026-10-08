@@ -521,7 +521,7 @@
   "block.tfmg.two_slot_cable_adapter": "Two Slot Cable Adapter",
   "block.tfmg.voltage_observer": "Voltage Observer",
   "block.tfmg.voltage_observer.tooltip.summary": "Powers redstone when any voltage is detected",
-  "block.tfmg.voltmeter": "Electric Gauge",
+  "block.tfmg.voltmeter": "Voltmeter",
   "block.tfmg.voltmeter.tooltip.behaviour1": "To use put this block on an electric block/component. By default it will measure voltage from 0 to 500 volts. To see what its currently measuring look at it with engineers goggles. To choose from various options of what it can measure R-Click with a wrench.",
   "block.tfmg.voltmeter.tooltip.summary": "Shows various different values about an electric component",
   "block.tfmg.white_caution_block": "White Caution Block",

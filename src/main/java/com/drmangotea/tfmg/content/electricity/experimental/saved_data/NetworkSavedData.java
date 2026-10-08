@@ -6,6 +6,7 @@ import com.drmangotea.tfmg.content.electricity.experimental.RealElectricNetworkM
 import com.drmangotea.tfmg.content.electricity.experimental.RealElectricalNetwork;
 import com.drmangotea.tfmg.content.electricity.experimental.WireConnection;
 import com.drmangotea.tfmg.content.electricity.experimental.simulation.*;
+import com.drmangotea.tfmg.content.electricity.experimental.simulation.nodes.ConnectingElectricalNode;
 import net.minecraft.core.BlockPos;
 import com.drmangotea.tfmg.content.electricity.experimental.content.DirectionalElectricalProperties;
 import com.drmangotea.tfmg.content.electricity.experimental.content.ThreePhaseGeneratorProperties;

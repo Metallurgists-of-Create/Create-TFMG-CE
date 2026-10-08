@@ -43,7 +43,7 @@ public class ResistiveLoadBlockEntity extends SmartBlockEntity implements IReali
             return false;
         }
 
-        Resistance resistor = ((Resistance) properties.components.get(0));
+        Resistance resistor = ((Resistance) properties.components.getFirst());
 
         TFMGLang.text("Resistance: " + resistor.resistance).forGoggles(tooltip);
         TFMGLang.text("Voltage: " + resistor.getVoltage(level)).forGoggles(tooltip);
@@ -65,8 +65,8 @@ public class ResistiveLoadBlockEntity extends SmartBlockEntity implements IReali
     }
 
     @Override
-    public long getPos() {
-        return getBlockPos().asLong();
+    public BlockPos getPos() {
+        return getBlockPos();
     }
 
     @Override
