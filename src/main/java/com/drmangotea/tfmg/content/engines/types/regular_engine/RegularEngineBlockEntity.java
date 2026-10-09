@@ -29,6 +29,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.items.wrapper.CombinedInvWrapper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -72,6 +73,11 @@ public class RegularEngineBlockEntity extends AbstractSmallEngineBlockEntity {
         updateRotation();
         sendData();
         setChanged();
+    }
+
+    @Override
+    public CombinedInvWrapper itemHandler() {
+        return new CombinedInvWrapper(componentsInventory, upgradeInventory, pistonInventory);
     }
 
     public void refreshFuels() {

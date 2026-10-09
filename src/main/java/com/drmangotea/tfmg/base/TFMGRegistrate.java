@@ -6,6 +6,8 @@ import com.drmangotea.tfmg.content.electricity.connection.cable_type.CableType;
 import com.drmangotea.tfmg.content.electricity.connection.cable_type.CableTypeBuilder;
 import com.drmangotea.tfmg.content.engines.types.EngineType;
 import com.drmangotea.tfmg.content.engines.types.EngineTypeBuilder;
+import com.drmangotea.tfmg.content.engines.upgrades.base.EngineUpgrade;
+import com.drmangotea.tfmg.content.engines.upgrades.base.EngineUpgradeBuilder;
 import com.drmangotea.tfmg.content.machinery.vat.base.registry.operations.VatOperation;
 import com.drmangotea.tfmg.content.machinery.vat.base.registry.operations.VatOperationBuilder;
 import com.drmangotea.tfmg.content.machinery.vat.base.registry.types.VatType;
@@ -170,5 +172,21 @@ public class TFMGRegistrate extends CreateRegistrate {
 
     public <P> VatTypeBuilder<P> vatType(P parent, String name, Function<ResourceLocation, VatType> factory) {
         return entry(name, callback -> new VatTypeBuilder<>(this, parent, name, callback, factory));
+    }
+
+    public <T extends EngineUpgrade> EngineUpgradeBuilder<T, TFMGRegistrate> engineUpgrade(Function<ResourceLocation, T> factory) {
+        return engineUpgrade((TFMGRegistrate) self(), factory);
+    }
+
+    public <T extends EngineUpgrade> EngineUpgradeBuilder<T, TFMGRegistrate> engineUpgrade(String name, Function<ResourceLocation, T> factory) {
+        return engineUpgrade((TFMGRegistrate) self(), name, factory);
+    }
+
+    public <T extends EngineUpgrade, P> EngineUpgradeBuilder<T, P> engineUpgrade(P parent, Function<ResourceLocation, T> factory) {
+        return engineUpgrade(parent, currentName(), factory);
+    }
+
+    public <T extends EngineUpgrade, P> EngineUpgradeBuilder<T, P> engineUpgrade(P parent, String name, Function<ResourceLocation, T> factory) {
+        return entry(name, callback -> new EngineUpgradeBuilder<>(this, parent, name, callback, factory));
     }
 }

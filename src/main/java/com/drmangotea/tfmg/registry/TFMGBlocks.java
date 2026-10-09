@@ -75,6 +75,7 @@ import com.drmangotea.tfmg.content.engines.types.radial_engine.RadialEngineBlock
 import com.drmangotea.tfmg.content.engines.types.regular_engine.RegularEngineBlock;
 import com.drmangotea.tfmg.content.engines.types.turbine_engine.TurbineEngineBlock;
 import com.drmangotea.tfmg.content.engines.types.turbine_engine.TurbineEngineGenerator;
+import com.drmangotea.tfmg.content.engines.upgrades.base.EngineUpgrade;
 import com.drmangotea.tfmg.content.items.weapons.explosives.napalm.NapalmBombBlock;
 import com.drmangotea.tfmg.content.machinery.metallurgy.blast_furnace.BlastFurnaceHatchBlock;
 import com.drmangotea.tfmg.content.machinery.metallurgy.blast_furnace.BlastFurnaceOutputBlock;
@@ -331,7 +332,9 @@ public class TFMGBlocks {
             .tag(TFMGTags.Blocks.INDUSTRIAL_PIPE.tag)
             .recipe((c, p) -> p.stonecutting(DataIngredient.tag(CommonMetal.STEEL.ingots), RecipeCategory.BUILDING_BLOCKS, c, 8))
             .blockstate((ctx, prov) -> prov.simpleBlock(ctx.getEntry(), AssetLookup.partialBaseModel(ctx, prov)))
-            .simpleItem()
+            .item()
+            .properties(p -> p.component(TFMGDataComponents.ENGINE_UPGRADE, new EngineUpgrade.Stored(TFMGEngineUpgrades.PIPING)))
+            .build()
             .register();
     public static final BlockEntry<Block> CONCRETE_ENCASED_INDUSTRIAL_PIPE = REGISTRATE.block("concrete_encased_industrial_pipe", Block::new)
             .initialProperties(SharedProperties::softMetal)
@@ -939,6 +942,7 @@ public class TFMGBlocks {
                     .transform(TFMGStress.setImpact(50.0f))
                     .blockstate(BlockStateGen.directionalBlockProvider(true))
                     .item()
+                    .properties(p -> p.component(TFMGDataComponents.ENGINE_UPGRADE, new EngineUpgrade.Stored(TFMGEngineUpgrades.GENERATOR)))
                     .transform(customItemModel())
                     .register();
 

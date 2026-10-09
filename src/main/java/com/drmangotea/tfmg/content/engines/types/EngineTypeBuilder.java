@@ -1,6 +1,7 @@
 package com.drmangotea.tfmg.content.engines.types;
 
 import com.drmangotea.tfmg.TFMGRegistries;
+import com.drmangotea.tfmg.base.annotation.NothingNullByDefault;
 import com.drmangotea.tfmg.datagen.TFMGDatagen;
 import com.tterrag.registrate.AbstractRegistrate;
 import com.tterrag.registrate.builders.AbstractBuilder;
@@ -14,6 +15,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.neoforged.neoforge.registries.DeferredHolder;
 
+@NothingNullByDefault
 public class EngineTypeBuilder<T extends EngineType, P> extends AbstractBuilder<EngineType, T, P, EngineTypeBuilder<T, P>> {
 
     public static <T extends EngineType, P> EngineTypeBuilder<T, P> create(AbstractRegistrate<?> owner, P parent, String name, BuilderCallback callback, NonNullFunction<EngineType.Properties, T> factory) {

@@ -2,6 +2,7 @@ package com.drmangotea.tfmg.registry;
 
 import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.base.data_storage.CylinderFuels;
+import com.drmangotea.tfmg.content.engines.upgrades.base.EngineUpgrade;
 import com.drmangotea.tfmg.content.items.weapons.fire_extinguisher.FireExtinguisherFuel;
 import com.drmangotea.tfmg.content.items.weapons.flamethrover.FlamethrowerFuel;
 import com.drmangotea.tfmg.content.machinery.vat.electrode_holder.electrode.Electrode;
@@ -40,6 +41,7 @@ public class TFMGDataComponents {
 
 	public static final DataComponentType<MixerMode.Stored> MIXER_MODE = register("mixer_mode", MixerMode.Stored.CODEC, MixerMode.Stored.STREAM_CODEC);
 	public static final DataComponentType<Electrode.Stored> ELECTRODE = register("electrode", Electrode.Stored.CODEC, Electrode.Stored.STREAM_CODEC);
+	public static final DataComponentType<EngineUpgrade.Stored> ENGINE_UPGRADE = register("engine_upgrade", EngineUpgrade.Stored.CODEC, EngineUpgrade.Stored.STREAM_CODEC);
 
 	/**
 	 * @deprecated Use {@link com.drmangotea.tfmg.registry.TFMGDataComponents#FLAMETHROWER}.

@@ -1,5 +1,6 @@
 package com.drmangotea.tfmg.content.engines.types;
 
+import com.drmangotea.tfmg.TFMGRegistries;
 import com.drmangotea.tfmg.base.TFMGUtils;
 import com.drmangotea.tfmg.base.lang.TFMGLang;
 import com.drmangotea.tfmg.base.lang.TFMGTexts;
@@ -7,20 +8,22 @@ import com.drmangotea.tfmg.config.TFMGConfigs;
 import com.drmangotea.tfmg.content.engines.base.AbstractEngineBlockEntity;
 import com.drmangotea.tfmg.content.engines.base.EngineComponentsInventory;
 import com.drmangotea.tfmg.content.engines.base.EngineProperties;
+import com.drmangotea.tfmg.content.engines.upgrades.base.EngineGenerator;
 import com.drmangotea.tfmg.content.engines.upgrades.EnginePipingUpgrade;
-import com.drmangotea.tfmg.content.engines.upgrades.EngineUpgrade;
-import com.drmangotea.tfmg.registry.TFMGBlocks;
-import com.drmangotea.tfmg.registry.TFMGDataComponents;
-import com.drmangotea.tfmg.registry.TFMGFluids;
-import com.drmangotea.tfmg.registry.TFMGItems;
+import com.drmangotea.tfmg.content.engines.upgrades.base.EngineUpgrade;
+import com.drmangotea.tfmg.registry.*;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import com.simibubi.create.foundation.fluid.CombinedTankWrapper;
+import com.simibubi.create.foundation.item.ItemHelper;
+import com.simibubi.create.foundation.item.SmartInventory;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
@@ -36,6 +39,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.items.wrapper.CombinedInvWrapper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,6 +57,7 @@ public abstract class AbstractSmallEngineBlockEntity extends AbstractEngineBlock
     public int oil = 0;
     public int coolingFluid = 0;
 
+    public SmartInventory upgradeInventory = new SmartInventory(1, this, 1, false).whenContentsChanged(this::upgradesChanged);
     public EngineComponentsInventory componentsInventory;
 
     public BlockPos controller = getBlockPos();
@@ -66,6 +71,34 @@ public abstract class AbstractSmallEngineBlockEntity extends AbstractEngineBlock
     public AbstractSmallEngineBlockEntity(BlockEntityType<?> typeIn, BlockPos pos, BlockState state) {
         super(typeIn, pos, state);
         componentsInventory = new EngineComponentsInventory(this, EngineProperties.commonRegularComponents());
+    }
+
+    public void upgradesChanged(int slot) {
+        sendData();
+        setChanged();
+        if (upgradeInventory.isEmpty()) {
+            this.upgrade = Optional.empty();
+            return;
+        }
+        ItemStack itemStack = upgradeInventory.getItem(slot);
+        Optional<Holder<EngineUpgrade>> upgradeHolder = EngineUpgrade.getUpgradeFromItem(itemStack);
+        this.upgrade = upgradeHolder.map(Holder::value);
+        if (upgrade.isPresent()) {
+            playInsertionSound();
+        }
+        updateRotation();
+        upgrade.ifPresent(u -> u.updateUpgrade(this));
+    }
+
+    public CombinedInvWrapper itemHandler() {
+        return new CombinedInvWrapper(componentsInventory, upgradeInventory);
+    }
+
+    @Override
+    public void destroy() {
+        super.destroy();
+        ItemHelper.dropContents(level, worldPosition, componentsInventory);
+        ItemHelper.dropContents(level, worldPosition, upgradeInventory);
     }
 
     public int getFuelConsumption() {
@@ -87,8 +120,7 @@ public abstract class AbstractSmallEngineBlockEntity extends AbstractEngineBlock
         List<Component> lines = new ArrayList<>();
         for (AbstractSmallEngineBlockEntity be : getEngines()) {
             be.upgrade.ifPresent(engineUpgrade -> lines.add(Component.literal("- ").withStyle(ChatFormatting.DARK_GRAY)
-                    .append(engineUpgrade.getItem().getDescription().copy()
-                            .withStyle(ChatFormatting.AQUA))));
+                    .append(engineUpgrade.getDisplayName().copy().withStyle(ChatFormatting.AQUA))));
         }
         cachedUpgradeLines = lines;
         return lines;
@@ -131,15 +163,15 @@ public abstract class AbstractSmallEngineBlockEntity extends AbstractEngineBlock
 
     @Override
     public int voltageGeneration() {
-        if (upgrade.isPresent() && upgrade.get().getItem() == TFMGBlocks.GENERATOR.asItem())
-            return (int) (rpm / 25f);
+        if (upgrade.isPresent() && upgrade.get() instanceof EngineGenerator generator)
+            return generator.getVoltageGeneration(this);
         return 0;
     }
 
     @Override
     public float powerGeneration() {
-        if (upgrade.isPresent() && upgrade.get().getItem() == TFMGBlocks.GENERATOR.asItem())
-            return rpm;
+        if (upgrade.isPresent() && upgrade.get() instanceof EngineGenerator generator)
+            return generator.getPowerGeneration(this);
         return 0;
     }
 
@@ -159,8 +191,6 @@ public abstract class AbstractSmallEngineBlockEntity extends AbstractEngineBlock
             if (coolingFluid > 0)
                 coolingFluid--;
         }
-
-
     }
 
     @Override
@@ -198,8 +228,9 @@ public abstract class AbstractSmallEngineBlockEntity extends AbstractEngineBlock
     @Override
     protected void write(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {
         compound.put("Controller", NbtUtils.writeBlockPos(controller));
-        upgrade.ifPresent(engineUpgrade -> compound.put("UpgradeItem", engineUpgrade.getItem().getDefaultInstance().saveOptional(registries)));
         compound.put("Components", componentsInventory.serializeNBT(registries));
+        compound.put("Upgrades", upgradeInventory.serializeNBT(registries));
+        this.upgrade.ifPresent(upgrade -> TFMGRegistries.ENGINE_UPGRADE_REGISTRY.byNameCodec().encodeStart(NbtOps.INSTANCE, upgrade).ifSuccess(nbt -> compound.put("Upgrade", nbt)));
         compound.putInt("Oil", oil);
         compound.putInt("CoolingFluid", coolingFluid);
         super.write(compound, registries, clientPacket);
@@ -207,16 +238,28 @@ public abstract class AbstractSmallEngineBlockEntity extends AbstractEngineBlock
 
     @Override
     protected void read(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {
-        if (compound.contains("UpgradeItem") && ItemStack.parse(registries, compound.getCompound("UpgradeItem")).isPresent()) {
-            ItemStack stack = ItemStack.parse(registries, compound.getCompound("UpgradeItem")).get();
-            upgrade = Optional.of(EngineUpgrade.getUpgrades().get(stack.getItem()));
-        }
         oil = compound.getInt("Oil");
         coolingFluid = compound.getInt("CoolingFluid");
         componentsInventory.deserializeNBT(registries, compound.getCompound("Components"));
+        upgradeInventory.deserializeNBT(registries,compound.getCompound("Upgrades"));
+        remapUpgrade(compound, registries);
+        if (compound.contains("Upgrade")) {
+            TFMGRegistries.ENGINE_UPGRADE_REGISTRY.byNameCodec().parse(NbtOps.INSTANCE, compound.get("Upgrade")).ifSuccess(upgrade -> this.upgrade = Optional.of(upgrade));
+        }
         super.read(compound, registries, clientPacket);
         controller = NbtUtils.readBlockPos(compound, "Controller").orElse(getBlockPos());
         invalidateUpgradeCache();
+    }
+
+    private void remapUpgrade(CompoundTag compound, HolderLookup.Provider registries) {
+        if (compound.contains("UpgradeItem")) {
+            ItemStack upgradeItem = ItemStack.parse(registries, compound.getCompound("UpgradeItem")).orElse(ItemStack.EMPTY);
+            if (!upgradeItem.isEmpty()) {
+                upgradeInventory.setStackInSlot(0, upgradeItem);
+            }
+            compound.remove("UpgradeItem");
+            upgradesChanged(0);
+        }
     }
 
     public int engineLength() {
@@ -245,10 +288,6 @@ public abstract class AbstractSmallEngineBlockEntity extends AbstractEngineBlock
     protected void analogSignalChanged() {
         if (controller == null)
             return;
-        if (hasEngineController()) {
-            return;
-        }
-
         getControllerBE().updateRotation();
         getControllerBE().updateGeneratedRotation();
         if (level == null) return;
@@ -428,21 +467,15 @@ public abstract class AbstractSmallEngineBlockEntity extends AbstractEngineBlock
                 return true;
             }
         }
-        if (upgrade.isEmpty())
-            if (EngineUpgrade.getUpgrades().containsKey(itemStack.getItem())) {
-                Optional<? extends EngineUpgrade> itemUpgrade = EngineUpgrade.getUpgrades().get(itemStack.getItem()).createUpgrade();
-
-                if (itemUpgrade.isPresent() && isUpgradeFirst(itemUpgrade.get())) {
-                    upgrade = itemUpgrade;
-                    playInsertionSound();
-                    updateRotation();
-                    upgrade.ifPresent(u -> u.updateUpgrade(this));
-                    itemStack.shrink(1);
-                    setChanged();
-                    sendData();
-                    return true;
-                }
+        if (upgradeInventory.isEmpty()) {
+            Optional<Holder<EngineUpgrade>> upgradeHolder = EngineUpgrade.getUpgradeFromItem(itemStack);
+            if (upgradeHolder.isPresent()) {
+                upgradeInventory.insertItem(0, itemStack.copyWithCount(1), false);
+                upgradesChanged(0);
+                itemStack.shrink(1);
+                return true;
             }
+        }
 
         if (!isController())
             return false;
@@ -503,14 +536,6 @@ public abstract class AbstractSmallEngineBlockEntity extends AbstractEngineBlock
 
         TFMGUtils.createFluidTooltip(tooltip, fluidCapability);
 
-        return true;
-    }
-
-    public boolean isUpgradeFirst(EngineUpgrade itemUpgrade) {
-        for (AbstractSmallEngineBlockEntity be : getEngines()) {
-            if (be.upgrade.isPresent() && be.upgrade.get().getItem() == itemUpgrade.getItem())
-                return false;
-        }
         return true;
     }
 
@@ -670,5 +695,6 @@ public abstract class AbstractSmallEngineBlockEntity extends AbstractEngineBlock
     @Override
     public void clearContent() {
         this.componentsInventory.clearContent();
+        this.upgradeInventory.clearContent();
     }
 }

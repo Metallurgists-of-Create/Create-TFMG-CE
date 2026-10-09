@@ -15,6 +15,7 @@ import com.drmangotea.tfmg.content.electricity.network.transformer.small.Electro
 import com.drmangotea.tfmg.content.electricity.utilities.polarizer.MagnetItem;
 import com.drmangotea.tfmg.content.electricity.utilities.resistor.ResistorItem;
 import com.drmangotea.tfmg.content.engines.fuels.EngineFuelType;
+import com.drmangotea.tfmg.content.engines.upgrades.base.EngineUpgrade;
 import com.drmangotea.tfmg.content.items.FluidContainingItem;
 import com.drmangotea.tfmg.content.items.ScrewdriverItem;
 import com.drmangotea.tfmg.content.items.weapons.LeadAxeItem;
@@ -147,8 +148,9 @@ public class TFMGItems {
             CAPACITOR = REGISTRATE.item("capacitor", Item::new).register(),
             COPPER_SULFATE = REGISTRATE.item("copper_sulfate", Item::new).register(),
             LITHIUM_CHARGE = REGISTRATE.item("lithium_charge", Item::new).register(),
-            TURBO = REGISTRATE.item("turbo", Item::new).register(),
-            GOLDEN_TURBO = REGISTRATE.item("golden_turbo", Item::new).register(),
+
+            TURBO = REGISTRATE.item("turbo", Item::new).properties(p -> p.component(TFMGDataComponents.ENGINE_UPGRADE, new EngineUpgrade.Stored(TFMGEngineUpgrades.TURBO))).register(),
+            GOLDEN_TURBO = REGISTRATE.item("golden_turbo", Item::new).properties(p -> p.component(TFMGDataComponents.ENGINE_UPGRADE, new EngineUpgrade.Stored(TFMGEngineUpgrades.GOLDEN_TURBO))).register(),
             CINDERBLOCK = REGISTRATE.item("cinderblock", Item::new)
                     .recipe((c, p) -> p.stonecutting(DataIngredient.items(TFMGBlocks.CONCRETE.block.asItem()), RecipeCategory.BUILDING_BLOCKS, c, 8))
                     .register(),
