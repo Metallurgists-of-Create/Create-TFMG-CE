@@ -1851,14 +1851,22 @@ public class TFMGBlocks {
     // public static final MaterialSet FACTORY_FLOOR_SET = makeVariants(FACTORY_FLOOR, true);
 
     public static final BlockEntry<Block> HARDENED_PLANKS =
-            REGISTRATE.block("hardened_planks", Block::new)
-                    .initialProperties(() -> net.minecraft.world.level.block.Blocks.OAK_PLANKS)
-                    .properties(p -> p
-                            .strength(2.0F)
-                            .sound(SoundType.CHERRY_WOOD))
-                    .transform(axeOnly())
-                    .simpleItem()
-                    .register();
+		REGISTRATE.block("hardened_planks", Block::new)
+			.initialProperties(() -> net.minecraft.world.level.block.Blocks.OAK_PLANKS)
+			.properties(p -> p.strength(2.0F).sound(SoundType.CHERRY_WOOD))
+			.transform(axeOnly())
+			.blockstate((c,p) -> numberedVariantBlockTextures(c, p, "hardened_planks", 4))/*{
+				VariantBlockStateBuilder vb = p.getVariantBuilder(c.get());
+				VariantBlockStateBuilder.PartialBlockstate part = vb.partialState();
+				vb.addModels(vb.partialState(), vb.partialState().modelForState()
+						.modelFile(p.models().cubeAll("hardened_planks",  TFMG.asResource("block/hardened_planks0"))).nextModel()
+						.modelFile(p.models().cubeAll("hardened_planks1", TFMG.asResource("block/hardened_planks1"))).nextModel()
+						.modelFile(p.models().cubeAll("hardened_planks2", TFMG.asResource("block/hardened_planks2"))).nextModel()
+						.modelFile(p.models().cubeAll("hardened_planks3", TFMG.asResource("block/hardened_planks3"))).build()
+				);
+			})*/
+			.simpleItem()
+			.register();
 
     //  public static final MaterialSet HARDENED_PLANKS_SET = makeVariants(HARDENED_PLANKS, true);
 

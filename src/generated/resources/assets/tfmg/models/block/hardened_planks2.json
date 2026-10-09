@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:block/cube_all",
   "textures": {
-    "all": "tfmg:block/hardened_planks0"
+    "all": "tfmg:block/hardened_planks2"
   }
 }

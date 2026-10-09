@@ -1,6 +1,5 @@
 package com.drmangotea.tfmg.base;
 
-
 import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.base.blocks.TFMGVanillaBlockStates;
 import com.drmangotea.tfmg.base.dyes.DyedMaterialSetList;
@@ -40,10 +39,13 @@ import net.minecraft.tags.ItemTags;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.neoforged.neoforge.client.model.generators.ConfiguredModel;
 import net.neoforged.neoforge.client.model.generators.ModelFile;
 import net.neoforged.neoforge.client.model.generators.MultiPartBlockStateBuilder;
+import net.neoforged.neoforge.client.model.generators.VariantBlockStateBuilder;
 import net.neoforged.neoforge.common.Tags;
 
+import java.util.ArrayList;
 import java.util.function.Supplier;
 
 import static com.drmangotea.tfmg.TFMG.REGISTRATE;
@@ -195,6 +197,22 @@ public class TFMGBuilderTransformers {
     }
 
     /// ////////////
+	
+	public static void numberedVariantBlockTextures(DataGenContext<Block, Block> ctx, RegistrateBlockstateProvider prov, String name, int n) {
+		VariantBlockStateBuilder vb = prov.getVariantBuilder(ctx.get());
+		VariantBlockStateBuilder.PartialBlockstate part = vb.partialState();
+		
+		ArrayList<ConfiguredModel> models = new ArrayList<>();
+		for (int i = 0; i < n; i++) {
+			models.add(part.modelForState().modelFile(prov.models().cubeAll(
+				i == 0 ? name : name + i,
+				TFMG.asResource("block/"+name+i)
+			)).buildLast());
+		}
+		
+		vb.addModels(vb.partialState(), models.toArray(ConfiguredModel[]::new));
+	}
+	
     public static BlockEntry<TFMGFlywheelBlock> flywheel(String name, NonNullFunction<BlockBehaviour.Properties, TFMGFlywheelBlock> block) {
         return REGISTRATE.block(name + "_flywheel", block)
                 .initialProperties(SharedProperties::softMetal)
@@ -232,8 +250,6 @@ public class TFMGBuilderTransformers {
                 .simpleItem()
                 .register();
     }
-
-    public static final String[] COLORS = {"white", "blue", "light_blue", "red", "green", "lime", "pink", "magenta", "yellow", "gray", "light_gray", "brown", "cyan", "purple", "orange","black"};
 
     public static MaterialSet generateConcrete(boolean rebar) {
         String name = rebar ? "rebar_concrete" : "concrete";
@@ -306,19 +322,17 @@ public class TFMGBuilderTransformers {
                     .transform(pickaxeOnly())
                     .blockstate(simpleCubeAll("concrete/" + colourName))
                     .tag(BlockTags.NEEDS_STONE_TOOL)
-                    .recipe((c, p) -> {
-                        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, c.get(), 8)
-                                .pattern("###")
-                                .pattern("#D#")
-                                .pattern("###")
-                                .define('D', colour.getTag())
-                                .define('#', undyed)
-                                .unlockedBy("has_concrete", RegistrateRecipeProvider.has(undyed))
-                                .save(p, TFMG.asResource("crafting/materials/" + c.getName() + "_dyeing"));
-                    })
-                    .item()
-                    .build()
-                    .register();
+                    .recipe((c, p) -> ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, c.get(), 8)
+							.pattern("###")
+							.pattern("#D#")
+							.pattern("###")
+							.define('D', colour.getTag())
+							.define('#', undyed)
+							.unlockedBy("has_concrete", RegistrateRecipeProvider.has(undyed))
+							.save(p, TFMG.asResource("crafting/materials/" + c.getName() + "_dyeing"))
+					)
+					.transform(tagBlockAndItem(Tags.Blocks.CONCRETES, Tags.Items.CONCRETES)).build()
+					.register();
 
             set.wall=REGISTRATE.block(colourName + name + "_wall", WallBlock::new)
                     .initialProperties(() -> Blocks.STONE)
