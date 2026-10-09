@@ -31,7 +31,7 @@ import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 
 import java.util.List;
 
-
+@SuppressWarnings("unused")
 @EventBusSubscriber(Dist.CLIENT)
 public class TFMGClientEvents {
 
@@ -80,8 +80,6 @@ public class TFMGClientEvents {
 		if (player != null)
 			player.getPersistentData().remove("IsUsingEngineController");
 	}
-
-
 
 	public static void registerGuiOverlays(RegisterGuiLayersEvent event) {
 		event.registerAbove(VanillaGuiLayers.HOTBAR, TFMG.asResource("multimeter_info"), MultimeterOverlayRenderer.OVERLAY);
