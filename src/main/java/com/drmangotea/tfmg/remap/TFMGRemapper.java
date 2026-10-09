@@ -36,6 +36,8 @@ public class TFMGRemapper {
         remaps.add(Remap.block("heavy_casing_encased_large_aluminum_cogwheel", TFMG.asResource("heavy_encased_large_aluminum_cogwheel")));
 
         remaps.add(Remap.item("lit_lithium_blade", TFMG.asResource("lithium_blade")));
+        remaps.add(Remap.item("capacitor_item", TFMG.asResource("capacitor")));
+        remaps.add(Remap.item("transistor_item", TFMG.asResource("transistor")));
 
         for (DyeColor color : DyeColor.values()) {
             remaps.add(Remap.item(color.getName() + "_liquid_concrete_bucket", TFMG.asResource("liquid_" + color.getName() + "_concrete_bucket")));
