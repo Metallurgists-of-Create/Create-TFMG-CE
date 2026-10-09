@@ -75,11 +75,7 @@ public abstract class EngineUpgrade {
     public void render(AbstractSmallEngineBlockEntity be, float partialTicks, PoseStack ms, MultiBufferSource buffer, int light) {}
 
     public static Optional<Holder<EngineUpgrade>> getUpgradeFromItem(ItemStack stack) {
-        var data = stack.get(TFMGDataComponents.ENGINE_UPGRADE);
-        if (data != null) {
-            return Optional.of(data.upgrade());
-        }
-        return Optional.empty();
+        return Optional.ofNullable(stack.get(TFMGDataComponents.ENGINE_UPGRADE)).map(Stored::upgrade);
     }
 
     public record Stored(Holder<EngineUpgrade> upgrade) implements TooltipProvider {
@@ -95,7 +91,7 @@ public abstract class EngineUpgrade {
 
         @Override
         public void addToTooltip(Item.TooltipContext ctx, Consumer<Component> tooltip, TooltipFlag flag) {
-            tooltip.accept(TFMGLang.translateDirect("tooltip.engine_upgrade").withStyle(ChatFormatting.GRAY));
+            tooltip.accept(TFMGLang.translateDirect("tooltip.engine_upgrade").withStyle(ChatFormatting.AQUA));
         }
     }
 }

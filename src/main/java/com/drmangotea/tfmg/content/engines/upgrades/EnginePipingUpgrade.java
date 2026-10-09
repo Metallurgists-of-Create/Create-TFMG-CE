@@ -38,6 +38,7 @@ public class EnginePipingUpgrade extends EngineUpgrade {
         findTank(be);
     }
 
+	//TODO: Fluid extraction is being funky
     @Override
     public void lazyTickUpgrade(AbstractSmallEngineBlockEntity engine) {
         Level level = engine.getLevel();
