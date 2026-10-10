@@ -1609,6 +1609,8 @@ public class TFMGBlocks {
     public static final BlockEntry<Block> NICKEL_BLOCK = REGISTRATE.block("nickel_block", Block::new)
             .initialProperties(SharedProperties::softMetal)
             .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
+            .onRegister(connectedTextures(() -> new EncasedCTBehaviour(TFMGSpriteShifts.NICKEL_BLOCK)))
+            .onRegister(casingConnectivity((block, cc) -> cc.makeCasing(block, TFMGSpriteShifts.NICKEL_BLOCK)))
             .transform(pickaxeOnly())
             .tag(BlockTags.NEEDS_IRON_TOOL)
             .tag(BlockTags.BEACON_BASE_BLOCKS)
