@@ -10,12 +10,14 @@ Contributors:<br>
 ### Bug Fixes:
 - Blast Furnace Outputs no-longer reset item components.
 - Coke Ovens once again process faster the bigger they are.
+- Concrete-logged Electric Posts no longer dry into Concrete-encased cables
 
 ### Changes:
 - Recipe inputs now use tags where applicable.
 - Added compositions for Crushed Lead & Nickel
 - Fluid Compositions are now created under the `tfmg` namespace.
 - Multimeters are now valid in the `belt` Curio slot.
+- Diagonal Cables can no be horizontal
 
 ### API Changes:
 - new `IHaveMultimeterInformation` interface
