@@ -39,7 +39,6 @@ import javax.annotation.Nullable;
 import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Predicate;
 
 public class LargeEngineBlockEntity extends AbstractEngineBlockEntity {
