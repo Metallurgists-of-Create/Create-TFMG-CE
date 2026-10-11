@@ -96,7 +96,7 @@ public record EngineFuelType(HolderSet<Fluid> fluids, float speed, float efficie
         }
 		
 		public Builder exhaust(Fluid exhaust) {
-			this.exhaust = exhaust;
+			this.exhaust = FluidHelper.convertToStill(exhaust);
 			return this;
 		}
 
@@ -106,12 +106,19 @@ public record EngineFuelType(HolderSet<Fluid> fluids, float speed, float efficie
     }
 
     @Override
+    public int hashCode() {
+        return fluids().hashCode() + exhaust().hashCode() + Float.hashCode(speed()) + Float.hashCode(efficiency()) + Float.hashCode(torque());
+    }
+
+    @Override
     public @NotNull String toString() {
         return "EngineFuelType[fluids=["
                 + fluids.stream()
                 .map(h -> h.unwrapKey().map(k -> k.location().toString()).orElse("unregistered"))
                 .reduce((a, b) -> a + ", " + b).orElse("")
-                + "], speed=" + this.speed
+                + "], exhaust="
+                + BuiltInRegistries.FLUID.getKey(this.exhaust)
+                + ", speed=" + this.speed
                 + ", efficiency=" + this.efficiency
                 + ", torque=" + this.torque + "]";
     }
