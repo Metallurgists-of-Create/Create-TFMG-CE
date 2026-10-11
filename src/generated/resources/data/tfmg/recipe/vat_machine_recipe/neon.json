@@ -2,9 +2,9 @@
   "type": "tfmg:vat_machine_recipe",
   "ingredients": [
     {
-      "type": "neoforge:single",
+      "type": "neoforge:tag",
       "amount": 1000,
-      "fluid": "tfmg:air"
+      "tag": "c:air"
     }
   ],
   "machines": [

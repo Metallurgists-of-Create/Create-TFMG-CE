@@ -6,6 +6,7 @@ import com.drmangotea.tfmg.base.TFMGRegistrate;
 import com.drmangotea.tfmg.base.TFMGTiers;
 import com.drmangotea.tfmg.base.data_storage.CylinderFuels;
 import com.drmangotea.tfmg.base.debug.DebugCinderBlockItem;
+import com.drmangotea.tfmg.base.dyes.DyedItemList;
 import com.drmangotea.tfmg.content.decoration.kinetics.gearbox.SteelVerticalGearboxItem;
 import com.drmangotea.tfmg.content.decoration.pipes.TFMGPipes;
 import com.drmangotea.tfmg.content.electricity.configuration_wrench.ElectriciansWrenchItem;
@@ -13,8 +14,8 @@ import com.drmangotea.tfmg.content.electricity.measurement.MultimeterItem;
 import com.drmangotea.tfmg.content.electricity.network.transformer.small.ElectromagneticCoilItem;
 import com.drmangotea.tfmg.content.electricity.utilities.polarizer.MagnetItem;
 import com.drmangotea.tfmg.content.electricity.utilities.resistor.ResistorItem;
-import com.drmangotea.tfmg.content.engines.FluidContainingItem;
 import com.drmangotea.tfmg.content.engines.fuels.EngineFuelType;
+import com.drmangotea.tfmg.content.items.FluidContainingItem;
 import com.drmangotea.tfmg.content.items.ScrewdriverItem;
 import com.drmangotea.tfmg.content.items.weapons.LeadAxeItem;
 import com.drmangotea.tfmg.content.items.weapons.LeadSwordItem;
@@ -47,6 +48,7 @@ import com.tterrag.registrate.util.nullness.NonNullBiConsumer;
 import net.minecraft.core.Holder;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
+import net.minecraft.data.recipes.ShapelessRecipeBuilder;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
@@ -54,9 +56,10 @@ import net.minecraft.world.item.*;
 import net.minecraft.world.level.block.Blocks;
 import net.neoforged.neoforge.common.Tags;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
-import static com.drmangotea.tfmg.base.TFMGBuilderTransformers.COLORS;
 import static com.drmangotea.tfmg.content.items.weapons.explosives.thermite_grenades.ThermiteGrenade.ChemicalColor.*;
 import static com.simibubi.create.AllTags.AllItemTags.CREATE_INGOTS;
 import static com.simibubi.create.AllTags.AllItemTags.PLATES;
@@ -104,7 +107,7 @@ public class TFMGItems {
     public static final ItemEntry<Item>
             REBAR = REGISTRATE.item("rebar", Item::new)
                     .tag(Items.RODS_STEEL.tag, Tags.Items.RODS)
-                    .recipe((c, p) -> p.stonecutting(DataIngredient.tag(CommonMetal.STEEL.ingots), RecipeCategory.BUILDING_BLOCKS, c, 4))
+                    .recipe((c, p) -> p.stonecutting(DataIngredient.tag(CommonMetal.STEEL.ingots), RecipeCategory.BUILDING_BLOCKS, c, 2))
                     .register(),
             SYNTHETIC_STRING = REGISTRATE.item("synthetic_string", Item::new)
                     .tag(Tags.Items.STRINGS)
@@ -135,13 +138,13 @@ public class TFMGItems {
             ASPHALT_MIXTURE = REGISTRATE.item("asphalt_mixture", Item::new).register(),
             MAGNETIC_ALLOY_INGOT = REGISTRATE.item("magnetic_alloy_ingot", Item::new).register(),
             MAGNETIC_ALLOY_SHEET = REGISTRATE.item("magnetic_alloy_sheet", Item::new).register(),
-            BAUXITE_POWDER = REGISTRATE.item("bauxite_powder", Item::new).register(),
+            BAUXITE_POWDER = REGISTRATE.item("bauxite_powder", Item::new).tag(Items.DUSTS_BAUXITE.tag).register(),
             EMPTY_CIRCUIT_BOARD = REGISTRATE.item("empty_circuit_board", Item::new).register(),
             COATED_CIRCUIT_BOARD = REGISTRATE.item("coated_circuit_board", Item::new).register(),
             ETCHED_CIRCUIT_BOARD = REGISTRATE.item("etched_circuit_board", Item::new).register(),
             CIRCUIT_BOARD = REGISTRATE.item("circuit_board", Item::new).register(),
-            TRANSISTOR = REGISTRATE.item("transistor_item", Item::new).lang("Transistor").register(),
-            CAPACITOR = REGISTRATE.item("capacitor_item", Item::new).lang("Capacitor").register(),
+            TRANSISTOR = REGISTRATE.item("transistor", Item::new).register(),
+            CAPACITOR = REGISTRATE.item("capacitor", Item::new).register(),
             COPPER_SULFATE = REGISTRATE.item("copper_sulfate", Item::new).register(),
             LITHIUM_CHARGE = REGISTRATE.item("lithium_charge", Item::new).register(),
             TURBO = REGISTRATE.item("turbo", Item::new).register(),
@@ -255,10 +258,9 @@ public class TFMGItems {
                     .properties(p -> p.stacksTo(1))
                     .register();
 
-    public static final ItemEntry<MultimeterItem> MULTIMETER = REGISTRATE.item("multimeter", MultimeterItem::new)
-            .register();
-
-    public static final Map<String, ItemEntry<MultimeterItem>> MULTIMETERS = multimeters();
+    public static final ItemEntry<MultimeterItem> MULTIMETER =
+		REGISTRATE.item("multimeter", p -> new MultimeterItem(p, 0xCFD300)) //todo: make a more gold-ish color
+			.tag(Items.MULTIMETERS.tag, Items.CURIOS_BELT.tag).register();
 
     public static final ItemEntry<SequencedAssemblyItem>
             UNFINISHED_POTENTIOMETER = sequencedIngredient("unfinished_potentiometer", "block/potentiometer/unfinished"),
@@ -319,11 +321,11 @@ public class TFMGItems {
 
 
     public static final ItemEntry<FluidContainingItem>
-            OIL_CAN = REGISTRATE.item("oil_can", p -> new FluidContainingItem(p, TFMGFluids.LUBRICATION_OIL))
+            OIL_CAN = REGISTRATE.item("oil_can", p -> new FluidContainingItem(p, (s) -> s.is(TFMGTags.Fluids.LUBRICATION_OIL.tag)))
             .properties(p -> p.stacksTo(1))
             .model((c, p) -> p.withExistingParent(c.getName(), TFMG.asResource("item/oil_can_model")))
             .register(),
-            COOLING_FLUID_BOTTLE = REGISTRATE.item("cooling_fluid_bottle", p -> new FluidContainingItem(p, TFMGFluids.COOLING_FLUID))
+            COOLING_FLUID_BOTTLE = REGISTRATE.item("cooling_fluid_bottle", p -> new FluidContainingItem(p, (s) -> s.is(TFMGTags.Fluids.COOLING_FLUID.tag)))
                     .properties(p -> p.stacksTo(1))
                     .register();
 	
@@ -338,6 +340,23 @@ public class TFMGItems {
             ZINC_GRENADE = thermiteGrenade("zinc_grenade", GREEN);
     public static final ItemEntry<ThermiteGrenadeItem>
             COPPER_GRENADE = thermiteGrenade("copper_grenade", BLUE);
+
+    //Dyed Items
+    public static final DyedItemList<MultimeterItem> MULTIMETERS = new DyedItemList<>(colour -> {
+        String colourName = colour.getSerializedName();
+        return REGISTRATE.item(colourName + "_multimeter", p -> new MultimeterItem(p, colour.getTextureDiffuseColor()))
+                .tag(Items.MULTIMETERS.tag, Items.CURIOS_BELT.tag)
+                .onRegister(item -> ItemDescription.referKey(item, () -> MULTIMETER))
+                .model((ctx, prov) -> prov.generated(ctx::get, TFMG.asResource("item/multimeter/" + colourName)))
+                .recipe((c, p) -> {
+                    ShapelessRecipeBuilder.shapeless(RecipeCategory.TOOLS, c.get())
+                            .requires(colour.getTag())
+                            .requires(Items.MULTIMETERS.tag)
+                            .unlockedBy("has_multimeter", RegistrateRecipeProvider.has(Items.MULTIMETERS.tag))
+                            .save(p, TFMG.asResource("crafting/materials/" + c.getName() + "_from_other_multimeter"));
+                })
+                .register();
+    });
 
     /// /////////////////////////
 
@@ -362,21 +381,21 @@ public class TFMGItems {
 
         list.add(REGISTRATE.item(material + "_sword", p -> new SwordItem(tier, p))
                 .properties(p -> p.attributes(SwordItem.createAttributes(tier, 2, -2.4F)))
-                .tag(ItemTags.SWORDS)
+                .tag(ItemTags.SWORDS, Tags.Items.MELEE_WEAPON_TOOLS)
                 .model((ctx, prov) -> prov
                         .withExistingParent(material + "_sword", "minecraft:item/handheld")
                         .texture("layer0", "tfmg:item/" + material + "_sword"))
                 .register());
         list.add(REGISTRATE.item(material + "_pickaxe", p -> new PickaxeItem(tier, p))
                 .properties(p -> p.attributes(PickaxeItem.createAttributes(tier, 1, 1)))
-                .tag(ItemTags.PICKAXES)
+                .tag(ItemTags.PICKAXES, ItemTags.CLUSTER_MAX_HARVESTABLES, Tags.Items.MINING_TOOL_TOOLS)
                 .model((ctx, prov) -> prov
                         .withExistingParent(material + "_pickaxe", "minecraft:item/handheld")
                         .texture("layer0", "tfmg:item/" + material + "_pickaxe"))
                 .register());
         list.add(REGISTRATE.item(material + "_axe", p -> new AxeItem(tier, p))
                 .properties(p -> p.attributes(AxeItem.createAttributes(tier, 6.0F, -3.2F)))
-                .tag(ItemTags.AXES)
+                .tag(ItemTags.AXES, Tags.Items.MELEE_WEAPON_TOOLS)
                 .model((ctx, prov) -> prov
                         .withExistingParent(material + "_axe", "minecraft:item/handheld")
                         .texture("layer0", "tfmg:item/" + material + "_axe"))
@@ -411,21 +430,21 @@ public class TFMGItems {
         List<ItemEntry<?>> list = new ArrayList<>();
         list.add(REGISTRATE.item("lead_sword", p -> new LeadSwordItem(TFMGTiers.LEAD, p))
                 .properties(p -> p.attributes(SwordItem.createAttributes(TFMGTiers.LEAD, 2, -2.4F)))
-                .tag(ItemTags.SWORDS)
+                .tag(ItemTags.SWORDS, Tags.Items.MELEE_WEAPON_TOOLS)
                 .model((ctx, prov) -> prov
                         .withExistingParent("lead_sword", "minecraft:item/handheld")
                         .texture("layer0", "tfmg:item/lead_sword"))
                 .register());
         list.add(REGISTRATE.item("lead_pickaxe", p -> new PickaxeItem(TFMGTiers.LEAD, p))
                 .properties(p -> p.attributes(AxeItem.createAttributes(TFMGTiers.LEAD, 1,1)))
-                .tag(ItemTags.PICKAXES)
+                .tag(ItemTags.PICKAXES, ItemTags.CLUSTER_MAX_HARVESTABLES, Tags.Items.MINING_TOOL_TOOLS)
                 .model((ctx, prov) -> prov
                         .withExistingParent("lead_pickaxe", "minecraft:item/handheld")
                         .texture("layer0", "tfmg:item/lead_pickaxe"))
                 .register());
         list.add(REGISTRATE.item("lead_axe", p -> new LeadAxeItem(TFMGTiers.LEAD, p))
                 .properties(p -> p.attributes(AxeItem.createAttributes(TFMGTiers.LEAD, 6.0F, -3.2F)))
-                .tag(ItemTags.AXES)
+                .tag(ItemTags.AXES, Tags.Items.MELEE_WEAPON_TOOLS)
                 .model((ctx, prov) -> prov
                         .withExistingParent("lead_axe", "minecraft:item/handheld")
                         .texture("layer0", "tfmg:item/lead_axe"))
@@ -466,19 +485,6 @@ public class TFMGItems {
     public static ItemEntry<SequencedAssemblyItem> assemblyItem(String name) {
         return REGISTRATE.item(name, SequencedAssemblyItem::new)
                 .register();
-    }
-
-    public static Map<String, ItemEntry<MultimeterItem>> multimeters() {
-        Map<String, ItemEntry<MultimeterItem>> map = new HashMap<>();
-
-        for (String color : COLORS) {
-            ItemEntry<MultimeterItem> multimeter = REGISTRATE.item(color + "_multimeter", MultimeterItem::new)
-                    .onRegister(item -> ItemDescription.referKey(item, () -> MULTIMETER))
-                    .register();
-            map.put(color, multimeter);
-        }
-
-        return map;
     }
 
     public static ItemBuilder<SpoolItem, CreateRegistrate> spoolItem(String name, int barColor) {

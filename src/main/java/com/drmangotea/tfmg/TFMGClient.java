@@ -5,6 +5,7 @@ import com.drmangotea.tfmg.content.items.weapons.advanced_potato_cannon.Advanced
 import com.drmangotea.tfmg.content.items.weapons.flamethrover.FlamethrowerRenderHandler;
 import com.drmangotea.tfmg.content.items.weapons.quad_potato_cannon.QuadPotatoCannonRenderHandler;
 import com.drmangotea.tfmg.content.machinery.vat.base.registry.operations.VatCategoryEvent;
+import com.drmangotea.tfmg.integration.curios.MultimeterCurios;
 import com.drmangotea.tfmg.ponder.TFMGPonderPlugin;
 import com.drmangotea.tfmg.registry.TFMGDataComponents;
 import com.drmangotea.tfmg.registry.TFMGItems;
@@ -46,6 +47,7 @@ public class TFMGClient {
         PonderIndex.addPlugin(new TFMGPonderPlugin());
         registerModelPredicates();
         ModLoader.postEvent(new VatCategoryEvent());
+        MultimeterCurios.registerRenderer();
     }
 
     public static void registerModelPredicates() {

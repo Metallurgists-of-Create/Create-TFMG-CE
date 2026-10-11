@@ -11,6 +11,7 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.fluids.FluidStack;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -94,5 +95,16 @@ public record EngineFuelType(HolderSet<Fluid> fluids, float speed, float efficie
         public EngineFuelType build() {
             return new EngineFuelType(this.fluids, speed, efficiency, torque);
         }
+    }
+
+    @Override
+    public @NotNull String toString() {
+        return "EngineFuelType[fluids=["
+                + fluids.stream()
+                .map(h -> h.unwrapKey().map(k -> k.location().toString()).orElse("unregistered"))
+                .reduce((a, b) -> a + ", " + b).orElse("")
+                + "], speed=" + this.speed
+                + ", efficiency=" + this.efficiency
+                + ", torque=" + this.torque + "]";
     }
 }

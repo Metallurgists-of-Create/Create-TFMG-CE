@@ -3,16 +3,16 @@
   "heat_level": 2,
   "ingredients": [
     {
-      "item": "tfmg:sulfur_dust"
+      "tag": "c:dusts/sulfur"
     },
     {
-      "type": "neoforge:single",
+      "type": "neoforge:tag",
       "amount": 250,
-      "fluid": "tfmg:heavy_oil"
+      "tag": "c:heavy_oil"
     }
   ],
   "machines": [
-    "tfmg:mixing"
+    "tfmg:mixer"
   ],
   "min_size": 1,
   "processing_time": 40,

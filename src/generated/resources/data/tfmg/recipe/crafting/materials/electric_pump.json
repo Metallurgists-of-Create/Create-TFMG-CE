@@ -15,7 +15,7 @@
       "item": "tfmg:steel_mechanical_pump"
     },
     "Q": {
-      "item": "tfmg:capacitor_item"
+      "item": "tfmg:capacitor"
     },
     "W": {
       "tag": "c:wires/copper"

@@ -7,16 +7,16 @@
   "heat_level": 2,
   "ingredients": [
     {
-      "item": "tfmg:bauxite_powder"
+      "tag": "c:dusts/bauxite"
     },
     {
-      "item": "tfmg:bauxite_powder"
+      "tag": "c:dusts/bauxite"
     },
     {
-      "item": "tfmg:bauxite_powder"
+      "tag": "c:dusts/bauxite"
     },
     {
-      "item": "tfmg:bauxite_powder"
+      "tag": "c:dusts/bauxite"
     }
   ],
   "machines": [

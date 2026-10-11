@@ -2,12 +2,15 @@ package com.drmangotea.tfmg.worldgen;
 
 import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.content.world.placement_modifier.BooleanConfigPlacementModifier;
+import com.drmangotea.tfmg.content.world.placement_modifier.WorldBottomModifier;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.levelgen.VerticalAnchor;
+import net.minecraft.world.level.levelgen.blockpredicates.BlockPredicate;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.level.levelgen.placement.*;
 
@@ -80,7 +83,8 @@ public class TFMGPlacedFeatures {
         return List.of(
                 frequency,
                 InSquarePlacement.spread(),
-                HeightRangePlacement.uniform(VerticalAnchor.absolute(-64), VerticalAnchor.absolute(-64)),
+                BlockPredicateFilter.forPredicate(BlockPredicate.matchesBlocks(Blocks.BEDROCK)),
+                new WorldBottomModifier(),
                 configPlacementModifier
         );
     }

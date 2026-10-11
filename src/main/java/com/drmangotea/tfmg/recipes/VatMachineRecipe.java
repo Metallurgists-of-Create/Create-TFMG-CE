@@ -124,7 +124,7 @@ public class VatMachineRecipe extends ProcessingRecipe<RecipeInput, VatRecipePar
         }
 
         public VatMachineRecipe.Builder<R> mixing() {
-            params.machines.add(TFMGVatOperations.MIXING.get());
+            params.machines.add(TFMGVatOperations.MIXER.get());
             return this;
         }
 
@@ -135,7 +135,7 @@ public class VatMachineRecipe extends ProcessingRecipe<RecipeInput, VatRecipePar
         }
 
         public VatMachineRecipe.Builder<R> freezing() {
-            params.machines.add(TFMGVatOperations.FREEZING.get());
+            params.machines.add(TFMGVatOperations.FREEZER.get());
             return this;
         }
 

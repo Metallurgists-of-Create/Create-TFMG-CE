@@ -63,12 +63,17 @@ public class Spark extends ThrowableProjectile {
 
     }
 
-    public void burst(double pX, double pY, double pZ, float pVelocity, float pInaccuracy) {
-        Vec3 vec3 = (new Vec3(pX, pY, pZ)).normalize().add(this.random.triangle(0.0D, 0.0172275D * (double) pInaccuracy), 0, this.random.triangle(0.0D, 0.0172275D * (double) pInaccuracy)).scale((double) pVelocity);
+    public void burst(Vec3 look, float pVelocity, double pInaccuracy) {
+        Vec3 vec3 = look.normalize()
+			.add(
+				this.random.triangle(0.0D, 0.0172275D * pInaccuracy),
+				0,
+				this.random.triangle(0.0D, 0.0172275D * pInaccuracy)
+			).scale(pVelocity);
         this.setDeltaMovement(vec3);
         double d0 = vec3.horizontalDistance();
-        this.setYRot((float) (Mth.atan2(vec3.x, vec3.z) * (double) (180F / (float) Math.PI)));
-        this.setXRot((float) (Mth.atan2(vec3.y, d0) * (double) (180F / (float) Math.PI)));
+        this.setYRot((float) Mth.atan2(vec3.x, vec3.z) * Mth.RAD_TO_DEG);
+        this.setXRot((float) Mth.atan2(vec3.y, d0) * Mth.RAD_TO_DEG);
         this.yRotO = this.getYRot();
         this.xRotO = this.getXRot();
     }

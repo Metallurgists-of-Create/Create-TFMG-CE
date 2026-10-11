@@ -1,5 +1,6 @@
 package com.drmangotea.tfmg.content.machinery.misc.winding_machine;
 
+import com.drmangotea.tfmg.base.annotation.NothingNullByDefault;
 import com.drmangotea.tfmg.base.lang.TFMGLang;
 import com.drmangotea.tfmg.base.lang.TFMGTexts;
 import com.drmangotea.tfmg.recipes.WindingRecipe;
@@ -15,7 +16,6 @@ import com.simibubi.create.foundation.item.SmartInventory;
 import net.createmod.catnip.animation.LerpedFloat;
 import net.createmod.catnip.math.VecHelper;
 import net.minecraft.ChatFormatting;
-import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -413,8 +413,7 @@ public class WindingMachineBlockEntity extends KineticBlockEntity implements IHa
         }
     }
 
-    @MethodsReturnNonnullByDefault
-    @ParametersAreNonnullByDefault
+    @NothingNullByDefault
     private record SpoolSlotHandler(WindingMachineBlockEntity be) implements IItemHandlerModifiable {
 
         @Override

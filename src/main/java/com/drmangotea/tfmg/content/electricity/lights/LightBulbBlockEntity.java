@@ -16,12 +16,8 @@ import static com.drmangotea.tfmg.content.electricity.lights.LightBulbBlock.LIGH
 
 public class LightBulbBlockEntity extends ElectricBlockEntity {
     public LerpedFloat glow = LerpedFloat.linear();
-
-    boolean signalChanged;
-
-    boolean hasSignal;
-
-    public DyeColor color= DyeColor.WHITE;
+	public DyeColor color = DyeColor.WHITE;
+	int signal = 0;
 
     public LightBulbBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
@@ -30,25 +26,19 @@ public class LightBulbBlockEntity extends ElectricBlockEntity {
     @Override
     public void tick() {
         super.tick();
-        if (!hasSignal&&canWork()) {
-            glow.chase(getPowerUsage()*2.5, 0.4, LerpedFloat.Chaser.EXP);
-            glow.tickChaser();
-            if (Math.min(getData().getVoltage() / 10, 15) != getBlockState().getValue(LIGHT))
-                level.setBlock(getBlockPos(), getBlockState().setValue(LIGHT, Math.min(getData().getVoltage() / 10, 15)), 2);
-        } else {
-            if (getBlockState().getValue(LIGHT)!=0)
-                level.setBlock(getBlockPos(), getBlockState().setValue(LIGHT, 0), 2);
-            glow.chase(0, 0.4, LerpedFloat.Chaser.EXP);
-            glow.tickChaser();
-
-        }
-        if (signalChanged) {
-            signalChanged = false;
-            analogSignalChanged(level.getBestNeighborSignal(worldPosition));
-        }
+		if (level == null) return;
+		
+		float signalEffect = (15 - signal)/15f;
+		float glowing = canWork() ? getPowerUsage()*2.5f*signalEffect : 0f;
+		int light = canWork() ? (int) Math.clamp(0.1f * getData().getVoltage() * signalEffect, 0, 15) : 0;
+		if (light != getBlockState().getValue(LIGHT))
+			level.setBlock(getBlockPos(), getBlockState().setValue(LIGHT, light), 2);
+		glow.chase(glowing, 0.4, LerpedFloat.Chaser.EXP);
+		glow.tickChaser();
     }
+	
     public void setColor(DyeColor color) {
-        if(color == DyeColor.BLACK||color == DyeColor.LIGHT_GRAY|| color == DyeColor.GRAY)
+        if (color == DyeColor.BLACK || color == DyeColor.LIGHT_GRAY || color == DyeColor.GRAY)
             return;
 
         this.color = color;
@@ -78,12 +68,12 @@ public class LightBulbBlockEntity extends ElectricBlockEntity {
     }
 
     public void neighbourChanged() {
-        if (!hasLevel())
-            return;
-        boolean powered = level.getBestNeighborSignal(worldPosition)>0;
-        if (powered != hasSignal)
-            signalChanged = true;
+        if (level == null) return;
+        int power = level.getBestNeighborSignal(worldPosition);
+        if (power != signal)
+            signal = power;
     }
+	
     @Override
     public void lazyTick() {
         super.lazyTick();
@@ -103,12 +93,11 @@ public class LightBulbBlockEntity extends ElectricBlockEntity {
     }
 
     protected void analogSignalChanged(int newSignal) {
-            hasSignal = newSignal > 0;
+		signal = newSignal;
     }
 
     @Override
     public boolean hasElectricitySlot(Direction direction) {
         return direction == getBlockState().getValue(FACING).getOpposite();
     }
-
 }

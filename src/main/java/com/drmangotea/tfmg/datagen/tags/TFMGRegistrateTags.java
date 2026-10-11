@@ -20,10 +20,8 @@ public class TFMGRegistrateTags {
     public static void addGenerators() {
         REGISTRATE.addDataGenerator(ProviderType.BLOCK_TAGS, TFMGRegistrateTags::genBlockTags);
         REGISTRATE.addDataGenerator(ProviderType.ITEM_TAGS, TFMGRegistrateTags::genItemTags);
-        //REGISTRATE.addDataGenerator(TFMGDatagen.ENGINE_FUEL_TAGS, TFMGRegistrateTags::genEngineFuelTags);
-       // TFMG.REGISTRATE.addDataGenerator(ProviderType.FLUID_TAGS, TFMGRegistrateTags::genFluidTags);
-       // TFMG.REGISTRATE.addDataGenerator(ProviderType.ENTITY_TAGS, TFMGRegistrateTags::genEntityTags);
     }
+
     private static void genItemTags(RegistrateTagsProvider<Item> provIn) {
         TagGen.CreateTagsProvider<Item> prov = new TagGen.CreateTagsProvider<>(provIn, Item::builtInRegistryHolder);
 
@@ -31,15 +29,10 @@ public class TFMGRegistrateTags {
                 .add(Items.STICK);
 
         prov.tag(TFMGTags.Items.ENGINE_CYLINDER.tag)
-                .add(TFMGItems.DIESEL_ENGINE_CYLINDER.get(), TFMGItems.SIMPLE_ENGINE_CYLINDER.get(), TFMGItems.ENGINE_CYLINDER.get(), TFMGItems.AUTOGAS_ENGINE_CYLINDER.get())
-                .addOptional(TFMG.asResource("chemica:biodiesel_engine_cylinder"))
-                .addOptional(TFMG.asResource("chemica:ethanol_engine_cylinder"))
-                .addOptional(TFMG.asResource("chemica:high_cetane_engine_cylinder"))
-                .addOptional(TFMG.asResource("chemica:high_octane_engine_cylinder"));
+                .add(TFMGItems.DIESEL_ENGINE_CYLINDER.get(), TFMGItems.SIMPLE_ENGINE_CYLINDER.get(), TFMGItems.ENGINE_CYLINDER.get(), TFMGItems.AUTOGAS_ENGINE_CYLINDER.get());
 
         prov.tag(TFMGTags.Items.ENGINE_TURBINE.tag)
-                .add(TFMGItems.TURBINE_BLADE.get())
-                .addOptional(TFMG.asResource("chemica:hydrogen_turbine_blade"));
+                .add(TFMGItems.TURBINE_BLADE.get());
     }
 
     private static void genBlockTags(RegistrateTagsProvider<Block> provIn) {

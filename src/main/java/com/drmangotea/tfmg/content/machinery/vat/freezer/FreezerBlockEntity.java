@@ -52,7 +52,7 @@ public class FreezerBlockEntity extends ElectricBlockEntity implements IVatMachi
 
     @Override
     public VatOperation getOperationId() {
-        return TFMGVatOperations.FREEZING.get();
+        return TFMGVatOperations.FREEZER.get();
     }
 
     @Override

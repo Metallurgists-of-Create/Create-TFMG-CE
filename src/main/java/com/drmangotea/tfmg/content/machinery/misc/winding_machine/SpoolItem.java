@@ -46,6 +46,13 @@ public class SpoolItem extends Item {
         this.cableTypeKey = cableTypeKey;
     }
 
+    public static boolean isDifferent(ItemStack using, ItemStack inserted) {
+        if (using.is(inserted.getItem())) {
+            return !using.getOrDefault(TFMGDataComponents.SPOOL_AMOUNT, 0).equals(inserted.getOrDefault(TFMGDataComponents.SPOOL_AMOUNT, 0));
+        }
+        return true;
+    }
+
     @Override @ParametersAreNonnullByDefault
     public void onCraftedBy(ItemStack stack, Level level, Player player) {
         stack.set(TFMGDataComponents.SPOOL_AMOUNT, 1000);

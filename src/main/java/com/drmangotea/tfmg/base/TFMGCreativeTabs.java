@@ -55,7 +55,6 @@ public class TFMGCreativeTabs {
                     continue;
                 event.accept(item.get(), CreativeModeTab.TabVisibility.PARENT_TAB_ONLY);
             }
-
         }
 
         if (event.getTab() == TFMG_DECORATION.get()) {

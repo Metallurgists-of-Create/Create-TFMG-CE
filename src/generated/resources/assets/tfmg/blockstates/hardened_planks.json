@@ -1,7 +1,18 @@
 {
   "variants": {
-    "": {
-      "model": "tfmg:block/hardened_planks"
-    }
+    "": [
+      {
+        "model": "tfmg:block/hardened_planks"
+      },
+      {
+        "model": "tfmg:block/hardened_planks1"
+      },
+      {
+        "model": "tfmg:block/hardened_planks2"
+      },
+      {
+        "model": "tfmg:block/hardened_planks3"
+      }
+    ]
   }
 }

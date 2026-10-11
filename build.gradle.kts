@@ -2,12 +2,12 @@ plugins {
     id("java-library")
     id("maven-publish")
     id("idea")
-    id("net.neoforged.moddev") version "2.0.89"
+    id("net.neoforged.moddev") version "2.0.148"
 }
 
-val baseArchivesName = project.property("mod_id").toString()
+val modID : String = project.property("mod_id").toString()
 base {
-    archivesName.set(project.property("mod_id").toString())
+    archivesName.set(modID)
 }
 val ci = System.getenv("CI") != null && System.getenv("CI").toBoolean()
 val release = System.getenv("RELEASE") != null && System.getenv("RELEASE").toBoolean()
@@ -32,7 +32,7 @@ tasks.withType<Javadoc>().configureEach {
     (options as StandardJavadocDocletOptions).addStringOption("Xdoclint:none", "-quiet")
 }
 
-val localRuntime: Configuration by configurations.creating
+val localRuntime: Configuration = configurations.create("localRuntime")
 configurations.runtimeClasspath {
     extendsFrom(localRuntime)
 }
@@ -50,24 +50,24 @@ neoForge {
             client()
 
             // Comma-separated list of namespaces to load gametests from. Empty = all namespaces.
-            systemProperty("neoforge.enabledGameTestNamespaces", project.property("mod_id").toString())
+            systemProperty("neoforge.enabledGameTestNamespaces", modID)
         }
 
         register("server") {
             server()
             programArgument("--nogui")
-            systemProperty("neoforge.enabledGameTestNamespaces", project.property("mod_id").toString())
+            systemProperty("neoforge.enabledGameTestNamespaces", modID)
         }
 
         register("gameTestServer") {
             type = "gameTestServer"
-            systemProperty("neoforge.enabledGameTestNamespaces", project.property("mod_id").toString())
+            systemProperty("neoforge.enabledGameTestNamespaces", modID)
         }
 
         register("data") {
             data()
             programArguments.addAll(
-                "--mod", project.property("mod_id").toString(),
+                "--mod", modID,
                 "--all",
                 "--output", file("src/generated/resources/").absolutePath,
                 "--existing", file("src/main/resources/").absolutePath
@@ -81,7 +81,7 @@ neoForge {
     }
 
     mods {
-        create("${property("mod_id")}") {
+        create(modID) {
             sourceSet(sourceSets.main.get())
         }
     }
@@ -104,27 +104,20 @@ repositories {
     maven("https://mvn.devos.one/snapshots") // Registrate
     maven("https://raw.githubusercontent.com/Fuzss/modresources/main/maven/") // ForgeConfigAPIPort
     maven("https://maven.blamejared.com") // JEI, Vazkii's Mods
-    maven("https://maven.ryanhcode.dev/releases")
+    maven("https://maven.ryanhcode.dev/releases") //Sable Companion
     maven("https://api.modrinth.com/maven")
     maven("https://dl.cloudsmith.io/public/wolfieboy09/liquid-fuel-reburned/maven/")
-
+    maven {
+        name = "Krystals Releases Maven"
+        url = uri("https://krystalsmaven.oreostack.uk/releases") // Rutile
+    }
     maven {
         name = "DevAuth Maven"
         url = uri("https://pkgs.dev.azure.com/djtheredstoner/DevAuth/_packaging/public/maven/v1")
     }
-
-    // Needed because CLF Reburned is making Gradle complain
-    maven("https://maven.latvian.dev/releases") {
-        content {
-            includeGroup("dev.latvian.mods")
-            includeGroup("dev.latvian.apps")
-        }
-    }
-
-    maven("https://jitpack.io") {
-        content {
-            includeGroup("com.github.rtyley")
-        }
+    maven {
+        name = "Illusive Soulworks maven" //Curios
+        url = uri("https://maven.theillusivec4.top/")
     }
 }
 
@@ -139,21 +132,26 @@ dependencies {
     compileOnly("dev.engine-room.flywheel:flywheel-neoforge-api-${property("minecraft_version")}:${property("flywheel_version")}")
     runtimeOnly("dev.engine-room.flywheel:flywheel-neoforge-${property("minecraft_version")}:${property("flywheel_version")}")
 
-    implementation("maven.modrinth:createaddition:neoforge-1.21.1-1.6.0")
-    implementation("maven.modrinth:spark:1.10.124-neoforge-1.21.1")
-
-    implementation("mezz.jei:jei-${property("jei_minecraft_version")}-neoforge:${property("jei_version")}")
+    implementation("mezz.jei:jei-${property("minecraft_version")}-neoforge:${property("jei_version")}")
     implementation("com.tterrag.registrate:Registrate:${property("registrate_version")}")
 
-    compileOnly("dev.wolfieboy09.createliquidfuel:createliquidfuel:${property("minecraft_version")}-${property("clf_reburned_version")}") { isTransitive = false }
-    runtimeOnly("dev.wolfieboy09.createliquidfuel:createliquidfuel:${property("minecraft_version")}-${property("clf_reburned_version")}") { isTransitive = false }
+    implementation("dev.wolfieboy09.createliquidfuel:createliquidfuel:${property("minecraft_version")}-${property("clf_reburned_version")}") { isTransitive = false }
+    implementation("dev.metallurgists:rutile:${property("minecraft_version")}-${property("rutile_version")}") { isTransitive = false }
 
+    compileOnly("top.theillusivec4.curios:curios-neoforge:${property("curios_version")}:api")
+    runtimeOnly("top.theillusivec4.curios:curios-neoforge:${property("curios_version")}")
+
+    implementation("maven.modrinth:create-big-cannons:bOiDu0LS") //Create: Big Cannons (CBC)
+    runtimeOnly("maven.modrinth:rpl:hZ6B2Z0x") //RPL, so CBC can run
+    
     runtimeOnly("me.djtheredstoner:DevAuth-neoforge:1.2.1")
+    runtimeOnly("maven.modrinth:createaddition:neoforge-1.21.1-1.6.0")
+    runtimeOnly("maven.modrinth:spark:1.10.124-neoforge-1.21.1")
     runtimeOnly("maven.modrinth:lhGA9TYQ:1IiqEQGl") //architectury, for CPG
-    runtimeOnly("maven.modrinth:power-grid:ip4gJrgx") //Create: Power Grid 0.6.1
+    runtimeOnly("maven.modrinth:power-grid:jCkPHjmP") //Create: Power Grid 0.6.2
 }
 
-val generateModMetadata by tasks.registering(ProcessResources::class) {
+val generateModMetadata = tasks.register<ProcessResources>("generateModMetadata") {
     description = "You want a description IDEA? You get one! Leave me alone!!!"
     val replaceProperties = mapOf(
         "minecraft_version" to project.findProperty("minecraft_version") as String,
@@ -167,7 +165,8 @@ val generateModMetadata by tasks.registering(ProcessResources::class) {
         "mod_version" to project.findProperty("mod_version") as String,
         "mod_authors" to project.findProperty("mod_authors") as String,
         "mod_credits" to project.findProperty("mod_credits") as String,
-        "mod_description" to project.findProperty("mod_description") as String
+        "mod_description" to project.findProperty("mod_description") as String,
+        "jei_version" to project.findProperty("jei_version") as String,
     )
     inputs.properties(replaceProperties)
     expand(replaceProperties)

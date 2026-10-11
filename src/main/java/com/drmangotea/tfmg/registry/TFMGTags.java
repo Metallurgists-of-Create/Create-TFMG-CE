@@ -77,6 +77,7 @@ public class TFMGTags {
         DUSTS_IRON(COMMON, "dusts/iron"),
         DUSTS_SALTPETER(COMMON, "dusts/saltpeter"),
         DUSTS_SULFUR(COMMON, "dusts/sulfur"),
+        DUSTS_BAUXITE(COMMON, "dusts/bauxite"),
         FLUX,
         INGOTS_CAST_IRON(COMMON, "ingots/cast_iron"),
         INGOTS_LITHIUM(COMMON, "ingots/lithium"),
@@ -85,6 +86,8 @@ public class TFMGTags {
         INGOTS_SILICON(COMMON, "ingots/silicon"),
         NUGGETS_CAST_IRON(COMMON, "nuggets/cast_iron"),
         NUGGETS_LITHIUM(COMMON, "nuggets/lithium"),
+        ORES_LEAD(COMMON, "ores/lead"),
+        ORES_NICKEL(COMMON, "ores/nickel"),
         ORES_LITHIUM(COMMON, "ores/lithium"),
         PLATES_CAST_IRON(COMMON, "plates/cast_iron"),
         RAW_LITHIUM(COMMON, "raw_materials/lithium"),
@@ -100,7 +103,10 @@ public class TFMGTags {
         WIRES_CONSTANTAN(COMMON, "wires/constantan"),
         WIRES_COPPER(COMMON, "wires/copper"),
         ENGINE_TURBINE(MOD, "engine/turbine"),
-        ENGINE_CYLINDER(MOD, "engine/cylinder")
+        ENGINE_CYLINDER(MOD, "engine/cylinder"),
+        MULTIMETERS,
+        CAUTION_BLOCKS,
+		CURIOS_BELT("curios","belt")
         ;
 
         public final TagKey<Item> tag;
@@ -111,10 +117,14 @@ public class TFMGTags {
         Items(NameSpace namespace) {
             this(namespace, null);
         }
-        Items(NameSpace namespace, String path) {
-            ResourceLocation id = ResourceLocation.fromNamespaceAndPath(namespace.id, path == null ? TFMGLang.asId(name()) : path);
-            this.tag = ItemTags.create(id);
-        }
+		Items(NameSpace namespace, String path) {
+			ResourceLocation id = ResourceLocation.fromNamespaceAndPath(namespace.id, path == null ? TFMGLang.asId(name()) : path);
+			this.tag = ItemTags.create(id);
+		}
+		Items(String namespace, String path) {
+			ResourceLocation id = ResourceLocation.fromNamespaceAndPath(namespace, path == null ? TFMGLang.asId(name()) : path);
+			this.tag = ItemTags.create(id);
+		}
     }
 
     public enum Fluids {
@@ -142,13 +152,15 @@ public class TFMGTags {
         CRUDE_OIL(COMMON),
         MOLTEN_STEEL(COMMON),
         FUEL(COMMON),
+        ETHYLENE(COMMON),
+        PROPYLENE(COMMON),
 
-        //Chemica fix
-        BIODIESEL(COMMON),
-        ETHANOL(COMMON),
-        HIGH_CETANE_DIESEL(COMMON),
-        HIGH_OCTANE_GASOLINE(COMMON),
-        HYDROGEN_FUEL(COMMON)
+        SULFURIC_ACID(COMMON),
+
+        //CBC
+        MOLTEN_CAST_IRON(COMMON),
+        MOLTEN_BRONZE(COMMON),
+        MOLTEN_NETHERSTEEL(COMMON)
 
         ;
 

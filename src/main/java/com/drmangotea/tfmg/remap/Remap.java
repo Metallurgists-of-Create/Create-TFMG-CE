@@ -51,7 +51,7 @@ public class Remap {
         for (var key : this.registries) {
             if (registry.key() == key) {
                 registry.addAlias(TFMG.asResource(getOld()), getCurrent());
-                TFMG.LOGGER.info("[TFMG Remapper ({})] Remapped {} to {}", key.location(), TFMG.asResource(getOld()), getCurrent());
+                TFMG.LOGGER.debug("[TFMG Remapper ({})] Remapped {} to {}", key.location(), TFMG.asResource(getOld()), getCurrent());
             }
         }
     }

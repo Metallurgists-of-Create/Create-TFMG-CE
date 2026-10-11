@@ -109,6 +109,7 @@ import com.drmangotea.tfmg.content.machinery.vat.freezer.FreezerBlockEntity;
 import com.drmangotea.tfmg.content.machinery.vat.industrial_mixer.IndustrialMixerBlockEntity;
 import com.drmangotea.tfmg.content.machinery.vat.industrial_mixer.IndustrialMixerRenderer;
 import com.drmangotea.tfmg.content.machinery.vat.industrial_mixer.IndustrialMixerVisual;
+import com.drmangotea.tfmg.content.world.resevoir.OilDepositBlockEntity;
 import com.simibubi.create.AllPartialModels;
 import com.simibubi.create.content.decoration.slidingDoor.SlidingDoorBlockEntity;
 import com.simibubi.create.content.fluids.pipes.FluidPipeBlockEntity;
@@ -677,6 +678,11 @@ public class TFMGBlockEntities {
                     TFMGPipes.PIPES.get(TFMGPipes.PipeMaterial.PLASTIC).getValve()
             )
             .renderer(() -> FluidValveRenderer::new)
+            .register();
+
+    public static final BlockEntityEntry<OilDepositBlockEntity> OIL_DEPOSIT = REGISTRATE
+            .blockEntity("oil_deposit", OilDepositBlockEntity::new)
+            .validBlocks(TFMGBlocks.OIL_DEPOSIT)
             .register();
 
     public static void init() { }

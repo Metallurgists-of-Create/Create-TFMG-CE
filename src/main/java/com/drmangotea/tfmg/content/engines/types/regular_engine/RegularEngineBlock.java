@@ -20,6 +20,9 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.ParametersAreNonnullByDefault;
+
+@ParametersAreNonnullByDefault
 public class RegularEngineBlock extends EngineBlock implements IBE<RegularEngineBlockEntity> {
 
     public static final BooleanProperty EXTENDED = BooleanProperty.create("extended");

@@ -37,7 +37,7 @@ public class ExhaustBlockEntity extends SmartBlockEntity implements IHaveGoggleI
 
     public ExhaustBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
-        tankInventory = new ForceableFluidTank(1000, this::onFluidStackChanged)
+        tankInventory = new ForceableFluidTank(4000, this::onFluidStackChanged)
 			.allowInsertion().blockExtraction()
 			.withValidator((stack) -> stack.is(TFMGTags.Fluids.EXHAUSTABLE.tag));
         fluidCapability = tankInventory;
@@ -80,7 +80,7 @@ public class ExhaustBlockEntity extends SmartBlockEntity implements IHaveGoggleI
         if (tankInventory.getFluidAmount() > 0) {
             smokeTimer = 100;
             spawnsSmoke = true;
-            tankInventory.forceDrain(100, IFluidHandler.FluidAction.EXECUTE);
+            tankInventory.forceDrain(500, IFluidHandler.FluidAction.EXECUTE);
         }
 
         if (updateCapability) {

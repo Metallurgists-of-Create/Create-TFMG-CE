@@ -9,6 +9,7 @@ import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.util.StringUtil;
 import net.neoforged.neoforge.fluids.FluidStack;
@@ -40,10 +41,10 @@ public class CokingCategory extends CreateRecipeCategory<CokingRecipe> {
         FluidStack primaryFluid = recipe.getFluidResults().get(0);
         FluidStack secondaryFluid = recipe.getFluidResults().get(1);
         if (recipe.getFluidResults().size() >= 2) {
-            addFluidSlot(builder, 160, 46, secondaryFluid.copyWithAmount(secondaryFluid.getAmount() * recipe.getProcessingDuration())).addRichTooltipCallback((slotView, tooltip) -> tooltip.add(TFMGLang.translate("recipe.over_time", StringUtil.formatTickDuration(recipe.getProcessingDuration(), 1)).component()));
+            addFluidSlot(builder, 160, 46, secondaryFluid.copyWithAmount(secondaryFluid.getAmount() * recipe.getProcessingDuration())).addRichTooltipCallback((slotView, tooltip) -> tooltip.add(TFMGLang.translate("recipe.over_time", StringUtil.formatTickDuration(recipe.getProcessingDuration(), Minecraft.getInstance().level.tickRateManager().tickrate())).component()));
         }
         if (!recipe.getFluidResults().isEmpty()) {
-            addFluidSlot(builder, 160, 22, primaryFluid.copyWithAmount(primaryFluid.getAmount() * recipe.getProcessingDuration())).addRichTooltipCallback((slotView, tooltip) -> tooltip.add(TFMGLang.translate("recipe.over_time", StringUtil.formatTickDuration(recipe.getProcessingDuration(), 1)).component()));
+            addFluidSlot(builder, 160, 22, primaryFluid.copyWithAmount(primaryFluid.getAmount() * recipe.getProcessingDuration())).addRichTooltipCallback((slotView, tooltip) -> tooltip.add(TFMGLang.translate("recipe.over_time", StringUtil.formatTickDuration(recipe.getProcessingDuration(), Minecraft.getInstance().level.tickRateManager().tickrate())).component()));
         }
     }
 

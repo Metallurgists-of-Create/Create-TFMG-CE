@@ -225,8 +225,7 @@ public class TFMGBlockConnectivityHandler {
 			if (axis != Direction.Axis.Z) {
 				if (pos.getZ() < origin.getZ())
 					return false;
-				if (pos.getZ() + otherWidth > origin.getZ() + width)
-					return false;
+                return pos.getZ() + otherWidth <= origin.getZ() + width;
 			}
 		}
 		
