@@ -1,8 +1,8 @@
 package com.drmangotea.tfmg.content.machinery.oil_processing.pumpjack.hammer.parts;
 
 import com.drmangotea.tfmg.base.TFMGShapes;
+import com.drmangotea.tfmg.base.annotation.NothingNullByDefault;
 import com.mojang.serialization.MapCodec;
-import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
@@ -13,9 +13,7 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-import javax.annotation.ParametersAreNonnullByDefault;
-
-@MethodsReturnNonnullByDefault
+@NothingNullByDefault
 public class PumpjackHammerHeadBlock extends HorizontalDirectionalBlock {
     public PumpjackHammerHeadBlock(Properties pProperties) {
         super(pProperties);
@@ -28,7 +26,7 @@ public class PumpjackHammerHeadBlock extends HorizontalDirectionalBlock {
         return CODEC;
     }
 
-    @Override @ParametersAreNonnullByDefault
+    @Override
     public VoxelShape getShape(BlockState pState, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
         return TFMGShapes.PUMPJACK_HEAD.get(pState.getValue(FACING));
     }

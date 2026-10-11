@@ -11,15 +11,11 @@ import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 
-//TODO: This shouldn't just blindly extend BearingBlock
-//Bearings can face in any direction, while this is meant to be vertical.
-//It facing upwards also breaks PumpjackBlockEntity.applyRotation
 public class PumpjackBlock extends TFMGHorizontalDirectionalBlock implements IBE<PumpjackBlockEntity>, IWrenchable {
 	public static final BooleanProperty WIDE = BooleanProperty.create("wide");
 
@@ -54,8 +50,7 @@ public class PumpjackBlock extends TFMGHorizontalDirectionalBlock implements IBE
 		InteractionResult resultType = IWrenchable.super.onWrenched(state, context);
 		Level level = context.getLevel();
 		if (!level.isClientSide && resultType.consumesAction()) {
-			BlockEntity be = level.getBlockEntity(context.getClickedPos());
-			if (be instanceof PumpjackBlockEntity jack) {
+			if (level.getBlockEntity(context.getClickedPos()) instanceof PumpjackBlockEntity jack) {
 				jack.disassemble();
 			}
 		}

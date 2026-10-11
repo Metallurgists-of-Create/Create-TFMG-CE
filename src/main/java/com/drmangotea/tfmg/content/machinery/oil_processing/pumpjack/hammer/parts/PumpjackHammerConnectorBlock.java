@@ -1,6 +1,7 @@
 package com.drmangotea.tfmg.content.machinery.oil_processing.pumpjack.hammer.parts;
 
 import com.drmangotea.tfmg.base.TFMGShapes;
+import com.drmangotea.tfmg.base.annotation.NothingNullByDefault;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -12,9 +13,7 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-import javax.annotation.Nonnull;
-import javax.annotation.ParametersAreNonnullByDefault;
-
+@NothingNullByDefault
 public class PumpjackHammerConnectorBlock extends HorizontalDirectionalBlock {
 	public static final MapCodec<PumpjackHammerConnectorBlock> CODEC = simpleCodec(PumpjackHammerConnectorBlock::new);
 	
@@ -22,12 +21,12 @@ public class PumpjackHammerConnectorBlock extends HorizontalDirectionalBlock {
         super(pProperties);
     }
     
-	@Override @Nonnull
+	@Override
     protected MapCodec<? extends HorizontalDirectionalBlock> codec() {
         return CODEC;
     }
 
-    @Override @Nonnull @ParametersAreNonnullByDefault
+    @Override
     public VoxelShape getShape(BlockState pState, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
         return TFMGShapes.PUMPJACK_HAMMER_PART.get(pState.getValue(FACING).getClockWise());
     }

@@ -24,6 +24,7 @@ public class TFMGHorizontalDirectionalBlock extends HorizontalDirectionalBlock {
         builder.add(FACING);
         super.createBlockStateDefinition(builder);
     }
+	
     public BlockState getStateForPlacement(BlockPlaceContext pContext) {
         return this.defaultBlockState().setValue(FACING, pContext.getHorizontalDirection().getOpposite());
     }

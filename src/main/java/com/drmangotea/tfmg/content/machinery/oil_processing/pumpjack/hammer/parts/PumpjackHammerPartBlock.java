@@ -1,12 +1,12 @@
 package com.drmangotea.tfmg.content.machinery.oil_processing.pumpjack.hammer.parts;
 
 import com.drmangotea.tfmg.base.TFMGShapes;
+import com.drmangotea.tfmg.base.annotation.NothingNullByDefault;
 import com.mojang.serialization.MapCodec;
 import com.simibubi.create.foundation.placement.PoleHelper;
 import net.createmod.catnip.placement.IPlacementHelper;
 import net.createmod.catnip.placement.PlacementHelpers;
 import net.createmod.catnip.placement.PlacementOffset;
-import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
@@ -25,10 +25,9 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.function.Predicate;
 
-@MethodsReturnNonnullByDefault
+@NothingNullByDefault
 public class PumpjackHammerPartBlock extends HorizontalDirectionalBlock {
     public static final int placementHelperId = PlacementHelpers.register(new PlacementHelper());
 	public static final MapCodec<PumpjackHammerPartBlock> CODEC = simpleCodec(PumpjackHammerPartBlock::new);
@@ -52,12 +51,11 @@ public class PumpjackHammerPartBlock extends HorizontalDirectionalBlock {
         return this.defaultBlockState().setValue(FACING, pContext.getHorizontalDirection().getOpposite());
     }
 
-    @Override @ParametersAreNonnullByDefault
+    @Override
     public VoxelShape getShape(BlockState pState, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
         return TFMGShapes.PUMPJACK_HAMMER_PART.get(pState.getValue(FACING).getClockWise());
     }
 	
-    @MethodsReturnNonnullByDefault
     private static class PlacementHelper extends PoleHelper<Direction> {
         private PlacementHelper() {
             super(state -> state.getBlock() instanceof PumpjackHammerPartBlock, state -> state.getValue(FACING).getAxis(), FACING);
@@ -85,7 +83,7 @@ public class PumpjackHammerPartBlock extends HorizontalDirectionalBlock {
         }
     }
 
-    @Override @ParametersAreNonnullByDefault
+    @Override
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit) {
 		ItemStack itemInHand = pPlayer.getItemInHand(pHand);
 
