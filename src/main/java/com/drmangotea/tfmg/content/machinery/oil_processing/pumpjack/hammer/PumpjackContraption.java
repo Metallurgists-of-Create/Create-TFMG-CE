@@ -1,7 +1,5 @@
 package com.drmangotea.tfmg.content.machinery.oil_processing.pumpjack.hammer;
 
-
-
 import com.drmangotea.tfmg.base.TFMGContraptions;
 import com.simibubi.create.api.contraption.ContraptionType;
 import com.simibubi.create.content.contraptions.AssemblyException;

@@ -1,6 +1,6 @@
 package com.drmangotea.tfmg.content.machinery.oil_processing.pumpjack.hammer;
 
-
+import com.drmangotea.tfmg.content.machinery.oil_processing.pumpjack.PumpjackMultiblock;
 import com.drmangotea.tfmg.content.machinery.oil_processing.pumpjack.base.PumpjackBaseBlockEntity;
 import com.drmangotea.tfmg.content.machinery.oil_processing.pumpjack.crank.PumpjackCrankBlockEntity;
 import com.drmangotea.tfmg.registry.TFMGTags;
@@ -40,19 +40,11 @@ public class PumpjackBlockEntity extends GeneratingKineticBlockEntity implements
     protected AssemblyException lastException;
     protected double sequencedAngleLimit;
     private float prevAngle;
-    public BlockPos headPosition = null;
-    public BlockPos connectorPosition = null;
-    public PumpjackCrankBlockEntity crank = null;
-    public PumpjackBaseBlockEntity base = null;
-    public int connectorDistance = 0;
-    public int headDistance = 0;
-    public boolean connectorAtFront = false;
-    public boolean headAtFront = false;
-    public int crankConnectorDistance = 0;
-    public int headBaseDistance = 0;
+	public final PumpjackMultiblock multiblock;
 
     public PumpjackBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
+		multiblock = new PumpjackMultiblock(this);
         setLazyTickRate(3);
         sequencedAngleLimit = -1;
     }
@@ -88,23 +80,12 @@ public class PumpjackBlockEntity extends GeneratingKineticBlockEntity implements
 
     @Override
     public void write(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {
-        if (connectorPosition != null) {
-            compound.putInt("connectorX", connectorPosition.getX());
-            compound.putInt("connectorY", connectorPosition.getY());
-            compound.putInt("connectorZ", connectorPosition.getZ());
-        }
-        if (headPosition != null) {
-            compound.putInt("headX", headPosition.getX());
-            compound.putInt("headY", headPosition.getY());
-            compound.putInt("headZ", headPosition.getZ());
-        }
-        compound.putBoolean("connectorAtFront", connectorAtFront);
-        compound.putBoolean("headAtFront", headAtFront);
         compound.putBoolean("Running", running);
         compound.putFloat("Angle", angle);
         if (sequencedAngleLimit >= 0)
             compound.putDouble("SequencedAngleLimit", sequencedAngleLimit);
         AssemblyException.write(compound,registries, lastException);
+		compound.put("MultiblockData", multiblock.write(registries, clientPacket));
         super.write(compound,registries , clientPacket);
     }
 
@@ -114,23 +95,12 @@ public class PumpjackBlockEntity extends GeneratingKineticBlockEntity implements
             super.read(compound,registries , clientPacket);
             return;
         }
-        connectorPosition = new BlockPos(
-                compound.getInt("connectorX"),
-                compound.getInt("connectorY"),
-                compound.getInt("connectorZ")
-        );
-        headPosition = new BlockPos(
-                compound.getInt("headX"),
-                compound.getInt("headY"),
-                compound.getInt("headZ")
-        );
-        connectorAtFront = compound.getBoolean("connectorAtFront");
-        headAtFront = compound.getBoolean("headAtFront");
         float angleBefore = angle;
         running = compound.getBoolean("Running");
         angle = compound.getFloat("Angle");
         sequencedAngleLimit = compound.contains("SequencedAngleLimit") ? compound.getDouble("SequencedAngleLimit") : -1;
         lastException = AssemblyException.read(compound,registries);
+		multiblock.read(compound.getCompound("MultiblockData"), registries, clientPacket);
         super.read(compound,registries , clientPacket);
         if (!clientPacket)
             return;
@@ -199,10 +169,12 @@ public class PumpjackBlockEntity extends GeneratingKineticBlockEntity implements
             return;
         Direction direction = getBlockState().getValue(BlockStateProperties.HORIZONTAL_FACING);
         PumpjackContraption contraption = new PumpjackContraption(direction);
+		BlockPos headPos = multiblock.getHead();
+		BlockPos connectorPos = multiblock.getConnector();
         try {
             if (!contraption.assemble(level, worldPosition))
                 return;
-            if (connectorPosition == null || headPosition == null)
+            if (connectorPos == null || headPos == null)
                 return;
             lastException = null;
         } catch (AssemblyException e) {
@@ -214,7 +186,7 @@ public class PumpjackBlockEntity extends GeneratingKineticBlockEntity implements
         boolean canAssemble = true;
         boolean foundHead = false;
         boolean foundConnector = false;
-        BlockPos headLocalPos = headPosition.subtract(getBlockPos().above());
+        BlockPos headLocalPos = headPos.subtract(getBlockPos().above());
         for (StructureTemplate.StructureBlockInfo block : contraption.getBlocks().values()) {
             if (block.state().is(TFMGTags.Blocks.PUMPJACK_HEAD.tag)) {
                 foundHead = true;
@@ -224,7 +196,7 @@ public class PumpjackBlockEntity extends GeneratingKineticBlockEntity implements
 				) { canAssemble = false; }
             }
         }
-        BlockPos connectorLocalPos = connectorPosition.subtract(getBlockPos().above());
+        BlockPos connectorLocalPos = connectorPos.subtract(getBlockPos().above());
         for (StructureTemplate.StructureBlockInfo block : contraption.getBlocks().values()) {
             if (block.state().is(TFMGTags.Blocks.PUMPJACK_CONNECTOR.tag)) {
                 foundConnector = true;
@@ -236,7 +208,8 @@ public class PumpjackBlockEntity extends GeneratingKineticBlockEntity implements
         }
         if (!canAssemble || !foundHead || !foundConnector)
             return;
-        if (base.controllerHammer != this && base.controllerHammer != null)
+		PumpjackBaseBlockEntity baseBE = multiblock.getBaseBE();
+        if (baseBE != null && baseBE.controllerHammer != this && baseBE.controllerHammer != null)
             return;
         contraption.removeBlocksFromWorld(level, BlockPos.ZERO);
         movedContraption = ControlledContraptionEntity.create(level, this, contraption);
@@ -253,97 +226,11 @@ public class PumpjackBlockEntity extends GeneratingKineticBlockEntity implements
         updateGeneratedRotation();
     }
 
-    public boolean isHead(BlockPos pos) {
-        return level.getBlockState(pos).is(TFMGTags.Blocks.PUMPJACK_HEAD.tag);
-    }
-
-    public boolean isPart(BlockPos pos) {
-        return level.getBlockState(pos).is(TFMGTags.Blocks.PUMPJACK_PART.tag);
-    }
-
-    public boolean isConnector(BlockPos pos) {
-        return level.getBlockState(pos).is(TFMGTags.Blocks.PUMPJACK_CONNECTOR.tag);
-    }
-
-    private void findHeadAndConnector() {
-        Direction direction = getBlockState().getValue(BlockStateProperties.HORIZONTAL_FACING);
-        BlockPos checkedPos = this.getBlockPos().above();
-        connectorPosition = null;
-        headPosition = null;
-        for (int i = 0; i < 7; i++) {
-            if (connectorPosition != null && headPosition != null
-            ) {
-                sendData();
-                return;
-            }
-            if (i != 0)
-                if (isHead(checkedPos)) {
-                    headPosition = checkedPos;
-                    headAtFront = true;
-                    checkedPos = checkedPos.relative(direction);
-                    sendData();
-                    continue;
-                }
-            if (i != 0)
-                if (isConnector(checkedPos)) {
-                    if (level.getBlockState(checkedPos).getValue(BlockStateProperties.HORIZONTAL_FACING).getAxis() == this.getBlockState().getValue(BlockStateProperties.HORIZONTAL_FACING).getAxis()) {
-                        connectorPosition = checkedPos;
-                        connectorAtFront = true;
-                        checkedPos = checkedPos.relative(direction);
-                        sendData();
-                        continue;
-                    }
-                }
-            if (!isPart(checkedPos)) {
-                break;
-            } else {
-                if (level.getBlockState(checkedPos).getValue(BlockStateProperties.HORIZONTAL_FACING).getAxis() != this.getBlockState().getValue(BlockStateProperties.HORIZONTAL_FACING).getAxis()) {
-                    break;
-                }
-            }
-            checkedPos = checkedPos.relative(direction);
-        }
-        checkedPos = this.getBlockPos().above();
-        for (int i = 0; i < 7; i++) {
-            if (connectorPosition != null && headPosition != null) {
-                sendData();
-                return;
-            }
-            if (i != 0)
-                if (isHead(checkedPos)) {
-                    headPosition = checkedPos;
-                    headAtFront = false;
-                    checkedPos = checkedPos.relative(direction.getOpposite());
-                    sendData();
-                    continue;
-                }
-            if (i != 0)
-                if (isConnector(checkedPos)) {
-                    if (level.getBlockState(checkedPos).getValue(BlockStateProperties.HORIZONTAL_FACING).getAxis() == this.getBlockState().getValue(BlockStateProperties.HORIZONTAL_FACING).getAxis()) {
-                        connectorPosition = checkedPos;
-                        connectorAtFront = false;
-                        checkedPos = checkedPos.relative(direction.getOpposite());
-                        sendData();
-                        continue;
-                    }
-                }
-            if (!isPart(checkedPos)) {
-                break;
-            } else {
-                if (level.getBlockState(checkedPos).getValue(BlockStateProperties.HORIZONTAL_FACING).getAxis() != this.getBlockState().getValue(BlockStateProperties.HORIZONTAL_FACING).getAxis()) {
-                    break;
-                }
-            }
-            checkedPos = checkedPos.relative(direction.getOpposite());
-        }
-        sendData();
-	}
-
     public void disassemble() {
         if (!running && movedContraption == null)
             return;
-        connectorDistance = 0;
-        headDistance = 0;
+        multiblock.connectorDistance = 0;
+		multiblock.headDistance = 0;
         angle = 0;
         sequencedAngleLimit = -1;
         if (movedContraption != null) {
@@ -363,16 +250,18 @@ public class PumpjackBlockEntity extends GeneratingKineticBlockEntity implements
     public void tick() {
         super.tick();
         if (level == null) return;
-        if (!running)
-			findHeadAndConnector();
-		if (!running && isComplete() && !level.isClientSide) {
+        if (!running) {
+			multiblock.findHeadAndConnector();
+			sendData();
+        }
+		if (!running && multiblock.isComplete() && !level.isClientSide && assembleNextTick) {
 			assemble();
 		}
-		if (base != null && base.controllerHammer == null) {
-			if (running)
-				base.setControllerHammer(this);
+		PumpjackBaseBlockEntity base = multiblock.getBaseBE();
+		if (running && base != null && base.controllerHammer == null) {
+			base.setControllerHammer(this);
 		}
-        boolean actuallyComplete = isComplete();
+        boolean actuallyComplete = multiblock.isComplete();
         if (actuallyComplete) {
             incompleteTimer = 0;
         } else {
@@ -383,39 +272,7 @@ public class PumpjackBlockEntity extends GeneratingKineticBlockEntity implements
                 disassemble();
 
         setHolderSize();
-        Direction direction = getBlockState().getValue(BlockStateProperties.HORIZONTAL_FACING);
-        if (connectorPosition != null) {
-            if (direction.getAxis() == Direction.Axis.Z)
-                connectorDistance = Math.abs(getBlockPos().getZ() - connectorPosition.getZ());
-
-            if (direction.getAxis() == Direction.Axis.X)
-                connectorDistance = Math.abs(getBlockPos().getX() - connectorPosition.getX());
-
-            if (crank != null) {
-                crankConnectorDistance = Math.abs(crank.getBlockPos().getY() - connectorPosition.getY());
-                crank.crankRadius = (float) connectorDistance / 5;
-            }
-        }
-        if (headPosition != null) {
-            if (direction.getAxis() == Direction.Axis.Z)
-                headDistance = Math.abs(getBlockPos().getZ() - headPosition.getZ());
-            if (direction.getAxis() == Direction.Axis.X)
-                headDistance = Math.abs(getBlockPos().getX() - headPosition.getX());
-            if (base != null) {
-                headBaseDistance = Math.abs(base.getBlockPos().getY() - headPosition.getY());
-            }
-        }
-        if (connectorPosition != null)
-            crank = findCrank();
-        if (crank != null)
-            if (!(level.getBlockEntity(crank.getBlockPos()) instanceof PumpjackCrankBlockEntity))
-                crank = null;
-        if (headPosition != null) {
-            base = findBase();
-        }
-        if (base != null)
-            if (!(level.getBlockEntity(base.getBlockPos()) instanceof PumpjackBaseBlockEntity))
-                base = null;
+		multiblock.evaluate();
         prevAngle = angle;
         if (level.isClientSide)
             clientAngleDiff /= 2;
@@ -428,59 +285,26 @@ public class PumpjackBlockEntity extends GeneratingKineticBlockEntity implements
         if (!running)
             return;
         if (!(movedContraption != null && movedContraption.isStalled())) {
-            if (crank != null) {
-                int x = 1;
-                if (connectorAtFront)
-                    x = -1;
-                if (direction == Direction.SOUTH || direction == Direction.WEST) {
-                    angle = (float) Math.toDegrees(Math.atan(crank.heightModifier * x / connectorDistance));
-
-                } else angle = (float) Math.toDegrees(Math.atan(-crank.heightModifier * x / connectorDistance));
+			PumpjackCrankBlockEntity Crank = multiblock.getCrankBE();
+            if (Crank != null) {
+                angle = (float) Math.toDegrees(Math.atan(Crank.heightModifier / multiblock.connectorDistance));
             }
         }
         applyRotation();
     }
 
     public void setHolderSize() {
-        if (isRunning())
+        if (isRunning() || level == null)
             return;
 
+		boolean small = level.getBlockState(getBlockPos().above()).is(TFMGTags.Blocks.PUMPJACK_SMALL_PART.tag);
+		boolean wide = getBlockState().getValue(WIDE);
 
-        if (!level.getBlockState(getBlockPos().above()).is(TFMGTags.Blocks.PUMPJACK_SMALL_PART.tag) && !getBlockState().getValue(WIDE))
+        if (!small && !wide)
             level.setBlock(getBlockPos(), getBlockState().setValue(WIDE, true), 2);
 
-        if (level.getBlockState(getBlockPos().above()).is(TFMGTags.Blocks.PUMPJACK_SMALL_PART.tag) && getBlockState().getValue(WIDE))
+        if (small && wide)
             level.setBlock(getBlockPos(), getBlockState().setValue(WIDE, false), 2);
-    }
-
-    public boolean isComplete() {
-        return base != null && crank != null;
-    }
-
-    private PumpjackCrankBlockEntity findCrank() {
-		if (level == null) return null;
-		
-        BlockPos checkedPos = connectorPosition.below();
-        for (int i = 0; i < 7; i++) {
-	        if (level.getBlockEntity(checkedPos) instanceof PumpjackCrankBlockEntity crankBE)
-                if (level.getBlockState(checkedPos).getValue(BlockStateProperties.HORIZONTAL_FACING).getAxis()
-					        == this.getBlockState().getValue(BlockStateProperties.HORIZONTAL_FACING).getAxis()
-				) { return crankBE; }
-            checkedPos = checkedPos.below();
-        }
-        return null;
-    }
-
-    private PumpjackBaseBlockEntity findBase() {
-        BlockPos checkedPos = headPosition.below();
-        for (int i = 0; i < 8; i++) {
-
-            if (level.getBlockEntity(checkedPos) instanceof PumpjackBaseBlockEntity)
-                return (PumpjackBaseBlockEntity) level.getBlockEntity(checkedPos);
-
-            checkedPos = checkedPos.below();
-        }
-        return null;
     }
 
     @Override
@@ -494,9 +318,8 @@ public class PumpjackBlockEntity extends GeneratingKineticBlockEntity implements
         if (movedContraption == null)
             return;
         movedContraption.setAngle(angle);
-        BlockState blockState = getBlockState();
-        if (blockState.hasProperty(BlockStateProperties.HORIZONTAL_FACING))
-            movedContraption.setRotationAxis(blockState
+        if (getBlockState().hasProperty(BlockStateProperties.HORIZONTAL_FACING))
+            movedContraption.setRotationAxis(getBlockState()
 				.getValue(BlockStateProperties.HORIZONTAL_FACING)
 				.getClockWise()
 				.getAxis()

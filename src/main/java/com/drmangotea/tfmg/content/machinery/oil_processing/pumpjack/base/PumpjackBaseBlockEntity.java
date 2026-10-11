@@ -4,6 +4,7 @@ import com.drmangotea.tfmg.base.TFMGUtils;
 import com.drmangotea.tfmg.base.fluid.ForceableFluidTank;
 import com.drmangotea.tfmg.base.lang.TFMGTexts;
 import com.drmangotea.tfmg.config.TFMGConfigs;
+import com.drmangotea.tfmg.content.machinery.oil_processing.pumpjack.PumpjackMultiblock;
 import com.drmangotea.tfmg.content.machinery.oil_processing.pumpjack.crank.PumpjackCrankBlockEntity;
 import com.drmangotea.tfmg.content.machinery.oil_processing.pumpjack.hammer.PumpjackBlockEntity;
 import com.drmangotea.tfmg.content.world.resevoir.FluidReservoir;
@@ -28,6 +29,7 @@ import java.util.List;
 
 public class PumpjackBaseBlockEntity extends SmartBlockEntity implements IHaveGoggleInformation {
     public PumpjackBlockEntity controllerHammer;
+	public PumpjackMultiblock controller;
     public boolean isRunning = false;
     int depositCheckTimer = 0;
     public int miningRate = 0;
@@ -64,7 +66,7 @@ public class PumpjackBaseBlockEntity extends SmartBlockEntity implements IHaveGo
             if (!(level.getBlockEntity(controllerHammer.getBlockPos()) instanceof PumpjackBlockEntity))
                 controllerHammer = null;
         if (controllerHammer != null)
-            if (controllerHammer.base == null)
+            if (controllerHammer.multiblock.getBaseBE() == null)
                 controllerHammer = null;
 
         if (controllerHammer != null)
@@ -85,12 +87,9 @@ public class PumpjackBaseBlockEntity extends SmartBlockEntity implements IHaveGo
         if (depositCheckTimer > 50) {
             depositCheckTimer = 0;
             findDeposit();
-
         }
-        PumpjackCrankBlockEntity crank = null;
-        if (controllerHammer.crank != null)
-            crank = controllerHammer.crank;
-
+		
+        PumpjackCrankBlockEntity crank = controllerHammer.multiblock.getCrankBE();
         if (crank == null)
             return;
         miningRate = (int) Math.abs(crank.getMachineInputSpeed() * (crank.heightModifier));

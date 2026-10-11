@@ -1,5 +1,7 @@
 package com.drmangotea.tfmg.content.machinery.oil_processing.pumpjack.hammer;
 
+import com.drmangotea.tfmg.content.machinery.oil_processing.pumpjack.base.PumpjackBaseBlockEntity;
+import com.drmangotea.tfmg.content.machinery.oil_processing.pumpjack.crank.PumpjackCrankBlockEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntityRenderer;
@@ -13,8 +15,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
 
-import javax.annotation.ParametersAreNonnullByDefault;
-
 import static com.drmangotea.tfmg.base.blocks.TFMGHorizontalDirectionalBlock.FACING;
 
 
@@ -27,24 +27,26 @@ public class PumpjackRenderer extends KineticBlockEntityRenderer<PumpjackBlockEn
     protected void renderSafe(
 		PumpjackBlockEntity be, float partialTicks, PoseStack ms, MultiBufferSource buffer, int light, int overlay
 	) {
-        if(be.crank == null || be.base == null || !be.running)
+		PumpjackCrankBlockEntity crank = be.multiblock.getCrankBE();
+		PumpjackBaseBlockEntity base = be.multiblock.getBaseBE();
+        if(crank == null || base == null || !be.running)
             return;
 		
 		Direction direction = be.getBlockState().getValue(FACING);
-		int q = be.headAtFront ? 1 : -1;
+		int q = be.multiblock.headAtFront ? 1 : -1;
 		
 		//sides
-		float hModifier = be.crank.heightModifier - be.crankConnectorDistance;
-		double height2 = Math.pow(be.crank.heightModifier, 2);
-		float x = getX(be.crank.crankRadius, be.crank.angle, height2, direction);
-		float y = (float) (be.connectorDistance*(1 - be.connectorDistance) - height2);
-		int dist = be.connectorDistance*q;
+		float hModifier = crank.heightModifier - be.multiblock.crankConnectorDistance;
+		double height2 = Math.pow(crank.heightModifier, 2);
+		float x = getX(crank.crankRadius, crank.angle, height2, direction);
+		float y = (float) (be.multiblock.crankConnectorDistance*(1 - be.multiblock.crankConnectorDistance) - height2)*q;
+		int dist = be.multiblock.connectorDistance*q;
 		
-        renderPumpjackLink(false, ms, buffer, direction, q, x, y*q, hModifier, dist, be.crankConnectorDistance);
-        renderPumpjackLink(true, ms, buffer, direction, q, x, y*q, hModifier, dist, be.crankConnectorDistance);
+        renderPumpjackLink(false, ms, buffer, direction, x, y, hModifier, dist, be.multiblock.crankConnectorDistance);
+        renderPumpjackLink(true, ms, buffer, direction, x, y, hModifier, dist, be.multiblock.crankConnectorDistance);
 		
 		//front
-        renderFrontPumpjackLink(ms, buffer, direction, q, be.headBaseDistance, be);
+        renderFrontPumpjackLink(ms, buffer, direction, q, be.multiblock.headBaseDistance, be);
     }
 	
 	private static float getX(float crankRadius, float angle, double height2, Direction direction) {
@@ -69,10 +71,9 @@ public class PumpjackRenderer extends KineticBlockEntityRenderer<PumpjackBlockEn
 		};
 	}
 	
-	@ParametersAreNonnullByDefault
     private void renderPumpjackLink(
 		boolean second, PoseStack pMatrixStack, MultiBufferSource pBuffer,
-		Direction direction, int q, float x, float y, float hModifier, int dist, int crankDist
+		Direction direction, float x, float y, float hModifier, int dist, int crankDist
 	) {
 		pMatrixStack.pushPose();
 		
@@ -85,7 +86,7 @@ public class PumpjackRenderer extends KineticBlockEntityRenderer<PumpjackBlockEn
 			}
 			case SOUTH -> {
 				pMatrixStack.translate(second?1:0, hModifier + 1.5, -dist + .5 + x);
-				vec3 = vec3.add(0, 0, -x*q - y);
+				vec3 = vec3.add(0, 0, -x - y);
 			}
 			case WEST -> {
 				pMatrixStack.translate(dist + .5 + x, hModifier + 1.5, second?1:0);
@@ -102,7 +103,6 @@ public class PumpjackRenderer extends KineticBlockEntityRenderer<PumpjackBlockEn
         pMatrixStack.popPose();
     }
 	
-	@ParametersAreNonnullByDefault
 	private void renderFrontPumpjackLink(
 		PoseStack pMatrixStack, MultiBufferSource pBuffer,
 		Direction direction, int q, float linkLength, PumpjackBlockEntity be
@@ -110,27 +110,24 @@ public class PumpjackRenderer extends KineticBlockEntityRenderer<PumpjackBlockEn
         pMatrixStack.pushPose();
         Vec3 vec3 = new Vec3(0,linkLength,0);
         
-		float hModifier = (float) (be.headDistance*Math.sin(Math.toRadians(be.angle)));
-		
-		float y = -0.01f;
-		hModifier = hModifier*q;
+		float hModifier = (float) (q*be.multiblock.headDistance*Math.sin(Math.toRadians(be.angle)));
 		
 		switch (direction) {
 			case NORTH -> {
-				pMatrixStack.translate(0.5, -linkLength + 2, -be.headDistance * q + .5);
-				vec3 = vec3.add(0, hModifier - 0.3, +y);
+				pMatrixStack.translate(0.5, -linkLength + 2, -be.multiblock.headDistance * q + .5);
+				vec3 = vec3.add(0, hModifier - 0.3,-0.01f);
 			}
 			case SOUTH -> {
-				pMatrixStack.translate(0.5, -linkLength + 2, (be.headDistance * q) + .5);
-				vec3 = vec3.add(0, -hModifier - 0.3, -y);
+				pMatrixStack.translate(0.5, -linkLength + 2, (be.multiblock.headDistance * q) + .5);
+				vec3 = vec3.add(0,-hModifier - 0.3, 0.01f);
 			}
 			case WEST -> {
-				pMatrixStack.translate((-be.headDistance * q) + .5, -linkLength + 2, 0.5);
-				vec3 = vec3.add(-y, -hModifier - 0.3, 0);
+				pMatrixStack.translate((-be.multiblock.headDistance * q) + .5, -linkLength + 2, 0.5);
+				vec3 = vec3.add( 0.01f, -hModifier - 0.3, 0);
 			}
 			case EAST -> {
-				pMatrixStack.translate((be.headDistance * q) + .5, -linkLength + 2, 0.5);
-				vec3 = vec3.add(+y, hModifier - 0.3, 0);
+				pMatrixStack.translate((be.multiblock.headDistance * q) + .5, -linkLength + 2, 0.5);
+				vec3 = vec3.add(-0.01f, hModifier - 0.3, 0);
 			}
 		}
 		
