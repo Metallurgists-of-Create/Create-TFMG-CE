@@ -108,7 +108,8 @@ public abstract class AbstractSmallEngineBlockEntity extends AbstractEngineBlock
         float oilModifier = oil > 0 ? 0.7f : 1f;
         float coolingFluidModifier = coolingFluid > 0 ? 0.7f : 1f;
 
-        return (int) ((12.5f * (1 / efficiencyModifier()) * getSpeedEfficiency() * highestSignal / 15 * oilModifier * coolingFluidModifier) * (engineLength() )+ 1);
+		//TODO: Review `highestSignal` division
+		return (int) ((5f/6f * (1 / efficiencyModifier()) * getSpeedEfficiency() * highestSignal * oilModifier * coolingFluidModifier) * (engineLength() )+ 1);
     }
 
     public void detachEngines() {}

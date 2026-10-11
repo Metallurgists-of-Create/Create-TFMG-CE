@@ -5,7 +5,6 @@ import com.drmangotea.tfmg.TFMGRegistries;
 import com.drmangotea.tfmg.content.engines.fuels.EngineFuelType;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 
 public class TFMGEngineFuelTypes {
     public static final ResourceKey<EngineFuelType> FALLBACK = key("fallback");
@@ -18,18 +17,8 @@ public class TFMGEngineFuelTypes {
     public static final ResourceKey<EngineFuelType> CREOSOTE = key("creosote");
     public static final ResourceKey<EngineFuelType> FURNACE_GAS = key("furnace_gas");
 
-    public static final ResourceKey<EngineFuelType> BIODIESEL = key("chemica", "biodiesel");
-    public static final ResourceKey<EngineFuelType> ETHANOL = key("chemica", "ethanol");
-    public static final ResourceKey<EngineFuelType> HIGH_CETANE_DIESEL = key("chemica", "high_cetane_diesel");
-    public static final ResourceKey<EngineFuelType> HIGH_OCTANE_GASOLINE = key("chemica", "high_octane_gasoline");
-    public static final ResourceKey<EngineFuelType> HYDROGEN_FUEL = key("chemica", "hydrogen_fuel");
-
     private static ResourceKey<EngineFuelType> key(String name) {
         return ResourceKey.create(TFMGRegistries.ENGINE_FUEL_TYPE, TFMG.asResource(name));
-    }
-
-    private static ResourceKey<EngineFuelType> key(String namespace, String path) {
-        return ResourceKey.create(TFMGRegistries.ENGINE_FUEL_TYPE, ResourceLocation.fromNamespaceAndPath(namespace, path));
     }
 
     public static void bootstrap(BootstrapContext<EngineFuelType> ctx) {

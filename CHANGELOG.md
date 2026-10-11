@@ -34,5 +34,7 @@ Contributors:<br>
 - Engine Upgrades are now a registry.
 - Electricity generation on engine upgrades is now an interface.
 - All engines now have registered item handlers.
+- Engine Fuels can now specify custom exhaust fluids
+  - The field is not optional, but the Builder and Engines default to CO2.
 
 ### New Translations:

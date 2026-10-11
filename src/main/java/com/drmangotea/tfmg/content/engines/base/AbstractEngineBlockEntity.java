@@ -2,12 +2,13 @@ package com.drmangotea.tfmg.content.engines.base;
 
 import com.drmangotea.tfmg.config.TFMGConfigs;
 import com.drmangotea.tfmg.content.electricity.base.KineticElectricBlockEntity;
-import com.drmangotea.tfmg.content.engines.fuels.EngineFuel;
+import com.drmangotea.tfmg.content.engines.fuels.EngineFuelType;
 import com.drmangotea.tfmg.registry.TFMGBlockEntities;
 import com.drmangotea.tfmg.registry.TFMGFluids;
 import com.simibubi.create.foundation.fluid.CombinedTankWrapper;
 import net.createmod.catnip.math.VecHelper;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -17,6 +18,7 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
@@ -25,6 +27,7 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.items.wrapper.CombinedInvWrapper;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Predicate;
 
 public abstract class AbstractEngineBlockEntity extends KineticElectricBlockEntity {
@@ -148,8 +151,9 @@ public abstract class AbstractEngineBlockEntity extends KineticElectricBlockEnti
         } else drainFuel = true;
     }
 
+	//TODO: Make this more configurable
     public void manageFuelAndExhaust() {
-        exhaustTank.forceFill(new FluidStack(TFMGFluids.CARBON_DIOXIDE.get(), Math.min(300, getFuelConsumption())), IFluidHandler.FluidAction.EXECUTE);
+        exhaustTank.forceFill(new FluidStack(exhaustFluid(), Math.min(300, getFuelConsumption())), IFluidHandler.FluidAction.EXECUTE);
         fuelTank.forceDrain(getFuelConsumption(), IFluidHandler.FluidAction.EXECUTE);
         if (fuelTank.isEmpty())
             updateRotation();
@@ -180,17 +184,28 @@ public abstract class AbstractEngineBlockEntity extends KineticElectricBlockEnti
     public void updateRotation() {
     }
 
-    public abstract float efficiencyModifier();
-
-    public abstract float speedModifier();
-
-    public abstract float torqueModifier();
-
-
-    public EngineFuel getFuelType() {
-        if (this.level == null) return EngineFuel.EMPTY;
-        FluidStack contained = fuelTank.getFluid();
-        return EngineFuel.createForType(this.level.registryAccess(), contained);
+	public float efficiencyModifier() {
+		return getFuelType().map(EngineFuelType::efficiency).orElse(1.0f);
+	}
+	
+    public float speedModifier() {
+		return getFuelType().map(EngineFuelType::speed).orElse(1.0f);
+	}
+	
+	public float torqueModifier() {
+		return getFuelType().map(EngineFuelType::torque).orElse(1.0f);
+	}
+	
+	public Fluid exhaustFluid() {
+		//fallback to Co2 if no exhaust
+		if (level == null) return TFMGFluids.CARBON_DIOXIDE.get();
+		return getFuelType().map(f -> f.exhaust().value())
+			.orElseGet(TFMGFluids.CARBON_DIOXIDE);
+	}
+	
+    public Optional<EngineFuelType> getFuelType() {
+        if (this.level == null) return Optional.empty();
+        return EngineFuelType.getTypeForFluid(this.level.registryAccess(), fuelTank.getFluid().getFluid()).map(Holder.Reference::value);
     }
 
     public void refreshCapability() {

@@ -1,6 +1,5 @@
 package com.drmangotea.tfmg.base.events;
 
-
 import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.TFMGRegistries;
 import com.drmangotea.tfmg.config.TFMGConfigs;
@@ -50,7 +49,7 @@ import net.neoforged.neoforge.event.level.LevelEvent;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import net.neoforged.neoforge.registries.NewRegistryEvent;
 
-
+@SuppressWarnings("unused")
 @EventBusSubscriber
 public class TFMGCommonEvents {
     @SubscribeEvent
