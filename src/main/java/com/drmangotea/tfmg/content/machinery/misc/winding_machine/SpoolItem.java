@@ -3,6 +3,7 @@ package com.drmangotea.tfmg.content.machinery.misc.winding_machine;
 import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.TFMGRegistries;
 import com.drmangotea.tfmg.base.TFMGUtils;
+import com.drmangotea.tfmg.base.annotation.NothingNullByDefault;
 import com.drmangotea.tfmg.base.lang.TFMGLang;
 import com.drmangotea.tfmg.content.electricity.connection.cable_type.CableType;
 import com.drmangotea.tfmg.content.electricity.connection.cables.CableConnection;
@@ -28,14 +29,13 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 import java.util.Objects;
 
 import static com.drmangotea.tfmg.base.blocks.WallMountBlock.FACING;
 
+@NothingNullByDefault
 public class SpoolItem extends Item {
     public final int barColor;
     public final ResourceLocation cableTypeKey;
@@ -53,13 +53,13 @@ public class SpoolItem extends Item {
         return true;
     }
 
-    @Override @ParametersAreNonnullByDefault
+    @Override
     public void onCraftedBy(ItemStack stack, Level level, Player player) {
         stack.set(TFMGDataComponents.SPOOL_AMOUNT, 1000);
         super.onCraftedBy(stack, level, player);
     }
 
-    @Override @NotNull @ParametersAreNonnullByDefault
+    @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         BlockPos fallback = new BlockPos(0, level.getMaxBuildHeight() + 1, 0); // Impossible block position, better than 0,0,0
         ItemStack stack = player.getItemInHand(hand);
@@ -80,8 +80,7 @@ public class SpoolItem extends Item {
         return super.use(level, player, hand);
     }
 
-    @Override @ParametersAreNonnullByDefault
-    @OnlyIn(Dist.CLIENT)
+    @Override @OnlyIn(Dist.CLIENT)
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
         String text = TFMGLang.translateDirect("tooltip.coils").getString();
         tooltip.add(TFMGLang.text(text + stack.getOrDefault(TFMGDataComponents.SPOOL_AMOUNT, 0)).component().withStyle(ChatFormatting.GREEN));
@@ -94,7 +93,7 @@ public class SpoolItem extends Item {
         super.appendHoverText(stack, context, tooltip, flag);
     }
 
-    @Override @NotNull
+    @Override
     public InteractionResult useOn(UseOnContext context) {
         Level level = context.getLevel();
         BlockPos pos = context.getClickedPos();
@@ -205,31 +204,29 @@ public class SpoolItem extends Item {
     }
 
 
-    @Override @ParametersAreNonnullByDefault
+    @Override
     public void inventoryTick(ItemStack stack, Level level, Entity entity, int slot, boolean isSelected) {
-        if (stack.get(TFMGDataComponents.SPOOL_AMOUNT) == null)
+		var amount = stack.get(TFMGDataComponents.SPOOL_AMOUNT);
+        if (amount == null)
             return;
 
-        if (stack.get(TFMGDataComponents.SPOOL_AMOUNT) == 0 && entity instanceof Player player && !stack.is(TFMGItems.EMPTY_SPOOL.get())) {
+        if (amount == 0 && entity instanceof Player player && !stack.is(TFMGItems.EMPTY_SPOOL.get())) {
             player.getInventory().setItem(slot, TFMGItems.EMPTY_SPOOL.asStack());
         }
     }
 
-    @Override @ParametersAreNonnullByDefault
+    @Override
     public boolean isBarVisible(ItemStack stack) {
         return !Objects.equals(cableTypeKey, TFMG.asResource("empty")) && TFMGRegistries.CABLE_TYPE_REGISTRY.containsKey(cableTypeKey);
     }
 
-    @Override @ParametersAreNonnullByDefault
+    @Override
     public int getBarColor(ItemStack stack) {
         return barColor;
     }
 
     @Override
     public int getBarWidth(ItemStack stack) {
-        if (stack.get(TFMGDataComponents.SPOOL_AMOUNT) == null)
-            return 13;
-
-        return (int) (13f * ((float) stack.get(TFMGDataComponents.SPOOL_AMOUNT) / 1000));
+        return (int) (13f * ((float) stack.getOrDefault(TFMGDataComponents.SPOOL_AMOUNT, 1000) / 1000));
     }
 }

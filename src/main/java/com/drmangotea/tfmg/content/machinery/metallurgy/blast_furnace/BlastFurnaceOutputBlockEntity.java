@@ -381,7 +381,7 @@ public class BlastFurnaceOutputBlockEntity extends SmartBlockEntity implements I
 
     @Override
     public void write(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {
-        super.write(compound,registries , clientPacket);
+        super.write(compound, registries, clientPacket);
         compound.put("MultiblockData", multiblock.write(registries, clientPacket));
         compound.put("InputItems", inputInventory.serializeNBT(registries));
         compound.put("Flux", fluxInventory.serializeNBT(registries));
