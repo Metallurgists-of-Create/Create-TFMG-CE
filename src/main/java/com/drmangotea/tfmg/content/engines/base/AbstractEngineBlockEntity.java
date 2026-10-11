@@ -141,16 +141,16 @@ public abstract class AbstractEngineBlockEntity extends KineticElectricBlockEnti
         } else drainFuel = true;
     }
 
+    //TODO: Make this more configurable
     public void manageFuelAndExhaust() {
         exhaustTank.forceFill(new FluidStack(TFMGFluids.CARBON_DIOXIDE.get(), Math.min(300, getFuelConsumption())), IFluidHandler.FluidAction.EXECUTE);
 
-            fuelTank.forceDrain(getFuelConsumption(), IFluidHandler.FluidAction.EXECUTE);
+        fuelTank.forceDrain(getFuelConsumption(), IFluidHandler.FluidAction.EXECUTE);
 
-            if (fuelTank.isEmpty())
-                updateRotation();
+        if (fuelTank.isEmpty())
+            updateRotation();
 
-            drainFuel = false;
-
+        drainFuel = false;
     }
 
     @Override
