@@ -1,6 +1,6 @@
 {
   "efficiency": 0.7,
-  "exhaust": "tfmg:flowing_carbon_dioxide",
+  "exhaust": "tfmg:carbon_dioxide",
   "fluids": "#c:naphtha",
   "torque": 1.3
 }

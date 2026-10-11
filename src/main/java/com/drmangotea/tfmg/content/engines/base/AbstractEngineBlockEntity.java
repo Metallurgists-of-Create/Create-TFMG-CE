@@ -199,7 +199,7 @@ public abstract class AbstractEngineBlockEntity extends KineticElectricBlockEnti
 	public Fluid exhaustFluid() {
 		//fallback to Co2 if no exhaust
 		if (level == null) return TFMGFluids.CARBON_DIOXIDE.get();
-		return getFuelType().map(f -> f.exhaust().value())
+		return getFuelType().map(EngineFuelType::exhaust)
 			.orElseGet(TFMGFluids.CARBON_DIOXIDE);
 	}
 	
