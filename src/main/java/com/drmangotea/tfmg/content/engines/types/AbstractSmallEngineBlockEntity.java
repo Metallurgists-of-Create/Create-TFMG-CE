@@ -86,8 +86,8 @@ public abstract class AbstractSmallEngineBlockEntity extends AbstractEngineBlock
         if (upgrade.isPresent()) {
             playInsertionSound();
         }
+		upgrade.ifPresent(u -> u.updateUpgrade(this));
         updateRotation();
-        upgrade.ifPresent(u -> u.updateUpgrade(this));
     }
 
     public CombinedInvWrapper itemHandler() {
@@ -286,20 +286,15 @@ public abstract class AbstractSmallEngineBlockEntity extends AbstractEngineBlock
     }
 
     protected void analogSignalChanged() {
-        if (controller == null)
-            return;
         getControllerBE().updateRotation();
-        getControllerBE().updateGeneratedRotation();
         if (level == null) return;
 
         int newSignal = level.getBestNeighborSignal(getBlockPos());
         signal = newSignal;
-        if (!isController()) {
-            if (level.getBlockEntity(controller) instanceof AbstractSmallEngineBlockEntity be) {
-                be.analogSignalChanged();
-                return;
-            }
-        }
+        if (!isController() && level.getBlockEntity(controller) instanceof AbstractSmallEngineBlockEntity be) {
+			be.analogSignalChanged();
+			return;
+		}
 
         for (BlockPos pos : engines) {
             newSignal = Math.max(level.getBestNeighborSignal(pos), newSignal);
@@ -548,10 +543,8 @@ public abstract class AbstractSmallEngineBlockEntity extends AbstractEngineBlock
     public AbstractSmallEngineBlockEntity getControllerBE() {
         if (isController())
             return this;
-        if (level == null) return this;
-        BlockEntity blockEntity = level.getBlockEntity(controller);
-        if (blockEntity instanceof AbstractSmallEngineBlockEntity)
-            return (AbstractSmallEngineBlockEntity) blockEntity;
+        if (level != null && level.getBlockEntity(controller) instanceof AbstractSmallEngineBlockEntity be)
+            return be;
         return this;
     }
 

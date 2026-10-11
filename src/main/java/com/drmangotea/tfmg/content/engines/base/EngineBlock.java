@@ -54,7 +54,8 @@ public class EngineBlock extends HorizontalKineticBlock {
             if (be.hasUpgrade()) {
                 if (!be.upgradeInventory.isEmpty()) {
                     be.playRemovalSound();
-                    be.dropItem(be.upgradeInventory.getStackInSlot(0));
+					ItemStack stack = be.upgradeInventory.extractItem(0, 1, false);
+                    be.dropItem(stack);
                 }
                 be.upgrade = Optional.empty();
                 be.updateRotation();

@@ -1,5 +1,6 @@
 package com.drmangotea.tfmg.content.engines.upgrades;
 
+import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.content.engines.types.AbstractSmallEngineBlockEntity;
 import com.drmangotea.tfmg.content.engines.upgrades.base.EngineUpgrade;
 import net.minecraft.core.BlockPos;
@@ -70,7 +71,9 @@ public class EnginePipingUpgrade extends EngineUpgrade {
 		int maxOutput = fluidHandler.drain(maxInput, IFluidHandler.FluidAction.SIMULATE).getAmount();
 		
 		int amount = Math.min(maxInput, Math.min(maxOutput, controller.fuelTank.getSpace()));
+		TFMG.LOGGER.debug("[Engine Piping @ [{}]] In: {}, Out: {}, amount: {}", engine.getBlockPos(), maxInput, maxOutput, amount);
 		FluidStack drained = fluidHandler.drain(toDrain.copyWithAmount(amount), IFluidHandler.FluidAction.EXECUTE);
-		controller.getControllerBE().fuelTank.fill(drained, IFluidHandler.FluidAction.EXECUTE);
+		int in = controller.fuelTank.fill(drained, IFluidHandler.FluidAction.EXECUTE);
+		TFMG.LOGGER.debug("[Engine Piping @ [{}]] Out: {}, In: {}", engine.getBlockPos(), drained, in);
 	}
 }
