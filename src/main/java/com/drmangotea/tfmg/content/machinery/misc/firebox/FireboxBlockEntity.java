@@ -8,7 +8,6 @@ import com.drmangotea.tfmg.registry.TFMGFluids;
 import com.drmangotea.tfmg.registry.TFMGTags;
 import com.simibubi.create.api.connectivity.ConnectivityHandler;
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
-import com.simibubi.create.content.fluids.tank.FluidTankBlock;
 import com.simibubi.create.content.processing.burner.BlazeBurnerBlock;
 import com.simibubi.create.foundation.advancement.AllAdvancements;
 import com.simibubi.create.foundation.blockEntity.IMultiBlockEntityContainer;
@@ -21,7 +20,6 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
@@ -80,7 +78,7 @@ public class FireboxBlockEntity extends SmartBlockEntity implements IHaveGoggleI
 
     protected void updateConnectivity() {
         updateConnectivity = false;
-        if (level.isClientSide)
+        if (level == null || level.isClientSide)
             return;
         if (!isController())
             return;
@@ -170,7 +168,7 @@ public class FireboxBlockEntity extends SmartBlockEntity implements IHaveGoggleI
     public void initialize() {
         super.initialize();
         sendData();
-        if (level.isClientSide)
+        if (level != null && level.isClientSide)
             invalidateRenderBoundingBox();
     }
 
@@ -193,9 +191,8 @@ public class FireboxBlockEntity extends SmartBlockEntity implements IHaveGoggleI
     public FireboxBlockEntity getControllerBE() {
         if (isController())
             return this;
-        BlockEntity blockEntity = level.getBlockEntity(controller);
-        if (blockEntity instanceof FireboxBlockEntity)
-            return (FireboxBlockEntity) blockEntity;
+        if (level != null && level.getBlockEntity(controller) instanceof FireboxBlockEntity be)
+            return be;
         return null;
     }
 
@@ -211,7 +208,7 @@ public class FireboxBlockEntity extends SmartBlockEntity implements IHaveGoggleI
     }
 
     public void removeController(boolean keepFluids) {
-        if (level.isClientSide)
+        if (level == null || level.isClientSide)
             return;
         updateConnectivity = true;
         if (!keepFluids)
@@ -246,7 +243,7 @@ public class FireboxBlockEntity extends SmartBlockEntity implements IHaveGoggleI
 
     @Override
     public void setController(BlockPos controller) {
-        if (level.isClientSide && !isVirtual())
+        if (level == null || level.isClientSide && !isVirtual())
             return;
         if (controller.equals(this.controller))
             return;
@@ -282,9 +279,8 @@ public class FireboxBlockEntity extends SmartBlockEntity implements IHaveGoggleI
 
     @Nullable
     public FireboxBlockEntity getOtherFireboxBlockEntity(Direction direction) {
-        BlockEntity otherBE = level.getBlockEntity(worldPosition.relative(direction));
-        if (otherBE instanceof FireboxBlockEntity)
-            return (FireboxBlockEntity) otherBE;
+        if (level != null && level.getBlockEntity(worldPosition.relative(direction)) instanceof FireboxBlockEntity otherBE)
+            return otherBE;
         return null;
     }
 
@@ -305,15 +301,11 @@ public class FireboxBlockEntity extends SmartBlockEntity implements IHaveGoggleI
         int prevHeight = height;
 
         updateConnectivity = compound.contains("Uninitialized");
-        controller = null;
-        lastKnownPos = null;
 
         running = compound.getBoolean("IsRunning");
 
-        if (compound.contains("LastKnownPos"))
-            lastKnownPos = NbtUtils.readBlockPos(compound,"LastKnownPos").get();
-        if (compound.contains("Controller"))
-            controller = NbtUtils.readBlockPos(compound,"Controller").get();
+        lastKnownPos = NbtUtils.readBlockPos(compound,"LastKnownPos").orElse(null);
+        controller = NbtUtils.readBlockPos(compound,"Controller").orElse(null);
 
         if (isController()) {
             width = compound.getInt("Size");
@@ -335,7 +327,7 @@ public class FireboxBlockEntity extends SmartBlockEntity implements IHaveGoggleI
 
         boolean changeOfController = !Objects.equals(controllerBefore, controller);
         if (changeOfController || prevSize != width || prevHeight != height) {
-            if (hasLevel())
+            if (level != null)
                 level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 16);
             if (isController()) {
                 tankInventory.setCapacity(getCapacityMultiplier() * getTotalTankSize());
@@ -418,12 +410,6 @@ public class FireboxBlockEntity extends SmartBlockEntity implements IHaveGoggleI
 
     @Override
     public void notifyMultiUpdated() {
-        BlockState state = this.getBlockState();
-        if (FluidTankBlock.isTank(state)) { // safety
-            state = state.setValue(FluidTankBlock.BOTTOM, getController().getY() == getBlockPos().getY());
-            state = state.setValue(FluidTankBlock.TOP, getController().getY() + height - 1 == getBlockPos().getY());
-            level.setBlock(getBlockPos(), state, 6);
-        }
         onFluidStackChanged(tankInventory.getFluid());
         setChanged();
     }
