@@ -33,6 +33,12 @@ public enum TFMGRecipeTypes implements IRecipeTypeInfo, StringRepresentable {
     WINDING(WindingRecipe::new),
     HOT_BLAST(HotBlastRecipe::new),
     VAT(VatMachineRecipe::new),
+
+    /**
+     * Use {@link #VAT} instead
+     */
+    @Deprecated(since = "1.3.2a", forRemoval = true)
+    VAT_MACHINE_RECIPE(VatMachineRecipe::new),
     POLARIZING(PolarizingRecipe::new);
 
 
