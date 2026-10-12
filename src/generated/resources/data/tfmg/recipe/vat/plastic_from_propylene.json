@@ -1,11 +1,11 @@
 {
-  "type": "tfmg:vat_machine_recipe",
+  "type": "tfmg:vat",
   "heat_level": 2,
   "ingredients": [
     {
       "type": "neoforge:tag",
       "amount": 500,
-      "tag": "c:ethylene"
+      "tag": "c:propylene"
     }
   ],
   "machines": [

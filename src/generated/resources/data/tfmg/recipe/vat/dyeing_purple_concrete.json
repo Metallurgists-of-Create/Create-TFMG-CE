@@ -1,8 +1,8 @@
 {
-  "type": "tfmg:vat_machine_recipe",
+  "type": "tfmg:vat",
   "ingredients": [
     {
-      "tag": "c:dyes/lime"
+      "tag": "c:dyes/purple"
     },
     {
       "type": "neoforge:single",
@@ -18,7 +18,7 @@
   "results": [
     {
       "amount": 8000,
-      "id": "tfmg:liquid_lime_concrete"
+      "id": "tfmg:liquid_purple_concrete"
     }
   ]
 }

@@ -1,8 +1,8 @@
 {
-  "type": "tfmg:vat_machine_recipe",
+  "type": "tfmg:vat",
   "ingredients": [
     {
-      "tag": "c:dyes/black"
+      "tag": "c:dyes/red"
     },
     {
       "type": "neoforge:single",
@@ -18,7 +18,7 @@
   "results": [
     {
       "amount": 8000,
-      "id": "tfmg:liquid_black_concrete"
+      "id": "tfmg:liquid_red_concrete"
     }
   ]
 }

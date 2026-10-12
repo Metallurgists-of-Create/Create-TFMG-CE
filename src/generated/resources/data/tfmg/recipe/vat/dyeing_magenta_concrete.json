@@ -1,8 +1,8 @@
 {
-  "type": "tfmg:vat_machine_recipe",
+  "type": "tfmg:vat",
   "ingredients": [
     {
-      "tag": "c:dyes/light_gray"
+      "tag": "c:dyes/magenta"
     },
     {
       "type": "neoforge:single",
@@ -18,7 +18,7 @@
   "results": [
     {
       "amount": 8000,
-      "id": "tfmg:liquid_light_gray_concrete"
+      "id": "tfmg:liquid_magenta_concrete"
     }
   ]
 }

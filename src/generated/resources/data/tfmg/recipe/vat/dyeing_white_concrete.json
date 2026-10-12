@@ -1,8 +1,8 @@
 {
-  "type": "tfmg:vat_machine_recipe",
+  "type": "tfmg:vat",
   "ingredients": [
     {
-      "tag": "c:dyes/orange"
+      "tag": "c:dyes/white"
     },
     {
       "type": "neoforge:single",
@@ -18,7 +18,7 @@
   "results": [
     {
       "amount": 8000,
-      "id": "tfmg:liquid_orange_concrete"
+      "id": "tfmg:liquid_white_concrete"
     }
   ]
 }

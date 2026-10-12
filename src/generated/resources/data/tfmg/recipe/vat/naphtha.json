@@ -1,22 +1,26 @@
 {
-  "type": "tfmg:vat_machine_recipe",
+  "type": "tfmg:vat",
   "heat_level": 2,
   "ingredients": [
     {
       "type": "neoforge:tag",
       "amount": 500,
-      "tag": "c:propylene"
+      "tag": "c:naphtha"
     }
   ],
   "machines": [
     "tfmg:mixer"
   ],
   "min_size": 1,
-  "processing_time": 30,
+  "processing_time": 20,
   "results": [
     {
-      "amount": 500,
-      "id": "tfmg:molten_plastic"
+      "amount": 250,
+      "id": "tfmg:ethylene"
+    },
+    {
+      "amount": 250,
+      "id": "tfmg:propylene"
     }
   ]
 }

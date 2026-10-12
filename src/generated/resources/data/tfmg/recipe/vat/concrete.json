@@ -1,5 +1,5 @@
 {
-  "type": "tfmg:vat_machine_recipe",
+  "type": "tfmg:vat",
   "ingredients": [
     {
       "tag": "c:sands/colorless"

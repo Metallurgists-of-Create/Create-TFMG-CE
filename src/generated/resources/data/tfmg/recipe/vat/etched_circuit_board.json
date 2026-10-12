@@ -1,13 +1,13 @@
 {
-  "type": "tfmg:vat_machine_recipe",
+  "type": "tfmg:vat",
   "ingredients": [
     {
-      "tag": "c:dyes/green"
+      "item": "tfmg:coated_circuit_board"
     },
     {
       "type": "neoforge:single",
-      "amount": 8000,
-      "fluid": "tfmg:liquid_concrete"
+      "amount": 250,
+      "fluid": "tfmg:sulfuric_acid"
     }
   ],
   "machines": [
@@ -17,8 +17,7 @@
   "processing_time": 100,
   "results": [
     {
-      "amount": 8000,
-      "id": "tfmg:liquid_green_concrete"
+      "id": "tfmg:etched_circuit_board"
     }
   ]
 }

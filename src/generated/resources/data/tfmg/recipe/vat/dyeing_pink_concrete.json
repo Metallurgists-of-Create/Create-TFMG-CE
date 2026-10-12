@@ -1,13 +1,13 @@
 {
-  "type": "tfmg:vat_machine_recipe",
+  "type": "tfmg:vat",
   "ingredients": [
     {
-      "item": "tfmg:coated_circuit_board"
+      "tag": "c:dyes/pink"
     },
     {
       "type": "neoforge:single",
-      "amount": 250,
-      "fluid": "tfmg:sulfuric_acid"
+      "amount": 8000,
+      "fluid": "tfmg:liquid_concrete"
     }
   ],
   "machines": [
@@ -17,7 +17,8 @@
   "processing_time": 100,
   "results": [
     {
-      "id": "tfmg:etched_circuit_board"
+      "amount": 8000,
+      "id": "tfmg:liquid_pink_concrete"
     }
   ]
 }
