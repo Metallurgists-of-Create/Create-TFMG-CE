@@ -7,23 +7,18 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-public class Remap {
-    private final String old;
-    private final ResourceLocation current;
-
-    private List<ResourceKey<? extends Registry<?>>> registries = new ArrayList<>();
-
-    public Remap(String old, ResourceLocation current) {
-        this.old = old;
-        this.current = current;
-    }
+public record Remap(String old, ResourceLocation current) {
+    private static final Map<ResourceKey<? extends Registry<?>>, List<Remap>> REMAPS = new HashMap<>();
 
     @SafeVarargs
     public final Remap forTypes(ResourceKey<? extends Registry<?>>... registries) {
-        this.registries = Arrays.asList(registries);
+        for (ResourceKey<? extends Registry<?>> registry : registries) {
+            REMAPS.computeIfAbsent(registry, k -> new ArrayList<>()).add(this);
+        }
         return this;
     }
 
@@ -39,20 +34,19 @@ public class Remap {
         return new Remap(old, current).forTypes(Registries.FLUID);
     }
 
-    public String getOld() {
-        return old;
+    public static Remap recipe(String old, ResourceLocation current) {
+        return new Remap(old, current).forTypes(Registries.RECIPE);
     }
 
-    public ResourceLocation getCurrent() {
-        return current;
-    }
+    public static void remap(Registry<?> registry) {
+        List<Remap> remaps = REMAPS.get(registry.key());
+        if (remaps == null) {
+            return;
+        }
 
-    public void remap(Registry<?> registry) {
-        for (var key : this.registries) {
-            if (registry.key() == key) {
-                registry.addAlias(TFMG.asResource(getOld()), getCurrent());
-                TFMG.LOGGER.debug("[TFMG Remapper ({})] Remapped {} to {}", key.location(), TFMG.asResource(getOld()), getCurrent());
-            }
+        for (Remap remap : remaps) {
+            registry.addAlias(TFMG.asResource(remap.old()), remap.current());
+            TFMG.LOGGER.debug("[TFMG Remapper ({})] Remapped {} to {}", registry.key().location(), TFMG.asResource(remap.old()), remap.current());
         }
     }
 }
