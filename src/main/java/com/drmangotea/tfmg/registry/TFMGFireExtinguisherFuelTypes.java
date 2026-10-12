@@ -18,7 +18,7 @@ public class TFMGFireExtinguisherFuelTypes {
         register(ctx, "carbon_dioxide", new FireExtinguisherFuelType.Builder()
                 .spread(10).speed(0.5f)
                 .color(0x525252).clearRadius(1)
-                .addFluids(TFMGFluids.CARBON_DIOXIDE.get())
+                .addFluids(TFMGFluids.CARBON_DIOXIDE.getSource())
                 .build());
     }
 

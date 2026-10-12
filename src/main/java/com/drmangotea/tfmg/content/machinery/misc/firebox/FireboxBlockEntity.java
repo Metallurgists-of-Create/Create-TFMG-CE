@@ -106,9 +106,9 @@ public class FireboxBlockEntity extends SmartBlockEntity implements IHaveGoggleI
             running = true;
             controller.tankInventory.forceDrain(drainable.getAmount(), IFluidHandler.FluidAction.EXECUTE);
             if (TFMGConfigs.common().machines.fireboxExhaustRequirement.get()) {
-                int toFill = controller.exhuastTank.forceFill(new FluidStack(TFMGFluids.CARBON_DIOXIDE.get(), 500), IFluidHandler.FluidAction.SIMULATE);
+                int toFill = controller.exhuastTank.forceFill(new FluidStack(TFMGFluids.CARBON_DIOXIDE.get().getSource(), 500), IFluidHandler.FluidAction.SIMULATE);
                 if (toFill > 0) {
-                    controller.exhuastTank.forceFill(new FluidStack(TFMGFluids.CARBON_DIOXIDE.get(), toFill), IFluidHandler.FluidAction.EXECUTE);
+                    controller.exhuastTank.forceFill(new FluidStack(TFMGFluids.CARBON_DIOXIDE.get().getSource(), toFill), IFluidHandler.FluidAction.EXECUTE);
                 }
             }
             sendData();

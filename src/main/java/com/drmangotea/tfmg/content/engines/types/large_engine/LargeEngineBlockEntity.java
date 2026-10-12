@@ -100,12 +100,9 @@ public class LargeEngineBlockEntity extends AbstractEngineBlockEntity {
         super.tick();
 
         PoweredShaftBlockEntity shaft = getShaft();
-        if (level == null) return;
-        //Don't fix this. For some reason fixing the double null check stops the engine from running
-        if (shaft == null) return;
+        if (level == null || shaft == null) return;
 
-        BlockState blockState = getBlockState();
-        if (!TFMGBlocks.LARGE_ENGINE.has(blockState) && !TFMGBlocks.SIMPLE_LARGE_ENGINE.has(blockState))
+        if (!TFMGBlocks.LARGE_ENGINE.has(getBlockState()) && !TFMGBlocks.SIMPLE_LARGE_ENGINE.has(getBlockState()))
             return;
 
         if (level.isClientSide && shaft.getSpeed() != 0 && canWork()) {
