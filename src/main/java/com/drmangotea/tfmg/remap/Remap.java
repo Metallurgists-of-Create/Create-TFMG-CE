@@ -35,7 +35,7 @@ public record Remap(String old, ResourceLocation current) {
     }
 
     public static Remap recipe(String old, ResourceLocation current) {
-        return new Remap(old, current).forTypes(Registries.RECIPE);
+        return new Remap(old, current).forTypes(Registries.RECIPE_TYPE, Registries.RECIPE_SERIALIZER);
     }
 
     public static void remap(Registry<?> registry) {
