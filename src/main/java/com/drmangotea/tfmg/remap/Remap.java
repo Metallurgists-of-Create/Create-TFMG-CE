@@ -39,7 +39,7 @@ public record Remap(String old, ResourceLocation current) {
     }
 
     public static void remap(Registry<?> registry) {
-        List<Remap> remaps = REMAPS.get(registry.key());
+        List<Remap> remaps = REMAPS.remove(registry.key());
         if (remaps == null) {
             return;
         }
