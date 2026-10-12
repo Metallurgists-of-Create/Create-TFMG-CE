@@ -18,6 +18,10 @@ Contributors:<br>
 - Fluid Compositions are now created under the `tfmg` namespace.
 - Multimeters are now valid in the `belt` Curio slot.
 - Diagonal Cables can no be horizontal
+- Engines:
+  - Engines now drop all components and upgrades when destroyed.
+  - Golden Turbo's speed and angle rendering now matches the Turbo's.
+  - Added the `engine_upgrade` component to all default upgrade items.
 
 ### API Changes:
 - new `IHaveMultimeterInformation` interface
@@ -26,5 +30,13 @@ Contributors:<br>
 - Vat Operations
   - Renamed `tfmg:mixing` to `tfmg:mixer` & `TFMGVatOperations#MIXING` to `TFMGVatOperations#MIXER`
   - Renamed `tfmg:freezing` to `tfmg:freezer` & `TFMGVatOperations#FREEZING` to `TFMGVatOperations#FREEZER`
+- Added `tfmg:engine_upgrade` data component.
+- Improved registry creation.
+- Added tag generator for Engine Upgrades.
+- Engine Upgrades are now a registry.
+- Electricity generation on engine upgrades is now an interface.
+- All engines now have registered item handlers.
+- Engine Fuels can now specify custom exhaust fluids
+  - The field is not optional, but the Builder and Engines default to CO2.
 
 ### New Translations:

@@ -5,7 +5,6 @@ import com.drmangotea.tfmg.base.TFMGUtils;
 import com.drmangotea.tfmg.base.data_storage.CylinderFuels;
 import com.drmangotea.tfmg.base.lang.TFMGTexts;
 import com.drmangotea.tfmg.config.TFMGConfigs;
-import com.drmangotea.tfmg.content.engines.fuels.EngineFuelType;
 import com.drmangotea.tfmg.content.engines.types.AbstractSmallEngineBlockEntity;
 import com.drmangotea.tfmg.content.engines.types.EngineType;
 import com.drmangotea.tfmg.content.engines.types.turbine_engine.TurbineEngineBlockEntity;
@@ -29,11 +28,10 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.items.wrapper.CombinedInvWrapper;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Predicate;
 
 import static com.drmangotea.tfmg.content.engines.types.regular_engine.RegularEngineBlock.EXTENDED;
@@ -72,6 +70,11 @@ public class RegularEngineBlockEntity extends AbstractSmallEngineBlockEntity {
         updateRotation();
         sendData();
         setChanged();
+    }
+
+    @Override
+    public CombinedInvWrapper itemHandler() {
+        return new CombinedInvWrapper(componentsInventory, upgradeInventory, pistonInventory);
     }
 
     public void refreshFuels() {
@@ -329,32 +332,17 @@ public class RegularEngineBlockEntity extends AbstractSmallEngineBlockEntity {
 
     @Override
     public float efficiencyModifier() {
-        AtomicReference<Float> fuelTypeEfficiency = new AtomicReference<>(1.0f);
-        if (level != null) {
-            Optional<EngineFuelType> fuelType = getFuelType().getFuelType(this.level.registryAccess());
-            fuelType.ifPresent(type -> fuelTypeEfficiency.set(type.efficiency()));
-        }
-        return type.efficiencyModifier * fuelTypeEfficiency.get() * getUpgradeEfficiencyModifier()*(TFMGConfigs.common().machines.engineFuelConsumption.getF()/100f);
+        return type.efficiencyModifier * super.efficiencyModifier() * getUpgradeEfficiencyModifier()*(TFMGConfigs.common().machines.engineFuelConsumption.getF()/100f);
     }
 
     @Override
     public float speedModifier() {
-        AtomicReference<Float> fuelTypeSpeed = new AtomicReference<>(1.0f);
-        if (level != null) {
-            Optional<EngineFuelType> fuelType = getFuelType().getFuelType(this.level.registryAccess());
-            fuelType.ifPresent(type -> fuelTypeSpeed.set(type.speed()));
-        }
-        return type.speedModifier * fuelTypeSpeed.get() * getUpgradeSpeedModifier();
+        return type.speedModifier * super.speedModifier() * getUpgradeSpeedModifier();
     }
 
     @Override
     public float torqueModifier() {
-        AtomicReference<Float> fuelTypeTorque = new AtomicReference<>(1.0f);
-        if (level != null) {
-            Optional<EngineFuelType> fuelType = getFuelType().getFuelType(this.level.registryAccess());
-            fuelType.ifPresent(type -> fuelTypeTorque.set(type.torque()));
-        }
-        return type.torqueModifier * fuelTypeTorque.get() * getUpgradeTorqueModifier();
+        return type.torqueModifier * super.torqueModifier() * getUpgradeTorqueModifier();
     }
 
     @Override

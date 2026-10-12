@@ -2,6 +2,7 @@ package com.drmangotea.tfmg.content.items.weapons.fire_extinguisher;
 
 import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.TFMGRegistries;
+import com.drmangotea.tfmg.base.annotation.NothingNullByDefault;
 import com.drmangotea.tfmg.base.lang.TFMGLang;
 import com.drmangotea.tfmg.registry.TFMGFireExtinguisherFuelTypes;
 import com.mojang.serialization.Codec;
@@ -32,6 +33,7 @@ import java.util.function.Consumer;
 
 import static com.drmangotea.tfmg.content.items.weapons.flamethrover.FlamethrowerItem.FUEL_CAPACITY;
 
+@NothingNullByDefault
 public record FireExtinguisherFuel(@Nullable ResourceKey<FireExtinguisherFuelType> fuelType, int amount, int color) implements TooltipProvider {
 
     public static final Codec<FireExtinguisherFuel> CODEC = RecordCodecBuilder.create(instance -> instance.group(

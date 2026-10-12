@@ -1,8 +1,8 @@
 package com.drmangotea.tfmg.datagen;
 
-
 import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.TFMGRegistries;
+import com.drmangotea.tfmg.base.annotation.NothingNullByDefault;
 import com.drmangotea.tfmg.registry.TFMGEngineFuelTypes;
 import com.drmangotea.tfmg.registry.TFMGFireExtinguisherFuelTypes;
 import com.drmangotea.tfmg.registry.TFMGFlamethrowerFuelTypes;
@@ -19,6 +19,7 @@ import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
+@NothingNullByDefault
 public class TFMGGeneratedEntriesProvider extends DatapackBuiltinEntriesProvider {
     private static final RegistrySetBuilder BUILDER = new RegistrySetBuilder()
             .add(TFMGRegistries.FLAMETHROWER_FUEL_TYPE, TFMGFlamethrowerFuelTypes::bootstrap)
@@ -31,7 +32,7 @@ public class TFMGGeneratedEntriesProvider extends DatapackBuiltinEntriesProvider
 
 
     public TFMGGeneratedEntriesProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {
-        super(output, registries, BUILDER, Set.of(TFMG.MOD_ID, "chemica"));
+        super(output, registries, BUILDER, Set.of(TFMG.MOD_ID));
     }
 
     @Override

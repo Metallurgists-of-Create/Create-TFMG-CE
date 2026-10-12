@@ -2,15 +2,15 @@ package com.drmangotea.tfmg.content.engines.base;
 
 import com.drmangotea.tfmg.config.TFMGConfigs;
 import com.drmangotea.tfmg.content.electricity.base.KineticElectricBlockEntity;
-import com.drmangotea.tfmg.content.engines.fuels.EngineFuel;
+import com.drmangotea.tfmg.content.engines.fuels.EngineFuelType;
 import com.drmangotea.tfmg.registry.TFMGBlockEntities;
 import com.drmangotea.tfmg.registry.TFMGFluids;
 import com.simibubi.create.foundation.fluid.CombinedTankWrapper;
 import net.createmod.catnip.math.VecHelper;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -18,13 +18,16 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.items.wrapper.CombinedInvWrapper;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Predicate;
 
 public abstract class AbstractEngineBlockEntity extends KineticElectricBlockEntity {
@@ -44,14 +47,11 @@ public abstract class AbstractEngineBlockEntity extends KineticElectricBlockEnti
     public float highestSignal;
     public int signal;
     //
-    public BlockPos engineController;
-    //
 
     public float torque = 0;
     public boolean signalChanged;
     //
     public boolean drainFuel = true;
-
     protected boolean updateCapability;
 
 
@@ -64,6 +64,8 @@ public abstract class AbstractEngineBlockEntity extends KineticElectricBlockEnti
         updateCapability = false;
         refreshCapability();
     }
+
+    public abstract CombinedInvWrapper itemHandler();
 
     public static void registerCapabilities(RegisterCapabilitiesEvent event) {
         event.registerBlockEntity(
@@ -80,6 +82,22 @@ public abstract class AbstractEngineBlockEntity extends KineticElectricBlockEnti
                 Capabilities.FluidHandler.BLOCK,
                 TFMGBlockEntities.RADIAL_ENGINE.get(),
                 (be, context) -> be.fluidCapability
+        );
+
+        event.registerBlockEntity(
+                Capabilities.ItemHandler.BLOCK,
+                TFMGBlockEntities.REGULAR_ENGINE.get(),
+                (be, context) -> be.itemHandler()
+        );
+        event.registerBlockEntity(
+                Capabilities.ItemHandler.BLOCK,
+                TFMGBlockEntities.TURBINE_ENGINE.get(),
+                (be, context) -> be.itemHandler()
+        );
+        event.registerBlockEntity(
+                Capabilities.ItemHandler.BLOCK,
+                TFMGBlockEntities.RADIAL_ENGINE.get(),
+                (be, context) -> be.itemHandler()
         );
     }
 
@@ -108,10 +126,6 @@ public abstract class AbstractEngineBlockEntity extends KineticElectricBlockEnti
         setChanged();
     }
 
-    public boolean hasEngineController() {
-        return engineController != null;
-    }
-
     @Override
     public void updateNetwork() {
         super.updateNetwork();
@@ -119,15 +133,11 @@ public abstract class AbstractEngineBlockEntity extends KineticElectricBlockEnti
 
     protected void analogSignalChanged() {
         if (level == null) return;
-        if (hasEngineController()) {
-            return;
-        }
         int newSignal = level.getBestNeighborSignal(getBlockPos());
         signal = newSignal;
         newSignal = Math.max(level.getBestNeighborSignal(getBlockPos()), newSignal);
         highestSignal = newSignal / 15f;
         updateRotation();
-
     }
 
 
@@ -141,15 +151,12 @@ public abstract class AbstractEngineBlockEntity extends KineticElectricBlockEnti
         } else drainFuel = true;
     }
 
-    //TODO: Make this more configurable
+	//TODO: Make this more configurable
     public void manageFuelAndExhaust() {
-        exhaustTank.forceFill(new FluidStack(TFMGFluids.CARBON_DIOXIDE.get(), Math.min(300, getFuelConsumption())), IFluidHandler.FluidAction.EXECUTE);
-
+        exhaustTank.forceFill(new FluidStack(exhaustFluid(), Math.min(300, getFuelConsumption())), IFluidHandler.FluidAction.EXECUTE);
         fuelTank.forceDrain(getFuelConsumption(), IFluidHandler.FluidAction.EXECUTE);
-
         if (fuelTank.isEmpty())
             updateRotation();
-
         drainFuel = false;
     }
 
@@ -162,16 +169,13 @@ public abstract class AbstractEngineBlockEntity extends KineticElectricBlockEnti
     public float getSpeedEfficiency() {
         if (rpm >= 6000)
             return 1;
-
 		return 2f / (1f + (rpm / 6250));
     }
-
 
     public abstract Predicate<FluidStack> validFuels();
 
     public void onUpdated() {
     }
-
 
     public boolean canWork() {
         return !fuelTank.isEmpty() && exhaustTank.getSpace() != 0;
@@ -180,17 +184,28 @@ public abstract class AbstractEngineBlockEntity extends KineticElectricBlockEnti
     public void updateRotation() {
     }
 
-    public abstract float efficiencyModifier();
-
-    public abstract float speedModifier();
-
-    public abstract float torqueModifier();
-
-
-    public EngineFuel getFuelType() {
-        if (this.level == null) return EngineFuel.EMPTY;
-        FluidStack contained = fuelTank.getFluid();
-        return EngineFuel.createForType(this.level.registryAccess(), contained);
+	public float efficiencyModifier() {
+		return getFuelType().map(EngineFuelType::efficiency).orElse(1.0f);
+	}
+	
+    public float speedModifier() {
+		return getFuelType().map(EngineFuelType::speed).orElse(1.0f);
+	}
+	
+	public float torqueModifier() {
+		return getFuelType().map(EngineFuelType::torque).orElse(1.0f);
+	}
+	
+	public Fluid exhaustFluid() {
+		//fallback to Co2 if no exhaust
+		if (level == null) return TFMGFluids.CARBON_DIOXIDE.get();
+		return getFuelType().map(EngineFuelType::exhaust)
+			.orElseGet(TFMGFluids.CARBON_DIOXIDE);
+	}
+	
+    public Optional<EngineFuelType> getFuelType() {
+        if (this.level == null) return Optional.empty();
+        return EngineFuelType.getTypeForFluid(this.level.registryAccess(), fuelTank.getFluid().getFluid()).map(Holder.Reference::value);
     }
 
     public void refreshCapability() {
@@ -239,9 +254,6 @@ public abstract class AbstractEngineBlockEntity extends KineticElectricBlockEnti
         super.read(compound, registries, clientPacket);
         reverse = compound.getBoolean("Reverse");
         signal = compound.getInt("Signal") + 1;
-        if (hasEngineController())
-            engineController = NbtUtils.readBlockPos(compound, "EngineController").orElse(getBlockPos());
-
         fuelTank.readFromNBT(registries, compound.getCompound("FuelTank"));
         exhaustTank.readFromNBT(registries, compound.getCompound("ExhaustTank"));
 
@@ -263,9 +275,6 @@ public abstract class AbstractEngineBlockEntity extends KineticElectricBlockEnti
 
         compound.putBoolean("Reverse", reverse);
         compound.putInt("Signal", signal);
-        if (hasEngineController()) {
-            compound.put("EngineController", NbtUtils.writeBlockPos(engineController));
-        }
         compound.put("FuelTank", fuelTank.writeToNBT(registries, new CompoundTag()));
         compound.put("ExhaustTank", exhaustTank.writeToNBT(registries, new CompoundTag()));
 

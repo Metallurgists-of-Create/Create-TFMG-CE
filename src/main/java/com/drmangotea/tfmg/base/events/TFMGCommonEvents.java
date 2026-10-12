@@ -1,6 +1,5 @@
 package com.drmangotea.tfmg.base.events;
 
-
 import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.TFMGRegistries;
 import com.drmangotea.tfmg.config.TFMGConfigs;
@@ -50,7 +49,7 @@ import net.neoforged.neoforge.event.level.LevelEvent;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import net.neoforged.neoforge.registries.NewRegistryEvent;
 
-
+@SuppressWarnings("unused")
 @EventBusSubscriber
 public class TFMGCommonEvents {
     @SubscribeEvent
@@ -104,12 +103,7 @@ public class TFMGCommonEvents {
 
         @SubscribeEvent
         public static void newRegistry(NewRegistryEvent event) {
-            event.register(TFMGRegistries.CABLE_TYPE_REGISTRY);
-            event.register(TFMGRegistries.ELECTRODE_REGISTRY);
-            event.register(TFMGRegistries.ENGINE_TYPE_REGISTRY);
-            event.register(TFMGRegistries.MIXER_MODE_REGISTRY);
-            event.register(TFMGRegistries.VAT_OPERATION_REGISTRY);
-            event.register(TFMGRegistries.VAT_TYPE_REGISTRY);
+            TFMGRegistries.FOR_INIT.forEach(event::register);
         }
     }
 

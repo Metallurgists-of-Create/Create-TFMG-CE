@@ -33,12 +33,12 @@ import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.items.wrapper.CombinedInvWrapper;
 
 import javax.annotation.Nullable;
 import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Predicate;
 
 public class LargeEngineBlockEntity extends AbstractEngineBlockEntity {
@@ -54,6 +54,11 @@ public class LargeEngineBlockEntity extends AbstractEngineBlockEntity {
         fuelTank = EngineFluidTank.fuelTank(2000, f->tankUpdated(f,true));
         airTank = EngineFluidTank.airTank(1000, f->tankUpdated(f,true));
         fluidCapability = new CombinedTankWrapper(exhaustTank, fuelTank, airTank);
+    }
+
+    @Override
+    public CombinedInvWrapper itemHandler() {
+        return new CombinedInvWrapper();
     }
 
     @Override
@@ -132,33 +137,24 @@ public class LargeEngineBlockEntity extends AbstractEngineBlockEntity {
 
     @Override
     public float efficiencyModifier() {
-        AtomicReference<Float> fuelTypeEfficiency = new AtomicReference<>(1.0f);
-        if (level != null) {
-            Optional<EngineFuelType> fuelType = EngineFuelType.find(fuelTank.getFluid(), level.registryAccess(), TFMGTags.EngineFuel.LARGE_ENGINE.tag);
-            fuelType.ifPresent(type -> fuelTypeEfficiency.set(type.efficiency()));
-        }
-        return fuelTypeEfficiency.get() * 0.5f;
+        return super.efficiencyModifier() * 0.5f;
     }
 
     @Override
     public float speedModifier() {
-        AtomicReference<Float> fuelTypeSpeed = new AtomicReference<>(1.0f);
-        if (level != null) {
-            Optional<EngineFuelType> fuelType = EngineFuelType.find(fuelTank.getFluid(), level.registryAccess(), TFMGTags.EngineFuel.LARGE_ENGINE.tag);
-            fuelType.ifPresent(type -> fuelTypeSpeed.set(type.speed()));
-        }
-        return fuelTypeSpeed.get();
+		return super.speedModifier();
     }
 
     @Override
     public float torqueModifier() {
-        AtomicReference<Float> fuelTypeTorque = new AtomicReference<>(1.0f);
-        if (level != null) {
-            Optional<EngineFuelType> fuelType = EngineFuelType.find(fuelTank.getFluid(), level.registryAccess(), TFMGTags.EngineFuel.LARGE_ENGINE.tag);
-            fuelType.ifPresent(type -> fuelTypeTorque.set(type.torque()));
-        }
-        return fuelTypeTorque.get();
+		return super.torqueModifier();
     }
+	
+	@Override
+	public Optional<EngineFuelType> getFuelType () {
+		if (level == null) return Optional.empty();
+		return EngineFuelType.find(fuelTank.getFluid(), level.registryAccess(), TFMGTags.EngineFuel.LARGE_ENGINE.tag);
+	}
     
     @OnlyIn(Dist.CLIENT)
     private void makeSound() {

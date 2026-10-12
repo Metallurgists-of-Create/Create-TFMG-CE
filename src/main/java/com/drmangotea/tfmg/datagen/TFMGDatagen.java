@@ -3,6 +3,7 @@ package com.drmangotea.tfmg.datagen;
 import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.TFMGRegistries;
 import com.drmangotea.tfmg.content.engines.types.EngineType;
+import com.drmangotea.tfmg.content.engines.upgrades.base.EngineUpgrade;
 import com.drmangotea.tfmg.datagen.integration.TFMGBigCannonsProvider;
 import com.drmangotea.tfmg.datagen.integration.TFMGCuriosProvider;
 import com.drmangotea.tfmg.datagen.integration.TFMGReburnedProvider;
@@ -37,6 +38,7 @@ import static com.drmangotea.tfmg.TFMG.REGISTRATE;
 
 public class TFMGDatagen {
     public static final ProviderType<RegistrateTagsProvider.IntrinsicImpl<EngineType>> ENGINE_TAGS = ProviderType.registerIntrinsicTag("tags/engine_type", "engine_type", TFMGRegistries.ENGINE_TYPE, engineType -> engineType.builtInRegistryHolder().getKey());
+    public static final ProviderType<RegistrateTagsProvider.IntrinsicImpl<EngineUpgrade>> ENGINE_UPGRADE_TAGS = ProviderType.registerIntrinsicTag("tags/engine_upgrade", "engine_upgrade", TFMGRegistries.ENGINE_UPGRADE, engineUpgrade -> engineUpgrade.builtInRegistryHolder().getKey());
 
     //public static final ProviderType<RegistrateTagsProvider.Impl<EngineFuelType>> ENGINE_FUEL_TAGS = ProviderType.registerDynamicTag("tags/engine_fuel_type", "tfmg/fuel_type/engine", TFMGRegistries.ENGINE_FUEL_TYPE);
 
