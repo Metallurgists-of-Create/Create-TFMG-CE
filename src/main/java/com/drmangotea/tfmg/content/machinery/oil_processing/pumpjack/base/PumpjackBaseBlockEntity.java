@@ -50,7 +50,12 @@ public class PumpjackBaseBlockEntity extends SmartBlockEntity implements IHaveGo
         event.registerBlockEntity(
                 Capabilities.FluidHandler.BLOCK,
                 TFMGBlockEntities.PUMPJACK_BASE.get(),
-                (be, context) -> be.fluidCapability
+                (be, context) -> {
+                    if (context == be.getBlockState().getValue(PumpjackBaseBlock.FACING)) {
+                        return be.fluidCapability;
+                    }
+                    return null;
+                }
         );
     }
 

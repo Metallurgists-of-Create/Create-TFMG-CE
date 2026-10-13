@@ -93,6 +93,7 @@ import com.drmangotea.tfmg.content.machinery.misc.air_intake.AirIntakeGenerator;
 import com.drmangotea.tfmg.content.machinery.misc.concrete_hose.ConcreteHoseBlock;
 import com.drmangotea.tfmg.content.machinery.misc.exhaust.ExhaustBlock;
 import com.drmangotea.tfmg.content.machinery.misc.firebox.FireboxBlock;
+import com.drmangotea.tfmg.content.machinery.misc.firebox.FireboxGenerator;
 import com.drmangotea.tfmg.content.machinery.misc.flarestack.FlarestackBlock;
 import com.drmangotea.tfmg.content.machinery.misc.flarestack.FlarestackGenerator;
 import com.drmangotea.tfmg.content.machinery.misc.gas_lamp.GasLampBlock;
@@ -137,6 +138,7 @@ import com.simibubi.create.content.fluids.tank.FluidTankMovementBehavior;
 import com.simibubi.create.content.kinetics.gearbox.GearboxBlock;
 import com.simibubi.create.content.kinetics.motor.CreativeMotorGenerator;
 import com.simibubi.create.content.kinetics.simpleRelays.BracketedKineticBlockModel;
+import com.simibubi.create.content.processing.burner.BlazeBurnerBlock;
 import com.simibubi.create.foundation.block.DyedBlockList;
 import com.simibubi.create.foundation.block.connected.HorizontalCTBehaviour;
 import com.simibubi.create.foundation.data.*;
@@ -427,7 +429,7 @@ public class TFMGBlocks {
             .initialProperties(SharedProperties::softMetal)
             .transform(pickaxeOnly())
             .properties(BlockBehaviour.Properties::noOcclusion)
-            .blockstate((ctx, prov) -> prov.horizontalBlock(ctx.getEntry(), AssetLookup.partialBaseModel(ctx, prov)))
+            .blockstate(BlockStateGen.horizontalBlockProvider(false))
             .simpleItem()
             .register();
     public static final BlockEntry<OilDepositBlock> OIL_DEPOSIT = REGISTRATE.block("oil_deposit", OilDepositBlock::new)
@@ -744,10 +746,11 @@ public class TFMGBlocks {
     public static final BlockEntry<FireboxBlock> FIREBOX =
             REGISTRATE.block("firebox", FireboxBlock::new)
                     .initialProperties(SharedProperties::stone)
-                    .properties(p -> p.sound(SoundType.NETHER_BRICKS))
+                    .properties(p -> p.sound(SoundType.NETHER_BRICKS)
+                            .lightLevel(FireboxBlock::getLight))
                     .transform(pickaxeOnly())
                     .onRegister(CreateRegistrate.connectedTextures(() -> new MultiblockCTBehavior(null, TFMGSpriteShifts.FIREBOX_TOP)))
-                    .blockstate((ctx, prov) -> prov.simpleBlock(ctx.getEntry(), AssetLookup.partialBaseModel(ctx, prov)))
+                    .blockstate(new FireboxGenerator()::generate)
                     .item(SteelTankItem::new)
                     .build()
                     .register();
