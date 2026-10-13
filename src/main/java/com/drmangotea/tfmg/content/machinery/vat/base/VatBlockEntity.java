@@ -379,7 +379,7 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
      * finds a recipe with matching inputs and machines connected
      */
     public VatMachineRecipe getMatchingRecipe() {
-        List<RecipeHolder<? extends Recipe<?>>> list = RecipeFinder.get(getRecipeCacheKey(), level, RecipeConditions.isOfType(TFMGRecipeTypes.VAT_MACHINE_RECIPE.getType()));
+        List<RecipeHolder<? extends Recipe<?>>> list = RecipeFinder.get(getRecipeCacheKey(), level, RecipeConditions.isOfType(TFMGRecipeTypes.VAT.getType()));
 
         for (RecipeHolder<? extends Recipe<?>> recipe1 : list) {
             VatMachineRecipe testedRecipe = (VatMachineRecipe) recipe1.value();

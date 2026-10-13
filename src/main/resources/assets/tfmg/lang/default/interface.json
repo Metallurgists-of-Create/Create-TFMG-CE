@@ -111,6 +111,7 @@
   "tfmg.tooltip.fuse": "Rating: %1$s",
   "tfmg.tooltip.resistor": "Resistance: %1$s",
   "tfmg.tooltip.coils": "Turns: ",
+  "tfmg.tooltip.engine_upgrade": "Engine Upgrade",
   "tfmg.tooltip.cylinder": "Supported Fuels:",
   "tfmg.tooltip.fluid_item": "Fluid Amount: %1$s",
   "create.recipe.assembly.winding": "Wind a Spool",

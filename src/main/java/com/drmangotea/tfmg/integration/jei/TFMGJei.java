@@ -64,7 +64,7 @@ public class TFMGJei implements IModPlugin {
                         .build("coking", CokingCategory::new),
 
                 chemical_vat = builder(VatMachineRecipe.class)
-                        .addTypedRecipes(TFMGRecipeTypes.VAT_MACHINE_RECIPE)
+                        .addTypedRecipes(TFMGRecipeTypes.VAT)
                         .catalyst(TFMGBlocks.STEEL_CHEMICAL_VAT::get)
                         .catalyst(TFMGBlocks.CAST_IRON_CHEMICAL_VAT::get)
                         .catalyst(TFMGBlocks.FIREPROOF_CHEMICAL_VAT::get)

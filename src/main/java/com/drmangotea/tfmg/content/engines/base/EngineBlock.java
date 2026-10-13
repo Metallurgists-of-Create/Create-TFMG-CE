@@ -52,12 +52,10 @@ public class EngineBlock extends HorizontalKineticBlock {
         BlockPos pos = context.getClickedPos();
         if (level.getBlockEntity(pos) instanceof AbstractSmallEngineBlockEntity be) {
             if (be.hasUpgrade()) {
-
-                if (be.upgrade.isPresent()) {
-
+                if (!be.upgradeInventory.isEmpty()) {
                     be.playRemovalSound();
-                    be.dropItem(be.upgrade.get().getItem().getDefaultInstance());
-
+					ItemStack stack = be.upgradeInventory.extractItem(0, 1, false);
+                    be.dropItem(stack);
                 }
                 be.upgrade = Optional.empty();
                 be.updateRotation();

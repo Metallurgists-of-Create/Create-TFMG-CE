@@ -75,6 +75,7 @@ import com.drmangotea.tfmg.content.engines.types.radial_engine.RadialEngineBlock
 import com.drmangotea.tfmg.content.engines.types.regular_engine.RegularEngineBlock;
 import com.drmangotea.tfmg.content.engines.types.turbine_engine.TurbineEngineBlock;
 import com.drmangotea.tfmg.content.engines.types.turbine_engine.TurbineEngineGenerator;
+import com.drmangotea.tfmg.content.engines.upgrades.base.EngineUpgrade;
 import com.drmangotea.tfmg.content.items.weapons.explosives.napalm.NapalmBombBlock;
 import com.drmangotea.tfmg.content.machinery.metallurgy.blast_furnace.BlastFurnaceHatchBlock;
 import com.drmangotea.tfmg.content.machinery.metallurgy.blast_furnace.BlastFurnaceOutputBlock;
@@ -92,6 +93,7 @@ import com.drmangotea.tfmg.content.machinery.misc.air_intake.AirIntakeGenerator;
 import com.drmangotea.tfmg.content.machinery.misc.concrete_hose.ConcreteHoseBlock;
 import com.drmangotea.tfmg.content.machinery.misc.exhaust.ExhaustBlock;
 import com.drmangotea.tfmg.content.machinery.misc.firebox.FireboxBlock;
+import com.drmangotea.tfmg.content.machinery.misc.firebox.FireboxGenerator;
 import com.drmangotea.tfmg.content.machinery.misc.flarestack.FlarestackBlock;
 import com.drmangotea.tfmg.content.machinery.misc.flarestack.FlarestackGenerator;
 import com.drmangotea.tfmg.content.machinery.misc.gas_lamp.GasLampBlock;
@@ -136,6 +138,7 @@ import com.simibubi.create.content.fluids.tank.FluidTankMovementBehavior;
 import com.simibubi.create.content.kinetics.gearbox.GearboxBlock;
 import com.simibubi.create.content.kinetics.motor.CreativeMotorGenerator;
 import com.simibubi.create.content.kinetics.simpleRelays.BracketedKineticBlockModel;
+import com.simibubi.create.content.processing.burner.BlazeBurnerBlock;
 import com.simibubi.create.foundation.block.DyedBlockList;
 import com.simibubi.create.foundation.block.connected.HorizontalCTBehaviour;
 import com.simibubi.create.foundation.data.*;
@@ -331,7 +334,9 @@ public class TFMGBlocks {
             .tag(TFMGTags.Blocks.INDUSTRIAL_PIPE.tag)
             .recipe((c, p) -> p.stonecutting(DataIngredient.tag(CommonMetal.STEEL.ingots), RecipeCategory.BUILDING_BLOCKS, c, 8))
             .blockstate((ctx, prov) -> prov.simpleBlock(ctx.getEntry(), AssetLookup.partialBaseModel(ctx, prov)))
-            .simpleItem()
+            .item()
+            .properties(p -> p.component(TFMGDataComponents.ENGINE_UPGRADE, new EngineUpgrade.Stored(TFMGEngineUpgrades.PIPING)))
+            .build()
             .register();
     public static final BlockEntry<Block> CONCRETE_ENCASED_INDUSTRIAL_PIPE = REGISTRATE.block("concrete_encased_industrial_pipe", Block::new)
             .initialProperties(SharedProperties::softMetal)
@@ -424,7 +429,7 @@ public class TFMGBlocks {
             .initialProperties(SharedProperties::softMetal)
             .transform(pickaxeOnly())
             .properties(BlockBehaviour.Properties::noOcclusion)
-            .blockstate((ctx, prov) -> prov.simpleBlock(ctx.getEntry(), AssetLookup.partialBaseModel(ctx, prov)))
+            .blockstate(BlockStateGen.horizontalBlockProvider(false))
             .simpleItem()
             .register();
     public static final BlockEntry<OilDepositBlock> OIL_DEPOSIT = REGISTRATE.block("oil_deposit", OilDepositBlock::new)
@@ -741,10 +746,11 @@ public class TFMGBlocks {
     public static final BlockEntry<FireboxBlock> FIREBOX =
             REGISTRATE.block("firebox", FireboxBlock::new)
                     .initialProperties(SharedProperties::stone)
-                    .properties(p -> p.sound(SoundType.NETHER_BRICKS))
+                    .properties(p -> p.sound(SoundType.NETHER_BRICKS)
+                            .lightLevel(FireboxBlock::getLight))
                     .transform(pickaxeOnly())
                     .onRegister(CreateRegistrate.connectedTextures(() -> new MultiblockCTBehavior(null, TFMGSpriteShifts.FIREBOX_TOP)))
-                    .blockstate((ctx, prov) -> prov.simpleBlock(ctx.getEntry(), AssetLookup.partialBaseModel(ctx, prov)))
+                    .blockstate(new FireboxGenerator()::generate)
                     .item(SteelTankItem::new)
                     .build()
                     .register();
@@ -939,6 +945,7 @@ public class TFMGBlocks {
                     .transform(TFMGStress.setImpact(50.0f))
                     .blockstate(BlockStateGen.directionalBlockProvider(true))
                     .item()
+                    .properties(p -> p.component(TFMGDataComponents.ENGINE_UPGRADE, new EngineUpgrade.Stored(TFMGEngineUpgrades.GENERATOR)))
                     .transform(customItemModel())
                     .register();
 
@@ -1857,16 +1864,6 @@ public class TFMGBlocks {
 			.initialProperties(() -> net.minecraft.world.level.block.Blocks.OAK_PLANKS)
 			.properties(p -> p.strength(2.0F).sound(SoundType.CHERRY_WOOD))
 			.transform(axeOnly())
-			.blockstate((c,p) -> numberedVariantBlockTextures(c, p, "hardened_planks", 4))/*{
-				VariantBlockStateBuilder vb = p.getVariantBuilder(c.get());
-				VariantBlockStateBuilder.PartialBlockstate part = vb.partialState();
-				vb.addModels(vb.partialState(), vb.partialState().modelForState()
-						.modelFile(p.models().cubeAll("hardened_planks",  TFMG.asResource("block/hardened_planks0"))).nextModel()
-						.modelFile(p.models().cubeAll("hardened_planks1", TFMG.asResource("block/hardened_planks1"))).nextModel()
-						.modelFile(p.models().cubeAll("hardened_planks2", TFMG.asResource("block/hardened_planks2"))).nextModel()
-						.modelFile(p.models().cubeAll("hardened_planks3", TFMG.asResource("block/hardened_planks3"))).build()
-				);
-			})*/
 			.simpleItem()
 			.register();
 

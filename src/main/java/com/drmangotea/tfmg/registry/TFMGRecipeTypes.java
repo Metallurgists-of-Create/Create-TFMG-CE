@@ -20,20 +20,24 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 public enum TFMGRecipeTypes implements IRecipeTypeInfo, StringRepresentable {
-
     CASTING(CastingRecipe::new),
     INDUSTRIAL_BLASTING(IndustrialBlastingRecipe::new),
     COKING(CokingRecipe::new),
     DISTILLATION(DistillationRecipe::new),
     WINDING(WindingRecipe::new),
     HOT_BLAST(HotBlastRecipe::new),
+    VAT(VatMachineRecipe::new),
+
+    /**
+     * Use {@link #VAT} instead
+     */
+    @Deprecated(since = "1.3.2a", forRemoval = true)
     VAT_MACHINE_RECIPE(VatMachineRecipe::new),
     POLARIZING(PolarizingRecipe::new);
 
@@ -45,8 +49,6 @@ public enum TFMGRecipeTypes implements IRecipeTypeInfo, StringRepresentable {
     public final ResourceLocation id;
     public final Supplier<RecipeSerializer<?>> serializerSupplier;
     private final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<?>> serializerObject;
-    @Nullable
-    private final DeferredHolder<RecipeType<?>, RecipeType<?>> typeObject;
     private final Supplier<RecipeType<?>> type;
 
     private boolean isProcessingRecipe;
@@ -59,8 +61,7 @@ public enum TFMGRecipeTypes implements IRecipeTypeInfo, StringRepresentable {
         id = TFMG.asResource(name);
         this.serializerSupplier = serializerSupplier;
         serializerObject = Registers.SERIALIZER_REGISTER.register(name, serializerSupplier);
-        typeObject = Registers.TYPE_REGISTER.register(name, () -> RecipeType.simple(id));
-        type = typeObject;
+        type = Registers.TYPE_REGISTER.register(name, () -> RecipeType.simple(id));
         isProcessingRecipe = false;
     }
 
@@ -115,7 +116,7 @@ public enum TFMGRecipeTypes implements IRecipeTypeInfo, StringRepresentable {
 
     public static boolean shouldIgnoreInAutomation(RecipeHolder<?> recipe) {
         RecipeSerializer<?> serializer = recipe.value().getSerializer();
-        if (serializer != null && AllTags.AllRecipeSerializerTags.AUTOMATION_IGNORE.matches(serializer))
+        if (AllTags.AllRecipeSerializerTags.AUTOMATION_IGNORE.matches(serializer))
             return true;
         return !CAN_BE_AUTOMATED.test(recipe);
     }
