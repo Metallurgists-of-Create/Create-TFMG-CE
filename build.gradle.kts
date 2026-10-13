@@ -127,6 +127,7 @@ dependencies {
             prefer(property("sable_companion_version") as String)
         }
     })
+	implementation("dev.ryanhcode.sable:sable-neoforge-${property("minecraft_version")}:${property("sable_version")}")
     implementation("com.simibubi.create:create-${property("minecraft_version")}:${property("create_version")}:slim") { isTransitive = false }
     implementation("net.createmod.ponder:ponder-neoforge:${property("ponder_version")}+mc1.21.1")
     compileOnly("dev.engine-room.flywheel:flywheel-neoforge-api-${property("minecraft_version")}:${property("flywheel_version")}")

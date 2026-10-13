@@ -45,6 +45,7 @@ import net.neoforged.neoforge.items.IItemHandler;
 import org.apache.commons.lang3.StringUtils;
 import org.joml.Quaterniond;
 
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.List;
@@ -465,5 +466,12 @@ public class TFMGUtils {
         }
 
         return new Color(a << 24 | r << 16 | g << 8 | b);
+    }
+
+    public static boolean isAprilFirst() {
+        LocalDate date = LocalDate.now();
+        int day = date.getDayOfMonth();
+        int month = date.getMonthValue();
+        return month == 4 && day == 1;
     }
 }
