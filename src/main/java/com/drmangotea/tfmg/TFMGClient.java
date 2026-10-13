@@ -8,6 +8,7 @@ import com.drmangotea.tfmg.content.machinery.vat.base.registry.operations.VatCat
 import com.drmangotea.tfmg.integration.curios.MultimeterCurios;
 import com.drmangotea.tfmg.ponder.TFMGPonderPlugin;
 import com.drmangotea.tfmg.registry.TFMGDataComponents;
+import com.drmangotea.tfmg.base.TFMGUtils;
 import com.drmangotea.tfmg.registry.TFMGItems;
 import com.drmangotea.tfmg.registry.TFMGParticleTypes;
 import net.createmod.ponder.foundation.PonderIndex;
@@ -48,6 +49,8 @@ public class TFMGClient {
         registerModelPredicates();
         ModLoader.postEvent(new VatCategoryEvent());
         MultimeterCurios.registerRenderer();
+
+        ItemProperties.registerGeneric(TFMG.asResource("april_fools"), (stack, world, entity, s) -> TFMGUtils.isAprilFirst() ? 1 : 0);
     }
 
     public static void registerModelPredicates() {
