@@ -4,6 +4,7 @@ import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.base.TFMGCreativeTabs;
 import com.drmangotea.tfmg.base.TFMGRegistrate;
 import com.drmangotea.tfmg.base.TFMGTiers;
+import com.drmangotea.tfmg.base.TFMGUtils;
 import com.drmangotea.tfmg.base.data_storage.CylinderFuels;
 import com.drmangotea.tfmg.base.debug.DebugCinderBlockItem;
 import com.drmangotea.tfmg.base.dyes.DyedItemList;
@@ -32,6 +33,7 @@ import com.drmangotea.tfmg.content.machinery.misc.winding_machine.SpoolItem;
 import com.drmangotea.tfmg.content.machinery.oil_processing.OilHammerItem;
 import com.drmangotea.tfmg.content.machinery.vat.electrode_holder.electrode.Electrode;
 import com.drmangotea.tfmg.content.machinery.vat.industrial_mixer.mode.MixerMode;
+import com.drmangotea.tfmg.recipes.condition.TagFilledCondition;
 import com.drmangotea.tfmg.registry.TFMGTags.Items;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllTags;
@@ -57,6 +59,7 @@ import net.minecraft.world.item.*;
 import net.minecraft.world.level.block.Blocks;
 import net.neoforged.neoforge.client.model.generators.ModelFile;
 import net.neoforged.neoforge.common.Tags;
+import net.neoforged.neoforge.common.conditions.ICondition;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -355,16 +358,18 @@ public class TFMGItems {
     //Dyed Items
     public static final DyedItemList<MultimeterItem> MULTIMETERS = new DyedItemList<>(colour -> {
         String colourName = colour.getSerializedName();
+        boolean optional = colour.getId() > 15;
         return REGISTRATE.item(colourName + "_multimeter", p -> new MultimeterItem(p, colour.getTextureDiffuseColor()))
                 .tag(Items.MULTIMETERS.tag, Items.CURIOS_BELT.tag)
                 .onRegister(item -> ItemDescription.referKey(item, () -> MULTIMETER))
                 .model((ctx, prov) -> prov.generated(ctx::get, TFMG.asResource("item/multimeter/" + colourName)))
                 .recipe((c, p) -> {
-                    ShapelessRecipeBuilder.shapeless(RecipeCategory.TOOLS, c.get())
+                    var builder = ShapelessRecipeBuilder.shapeless(RecipeCategory.TOOLS, c.get())
                             .requires(colour.getTag())
                             .requires(Items.MULTIMETERS.tag)
-                            .unlockedBy("has_multimeter", RegistrateRecipeProvider.has(Items.MULTIMETERS.tag))
-                            .save(p, TFMG.asResource("crafting/materials/" + c.getName() + "_from_other_multimeter"));
+                            .unlockedBy("has_multimeter", RegistrateRecipeProvider.has(Items.MULTIMETERS.tag));
+                    ICondition[] conditions = optional ? new ICondition[]{new TagFilledCondition(colour.getTag())} : new ICondition[]{};
+                    TFMGUtils.conditionalCrafting(p, TFMG.asResource("crafting/materials/" + c.getName() + "_from_other_multimeter"), builder, conditions);
                 })
                 .register();
     });

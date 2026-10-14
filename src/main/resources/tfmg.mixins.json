@@ -11,10 +11,13 @@
     "ItemMixin",
     "ItemStackMixin",
     "MobEffectInstanceMixin",
+    "ModelBuilderMixin",
     "UtilMixin",
     "accessor.ChunkMapAccessor",
     "accessor.FluidTankBlockEntityAccessor",
     "accessor.FlywheelBlockEntityMixin",
+    "accessor.ShapedRecipeBuilderAccessor",
+    "accessor.ShapelessRecipeBuilderAccessor",
     "accessor.SlidingDoorBlockEntityAccessor",
     "accessor.TankSegmentAccessor"
   ],

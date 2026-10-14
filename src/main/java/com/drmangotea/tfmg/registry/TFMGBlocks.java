@@ -123,6 +123,7 @@ import com.drmangotea.tfmg.content.machinery.vat.electrode_holder.ElectrodeHolde
 import com.drmangotea.tfmg.content.machinery.vat.freezer.FreezerBlock;
 import com.drmangotea.tfmg.content.machinery.vat.industrial_mixer.IndustrialMixerBlock;
 import com.drmangotea.tfmg.content.world.resevoir.OilDepositBlock;
+import com.drmangotea.tfmg.recipes.condition.TagFilledCondition;
 import com.simibubi.create.AllTags;
 import com.simibubi.create.api.stress.BlockStressValues;
 import com.simibubi.create.content.contraptions.bearing.StabilizedBearingMovementBehaviour;
@@ -159,6 +160,7 @@ import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.functions.ApplyBonusCount;
 import net.neoforged.neoforge.common.Tags;
+import net.neoforged.neoforge.common.conditions.ICondition;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -1912,11 +1914,13 @@ public class TFMGBlocks {
                 .tag(BlockTags.NEEDS_STONE_TOOL)
                 .recipe((c, p) -> {
                     p.stonecutting(DataIngredient.tag(CommonMetal.ALUMINUM.ingots), RecipeCategory.BUILDING_BLOCKS, c, 2);
-                    ShapelessRecipeBuilder.shapeless(RecipeCategory.DECORATIONS, c.get())
+                    boolean optional = colour.getId() > 15;
+                    var builder = ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, c.get())
                             .requires(colour.getTag())
                             .requires(Items.CAUTION_BLOCKS.tag)
-                            .unlockedBy("has_caution_block", RegistrateRecipeProvider.has(Items.CAUTION_BLOCKS.tag))
-                            .save(p, TFMG.asResource("crafting/materials/" + c.getName() + "_from_other_caution_block"));
+                            .unlockedBy("has_caution_block", RegistrateRecipeProvider.has(Items.CAUTION_BLOCKS.tag));
+                    ICondition[] conditions = optional ? new ICondition[]{new TagFilledCondition(colour.getTag())} : new ICondition[]{};
+                    TFMGUtils.conditionalCrafting(p, TFMG.asResource("crafting/materials/" + c.getName() + "_from_other_caution_block"), builder, conditions);
                 })
                 .item()
                 .tag(Items.CAUTION_BLOCKS.tag)

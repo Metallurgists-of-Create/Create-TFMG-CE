@@ -12,6 +12,7 @@ import com.drmangotea.tfmg.content.decoration.kinetics.encased.TFMGEncasedShaftB
 import com.drmangotea.tfmg.content.decoration.kinetics.flywheels.TFMGFlywheelBlock;
 import com.drmangotea.tfmg.content.electricity.connection.copycat_cable.CopycatCableBlock;
 import com.drmangotea.tfmg.content.electricity.lights.neon_tube.NeonTubeBlock;
+import com.drmangotea.tfmg.recipes.condition.TagFilledCondition;
 import com.drmangotea.tfmg.registry.TFMGBlocks;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllTags;
@@ -44,6 +45,7 @@ import net.neoforged.neoforge.client.model.generators.ModelFile;
 import net.neoforged.neoforge.client.model.generators.MultiPartBlockStateBuilder;
 import net.neoforged.neoforge.client.model.generators.VariantBlockStateBuilder;
 import net.neoforged.neoforge.common.Tags;
+import net.neoforged.neoforge.common.conditions.ICondition;
 
 import java.util.ArrayList;
 import java.util.function.Supplier;
@@ -322,15 +324,18 @@ public class TFMGBuilderTransformers {
                     .transform(pickaxeOnly())
                     .blockstate(simpleCubeAll("concrete/" + colourName))
                     .tag(BlockTags.NEEDS_STONE_TOOL)
-                    .recipe((c, p) -> ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, c.get(), 8)
-							.pattern("###")
-							.pattern("#D#")
-							.pattern("###")
-							.define('D', colour.getTag())
-							.define('#', undyed)
-							.unlockedBy("has_concrete", RegistrateRecipeProvider.has(undyed))
-							.save(p, TFMG.asResource("crafting/materials/" + c.getName() + "_dyeing"))
-					)
+                    .recipe((c, p) -> {
+                        boolean optional = colour.getId() > 15;
+                        var builder = ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, c.get(), 8)
+                                        .pattern("###")
+                                        .pattern("#D#")
+                                        .pattern("###")
+                                        .define('D', colour.getTag())
+                                        .define('#', undyed)
+                                        .unlockedBy("has_concrete", RegistrateRecipeProvider.has(undyed));
+                        ICondition[] conditions = optional ? new ICondition[]{new TagFilledCondition(colour.getTag())} : new ICondition[]{};
+                        TFMGUtils.conditionalCrafting(p, TFMG.asResource("crafting/materials/" + c.getName() + "_dyeing"), builder, conditions);
+                    })
 					.transform(tagBlockAndItem(Tags.Blocks.CONCRETES, Tags.Items.CONCRETES)).build()
 					.register();
 
