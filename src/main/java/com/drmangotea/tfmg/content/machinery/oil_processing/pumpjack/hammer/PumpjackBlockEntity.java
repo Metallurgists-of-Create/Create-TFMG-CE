@@ -5,14 +5,10 @@ import com.drmangotea.tfmg.content.machinery.oil_processing.pumpjack.base.Pumpja
 import com.drmangotea.tfmg.content.machinery.oil_processing.pumpjack.crank.PumpjackCrankBlockEntity;
 import com.drmangotea.tfmg.registry.TFMGTags;
 import com.simibubi.create.AllSoundEvents;
-import com.simibubi.create.content.contraptions.AbstractContraptionEntity;
-import com.simibubi.create.content.contraptions.AssemblyException;
-import com.simibubi.create.content.contraptions.ControlledContraptionEntity;
-import com.simibubi.create.content.contraptions.IDisplayAssemblyExceptions;
-import com.simibubi.create.content.contraptions.bearing.IBearingBlockEntity;
-import com.simibubi.create.content.kinetics.base.GeneratingKineticBlockEntity;
-import com.simibubi.create.content.kinetics.transmission.sequencer.SequencerInstructions;
+import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
+import com.simibubi.create.content.contraptions.*;
 import com.simibubi.create.foundation.advancement.AllAdvancements;
+import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.utility.ServerSpeedProvider;
 import net.createmod.catnip.math.AngleHelper;
@@ -31,14 +27,13 @@ import java.util.List;
 
 import static com.drmangotea.tfmg.content.machinery.oil_processing.pumpjack.hammer.PumpjackBlock.WIDE;
 
-public class PumpjackBlockEntity extends GeneratingKineticBlockEntity implements IBearingBlockEntity, IDisplayAssemblyExceptions {
+public class PumpjackBlockEntity extends SmartBlockEntity implements IControlContraption, IDisplayAssemblyExceptions, IHaveGoggleInformation {
     protected ControlledContraptionEntity movedContraption;
     protected float angle;
     protected boolean running;
     protected boolean assembleNextTick;
     protected float clientAngleDiff;
     protected AssemblyException lastException;
-    protected double sequencedAngleLimit;
     private float prevAngle;
 	public final PumpjackMultiblock multiblock;
 
@@ -46,17 +41,6 @@ public class PumpjackBlockEntity extends GeneratingKineticBlockEntity implements
         super(type, pos, state);
 		multiblock = new PumpjackMultiblock(this);
         setLazyTickRate(3);
-        sequencedAngleLimit = -1;
-    }
-
-    @Override
-    public boolean isWoodenTop() {
-        return false;
-    }
-
-    @Override
-    protected boolean syncSequenceContext() {
-        return true;
     }
 
     @Override
@@ -66,14 +50,12 @@ public class PumpjackBlockEntity extends GeneratingKineticBlockEntity implements
 
     @Override
     public void addBehaviours(List<BlockEntityBehaviour> behaviours) {
-        super.addBehaviours(behaviours);
-
         registerAwardables(behaviours, AllAdvancements.CONTRAPTION_ACTORS);
     }
 
     @Override
     public void remove() {
-        if (!level.isClientSide)
+        if (level != null && !level.isClientSide)
             disassemble();
         super.remove();
     }
@@ -82,8 +64,6 @@ public class PumpjackBlockEntity extends GeneratingKineticBlockEntity implements
     public void write(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {
         compound.putBoolean("Running", running);
         compound.putFloat("Angle", angle);
-        if (sequencedAngleLimit >= 0)
-            compound.putDouble("SequencedAngleLimit", sequencedAngleLimit);
         AssemblyException.write(compound,registries, lastException);
 		compound.put("MultiblockData", multiblock.write(registries, clientPacket));
         super.write(compound,registries , clientPacket);
@@ -91,14 +71,9 @@ public class PumpjackBlockEntity extends GeneratingKineticBlockEntity implements
 
     @Override
     protected void read(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {
-        if (wasMoved) {
-            super.read(compound,registries , clientPacket);
-            return;
-        }
         float angleBefore = angle;
         running = compound.getBoolean("Running");
         angle = compound.getFloat("Angle");
-        sequencedAngleLimit = compound.contains("SequencedAngleLimit") ? compound.getDouble("SequencedAngleLimit") : -1;
         lastException = AssemblyException.read(compound,registries);
 		multiblock.read(compound.getCompound("MultiblockData"), registries, clientPacket);
         super.read(compound,registries , clientPacket);
@@ -113,46 +88,39 @@ public class PumpjackBlockEntity extends GeneratingKineticBlockEntity implements
             movedContraption = null;
     }
 
-    @Override
     public float getInterpolatedAngle(float partialTicks) {
         if (isVirtual())
             return Mth.lerp(partialTicks + .5f, prevAngle, angle);
         if (movedContraption == null || movedContraption.isStalled() || !running)
             partialTicks = 0;
         float angularSpeed = getAngularSpeed();
-        if (sequencedAngleLimit >= 0)
-            angularSpeed = (float) Mth.clamp(angularSpeed, -sequencedAngleLimit, sequencedAngleLimit);
         return Mth.lerp(partialTicks, angle, angle + angularSpeed);
     }
 
-    @Override
     public void onSpeedChanged(float prevSpeed) {
-        super.onSpeedChanged(prevSpeed);
         assembleNextTick = true;
-        sequencedAngleLimit = -1;
         if (movedContraption != null && Math.signum(prevSpeed) != Math.signum(getSpeed()) && prevSpeed != 0) {
             if (!movedContraption.isStalled()) {
                 angle = Math.round(angle);
                 applyRotation();
             }
-            movedContraption.getContraption()
-                    .stop(level);
+            movedContraption.getContraption().stop(level);
         }
-        if (sequenceContext != null
-                && sequenceContext.instruction() == SequencerInstructions.TURN_ANGLE)
-            sequencedAngleLimit = sequenceContext.getEffectiveValue(getTheoreticalSpeed());
     }
 
     public float getAngularSpeed() {
-        float speed = convertToAngular(getSpeed());
-        if (getSpeed() == 0)
-            speed = 0;
+        float speed = getSpeed() * 360f / 60f / 20f;
         if (level != null && level.isClientSide) {
             speed *= ServerSpeedProvider.get();
             speed += clientAngleDiff / 3f;
         }
         return speed;
     }
+	
+	private float getSpeed() {
+		//TODO: Implement
+		return 0;
+	}
 
     @Override
     public AssemblyException getLastAssemblyException() {
@@ -165,6 +133,7 @@ public class PumpjackBlockEntity extends GeneratingKineticBlockEntity implements
     }
 
     public void assemble() {
+		if (level == null) return;
         if (!(getBlockState().getBlock() instanceof PumpjackBlock)) //is this even necessary, though?
             return;
         Direction direction = getBlockState().getValue(BlockStateProperties.HORIZONTAL_FACING);
@@ -209,7 +178,7 @@ public class PumpjackBlockEntity extends GeneratingKineticBlockEntity implements
         if (!canAssemble || !foundHead || !foundConnector)
             return;
 		PumpjackBaseBlockEntity baseBE = multiblock.getBaseBE();
-        if (baseBE != null && baseBE.controllerHammer != this && baseBE.controllerHammer != null)
+        if (baseBE != null && baseBE.controller != multiblock)
             return;
         contraption.removeBlocksFromWorld(level, BlockPos.ZERO);
         movedContraption = ControlledContraptionEntity.create(level, this, contraption);
@@ -223,7 +192,6 @@ public class PumpjackBlockEntity extends GeneratingKineticBlockEntity implements
         running = true;
         angle = 0;
         sendData();
-        updateGeneratedRotation();
     }
 
     public void disassemble() {
@@ -232,14 +200,12 @@ public class PumpjackBlockEntity extends GeneratingKineticBlockEntity implements
         multiblock.connectorDistance = 0;
 		multiblock.headDistance = 0;
         angle = 0;
-        sequencedAngleLimit = -1;
         if (movedContraption != null) {
             movedContraption.disassemble();
             AllSoundEvents.MECHANICAL_PRESS_ACTIVATION.playOnServer(level, worldPosition);
         }
         movedContraption = null;
         running = false;
-        updateGeneratedRotation();
         assembleNextTick = false;
         sendData();
     }
@@ -258,8 +224,8 @@ public class PumpjackBlockEntity extends GeneratingKineticBlockEntity implements
 			assemble();
 		}
 		PumpjackBaseBlockEntity base = multiblock.getBaseBE();
-		if (running && base != null && base.controllerHammer == null) {
-			base.setControllerHammer(this);
+		if (running && base != null && base.controller == null) {
+			base.setController(multiblock);
 		}
         boolean actuallyComplete = multiblock.isComplete();
         if (actuallyComplete) {

@@ -4,23 +4,22 @@ import com.drmangotea.tfmg.content.machinery.oil_processing.pumpjack.base.Pumpja
 import com.drmangotea.tfmg.content.machinery.oil_processing.pumpjack.crank.PumpjackCrankBlockEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.simibubi.create.content.kinetics.base.KineticBlockEntityRenderer;
+import com.simibubi.create.foundation.blockEntity.renderer.SafeBlockEntityRenderer;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
 
 import static com.drmangotea.tfmg.base.blocks.TFMGHorizontalDirectionalBlock.FACING;
 
 
-public class PumpjackRenderer extends KineticBlockEntityRenderer<PumpjackBlockEntity> {
+public class PumpjackRenderer extends SafeBlockEntityRenderer<PumpjackBlockEntity> {
     public PumpjackRenderer(BlockEntityRendererProvider.Context context) {
-        super(context);
+        super();
     }
 
     @Override
@@ -46,7 +45,7 @@ public class PumpjackRenderer extends KineticBlockEntityRenderer<PumpjackBlockEn
         renderPumpjackLink(true, ms, buffer, direction, x, y, hModifier, dist, be.multiblock.crankConnectorDistance);
 		
 		//front
-        renderFrontPumpjackLink(ms, buffer, direction, q, be.multiblock.headBaseDistance, be);
+        renderFrontPumpjackLink(ms, buffer, direction, be.multiblock.headBaseDistance, be.multiblock.headDistance, be.angle);
     }
 	
 	private static float getX(float crankRadius, float angle, double height2, Direction direction) {
@@ -99,34 +98,64 @@ public class PumpjackRenderer extends KineticBlockEntityRenderer<PumpjackBlockEn
 		}
 		
         Matrix4f matrix4f = pMatrixStack.last().pose();
-		renderLink(pBuffer, matrix4f, vec3);
+		renderStraightLink(pBuffer, matrix4f, vec3);
         pMatrixStack.popPose();
     }
 	
-	private void renderFrontPumpjackLink(
-		PoseStack pMatrixStack, MultiBufferSource pBuffer,
-		Direction direction, int q, float linkLength, PumpjackBlockEntity be
+	private static void renderStraightLink(MultiBufferSource pBuffer, Matrix4f matrix, Vec3 vec3) {
+		double dist = Mth.invSqrt(vec3.x * vec3.x + vec3.z*vec3.z) * 0.0125F;
+		float dz = (float) (vec3.z * dist);
+		float dx = (float) (vec3.x * dist);
+		
+		VertexConsumer consumer = pBuffer.getBuffer(RenderType.leash());
+		float px = (float)(vec3.x);
+		float py = (float)(vec3.y);
+		float pz = (float)(vec3.z);
+		int light = LightTexture.pack(15, 15);
+		for (int i1 = 0; i1 <= 24; ++i1) {
+			float f = (float)i1 / 24.0F;
+			float f1 = i1 % 2 == 0 ? 0.07F : 0.1F;
+			float X = px * f;
+			float Y = py * f;
+			float Z = pz * f;
+			consumer.addVertex(matrix, X - dx, Y + 0.025F, Z + dz).setColor(f1, f1, f1, 1.0F).setLight(light);
+			consumer.addVertex(matrix, X + dx, Y, Z - dz).setColor(f1, f1, f1, 1.0F).setLight(light);
+		}
+		for (int j1 = 24; j1 >= 0; --j1) {
+			float f = (float)j1 / 24.0F;
+			float f1 = j1 % 2 == (1) ? 0.07F : 0.1F;
+			float X = px * f;
+			float Y = py * f;
+			float Z = pz * f;
+			consumer.addVertex(matrix, X - dx, Y, Z + dz).setColor(f1, f1, f1, 1.0F).setLight(light);
+			consumer.addVertex(matrix, X + dx, Y + 0.025F, Z - dz).setColor(f1, f1, f1, 1.0F).setLight(light);
+		}
+	}
+	
+	private void renderFrontPumpjackLink (
+		PoseStack pMatrixStack, MultiBufferSource pBuffer, Direction direction,
+		float linkLength, float headDistance, float angle
 	) {
         pMatrixStack.pushPose();
         Vec3 vec3 = new Vec3(0,linkLength,0);
         
-		float hModifier = (float) (q*be.multiblock.headDistance*Math.sin(Math.toRadians(be.angle)));
+		float hModifier = (float) (headDistance * Math.sin(angle * Mth.DEG_TO_RAD));
 		
 		switch (direction) {
 			case NORTH -> {
-				pMatrixStack.translate(0.5, -linkLength + 2, -be.multiblock.headDistance * q + .5);
+				pMatrixStack.translate(0.5, -linkLength + 2, .5 - headDistance);
 				vec3 = vec3.add(0, hModifier - 0.3,-0.01f);
 			}
 			case SOUTH -> {
-				pMatrixStack.translate(0.5, -linkLength + 2, (be.multiblock.headDistance * q) + .5);
+				pMatrixStack.translate(0.5, -linkLength + 2, .5 + headDistance);
 				vec3 = vec3.add(0,-hModifier - 0.3, 0.01f);
 			}
 			case WEST -> {
-				pMatrixStack.translate((-be.multiblock.headDistance * q) + .5, -linkLength + 2, 0.5);
+				pMatrixStack.translate(.5 - headDistance, -linkLength + 2, 0.5);
 				vec3 = vec3.add( 0.01f, -hModifier - 0.3, 0);
 			}
 			case EAST -> {
-				pMatrixStack.translate((be.multiblock.headDistance * q) + .5, -linkLength + 2, 0.5);
+				pMatrixStack.translate(.5 + headDistance, -linkLength + 2, 0.5);
 				vec3 = vec3.add(-0.01f, hModifier - 0.3, 0);
 			}
 		}
@@ -165,10 +194,4 @@ public class PumpjackRenderer extends KineticBlockEntityRenderer<PumpjackBlockEn
 			consumer.addVertex(matrix, X + dx, Y + 0.025F, Z - dz).setColor(f1, f1, f1, 1.0F).setLight(light);
 		}
 	}
-	
-	@Override
-    protected BlockState getRenderedBlockState(PumpjackBlockEntity te) {
-        return shaft(getRotationAxisOf(te));
-    }
-
 }

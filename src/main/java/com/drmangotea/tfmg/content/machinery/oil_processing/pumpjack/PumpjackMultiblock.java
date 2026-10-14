@@ -10,6 +10,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 
 import javax.annotation.Nullable;
@@ -64,6 +65,10 @@ public class PumpjackMultiblock {
 		}
 	}
 	
+	public PumpjackBlockEntity getMaster() {
+		return master;
+	}
+	
 	@Nullable
 	public BlockPos getCrank() {
 		return this.crankPos;
@@ -107,20 +112,21 @@ public class PumpjackMultiblock {
 	}
 	
 	public boolean correctFacing(BlockPos pos) {
-		return master.getLevel() != null &&
-			master.getLevel().getBlockState(pos).getValue(BlockStateProperties.HORIZONTAL_FACING).getAxis() ==
-			              master.getBlockState().getValue(BlockStateProperties.HORIZONTAL_FACING).getAxis();
+		if (master.getLevel() == null) return false;
+		
+		BlockState other = master.getLevel().getBlockState(pos);
+		if (!other.hasProperty(BlockStateProperties.HORIZONTAL_FACING)) return false;
+		
+		return other.getValue(BlockStateProperties.HORIZONTAL_FACING).getAxis() ==
+			master.getBlockState().getValue(BlockStateProperties.HORIZONTAL_FACING).getAxis();
 	}
 	
 	public void evaluate() {
 		Direction direction = master.getBlockState().getValue(BlockStateProperties.HORIZONTAL_FACING);
+		Direction.Axis masterAxis = direction.getAxis();
 		BlockPos pos = master.getBlockPos();
 		if (connectorPos != null) {
-			if (direction.getAxis() == Direction.Axis.Z)
-				connectorDistance = Math.abs(pos.getZ() - connectorPos.getZ());
-			
-			if (direction.getAxis() == Direction.Axis.X)
-				connectorDistance = Math.abs(pos.getX() - connectorPos.getX());
+			connectorDistance = Math.abs(pos.get(masterAxis) - connectorPos.get(masterAxis));
 			
 			if (crank != null) {
 				crankConnectorDistance = Math.abs(crank.getBlockPos().getY() - connectorPos.getY());
@@ -128,21 +134,16 @@ public class PumpjackMultiblock {
 			}
 		}
 		if (headPos != null) {
-			if (direction.getAxis() == Direction.Axis.Z)
-				headDistance = Math.abs(pos.getZ() - headPos.getZ());
-			if (direction.getAxis() == Direction.Axis.X)
-				headDistance = Math.abs(pos.getX() - headPos.getX());
+			headDistance = Math.abs(pos.get(masterAxis) - headPos.get(masterAxis));
 			if (base != null) {
 				headBaseDistance = Math.abs(base.getBlockPos().getY() - headPos.getY());
 			}
 		}
 		if (connectorPos != null) findCrank();
-		if (crank != null)
-			if (!(getBE(crankPos) instanceof PumpjackCrankBlockEntity))
-				crank = null;
+		if (crank != null && !(getBE(crankPos) instanceof PumpjackCrankBlockEntity))
+			crank = null;
 		if (headPos != null) findBase();
-		if (base != null)
-			if (!(getBE(basePos) instanceof PumpjackBaseBlockEntity))
+		if (base != null && !(getBE(basePos) instanceof PumpjackBaseBlockEntity))
 				base = null;
 	}
 	

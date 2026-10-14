@@ -28,7 +28,6 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import java.util.List;
 
 public class PumpjackBaseBlockEntity extends SmartBlockEntity implements IHaveGoggleInformation {
-    public PumpjackBlockEntity controllerHammer;
 	public PumpjackMultiblock controller;
     public boolean isRunning = false;
     int depositCheckTimer = 0;
@@ -67,24 +66,12 @@ public class PumpjackBaseBlockEntity extends SmartBlockEntity implements IHaveGo
             updateCapability = false;
             refreshCapability();
         }
-        if (controllerHammer != null)
-            if (!(level.getBlockEntity(controllerHammer.getBlockPos()) instanceof PumpjackBlockEntity))
-                controllerHammer = null;
-        if (controllerHammer != null)
-            if (controllerHammer.multiblock.getBaseBE() == null)
-                controllerHammer = null;
-
-        if (controllerHammer != null)
-            if (!controllerHammer.isRunning())
-                controllerHammer = null;
-
-        if (controllerHammer == null)
-            return;
-        isRunning = controllerHammer.isRunning();
+        if (controller != null && controller.getBase() != getBlockPos())
+			controller = null;
+		
+        isRunning = controller != null && controller.getMaster().isRunning();
 
         if (!isRunning) {
-            deposit = null;
-            controllerHammer = null;
             miningRate = 0;
             return;
         }
@@ -94,7 +81,7 @@ public class PumpjackBaseBlockEntity extends SmartBlockEntity implements IHaveGo
             findDeposit();
         }
 		
-        PumpjackCrankBlockEntity crank = controllerHammer.multiblock.getCrankBE();
+        PumpjackCrankBlockEntity crank = controller.getCrankBE();
         if (crank == null)
             return;
         miningRate = (int) Math.abs(crank.getMachineInputSpeed() * (crank.heightModifier));
@@ -110,15 +97,18 @@ public class PumpjackBaseBlockEntity extends SmartBlockEntity implements IHaveGo
 
     public void findDeposit() {
         for (int i = 0; i < this.getBlockPos().getY() + 64; i++) {
-            BlockPos checkedPos = new BlockPos(this.getBlockPos().getX(), (this.getBlockPos().getY() - 1) - i, this.getBlockPos().getZ());
-            if (level.getBlockState(new BlockPos(checkedPos)).is(TFMGBlocks.OIL_DEPOSIT.get())) {
-                deposit = checkedPos;
-                return;
-            }
-            if (!(level.getBlockState(new BlockPos(checkedPos)).is(TFMGTags.Blocks.INDUSTRIAL_PIPE.tag))) {
-                deposit = null;
-                return;
-            }
+            BlockPos checkedPos = getBlockPos().below(i);
+			if (level != null) {
+				BlockState state = level.getBlockState(checkedPos);
+				if (state.is(TFMGBlocks.OIL_DEPOSIT.get())) {
+					deposit = checkedPos;
+					return;
+				}
+				if (!state.is(TFMGTags.Blocks.INDUSTRIAL_PIPE.tag)) {
+					deposit = null;
+					return;
+				}
+			}
         }
         deposit = null;
     }
@@ -161,8 +151,8 @@ public class PumpjackBaseBlockEntity extends SmartBlockEntity implements IHaveGo
         }
     }
 
-    public void setControllerHammer(PumpjackBlockEntity controllerHammer) {
-        this.controllerHammer = controllerHammer;
+    public void setController(PumpjackMultiblock controller) {
+        this.controller = controller;
     }
 
     @Override
