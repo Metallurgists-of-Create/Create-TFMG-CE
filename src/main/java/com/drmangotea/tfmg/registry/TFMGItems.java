@@ -55,6 +55,7 @@ import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.block.Blocks;
+import net.neoforged.neoforge.client.model.generators.ModelFile;
 import net.neoforged.neoforge.common.Tags;
 
 import java.util.ArrayList;
@@ -213,6 +214,14 @@ public class TFMGItems {
             .register();
 
     public static final ItemEntry<Item> COAL_COKE = REGISTRATE.item("coal_coke", Item::new)
+            .model((ctx, prov) -> prov
+                    .generated(ctx::get)
+                    .override().predicate(TFMG.asResource("april_fools"), 1)
+                    .model(prov
+                            .getBuilder(ctx.getName() + "_fools")
+                            .parent(new ModelFile.UncheckedModelFile("item/generated"))
+                            .texture("layer0", TFMG.asResource("item/coal_cake")))
+                    .end())
             .register();
 
     public static final ItemEntry<DebugCinderBlockItem> DEBUG_CINDERBLOCK = REGISTRATE.item("debug_cinderblock", DebugCinderBlockItem::new)
