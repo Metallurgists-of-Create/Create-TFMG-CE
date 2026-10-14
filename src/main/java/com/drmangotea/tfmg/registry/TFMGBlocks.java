@@ -933,6 +933,22 @@ public class TFMGBlocks {
             .blockstate((ctx, prov) -> prov.simpleBlock(ctx.getEntry(), AssetLookup.partialBaseModel(ctx, prov)))
             .simpleItem()
             .register();
+	
+	//------------------CASINGS------------------//
+	
+	public static final BlockEntry<CasingBlock> STEEL_CASING = REGISTRATE.block("steel_casing", CasingBlock::new)
+		.transform(BuilderTransformers.casing(() -> TFMGSpriteShifts.STEEL_CASING))
+		.register();
+	public static final BlockEntry<CasingBlock> HEAVY_MACHINERY_CASING = REGISTRATE.block("heavy_machinery_casing", CasingBlock::new)
+		.tag(TFMGTags.Blocks.SURFACE_SCANNER_FINDABLE.tag)
+		.transform(BuilderTransformers.casing(() -> TFMGSpriteShifts.HEAVY_MACHINERY_CASING))
+		.properties(p -> p.sound(SoundType.NETHERITE_BLOCK))
+		.register();
+	public static final BlockEntry<CasingBlock> ALUMINUM_CASING = REGISTRATE.block("industrial_aluminum_casing", CasingBlock::new)
+		.transform(BuilderTransformers.casing(() -> TFMGSpriteShifts.INDUSTRIAL_ALUMINUM_CASING))
+		.properties(p -> p.sound(SoundType.COPPER))
+		.lang("Aluminum Casing")
+		.register();
 
     //------------------ELECTRICITY------------------//
 
@@ -1021,25 +1037,25 @@ public class TFMGBlocks {
                     .build()
                     .register();
     public static final BlockEntry<CableHubBlock> ALUMINUM_CABLE_HUB =
-            REGISTRATE.block("aluminum_cable_hub", p -> new CableHubBlock(p, 80))
+            REGISTRATE.block("aluminum_cable_hub", p -> new CableHubBlock(p, 80, ALUMINUM_CASING::get))
                     .initialProperties(SharedProperties::softMetal)
                     .transform(pickaxeOnly())
-                    .item()
-                    .build()
+					.onRegister(casingConnectivity((block, cc) -> cc.makeCasing(block, TFMGSpriteShifts.INDUSTRIAL_ALUMINUM_CASING)))
+                    .simpleItem()
                     .register();
     public static final BlockEntry<CableHubBlock> STEEL_CASING_CABLE_HUB =
-            REGISTRATE.block("steel_casing_cable_hub", p -> new CableHubBlock(p, 100))
+            REGISTRATE.block("steel_casing_cable_hub", p -> new CableHubBlock(p, 100, STEEL_CASING::get))
                     .initialProperties(SharedProperties::softMetal)
                     .transform(pickaxeOnly())
-                    .item()
-                    .build()
+					.onRegister(casingConnectivity((block, cc) -> cc.makeCasing(block, TFMGSpriteShifts.STEEL_CASING)))
+                    .simpleItem()
                     .register();
     public static final BlockEntry<CableHubBlock> HEAVY_CABLE_HUB =
-            REGISTRATE.block("heavy_cable_hub", p -> new CableHubBlock(p, 100))
+            REGISTRATE.block("heavy_cable_hub", p -> new CableHubBlock(p, 100, HEAVY_MACHINERY_CASING::get))
                     .initialProperties(SharedProperties::softMetal)
                     .transform(pickaxeOnly())
-                    .item()
-                    .build()
+					.onRegister(casingConnectivity((block, cc) -> cc.makeCasing(block, TFMGSpriteShifts.HEAVY_MACHINERY_CASING)))
+					.simpleItem()
                     .register();
 
     public static final BlockEntry<CableTubeBlock> CABLE_TUBE =
@@ -1494,22 +1510,7 @@ public class TFMGBlocks {
                     .item(TFMGCogwheelBlockItem::new)
                     .build()
                     .register();
-
-    //------------------CASINGS------------------//
-
-    public static final BlockEntry<CasingBlock> STEEL_CASING = REGISTRATE.block("steel_casing", CasingBlock::new)
-            .transform(BuilderTransformers.casing(() -> TFMGSpriteShifts.STEEL_CASING))
-            .register();
-    public static final BlockEntry<CasingBlock> HEAVY_MACHINERY_CASING = REGISTRATE.block("heavy_machinery_casing", CasingBlock::new)
-            .tag(TFMGTags.Blocks.SURFACE_SCANNER_FINDABLE.tag)
-            .transform(BuilderTransformers.casing(() -> TFMGSpriteShifts.HEAVY_MACHINERY_CASING))
-            .properties(p -> p.sound(SoundType.NETHERITE_BLOCK))
-            .register();
-    public static final BlockEntry<CasingBlock> ALUMINUM_CASING = REGISTRATE.block("industrial_aluminum_casing", CasingBlock::new)
-            .transform(BuilderTransformers.casing(() -> TFMGSpriteShifts.INDUSTRIAL_ALUMINUM_CASING))
-            .properties(p -> p.sound(SoundType.COPPER))
-            .lang("Aluminum Casing")
-            .register();
+	
     //------------------STORAGE_BLOCKS------------------//
     public static final BlockEntry<Block> STEEL_BLOCK = REGISTRATE.block("steel_block", Block::new)
             .initialProperties(SharedProperties::softMetal)
