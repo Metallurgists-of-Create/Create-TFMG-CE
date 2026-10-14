@@ -8,6 +8,7 @@
     "DeployerBlockEntityMixin",
     "FluidPipeBlockEntityMixin",
     "FluidPipeBlockMixin",
+    "ItemMixin",
     "ItemStackMixin",
     "MobEffectInstanceMixin",
     "UtilMixin",
