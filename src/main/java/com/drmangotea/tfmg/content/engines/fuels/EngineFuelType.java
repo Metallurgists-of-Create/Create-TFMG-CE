@@ -25,8 +25,12 @@ public record EngineFuelType(HolderSet<Fluid> fluids, float speed, float efficie
 		Codec.FLOAT.optionalFieldOf("speed", 1f).forGetter(EngineFuelType::speed),
 		Codec.FLOAT.optionalFieldOf("efficiency", 1f).forGetter(EngineFuelType::efficiency),
 		Codec.FLOAT.optionalFieldOf("torque", 1f).forGetter(EngineFuelType::torque),
-		BuiltInRegistries.FLUID.byNameCodec().fieldOf("exhaust").forGetter(EngineFuelType::exhaust)
+		BuiltInRegistries.FLUID.byNameCodec().optionalFieldOf("exhaust").forGetter((et) -> Optional.of(et.exhaust()))
     ).apply(i, EngineFuelType::new));
+
+    public EngineFuelType(HolderSet<Fluid> fluids, float speed, float efficiency, float torque, Optional<Fluid> exhaust) {
+        this(fluids, speed, efficiency, torque, exhaust.orElse(TFMGFluids.CARBON_DIOXIDE.getSource()));
+    }
 
     public static Optional<Holder.Reference<EngineFuelType>> getTypeForFluid(RegistryAccess registryAccess, Fluid fluid) {
         return typeCache.computeIfAbsent(fluid, f -> registryAccess.lookupOrThrow(TFMGRegistries.ENGINE_FUEL_TYPE)
