@@ -11,6 +11,7 @@ Contributors:<br>
 - Blast Furnace Outputs no-longer reset item components.
 - Coke Ovens once again process faster the bigger they are.
 - Concrete-logged Electric Posts no longer dry into Concrete-encased cables
+- Engines and fireboxes exhausting `flowing_carbon_dioxide` instead of `carbon_dioxide`
 
 ### Changes:
 - Recipe inputs now use tags where applicable.
@@ -36,7 +37,6 @@ Contributors:<br>
 - Engine Upgrades are now a registry.
 - Electricity generation on engine upgrades is now an interface.
 - All engines now have registered item handlers.
-- Engine Fuels can now specify custom exhaust fluids
-  - The field is not optional, but the Builder and Engines default to CO2.
+- Engine Fuels can now specify custom exhaust fluids (CO2 remains the default).
 
 ### New Translations:

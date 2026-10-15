@@ -150,6 +150,8 @@ dependencies {
     runtimeOnly("maven.modrinth:spark:1.10.124-neoforge-1.21.1")
     runtimeOnly("maven.modrinth:lhGA9TYQ:1IiqEQGl") //architectury, for CPG
     runtimeOnly("maven.modrinth:power-grid:jCkPHjmP") //Create: Power Grid 0.6.2
+    //!!Don't uncomment this during datagen, it will add external stuff to tags!!
+    //runtimeOnly("maven.modrinth:dye-depot:2.1.2") // Dye Depot 2.1.2
 }
 
 val generateModMetadata = tasks.register<ProcessResources>("generateModMetadata") {

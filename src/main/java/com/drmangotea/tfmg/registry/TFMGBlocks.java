@@ -124,6 +124,7 @@ import com.drmangotea.tfmg.content.machinery.vat.electrode_holder.ElectrodeHolde
 import com.drmangotea.tfmg.content.machinery.vat.freezer.FreezerBlock;
 import com.drmangotea.tfmg.content.machinery.vat.industrial_mixer.IndustrialMixerBlock;
 import com.drmangotea.tfmg.content.world.resevoir.OilDepositBlock;
+import com.drmangotea.tfmg.recipes.condition.TagFilledCondition;
 import com.simibubi.create.AllTags;
 import com.simibubi.create.api.stress.BlockStressValues;
 import com.simibubi.create.content.contraptions.bearing.StabilizedBearingMovementBehaviour;
@@ -161,6 +162,7 @@ import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.functions.ApplyBonusCount;
 import net.neoforged.neoforge.common.Tags;
+import net.neoforged.neoforge.common.conditions.ICondition;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -934,6 +936,22 @@ public class TFMGBlocks {
             .blockstate((ctx, prov) -> prov.simpleBlock(ctx.getEntry(), AssetLookup.partialBaseModel(ctx, prov)))
             .simpleItem()
             .register();
+	
+	//------------------CASINGS------------------//
+	
+	public static final BlockEntry<CasingBlock> STEEL_CASING = REGISTRATE.block("steel_casing", CasingBlock::new)
+		.transform(BuilderTransformers.casing(() -> TFMGSpriteShifts.STEEL_CASING))
+		.register();
+	public static final BlockEntry<CasingBlock> HEAVY_MACHINERY_CASING = REGISTRATE.block("heavy_machinery_casing", CasingBlock::new)
+		.tag(TFMGTags.Blocks.SURFACE_SCANNER_FINDABLE.tag)
+		.transform(BuilderTransformers.casing(() -> TFMGSpriteShifts.HEAVY_MACHINERY_CASING))
+		.properties(p -> p.sound(SoundType.NETHERITE_BLOCK))
+		.register();
+	public static final BlockEntry<CasingBlock> ALUMINUM_CASING = REGISTRATE.block("industrial_aluminum_casing", CasingBlock::new)
+		.transform(BuilderTransformers.casing(() -> TFMGSpriteShifts.INDUSTRIAL_ALUMINUM_CASING))
+		.properties(p -> p.sound(SoundType.COPPER))
+		.lang("Aluminum Casing")
+		.register();
 
     //------------------ELECTRICITY------------------//
 
@@ -1022,25 +1040,25 @@ public class TFMGBlocks {
                     .build()
                     .register();
     public static final BlockEntry<CableHubBlock> ALUMINUM_CABLE_HUB =
-            REGISTRATE.block("aluminum_cable_hub", p -> new CableHubBlock(p, 80))
+            REGISTRATE.block("aluminum_cable_hub", p -> new CableHubBlock(p, 80, ALUMINUM_CASING::get))
                     .initialProperties(SharedProperties::softMetal)
                     .transform(pickaxeOnly())
-                    .item()
-                    .build()
+					.onRegister(casingConnectivity((block, cc) -> cc.makeCasing(block, TFMGSpriteShifts.INDUSTRIAL_ALUMINUM_CASING)))
+                    .simpleItem()
                     .register();
     public static final BlockEntry<CableHubBlock> STEEL_CASING_CABLE_HUB =
-            REGISTRATE.block("steel_casing_cable_hub", p -> new CableHubBlock(p, 100))
+            REGISTRATE.block("steel_casing_cable_hub", p -> new CableHubBlock(p, 100, STEEL_CASING::get))
                     .initialProperties(SharedProperties::softMetal)
                     .transform(pickaxeOnly())
-                    .item()
-                    .build()
+					.onRegister(casingConnectivity((block, cc) -> cc.makeCasing(block, TFMGSpriteShifts.STEEL_CASING)))
+                    .simpleItem()
                     .register();
     public static final BlockEntry<CableHubBlock> HEAVY_CABLE_HUB =
-            REGISTRATE.block("heavy_cable_hub", p -> new CableHubBlock(p, 100))
+            REGISTRATE.block("heavy_cable_hub", p -> new CableHubBlock(p, 100, HEAVY_MACHINERY_CASING::get))
                     .initialProperties(SharedProperties::softMetal)
                     .transform(pickaxeOnly())
-                    .item()
-                    .build()
+					.onRegister(casingConnectivity((block, cc) -> cc.makeCasing(block, TFMGSpriteShifts.HEAVY_MACHINERY_CASING)))
+					.simpleItem()
                     .register();
 
     public static final BlockEntry<CableTubeBlock> CABLE_TUBE =
@@ -1495,22 +1513,7 @@ public class TFMGBlocks {
                     .item(TFMGCogwheelBlockItem::new)
                     .build()
                     .register();
-
-    //------------------CASINGS------------------//
-
-    public static final BlockEntry<CasingBlock> STEEL_CASING = REGISTRATE.block("steel_casing", CasingBlock::new)
-            .transform(BuilderTransformers.casing(() -> TFMGSpriteShifts.STEEL_CASING))
-            .register();
-    public static final BlockEntry<CasingBlock> HEAVY_MACHINERY_CASING = REGISTRATE.block("heavy_machinery_casing", CasingBlock::new)
-            .tag(TFMGTags.Blocks.SURFACE_SCANNER_FINDABLE.tag)
-            .transform(BuilderTransformers.casing(() -> TFMGSpriteShifts.HEAVY_MACHINERY_CASING))
-            .properties(p -> p.sound(SoundType.NETHERITE_BLOCK))
-            .register();
-    public static final BlockEntry<CasingBlock> ALUMINUM_CASING = REGISTRATE.block("industrial_aluminum_casing", CasingBlock::new)
-            .transform(BuilderTransformers.casing(() -> TFMGSpriteShifts.INDUSTRIAL_ALUMINUM_CASING))
-            .properties(p -> p.sound(SoundType.COPPER))
-            .lang("Aluminum Casing")
-            .register();
+	
     //------------------STORAGE_BLOCKS------------------//
     public static final BlockEntry<Block> STEEL_BLOCK = REGISTRATE.block("steel_block", Block::new)
             .initialProperties(SharedProperties::softMetal)
@@ -1915,11 +1918,13 @@ public class TFMGBlocks {
                 .tag(BlockTags.NEEDS_STONE_TOOL)
                 .recipe((c, p) -> {
                     p.stonecutting(DataIngredient.tag(CommonMetal.ALUMINUM.ingots), RecipeCategory.BUILDING_BLOCKS, c, 2);
-                    ShapelessRecipeBuilder.shapeless(RecipeCategory.DECORATIONS, c.get())
+                    boolean optional = colour.getId() > 15;
+                    var builder = ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, c.get())
                             .requires(colour.getTag())
                             .requires(Items.CAUTION_BLOCKS.tag)
-                            .unlockedBy("has_caution_block", RegistrateRecipeProvider.has(Items.CAUTION_BLOCKS.tag))
-                            .save(p, TFMG.asResource("crafting/materials/" + c.getName() + "_from_other_caution_block"));
+                            .unlockedBy("has_caution_block", RegistrateRecipeProvider.has(Items.CAUTION_BLOCKS.tag));
+                    ICondition[] conditions = optional ? new ICondition[]{new TagFilledCondition(colour.getTag())} : new ICondition[]{};
+                    TFMGUtils.conditionalCrafting(p, TFMG.asResource("crafting/materials/" + c.getName() + "_from_other_caution_block"), builder, conditions);
                 })
                 .item()
                 .tag(Items.CAUTION_BLOCKS.tag)
