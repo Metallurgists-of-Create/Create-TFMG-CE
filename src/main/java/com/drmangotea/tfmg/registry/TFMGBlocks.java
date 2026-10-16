@@ -1043,21 +1043,25 @@ public class TFMGBlocks {
             REGISTRATE.block("aluminum_cable_hub", p -> new CableHubBlock(p, 80, ALUMINUM_CASING::get))
                     .initialProperties(SharedProperties::softMetal)
                     .transform(pickaxeOnly())
-					.onRegister(casingConnectivity((block, cc) -> cc.makeCasing(block, TFMGSpriteShifts.INDUSTRIAL_ALUMINUM_CASING)))
+                    .onRegister(connectedTextures(() -> new EncasedCTBehaviour(TFMGSpriteShifts.ALUMINUM_CASING_CABLE_HUB)))
+                    .onRegister(casingConnectivity((block, cc) -> cc.makeCasing(block, TFMGSpriteShifts.INDUSTRIAL_ALUMINUM_CASING)))
                     .simpleItem()
                     .register();
     public static final BlockEntry<CableHubBlock> STEEL_CASING_CABLE_HUB =
             REGISTRATE.block("steel_casing_cable_hub", p -> new CableHubBlock(p, 100, STEEL_CASING::get))
                     .initialProperties(SharedProperties::softMetal)
                     .transform(pickaxeOnly())
-					.onRegister(casingConnectivity((block, cc) -> cc.makeCasing(block, TFMGSpriteShifts.STEEL_CASING)))
+                    .onRegister(connectedTextures(() -> new EncasedCTBehaviour(TFMGSpriteShifts.STEEL_CASING_CABLE_HUB)))
+                    .onRegister(casingConnectivity((block, cc) -> cc.makeCasing(block, TFMGSpriteShifts.STEEL_CASING)))
                     .simpleItem()
                     .register();
     public static final BlockEntry<CableHubBlock> HEAVY_CABLE_HUB =
             REGISTRATE.block("heavy_cable_hub", p -> new CableHubBlock(p, 100, HEAVY_MACHINERY_CASING::get))
                     .initialProperties(SharedProperties::softMetal)
                     .transform(pickaxeOnly())
-					.onRegister(casingConnectivity((block, cc) -> cc.makeCasing(block, TFMGSpriteShifts.HEAVY_MACHINERY_CASING)))
+                    .onRegister(connectedTextures(() -> new EncasedCTBehaviour(TFMGSpriteShifts.HEAVY_MACHINERY_CASING_CABLE_HUB)))
+
+                    .onRegister(casingConnectivity((block, cc) -> cc.makeCasing(block, TFMGSpriteShifts.HEAVY_MACHINERY_CASING)))
 					.simpleItem()
                     .register();
 

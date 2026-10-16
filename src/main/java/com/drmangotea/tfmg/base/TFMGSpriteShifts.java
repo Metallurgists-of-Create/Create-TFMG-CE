@@ -16,6 +16,7 @@ public class TFMGSpriteShifts {
             NICKEL_BLOCK = omni("nickel_block"),
             STEEL_BLOCK = omni("steel_block");
     public static final CTSpriteShiftEntry HEAVY_MACHINERY_CASING = omni("heavy_machinery_casing"), INDUSTRIAL_ALUMINUM_CASING = omni("industrial_aluminum_casing"),STEEL_CASING = omni("steel_casing");
+    public static final CTSpriteShiftEntry HEAVY_MACHINERY_CASING_CABLE_HUB = omni("heavy_cable_hub"), ALUMINUM_CASING_CABLE_HUB = omni("aluminum_cable_hub"), STEEL_CASING_CABLE_HUB = omni("steel_casing_cable_hub");
     public static final CTSpriteShiftEntry ACCUMULATOR = getCT(AllCTTypes.RECTANGLE, "accumulator_side");
     public static final CTSpriteShiftEntry STEEL_SCAFFOLD = horizontalKryppers("scaffold/steel_scaffold"), ALUMINUM_SCAFFOLD = horizontalKryppers("scaffold/aluminum_scaffold");
     public static final CTSpriteShiftEntry ALUMINUM_SCAFFOLD_TOP = omni("aluminum_casing");
