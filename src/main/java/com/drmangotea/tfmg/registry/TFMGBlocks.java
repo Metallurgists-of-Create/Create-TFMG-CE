@@ -1916,7 +1916,7 @@ public class TFMGBlocks {
                 .recipe((c, p) -> {
                     p.stonecutting(DataIngredient.tag(CommonMetal.ALUMINUM.ingots), RecipeCategory.BUILDING_BLOCKS, c, 2);
                     boolean optional = colour.getId() > 15;
-                    var builder = ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, c.get())
+                    var builder = ShapelessRecipeBuilder.shapeless(RecipeCategory.DECORATIONS, c.get())
                             .requires(colour.getTag())
                             .requires(Items.CAUTION_BLOCKS.tag)
                             .unlockedBy("has_caution_block", RegistrateRecipeProvider.has(Items.CAUTION_BLOCKS.tag));
