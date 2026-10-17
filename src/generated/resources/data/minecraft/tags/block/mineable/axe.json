@@ -1,14 +1,14 @@
 {
   "values": [
     "tfmg:machine_input",
+    "tfmg:steel_casing",
+    "tfmg:heavy_machinery_casing",
+    "tfmg:industrial_aluminum_casing",
     "tfmg:copycat_cable_block",
     "tfmg:steel_cogwheel",
     "tfmg:large_steel_cogwheel",
     "tfmg:aluminum_cogwheel",
     "tfmg:large_aluminum_cogwheel",
-    "tfmg:steel_casing",
-    "tfmg:heavy_machinery_casing",
-    "tfmg:industrial_aluminum_casing",
     "tfmg:steel_gearbox",
     "tfmg:hardened_planks",
     "tfmg:steel_flywheel",
