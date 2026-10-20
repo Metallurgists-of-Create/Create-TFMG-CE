@@ -63,7 +63,7 @@ public class TFMGFluids {
 
     public static final DyedFluidList<BaseFlowingFluid.Flowing> COLOURED_CONCRETE = new DyedFluidList<>(colour -> {
         String colourName = colour.getSerializedName();
-        return REGISTRATE.fluid("liquid_" + colourName + "_concrete", getLocation(colourName + "_liquid_concrete"), getLocationFlow(colourName + "_liquid_concrete"),
+        return REGISTRATE.fluid("liquid_" + colourName + "_concrete", getLocation("concrete/" + colourName), getLocationFlow("concrete/" + colourName),
                         SolidRenderedPlaceableFluidType.create(TFMGUtils.blendColours(new Color(colour.getFireworkColor()), new Color(0x5B5B59)).getRGB(), () -> 1f / 32f))
                 .lang(toHumanReadable("liquid_" + colourName + "_concrete"))
                 .properties(b -> b.viscosity(5000).density(2500))
@@ -73,6 +73,7 @@ public class TFMGFluids {
                         .explosionResistance(1000f))
                 .source((p) -> new ConcreteFluid.Source(p).withColour(colour))
                 .bucket()
+                .model((ctx, prov) -> prov.generated(ctx::get, TFMG.asResource("item/concrete_bucket/" + colourName)))
                 .tag(ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", "buckets/liquid_" + colourName + "_concrete")))
                 .build()
                 .register();

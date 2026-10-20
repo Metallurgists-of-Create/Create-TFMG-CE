@@ -1,6 +1,7 @@
 package com.drmangotea.tfmg.content.engines.fuels;
 
 import com.drmangotea.tfmg.TFMGRegistries;
+import com.drmangotea.tfmg.registry.TFMGFluids;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.simibubi.create.foundation.fluid.FluidHelper;
@@ -16,15 +17,20 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-public record EngineFuelType(HolderSet<Fluid> fluids, float speed, float efficiency, float torque) {
+public record EngineFuelType(HolderSet<Fluid> fluids, float speed, float efficiency, float torque, Fluid exhaust) {
     public static final Map<Fluid, Optional<Holder.Reference<EngineFuelType>>> typeCache = new HashMap<>();
 
     public static final Codec<EngineFuelType> CODEC = RecordCodecBuilder.create(i -> i.group(
-            RegistryCodecs.homogeneousList(Registries.FLUID).fieldOf("fluids").forGetter(EngineFuelType::fluids),
-            Codec.FLOAT.optionalFieldOf("speed", 1f).forGetter(EngineFuelType::speed),
-            Codec.FLOAT.optionalFieldOf("efficiency", 1f).forGetter(EngineFuelType::efficiency),
-            Codec.FLOAT.optionalFieldOf("torque", 1f).forGetter(EngineFuelType::torque)
+		RegistryCodecs.homogeneousList(Registries.FLUID).fieldOf("fluids").forGetter(EngineFuelType::fluids),
+		Codec.FLOAT.optionalFieldOf("speed", 1f).forGetter(EngineFuelType::speed),
+		Codec.FLOAT.optionalFieldOf("efficiency", 1f).forGetter(EngineFuelType::efficiency),
+		Codec.FLOAT.optionalFieldOf("torque", 1f).forGetter(EngineFuelType::torque),
+		BuiltInRegistries.FLUID.byNameCodec().optionalFieldOf("exhaust").forGetter((et) -> Optional.of(et.exhaust()))
     ).apply(i, EngineFuelType::new));
+
+    public EngineFuelType(HolderSet<Fluid> fluids, float speed, float efficiency, float torque, Optional<Fluid> exhaust) {
+        this(fluids, speed, efficiency, torque, exhaust.orElse(TFMGFluids.CARBON_DIOXIDE.getSource()));
+    }
 
     public static Optional<Holder.Reference<EngineFuelType>> getTypeForFluid(RegistryAccess registryAccess, Fluid fluid) {
         return typeCache.computeIfAbsent(fluid, f -> registryAccess.lookupOrThrow(TFMGRegistries.ENGINE_FUEL_TYPE)
@@ -59,6 +65,7 @@ public record EngineFuelType(HolderSet<Fluid> fluids, float speed, float efficie
         private float speed = 1f;
         private float efficiency = 1f;
         private float torque = 1f;
+		private Fluid exhaust = TFMGFluids.CARBON_DIOXIDE.getSource();
 
         @ApiStatus.Internal
         public Builder() {
@@ -91,10 +98,20 @@ public record EngineFuelType(HolderSet<Fluid> fluids, float speed, float efficie
             this.torque = torque;
             return this;
         }
+		
+		public Builder exhaust(Fluid exhaust) {
+			this.exhaust = FluidHelper.convertToStill(exhaust);
+			return this;
+		}
 
         public EngineFuelType build() {
-            return new EngineFuelType(this.fluids, speed, efficiency, torque);
+            return new EngineFuelType(this.fluids, speed, efficiency, torque, exhaust);
         }
+    }
+
+    @Override
+    public int hashCode() {
+        return fluids().hashCode() + exhaust().hashCode() + Float.hashCode(speed()) + Float.hashCode(efficiency()) + Float.hashCode(torque());
     }
 
     @Override
@@ -103,7 +120,9 @@ public record EngineFuelType(HolderSet<Fluid> fluids, float speed, float efficie
                 + fluids.stream()
                 .map(h -> h.unwrapKey().map(k -> k.location().toString()).orElse("unregistered"))
                 .reduce((a, b) -> a + ", " + b).orElse("")
-                + "], speed=" + this.speed
+                + "], exhaust="
+                + BuiltInRegistries.FLUID.getKey(this.exhaust)
+                + ", speed=" + this.speed
                 + ", efficiency=" + this.efficiency
                 + ", torque=" + this.torque + "]";
     }

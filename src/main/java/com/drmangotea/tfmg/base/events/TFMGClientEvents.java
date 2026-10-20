@@ -34,7 +34,7 @@ import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 
 import java.util.List;
 
-
+@SuppressWarnings("unused")
 @EventBusSubscriber(Dist.CLIENT)
 public class TFMGClientEvents {
 
@@ -100,12 +100,10 @@ public class TFMGClientEvents {
 			player.getPersistentData().remove("IsUsingEngineController");
 	}
 
-    @SubscribeEvent
-    public static void registerGuiOverlays(RegisterGuiLayersEvent event) {
-
-        event.registerAbove(VanillaGuiLayers.HOTBAR, TFMG.asResource("multimeter_info"), MultimeterOverlayRenderer.OVERLAY);
-
-    }
+	@SubscribeEvent
+	public static void registerGuiOverlays(RegisterGuiLayersEvent event) {
+		event.registerAbove(VanillaGuiLayers.HOTBAR, TFMG.asResource("multimeter_info"), MultimeterOverlayRenderer.OVERLAY);
+	}
 
 	protected static boolean isGameActive() {
 		return !(Minecraft.getInstance().level == null || Minecraft.getInstance().player == null);
@@ -121,11 +119,11 @@ public class TFMGClientEvents {
 
 		@SubscribeEvent
 		public static void vatOperations(VatCategoryEvent event) {
-			event.addDrawableOperation(TFMGVatOperations.MIXING.get(), (recipe, graphics, mouseX, mouseY) -> {
+			event.addDrawableOperation(TFMGVatOperations.MIXER.get(), (recipe, graphics, mouseX, mouseY) -> {
 				TFMGGuiTextures.VAT_MACHINE.render(graphics, 55 - 12, 0);
 				TFMGGuiTextures.MIXER.render(graphics, 55 - 19, 32);
 			});
-			event.addOperationTooltip(TFMGVatOperations.MIXING.get(), (recipe, tooltip, mouseX, mouseY) -> {
+			event.addOperationTooltip(TFMGVatOperations.MIXER.get(), (recipe, tooltip, mouseX, mouseY) -> {
 				if (mouseY > -3 && mouseY < 60 && mouseX > 43 && mouseX < 67) {
 					tooltip.accept(TFMGLang.translate("recipe.vat.mixing").component()
 							.withColor(PonderPalette.INPUT.getColor()));

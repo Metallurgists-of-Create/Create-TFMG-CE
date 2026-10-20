@@ -127,6 +127,7 @@ dependencies {
             prefer(property("sable_companion_version") as String)
         }
     })
+	implementation("dev.ryanhcode.sable:sable-neoforge-${property("minecraft_version")}:${property("sable_version")}")
     implementation("com.simibubi.create:create-${property("minecraft_version")}:${property("create_version")}:slim") { isTransitive = false }
     implementation("net.createmod.ponder:ponder-neoforge:${property("ponder_version")}+mc1.21.1")
     compileOnly("dev.engine-room.flywheel:flywheel-neoforge-api-${property("minecraft_version")}:${property("flywheel_version")}")
@@ -149,6 +150,8 @@ dependencies {
     runtimeOnly("maven.modrinth:spark:1.10.124-neoforge-1.21.1")
     runtimeOnly("maven.modrinth:lhGA9TYQ:1IiqEQGl") //architectury, for CPG
     runtimeOnly("maven.modrinth:power-grid:jCkPHjmP") //Create: Power Grid 0.6.2
+    //!!Don't uncomment this during datagen, it will add external stuff to tags!!
+    //runtimeOnly("maven.modrinth:dye-depot:2.1.2") // Dye Depot 2.1.2
 }
 
 val generateModMetadata = tasks.register<ProcessResources>("generateModMetadata") {

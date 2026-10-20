@@ -9,7 +9,9 @@ import com.drmangotea.tfmg.content.electricity.connection.cable_type.CableType;
 import com.drmangotea.tfmg.content.electricity.experimental.IRealisticElectric;
 import com.drmangotea.tfmg.content.electricity.experimental.simulation.nodes.ConnectingElectricalNode;
 import com.drmangotea.tfmg.content.machinery.vat.electrode_holder.electrode.Electrode;
+import com.drmangotea.tfmg.mixin.accessor.ShapedRecipeBuilderAccessor;
 import com.drmangotea.tfmg.registry.TFMGEntityTypes;
+import com.drmangotea.tfmg.mixin.accessor.ShapelessRecipeBuilderAccessor;
 import com.simibubi.create.content.fluids.tank.FluidTankBlockEntity;
 import com.simibubi.create.foundation.fluid.SmartFluidTank;
 import com.simibubi.create.foundation.item.SmartInventory;
@@ -19,10 +21,18 @@ import net.createmod.catnip.outliner.Outliner;
 import net.createmod.catnip.theme.Color;
 import net.createmod.ponder.api.level.PonderLevel;
 import net.minecraft.ChatFormatting;
+import net.minecraft.advancements.Advancement;
+import net.minecraft.advancements.AdvancementRequirements;
+import net.minecraft.advancements.AdvancementRewards;
+import net.minecraft.advancements.critereon.RecipeUnlockedTrigger;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.data.recipes.RecipeBuilder;
+import net.minecraft.data.recipes.RecipeOutput;
+import net.minecraft.data.recipes.ShapedRecipeBuilder;
+import net.minecraft.data.recipes.ShapelessRecipeBuilder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -36,17 +46,23 @@ import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.ShapedRecipe;
+import net.minecraft.world.item.crafting.ShapedRecipePattern;
+import net.minecraft.world.item.crafting.ShapelessRecipe;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.common.conditions.ICondition;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.items.IItemHandler;
 import org.apache.commons.lang3.StringUtils;
 import org.joml.Quaterniond;
 
+import java.time.LocalDate;
+import java.util.*;
 import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.List;
@@ -500,5 +516,36 @@ public class TFMGUtils {
         }
 
         return new Color(a << 24 | r << 16 | g << 8 | b);
+    }
+
+    public static boolean isAprilFirst() {
+        LocalDate date = LocalDate.now();
+        int day = date.getDayOfMonth();
+        int month = date.getMonthValue();
+        return month == 4 && day == 1;
+    }
+
+    //Vanilla builders don't support saving with conditions
+    public static void conditionalCrafting(RecipeOutput recipeOutput, ResourceLocation id, RecipeBuilder builder, ICondition... conditions) {
+        if (builder instanceof ShapelessRecipeBuilder shapelessRecipeBuilder) {
+            ShapelessRecipeBuilderAccessor accessed = (ShapelessRecipeBuilderAccessor) shapelessRecipeBuilder;
+            if (accessed.getCriteria().isEmpty()) {
+                throw new IllegalStateException("No way of obtaining recipe " + id);
+            }
+            Advancement.Builder advancement$builder = recipeOutput.advancement().addCriterion("has_the_recipe", RecipeUnlockedTrigger.unlocked(id)).rewards(AdvancementRewards.Builder.recipe(id)).requirements(AdvancementRequirements.Strategy.OR);
+            accessed.getCriteria().forEach(advancement$builder::addCriterion);
+            ShapelessRecipe shapelessrecipe = new ShapelessRecipe(Objects.requireNonNullElse(accessed.getGroup(), ""), RecipeBuilder.determineBookCategory(accessed.getCategory()), accessed.getResultStack(), accessed.getIngredients());
+            recipeOutput.accept(id, shapelessrecipe, advancement$builder.build(id.withPrefix("recipes/" + accessed.getCategory().getFolderName() + "/")), conditions);
+        } else if (builder instanceof ShapedRecipeBuilder shapedRecipeBuilder) {
+            ShapedRecipeBuilderAccessor accessed = (ShapedRecipeBuilderAccessor) shapedRecipeBuilder;
+            if (accessed.getCriteria().isEmpty()) {
+                throw new IllegalStateException("No way of obtaining recipe " + id);
+            }
+            ShapedRecipePattern pattern = ShapedRecipePattern.of(accessed.getKey(), accessed.getRows());
+            Advancement.Builder advancement$builder = recipeOutput.advancement().addCriterion("has_the_recipe", RecipeUnlockedTrigger.unlocked(id)).rewards(AdvancementRewards.Builder.recipe(id)).requirements(AdvancementRequirements.Strategy.OR);
+            accessed.getCriteria().forEach(advancement$builder::addCriterion);
+            ShapedRecipe shapedrecipe = new ShapedRecipe(Objects.requireNonNullElse(accessed.getGroup(), ""), RecipeBuilder.determineBookCategory(accessed.getCategory()), pattern, accessed.getResultStack(), accessed.showNotification());
+            recipeOutput.accept(id, shapedrecipe, advancement$builder.build(id.withPrefix("recipes/" + accessed.getCategory().getFolderName() + "/")), conditions);
+        }
     }
 }

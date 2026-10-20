@@ -30,7 +30,7 @@ public class TFMGMixerModes {
             .register();
 
     public static final MixerModeEntry<MixerMode> MIXING = REGISTRATE.mixerMode("mixing", MixerMode::new)
-            .properties((p) -> p.operation(TFMGVatOperations.MIXING).partial(IndustrialMixerModels::getMixerModel))
+            .properties((p) -> p.operation(TFMGVatOperations.MIXER).partial(IndustrialMixerModels::getMixerModel))
             .register();
 
     public static final MixerModeEntry<MixerMode> CENTRIFUGE = REGISTRATE.mixerMode("centrifuge", MixerMode::new)

@@ -20,6 +20,7 @@ import rbasamoyai.createbigcannons.index.CBCFluids;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -34,8 +35,7 @@ public class TFMGVatRecipeGen extends VatRecipeGen {
     }
 
 
-    GeneratedRecipe
-            CONCRETE = create("concrete", b -> b
+    GeneratedRecipe CONCRETE = create("concrete", b -> b
             .require(Tags.Items.SANDS_COLORLESS)
             .require(Blocks.GRAVEL.asItem())
             .require(TFMGItems.LIMESAND)
@@ -43,25 +43,20 @@ public class TFMGVatRecipeGen extends VatRecipeGen {
             .output(TFMGFluids.LIQUID_CONCRETE.get(), 32000)
             .allowAllVatTypes()
             .mixing()
-    ),
-
-    WHITE_CONCRETE = concreteDyeing(DyeColor.WHITE),
-    LIGHT_GRAY_CONCRETE = concreteDyeing(DyeColor.LIGHT_GRAY),
-    GRAY_CONCRETE = concreteDyeing(DyeColor.GRAY),
-    BLACK_CONCRETE = concreteDyeing(DyeColor.BLACK),
-    BROWN_CONCRETE = concreteDyeing(DyeColor.BROWN),
-    RED_CONCRETE = concreteDyeing(DyeColor.RED),
-    ORANGE_CONCRETE = concreteDyeing(DyeColor.ORANGE),
-    YELLOW_CONCRETE = concreteDyeing(DyeColor.YELLOW),
-    LIME_CONCRETE = concreteDyeing(DyeColor.LIME),
-    GREEN_CONCRETE = concreteDyeing(DyeColor.GREEN),
-    CYAN_CONCRETE = concreteDyeing(DyeColor.CYAN),
-    LIGHT_BLUE_CONCRETE = concreteDyeing(DyeColor.LIGHT_BLUE),
-    BLUE_CONCRETE = concreteDyeing(DyeColor.BLUE),
-    PURPLE_CONCRETE = concreteDyeing(DyeColor.PURPLE),
-    MAGENTA_CONCRETE = concreteDyeing(DyeColor.MAGENTA),
-    PINK_CONCRETE = concreteDyeing(DyeColor.PINK),
-
+    );
+	
+	GeneratedRecipe[] CONCRETE_DYEING =
+		Arrays.stream(DyeColor.values())
+		.map(colour -> create("dyeing_" + colour.getSerializedName() + "_concrete", b -> b
+			.require(colour.getTag())
+			.require(TFMGFluids.LIQUID_CONCRETE.getSource(), 8000)
+			.output(TFMGFluids.COLOURED_CONCRETE.getSource(colour), 8000)
+			.mixing()
+			.duration(100)
+			.allowAllVatTypes()
+		)).toArray(GeneratedRecipe[]::new);
+	
+	GeneratedRecipe
     ARC_FURNACE_STEEL = create("arc_furnace_steel", b -> b
             .require(crushedRawIron())
             .require(TFMGTags.Items.FLUX.tag)
@@ -166,17 +161,6 @@ public class TFMGVatRecipeGen extends VatRecipeGen {
             .allowFireproof()
             .heatLevel(2)
     );
-
-    public GeneratedRecipe concreteDyeing(DyeColor color) {
-        return create("dyeing_" + color.getSerializedName() + "_concrete", b -> b
-                .require(color.getTag())
-                .require(TFMGFluids.LIQUID_CONCRETE.getSource(), 8000)
-                .output(TFMGFluids.COLOURED_CONCRETE.getSource(color), 8000)
-                .mixing()
-                .duration(100)
-                .allowAllVatTypes()
-        );
-    }
 
     public static class VatRecipeValues {
         public List<VatOperation> machines;

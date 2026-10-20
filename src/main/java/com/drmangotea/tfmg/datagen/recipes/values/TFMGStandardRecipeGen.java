@@ -1284,7 +1284,7 @@ public class TFMGStandardRecipeGen extends TFMGRecipeProvider {
     ALUMINUM_CABLE_HUB = create(TFMGBlocks.ALUMINUM_CABLE_HUB).returns(2)
             .unlockedBy(TFMGItems.MAGNET::get)
             .viaShaped(b -> b
-                    .define('M', aluminumIngot())
+                    .define('M', aluminumCasing())
                     .define('W', copperWire())
                     .pattern("WWW")
                     .pattern("MMM")

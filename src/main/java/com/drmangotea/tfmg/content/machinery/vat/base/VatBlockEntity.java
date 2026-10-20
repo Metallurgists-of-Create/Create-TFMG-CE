@@ -284,7 +284,7 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
                 if (!operationalMachinesMap.getOrDefault(pos, true))
                     continue;
                 if (level.getBlockEntity(pos) instanceof IndustrialMixerBlockEntity mixer) {
-                    if (mixer.getOperationId().is(TFMGVatOperations.MIXING.get()) || mixer.getOperationId().is(TFMGVatOperations.CENTRIFUGE.get())) {
+                    if (mixer.getOperationId().is(TFMGVatOperations.MIXER.get()) || mixer.getOperationId().is(TFMGVatOperations.CENTRIFUGE.get())) {
                         targetSpeed += Math.abs(mixer.getSpeed());
                     }
                 }
@@ -379,7 +379,7 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
      * finds a recipe with matching inputs and machines connected
      */
     public VatMachineRecipe getMatchingRecipe() {
-        List<RecipeHolder<? extends Recipe<?>>> list = RecipeFinder.get(getRecipeCacheKey(), level, RecipeConditions.isOfType(TFMGRecipeTypes.VAT_MACHINE_RECIPE.getType()));
+        List<RecipeHolder<? extends Recipe<?>>> list = RecipeFinder.get(getRecipeCacheKey(), level, RecipeConditions.isOfType(TFMGRecipeTypes.VAT.getType()));
 
         for (RecipeHolder<? extends Recipe<?>> recipe1 : list) {
             VatMachineRecipe testedRecipe = (VatMachineRecipe) recipe1.value();

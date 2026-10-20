@@ -9,6 +9,7 @@ import com.drmangotea.tfmg.content.machinery.vat.base.registry.operations.VatCat
 import com.drmangotea.tfmg.integration.curios.MultimeterCurios;
 import com.drmangotea.tfmg.ponder.TFMGPonderPlugin;
 import com.drmangotea.tfmg.registry.TFMGDataComponents;
+import com.drmangotea.tfmg.base.TFMGUtils;
 import com.drmangotea.tfmg.registry.TFMGItems;
 import com.drmangotea.tfmg.registry.TFMGParticleTypes;
 import net.createmod.ponder.foundation.PonderIndex;
@@ -55,5 +56,6 @@ public class TFMGClient {
 
     public static void registerModelPredicates() {
         ItemProperties.register(TFMGItems.LITHIUM_BLADE.get(), TFMG.asResource("lithium_charged"), (stack, level, entity, seed) -> stack.getOrDefault(TFMGDataComponents.LITHIUM_BLADE_TIMER, 0) > 0 ? 1 : 0);
+        ItemProperties.registerGeneric(TFMG.asResource("april_fools"), (stack, world, entity, s) -> TFMGUtils.isAprilFirst() ? 1 : 0);
     }
 }

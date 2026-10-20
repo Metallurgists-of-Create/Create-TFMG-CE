@@ -1,6 +1,5 @@
 package com.drmangotea.tfmg.base;
 
-
 import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.base.blocks.TFMGVanillaBlockStates;
 import com.drmangotea.tfmg.base.dyes.DyedMaterialSetList;
@@ -13,6 +12,7 @@ import com.drmangotea.tfmg.content.decoration.kinetics.encased.TFMGEncasedShaftB
 import com.drmangotea.tfmg.content.decoration.kinetics.flywheels.TFMGFlywheelBlock;
 import com.drmangotea.tfmg.content.electricity.connection.copycat_cable.CopycatCableBlock;
 import com.drmangotea.tfmg.content.electricity.lights.neon_tube.NeonTubeBlock;
+import com.drmangotea.tfmg.recipes.condition.TagFilledCondition;
 import com.drmangotea.tfmg.registry.TFMGBlocks;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllTags;
@@ -40,10 +40,14 @@ import net.minecraft.tags.ItemTags;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.neoforged.neoforge.client.model.generators.ConfiguredModel;
 import net.neoforged.neoforge.client.model.generators.ModelFile;
 import net.neoforged.neoforge.client.model.generators.MultiPartBlockStateBuilder;
+import net.neoforged.neoforge.client.model.generators.VariantBlockStateBuilder;
 import net.neoforged.neoforge.common.Tags;
+import net.neoforged.neoforge.common.conditions.ICondition;
 
+import java.util.ArrayList;
 import java.util.function.Supplier;
 
 import static com.drmangotea.tfmg.TFMG.REGISTRATE;
@@ -195,6 +199,22 @@ public class TFMGBuilderTransformers {
     }
 
     /// ////////////
+	
+	public static void numberedVariantBlockTextures(DataGenContext<Block, Block> ctx, RegistrateBlockstateProvider prov, String name, int n) {
+		VariantBlockStateBuilder vb = prov.getVariantBuilder(ctx.get());
+		VariantBlockStateBuilder.PartialBlockstate part = vb.partialState();
+		
+		ArrayList<ConfiguredModel> models = new ArrayList<>();
+		for (int i = 0; i < n; i++) {
+			models.add(part.modelForState().modelFile(prov.models().cubeAll(
+				i == 0 ? name : name + i,
+				TFMG.asResource("block/"+name+i)
+			)).buildLast());
+		}
+		
+		vb.addModels(vb.partialState(), models.toArray(ConfiguredModel[]::new));
+	}
+	
     public static BlockEntry<TFMGFlywheelBlock> flywheel(String name, NonNullFunction<BlockBehaviour.Properties, TFMGFlywheelBlock> block) {
         return REGISTRATE.block(name + "_flywheel", block)
                 .initialProperties(SharedProperties::softMetal)
@@ -232,8 +252,6 @@ public class TFMGBuilderTransformers {
                 .simpleItem()
                 .register();
     }
-
-    public static final String[] COLORS = {"white", "blue", "light_blue", "red", "green", "lime", "pink", "magenta", "yellow", "gray", "light_gray", "brown", "cyan", "purple", "orange","black"};
 
     public static MaterialSet generateConcrete(boolean rebar) {
         String name = rebar ? "rebar_concrete" : "concrete";
@@ -304,33 +322,34 @@ public class TFMGBuilderTransformers {
                     .properties(p -> p.strength(rebar ? 12f : 3.5f, rebar ? 1200f : 3.5f))
                     .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
                     .transform(pickaxeOnly())
-                    .blockstate(simpleCubeAll(colourName + "_concrete"))
+                    .blockstate(simpleCubeAll("concrete/" + colourName))
                     .tag(BlockTags.NEEDS_STONE_TOOL)
                     .recipe((c, p) -> {
-                        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, c.get(), 8)
-                                .pattern("###")
-                                .pattern("#D#")
-                                .pattern("###")
-                                .define('D', colour.getTag())
-                                .define('#', undyed)
-                                .unlockedBy("has_concrete", RegistrateRecipeProvider.has(undyed))
-                                .save(p, TFMG.asResource("crafting/materials/" + c.getName() + "_dyeing"));
+                        boolean optional = colour.getId() > 15;
+                        var builder = ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, c.get(), 8)
+                                        .pattern("###")
+                                        .pattern("#D#")
+                                        .pattern("###")
+                                        .define('D', colour.getTag())
+                                        .define('#', undyed)
+                                        .unlockedBy("has_concrete", RegistrateRecipeProvider.has(undyed));
+                        ICondition[] conditions = optional ? new ICondition[]{new TagFilledCondition(colour.getTag())} : new ICondition[]{};
+                        TFMGUtils.conditionalCrafting(p, TFMG.asResource("crafting/materials/" + c.getName() + "_dyeing"), builder, conditions);
                     })
-                    .item()
-                    .build()
-                    .register();
+					.transform(tagBlockAndItem(Tags.Blocks.CONCRETES, Tags.Items.CONCRETES)).build()
+					.register();
 
             set.wall=REGISTRATE.block(colourName + name + "_wall", WallBlock::new)
                     .initialProperties(() -> Blocks.STONE)
                     .properties(p -> p.strength(rebar ? 12f : 3.5f, rebar ? 1200f : 3.5f))
                     .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
                     .transform(pickaxeOnly())
-                    .blockstate((c, p) -> TFMGVanillaBlockStates.generateWallBlockState(c, p, colourName + "_concrete"))
+                    .blockstate((c, p) -> TFMGVanillaBlockStates.generateWallBlockState(c, p, colourName + "_concrete", "concrete/" + colourName))
                     .tag(BlockTags.NEEDS_STONE_TOOL)
                     .tag(BlockTags.WALLS)
                     .recipe((c, p) -> p.stonecutting(DataIngredient.items(set.block.asItem()), RecipeCategory.BUILDING_BLOCKS, c, 1))
                     .item()
-                    .transform(b -> TFMGVanillaBlockStates.transformWallItem(b, colourName + "_concrete"))
+                    .transform(b -> TFMGVanillaBlockStates.transformWallItem(b, "concrete/" + colourName))
                     .build()
                     .register();
 
@@ -339,7 +358,7 @@ public class TFMGBuilderTransformers {
                     .properties(p -> p.strength(rebar ? 12f : 3.5f, rebar ? 1200f : 3.5f))
                     .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
                     .transform(pickaxeOnly())
-                    .blockstate((c, p) -> TFMGVanillaBlockStates.generateStairBlockState(c, p, colourName + "_concrete"))
+                    .blockstate((c, p) -> TFMGVanillaBlockStates.generateStairBlockState(c, p, colourName + "_concrete", "concrete/" + colourName))
                     .tag(BlockTags.NEEDS_STONE_TOOL)
                     .tag(BlockTags.STAIRS)
                     .recipe((c, p) -> p.stonecutting(DataIngredient.items(set.block.asItem()), RecipeCategory.BUILDING_BLOCKS, c, 1))
@@ -352,7 +371,7 @@ public class TFMGBuilderTransformers {
                     .properties(p -> p.strength(rebar ? 12f : 3.5f, rebar ? 1200f : 3.5f))
                     .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
                     .transform(pickaxeOnly())
-                    .blockstate((c, p) -> TFMGVanillaBlockStates.generateSlabBlockState(c, p, colourName + "_concrete"))
+                    .blockstate((c, p) -> TFMGVanillaBlockStates.generateSlabBlockState(c, p, colourName + "_concrete", "concrete/" + colourName))
                     .tag(BlockTags.NEEDS_STONE_TOOL)
                     .tag(BlockTags.SLABS)
                     .recipe((c, p) -> p.stonecutting(DataIngredient.items(set.block.asItem()), RecipeCategory.BUILDING_BLOCKS, c, 2))

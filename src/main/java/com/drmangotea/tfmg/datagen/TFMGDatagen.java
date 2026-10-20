@@ -3,10 +3,8 @@ package com.drmangotea.tfmg.datagen;
 import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.TFMGRegistries;
 import com.drmangotea.tfmg.content.engines.types.EngineType;
-import com.drmangotea.tfmg.datagen.integration.TFMGBigCannonsProvider;
-import com.drmangotea.tfmg.datagen.integration.TFMGCuriosProvider;
-import com.drmangotea.tfmg.datagen.integration.TFMGReburnedProvider;
-import com.drmangotea.tfmg.datagen.integration.TFMGRutileProvider;
+import com.drmangotea.tfmg.content.engines.upgrades.base.EngineUpgrade;
+import com.drmangotea.tfmg.datagen.integration.*;
 import com.drmangotea.tfmg.datagen.recipes.TFMGRecipeProvider;
 import com.drmangotea.tfmg.datagen.recipes.values.TFMGStandardRecipeGen;
 import com.drmangotea.tfmg.datagen.recipes.values.create.TFMGMechanicalCraftingRecipeGen;
@@ -37,6 +35,7 @@ import static com.drmangotea.tfmg.TFMG.REGISTRATE;
 
 public class TFMGDatagen {
     public static final ProviderType<RegistrateTagsProvider.IntrinsicImpl<EngineType>> ENGINE_TAGS = ProviderType.registerIntrinsicTag("tags/engine_type", "engine_type", TFMGRegistries.ENGINE_TYPE, engineType -> engineType.builtInRegistryHolder().getKey());
+    public static final ProviderType<RegistrateTagsProvider.IntrinsicImpl<EngineUpgrade>> ENGINE_UPGRADE_TAGS = ProviderType.registerIntrinsicTag("tags/engine_upgrade", "engine_upgrade", TFMGRegistries.ENGINE_UPGRADE, engineUpgrade -> engineUpgrade.builtInRegistryHolder().getKey());
 
     //public static final ProviderType<RegistrateTagsProvider.Impl<EngineFuelType>> ENGINE_FUEL_TAGS = ProviderType.registerDynamicTag("tags/engine_fuel_type", "tfmg/fuel_type/engine", TFMGRegistries.ENGINE_FUEL_TYPE);
 
@@ -58,8 +57,8 @@ public class TFMGDatagen {
         generator.addProvider(event.includeServer(), new TFMGEngineFuelTags(output, lookupProvider, fileHelper));
         generator.addProvider(event.includeServer(), new TFMGFlamethrowerFuelTags(output, lookupProvider, fileHelper));
 
-        generator.addProvider(event.includeServer(),new TFMGDataMapProvider(output, lookupProvider));
-        generator.addProvider(event.includeServer(),new TFMGStandardRecipeGen(output, lookupProvider));
+        generator.addProvider(event.includeServer(), new TFMGDataMapProvider(output, lookupProvider));
+        generator.addProvider(event.includeServer(), new TFMGStandardRecipeGen(output, lookupProvider));
         generator.addProvider(event.includeServer(), new TFMGMechanicalCraftingRecipeGen(output, lookupProvider));
         generator.addProvider(event.includeServer(), new TFMGSequencedAssemblyRecipeGen(output, lookupProvider));
 
@@ -74,6 +73,9 @@ public class TFMGDatagen {
         if (LoadingModList.get().getModFileById("createbigcannons") != null) {
             generator.addProvider(event.includeServer(), new TFMGBigCannonsProvider.Melting(output, lookupProvider));
         }
+		if (LoadingModList.get().getModFileById("sable") != null) {
+			generator.addProvider(event.includeServer(), new TFMGSableProvider(output, lookupProvider));
+		}
 		if (Mods.CURIOS.isLoaded()) {
 			generator.addProvider(event.includeServer(), new TFMGCuriosProvider(output, lookupProvider, fileHelper));
 		}

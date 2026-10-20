@@ -17,7 +17,7 @@ public abstract class VatRecipeGen extends ProcessingRecipeGen<VatRecipeParams, 
 
 	@Override
 	protected TFMGRecipeTypes getRecipeType() {
-		return TFMGRecipeTypes.VAT_MACHINE_RECIPE;
+		return TFMGRecipeTypes.VAT;
 	}
 
 	@Override

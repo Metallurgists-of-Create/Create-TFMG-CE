@@ -1,23 +1,26 @@
 package com.drmangotea.tfmg.content.engines.upgrades;
 
+import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.content.engines.types.AbstractSmallEngineBlockEntity;
-import com.drmangotea.tfmg.registry.TFMGBlocks;
+import com.drmangotea.tfmg.content.engines.upgrades.base.EngineUpgrade;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.capabilities.BlockCapabilityCache;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 
-import java.util.Optional;
-
 public class EnginePipingUpgrade extends EngineUpgrade {
 	private BlockCapabilityCache<IFluidHandler, Direction> cache;
 
-    public void findTank(AbstractSmallEngineBlockEntity be) {
+	public EnginePipingUpgrade(ResourceLocation id) {
+		super(id);
+	}
+
+	public void findTank(AbstractSmallEngineBlockEntity be) {
 		if (!(be.getLevel() instanceof ServerLevel level)) return;
         for (Direction direction : Direction.values()) {
             BlockPos pos = be.getBlockPos().relative(direction);
@@ -36,6 +39,7 @@ public class EnginePipingUpgrade extends EngineUpgrade {
         findTank(be);
     }
 
+	//TODO: Fluid extraction is being funky
     @Override
     public void lazyTickUpgrade(AbstractSmallEngineBlockEntity engine) {
         Level level = engine.getLevel();
@@ -67,17 +71,9 @@ public class EnginePipingUpgrade extends EngineUpgrade {
 		int maxOutput = fluidHandler.drain(maxInput, IFluidHandler.FluidAction.SIMULATE).getAmount();
 		
 		int amount = Math.min(maxInput, Math.min(maxOutput, controller.fuelTank.getSpace()));
+		TFMG.LOGGER.debug("[Engine Piping @ [{}]] In: {}, Out: {}, amount: {}", engine.getBlockPos(), maxInput, maxOutput, amount);
 		FluidStack drained = fluidHandler.drain(toDrain.copyWithAmount(amount), IFluidHandler.FluidAction.EXECUTE);
-		controller.getControllerBE().fuelTank.fill(drained, IFluidHandler.FluidAction.EXECUTE);
+		int in = controller.fuelTank.fill(drained, IFluidHandler.FluidAction.EXECUTE);
+		TFMG.LOGGER.debug("[Engine Piping @ [{}]] Out: {}, In: {}", engine.getBlockPos(), drained, in);
 	}
-
-    @Override
-    public Optional<? extends EngineUpgrade> createUpgrade() {
-        return Optional.of(new EnginePipingUpgrade());
-    }
-
-    @Override
-    public Item getItem() {
-        return TFMGBlocks.INDUSTRIAL_PIPE.asItem();
-    }
 }
