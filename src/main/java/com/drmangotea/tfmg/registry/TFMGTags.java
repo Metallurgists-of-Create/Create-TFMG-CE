@@ -150,12 +150,26 @@ public class TFMGTags {
         LUBRICATION_OIL(COMMON),
         NAPHTHA(COMMON),
         CRUDE_OIL(COMMON),
-        MOLTEN_STEEL(COMMON),
+
         FUEL(COMMON),
         ETHYLENE(COMMON),
         PROPYLENE(COMMON),
 
+        BUTANE(COMMON),
+        PROPANE(COMMON),
+        HYDROGEN(COMMON),
+        NEON(COMMON),
+        CARBON_DIOXIDE(COMMON),
+
+
         SULFURIC_ACID(COMMON),
+
+        MOLTEN_STEEL(COMMON),
+        MOLTEN_SLAG(COMMON),
+        MOLTEN_PLASTIC(COMMON),
+        LIQUID_SILICON(COMMON),
+
+        NAPALM(COMMON),
 
         //CBC
         MOLTEN_CAST_IRON(COMMON),
