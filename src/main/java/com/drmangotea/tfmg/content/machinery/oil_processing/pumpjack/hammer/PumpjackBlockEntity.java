@@ -119,6 +119,8 @@ public class PumpjackBlockEntity extends SmartBlockEntity implements IControlCon
 	
 	private float getSpeed() {
 		//TODO: Implement
+		if (multiblock.getCrankBE() instanceof PumpjackCrankBlockEntity be)
+			return be.getMachineInputSpeed();
 		return 0;
 	}
 
@@ -233,9 +235,8 @@ public class PumpjackBlockEntity extends SmartBlockEntity implements IControlCon
         } else {
             incompleteTimer++;
         }
-        if (incompleteTimer > 40)
-            if (!level.isClientSide)
-                disassemble();
+        if (incompleteTimer > 40 && !level.isClientSide)
+			disassemble();
 
         setHolderSize();
 		multiblock.evaluate();
@@ -251,9 +252,9 @@ public class PumpjackBlockEntity extends SmartBlockEntity implements IControlCon
         if (!running)
             return;
         if (!(movedContraption != null && movedContraption.isStalled())) {
-			PumpjackCrankBlockEntity Crank = multiblock.getCrankBE();
-            if (Crank != null) {
-                angle = (float) Math.toDegrees(Math.atan(Crank.heightModifier / multiblock.connectorDistance));
+			PumpjackCrankBlockEntity crank = multiblock.getCrankBE();
+            if (crank != null) {
+                angle = (float) Math.toDegrees(Math.atan(crank.heightModifier / multiblock.connectorDistance));
             }
         }
         applyRotation();

@@ -6,6 +6,7 @@ import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour
 import net.createmod.catnip.animation.AnimationTickHolder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -29,7 +30,7 @@ public class PumpjackCrankBlockEntity extends KineticBlockEntity {
         super.tick();
         direction = this.getBlockState().getValue(FACING);
         setAngle();
-        heightModifier = (float) (crankRadius * Math.sin(Math.toRadians(angle)));
+        heightModifier = (float) (crankRadius * Math.sin(angle * Mth.DEG_TO_RAD));
     }
 
     public float getMachineInputSpeed() {
@@ -39,12 +40,12 @@ public class PumpjackCrankBlockEntity extends KineticBlockEntity {
     }
 
     private void setAngle() {
-        if (level != null && level.getBlockEntity(getBlockPos().below()) instanceof MachineInputBlockEntity) {
+        if (level != null && level.getBlockEntity(getBlockPos().below()) instanceof MachineInputBlockEntity be) {
             float time;
             if (level.isClientSide) {
                 time = AnimationTickHolder.getRenderTime(getLevel());
             } else time = level.getBlockTicks().hashCode();
-            float speed = Math.min(getMachineInputSpeed() / 20f, 3f);
+            float speed = Math.min(be.getSpeed() / 20f, 3f);
             angle = (speed == 0) ? 180f : (time * speed) % 360;
         }
     }
