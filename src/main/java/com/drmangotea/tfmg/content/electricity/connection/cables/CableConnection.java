@@ -2,7 +2,7 @@ package com.drmangotea.tfmg.content.electricity.connection.cables;
 
 import com.drmangotea.tfmg.TFMGRegistries;
 import com.drmangotea.tfmg.base.TFMGUtils;
-import com.drmangotea.tfmg.content.electricity.connection.cable_type.CableType;
+import com.drmangotea.tfmg.content.electricity.experimental.content.power_transmission.wires.cable_type.CableType;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;

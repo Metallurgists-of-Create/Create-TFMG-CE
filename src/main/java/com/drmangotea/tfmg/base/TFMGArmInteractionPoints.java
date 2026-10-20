@@ -1,7 +1,7 @@
 package com.drmangotea.tfmg.base;
 
 import com.drmangotea.tfmg.TFMG;
-import com.drmangotea.tfmg.content.electricity.utilities.polarizer.PolarizerBlockEntity;
+import com.drmangotea.tfmg.content.electricity.experimental.content.devices.polarizer.PolarizerBlockEntity;
 import com.drmangotea.tfmg.content.machinery.misc.winding_machine.SpoolItem;
 import com.drmangotea.tfmg.content.machinery.misc.winding_machine.WindingMachineBlockEntity;
 import com.drmangotea.tfmg.registry.TFMGBlocks;

@@ -9,18 +9,21 @@ import com.drmangotea.tfmg.content.electricity.experimental.simulation.*;
 import com.drmangotea.tfmg.content.electricity.experimental.simulation.nodes.ConnectingElectricalNode;
 import net.minecraft.core.BlockPos;
 import com.drmangotea.tfmg.content.electricity.experimental.content.DirectionalElectricalProperties;
-import com.drmangotea.tfmg.content.electricity.experimental.content.ThreePhaseGeneratorProperties;
-import com.drmangotea.tfmg.content.electricity.experimental.content.devices.ResistorProperties;
+import com.drmangotea.tfmg.content.electricity.experimental.content.devices.base.ResistorProperties;
 import com.drmangotea.tfmg.content.electricity.experimental.content.devices.electric_motor.ElectricMotorProperties;
+import com.drmangotea.tfmg.content.electricity.experimental.content.devices.generators.creative_generator.CreativeGeneratorProperties;
+import com.drmangotea.tfmg.content.electricity.experimental.content.devices.generators.three_phase_generator.ThreePhaseGeneratorProperties;
 import com.drmangotea.tfmg.content.electricity.experimental.content.lights.LightProperties;
 import com.drmangotea.tfmg.content.electricity.experimental.content.power_transmission.adapters.FourSlotAdapterProperties;
 import com.drmangotea.tfmg.content.electricity.experimental.content.power_transmission.adapters.TwoSlotAdapterProperties;
 import com.drmangotea.tfmg.content.electricity.experimental.content.power_transmission.cables.CableProperties;
+import com.drmangotea.tfmg.content.electricity.experimental.content.power_transmission.switches.SwitchProperties;
 import com.drmangotea.tfmg.content.electricity.experimental.content.power_transmission.transformers.small.TransformerProperties;
 import com.drmangotea.tfmg.content.electricity.experimental.content.power_transmission.wires.ConnectorProperties;
 import com.drmangotea.tfmg.content.electricity.experimental.simulation.ElectricalComponent;
 import com.drmangotea.tfmg.content.electricity.experimental.simulation.IdealVoltageSource;
 import com.drmangotea.tfmg.content.electricity.experimental.simulation.Resistance;
+import com.drmangotea.tfmg.content.electricity.experimental.simulation.Transformer;
 import com.drmangotea.tfmg.content.electricity.experimental.simulation.nodes.ConnectableElectricalNode;
 import com.drmangotea.tfmg.content.electricity.experimental.simulation.nodes.ElectricalNode;
 import net.minecraft.core.Direction;
@@ -68,9 +71,21 @@ public class NetworkSavedData extends SavedData {
                             member.putInt("Voltage " + source.id, (int) source.amplitude);
                         }
                         if (component instanceof Resistance resistance) {
-                            member.putInt("Resistance " + resistance.localId, (int) resistance.resistance);
+                            member.putDouble("Resistance " + resistance.localId, resistance.resistance);
+                        }
+                        if (component instanceof Transformer transformer) {
+                            member.putDouble("Transformer_Ratio " + transformer.localId, transformer.turnsRatio);
                         }
                     }
+
+                    List<Integer> connectDirections = new ArrayList<>();
+
+                    for (Direction facing : properties.getConnectableDirections()) {
+                        connectDirections.add(facing.get3DDataValue());
+                    }
+                    member.putIntArray("Connect Direction",connectDirections);
+
+
                     if (properties instanceof DirectionalElectricalProperties p)
                         member.putInt("direction", p.direction.get3DDataValue());
 
@@ -86,7 +101,7 @@ public class NetworkSavedData extends SavedData {
                     WireConnection connection = network.connections.get(i);
 
                     connectionTag.putDouble("Resistance", connection.resistance);
-                    connectionTag.putBoolean("Should Render",connection.render);
+                    connectionTag.putBoolean("Should Render", connection.render);
 
                     connectionTag.put("Node1", connection.node1.save());
 					connectionTag.put("Node2", connection.node2.save());
@@ -127,10 +142,28 @@ public class NetworkSavedData extends SavedData {
                     if (member.contains("direction")) {
                         direction = Direction.from3DDataValue(member.getInt("direction"));
                     }
-                    ElectricalProperties properties = getElectricalProperties(member.getInt("Property Id"), pos, direction);
+                    int[] d = member.getIntArray("Connect Direction");
+                    List<Direction> directions = new ArrayList<>();
+                    for (int k : d) {
+                        directions.add(Direction.from3DDataValue(k));
+                    }
+
+                    ElectricalProperties properties = getElectricalProperties(member.getInt("Property Id"), direction, directions, pos);
 
                     properties.position = pos;
                     network.members.put(pos, properties);
+                    for (ElectricalComponent component : properties.components) {
+                        if (component instanceof Resistance r) {
+                            network.setResistance(pos, r.localId, member.getDouble("Resistance " + r.localId));
+                        }
+                        if (component instanceof IdealVoltageSource v) {
+                            network.setVoltageGen(pos, member.getInt("Voltage " + v.localId));
+                        }
+                        if (component instanceof Transformer t) {
+                            network.setTransformerRatio(pos, t.localId, member.getDouble("Transformer_Ratio " + t.localId));
+                        }
+                    }
+
 
                 }
                 int connectionCount = networkTag.getInt("Connection Count");
@@ -166,17 +199,19 @@ public class NetworkSavedData extends SavedData {
 		return node;
 	}
 
-    public static ElectricalProperties getElectricalProperties(int id, BlockPos pos, Direction direction) {
+    public static ElectricalProperties getElectricalProperties(int id, Direction direction, List<Direction> d, BlockPos pos) {
 		return switch (id) {
             case 1 -> new ThreePhaseGeneratorProperties(pos, direction);
             case 2 -> new ConnectorProperties(pos);
             case 3 -> new ResistorProperties(pos, direction);
-            case 4 -> new CableProperties(pos, List.of(Direction.values()));
+            case 4 -> new CableProperties(pos, d);
             case 5 -> new FourSlotAdapterProperties(pos, direction);
-            case 6 -> new TwoSlotAdapterProperties(pos,  direction);
+            case 6 -> new TwoSlotAdapterProperties(pos, direction);
             case 7 -> new LightProperties(pos);
-            case 8 -> new ElectricMotorProperties(pos,direction);
-            case 9 -> new TransformerProperties(pos,direction);
+            case 8 -> new ElectricMotorProperties(pos, direction);
+            case 9 -> new TransformerProperties(pos, direction);
+            case 10 -> new CreativeGeneratorProperties(pos);
+            case 11 -> new SwitchProperties(pos, direction);
             default -> new ElectricalProperties(pos);
 
         };

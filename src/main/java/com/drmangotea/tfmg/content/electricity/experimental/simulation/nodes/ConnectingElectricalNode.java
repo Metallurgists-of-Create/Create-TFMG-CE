@@ -5,8 +5,8 @@ import net.minecraft.world.phys.Vec3;
 
 public class ConnectingElectricalNode extends ConnectableElectricalNode {
 	
-    public ConnectingElectricalNode(BlockPos pos, int localId, Vec3 position) {
-        super(pos, localId);
+    public ConnectingElectricalNode(BlockPos pos, int localId, Vec3 position, NodeType type) {
+        super(pos, localId, type);
         this.position = position;
     }
 

@@ -1,6 +1,6 @@
 package com.drmangotea.tfmg.integration.curios;
 
-import com.drmangotea.tfmg.content.electricity.measurement.MultimeterItem;
+import com.drmangotea.tfmg.content.electricity.experimental.content.measuring_instruments.MultimeterItem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.compat.Mods;
 import net.minecraft.client.Minecraft;

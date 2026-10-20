@@ -9,13 +9,14 @@ import com.drmangotea.tfmg.base.data_storage.CylinderFuels;
 import com.drmangotea.tfmg.base.debug.DebugCinderBlockItem;
 import com.drmangotea.tfmg.base.dyes.DyedItemList;
 import com.drmangotea.tfmg.content.decoration.kinetics.gearbox.SteelVerticalGearboxItem;
+import com.drmangotea.tfmg.content.electricity.experimental.configuration_wrench.ElectriciansWrenchItem;
 import com.drmangotea.tfmg.content.decoration.pipes.TFMGPipes;
-import com.drmangotea.tfmg.content.electricity.configuration_wrench.ElectriciansWrenchItem;
 import com.drmangotea.tfmg.content.electricity.experimental.BetterSpoolItem;
+import com.drmangotea.tfmg.content.electricity.experimental.content.devices.resistor.ResistorItem;
+import com.drmangotea.tfmg.content.electricity.experimental.content.measuring_instruments.MultimeterItem;
+import com.drmangotea.tfmg.content.electricity.experimental.content.devices.polarizer.MagnetItem;
+import com.drmangotea.tfmg.content.electricity.experimental.content.power_transmission.energy_storage.cells.AccumulatorCellItem;
 import com.drmangotea.tfmg.content.electricity.experimental.content.power_transmission.transformers.small.ElectromagneticCoilItem;
-import com.drmangotea.tfmg.content.electricity.measurement.MultimeterItem;
-import com.drmangotea.tfmg.content.electricity.utilities.polarizer.MagnetItem;
-import com.drmangotea.tfmg.content.electricity.utilities.resistor.ResistorItem;
 
 import com.drmangotea.tfmg.content.engines.fuels.EngineFuelType;
 import com.drmangotea.tfmg.content.engines.upgrades.base.EngineUpgrade;
@@ -199,6 +200,13 @@ public class TFMGItems {
     public static final ItemEntry<ResistorItem>
             UNFINISHED_RESISTOR = REGISTRATE.item("unfinished_resistor", ResistorItem::new).register();
 	
+    public static final ItemEntry<AccumulatorCellItem>
+            LEAD_ACID_BATTERY = REGISTRATE.item("lead_acid_battery",p-> new AccumulatorCellItem(p.stacksTo(1),10000)).register(),
+            SINGLE_USE_BATTERY = REGISTRATE.item("single_use_battery",p-> new AccumulatorCellItem(p.stacksTo(1),10000)).register(),
+            SUPERCAPACITOR = REGISTRATE.item("supercapacitor",p-> new AccumulatorCellItem(p.stacksTo(1),10000)).register(),
+            LITHIUM_CELL = REGISTRATE.item("lithium_cell",p-> new AccumulatorCellItem(p.stacksTo(1),10000)).register();
+
+
     public static final ItemEntry<SpoolItem>
 		EMPTY_SPOOL = spoolItem("empty", 0x000000)
             .recipe((c, p) -> p.stonecutting(DataIngredient.items(TFMGBlocks.HARDENED_PLANKS.asItem()), RecipeCategory.BUILDING_BLOCKS, c, 1))

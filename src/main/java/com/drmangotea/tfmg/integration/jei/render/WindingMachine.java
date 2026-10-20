@@ -1,6 +1,6 @@
 package com.drmangotea.tfmg.integration.jei.render;
 
-import com.drmangotea.tfmg.content.electricity.utilities.polarizer.PolarizerBlock;
+import com.drmangotea.tfmg.content.electricity.experimental.content.devices.polarizer.PolarizerBlock;
 import com.drmangotea.tfmg.registry.TFMGBlocks;
 import com.drmangotea.tfmg.registry.TFMGPartialModels;
 import com.mojang.blaze3d.vertex.PoseStack;

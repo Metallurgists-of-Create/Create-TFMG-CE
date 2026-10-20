@@ -6,8 +6,9 @@ import com.drmangotea.tfmg.config.TFMGConfigs;
 import com.drmangotea.tfmg.content.decoration.tanks.TFMGFluidTankBlockEntity;
 import com.drmangotea.tfmg.content.decoration.tanks.steel.SteelTankBlockEntity;
 import com.drmangotea.tfmg.content.electricity.experimental.RealElectricNetworkManager;
+import com.drmangotea.tfmg.content.electricity.experimental.content.power_transmission.energy_storage.cells.AccumulatorCellItem;
 import com.drmangotea.tfmg.content.electricity.storage.AccumulatorBlockEntity;
-import com.drmangotea.tfmg.content.electricity.utilities.polarizer.PolarizerBlockEntity;
+import com.drmangotea.tfmg.content.electricity.experimental.content.devices.polarizer.PolarizerBlockEntity;
 import com.drmangotea.tfmg.content.engines.fuels.EngineFuelType;
 import com.drmangotea.tfmg.content.engines.types.AbstractSmallEngineBlockEntity;
 import com.drmangotea.tfmg.content.engines.types.large_engine.LargeEngineBlockEntity;
@@ -97,6 +98,9 @@ public class TFMGCommonEvents {
     public static class ModBusEvents {
         @SubscribeEvent
         public static void registerCapabilities(RegisterCapabilitiesEvent event) {
+
+            AccumulatorCellItem.registerCapabilities(event);
+
             AbstractSmallEngineBlockEntity.registerCapabilities(event);
             DistillationOutputBlockEntity.registerCapabilities(event);
             ConcreteHoseBlockEntity.registerCapabilities(event);

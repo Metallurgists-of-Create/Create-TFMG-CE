@@ -1,10 +1,10 @@
 {
   "values": [
+    "tfmg:copycat_cable_block",
     "tfmg:machine_input",
     "tfmg:steel_casing",
     "tfmg:heavy_machinery_casing",
     "tfmg:industrial_aluminum_casing",
-    "tfmg:copycat_cable_block",
     "tfmg:steel_cogwheel",
     "tfmg:large_steel_cogwheel",
     "tfmg:aluminum_cogwheel",

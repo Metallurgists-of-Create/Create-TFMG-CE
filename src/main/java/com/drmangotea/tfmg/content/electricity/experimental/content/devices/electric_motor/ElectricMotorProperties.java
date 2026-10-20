@@ -5,6 +5,7 @@ import com.drmangotea.tfmg.content.electricity.experimental.content.DirectionalE
 import com.drmangotea.tfmg.content.electricity.experimental.simulation.Resistance;
 import com.drmangotea.tfmg.content.electricity.experimental.simulation.nodes.ConnectingElectricalNode;
 import com.drmangotea.tfmg.content.electricity.experimental.simulation.nodes.ElectricalNode;
+import com.drmangotea.tfmg.content.electricity.experimental.simulation.nodes.NodeType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.phys.Vec3;
@@ -19,10 +20,10 @@ public class ElectricMotorProperties extends DirectionalElectricalProperties {
         super(pos1, direction);
 		List<Vec3> positions = getRotation(direction);
 
-        ElectricalNode N  = new ConnectingElectricalNode(position, 0, positions.get(0));
-        ElectricalNode L1 = new ConnectingElectricalNode(position, 1, positions.get(1));
-        ElectricalNode L2 = new ConnectingElectricalNode(position, 2, positions.get(2));
-        ElectricalNode L3 = new ConnectingElectricalNode(position, 3, positions.get(3));
+        ElectricalNode N  = new ConnectingElectricalNode(position, 0, positions.get(0), NodeType.NEUTRAL);
+        ElectricalNode L1 = new ConnectingElectricalNode(position, 1, positions.get(1), NodeType.PHASE_1);
+        ElectricalNode L2 = new ConnectingElectricalNode(position, 2, positions.get(2), NodeType.PHASE_2);
+        ElectricalNode L3 = new ConnectingElectricalNode(position, 3, positions.get(3), NodeType.PHASE_3);
 
         nodes.add(N);
         nodes.add(L1);

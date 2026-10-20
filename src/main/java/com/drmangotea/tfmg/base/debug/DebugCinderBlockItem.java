@@ -7,8 +7,8 @@ import com.drmangotea.tfmg.content.decoration.tanks.steel.SteelTankBlockEntity;
 import com.drmangotea.tfmg.content.electricity.experimental.IRealisticElectric;
 import com.drmangotea.tfmg.content.electricity.experimental.RealElectricNetworkManager;
 import com.drmangotea.tfmg.content.electricity.experimental.RealElectricalNetwork;
-import com.drmangotea.tfmg.content.electricity.experimental.content.ThreePhaseGeneratorBlockEntity;
-import com.drmangotea.tfmg.content.electricity.experimental.content.devices.DebugResistorBlockEntity;
+import com.drmangotea.tfmg.content.electricity.experimental.content.devices.generators.three_phase_generator.ThreePhaseGeneratorBlockEntity;
+import com.drmangotea.tfmg.content.electricity.experimental.content.devices.resistor.DebugResistorBlockEntity;
 import com.drmangotea.tfmg.content.electricity.base.IElectric;
 import com.drmangotea.tfmg.content.electricity.connection.cables.CableConnectorBlockEntity;
 import net.minecraft.core.BlockPos;
@@ -49,11 +49,11 @@ public class DebugCinderBlockItem extends Item {
 
             RealElectricalNetwork network = RealElectricNetworkManager.getNetwork(be.getWorld());
 
-            network.setResistance(be, 0, TFMG.RANDOM.nextInt(700));
+            network.setResistance(be, 0, TFMG.RANDOM.nextInt(5));
 
             return InteractionResult.SUCCESS;
         }
-        if (level.getBlockEntity(pos) instanceof IRealisticElectric be) {
+        if (level.getBlockEntity(pos) instanceof IRealisticElectric be&&false) {
             //if (context.getPlayer() instanceof ServerPlayer serverPlayer) {
             //    NetworkLoadPacket packet = new NetworkLoadPacket(RealElectricNetworkManager.networks.values().stream().toList());
             //    CatnipServices.NETWORK.sendToClient(serverPlayer, packet);

@@ -1,6 +1,6 @@
 package com.drmangotea.tfmg;
 
-import com.drmangotea.tfmg.content.electricity.connection.cable_type.CableType;
+import com.drmangotea.tfmg.content.electricity.experimental.content.power_transmission.wires.cable_type.CableType;
 import com.drmangotea.tfmg.content.engines.fuels.EngineFuelType;
 import com.drmangotea.tfmg.content.engines.types.EngineType;
 import com.drmangotea.tfmg.content.engines.upgrades.base.EngineUpgrade;

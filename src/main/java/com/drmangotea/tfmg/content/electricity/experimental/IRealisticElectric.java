@@ -2,8 +2,8 @@ package com.drmangotea.tfmg.content.electricity.experimental;
 
 import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.base.lang.TFMGTexts;
-import com.drmangotea.tfmg.content.electricity.experimental.content.power_transmission.cables.AbstractCableBlockEntity;
 import com.drmangotea.tfmg.content.electricity.experimental.content.power_transmission.cables.CableBlockEntity;
+import com.drmangotea.tfmg.content.electricity.experimental.content.power_transmission.switches.electric_switch.ElectricSwitchBlockEntity;
 import com.drmangotea.tfmg.content.electricity.experimental.simulation.ElectricalComponent;
 import com.drmangotea.tfmg.content.electricity.experimental.simulation.IdealVoltageSource;
 import com.drmangotea.tfmg.content.electricity.experimental.simulation.Resistance;
@@ -17,6 +17,8 @@ import net.minecraft.world.level.Level;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.drmangotea.tfmg.content.electricity.experimental.content.power_transmission.cables.AbstractCableBlockEntity.connectToNeighbors;
 
 public interface IRealisticElectric extends IHaveMultimeterInformation {
     default ElectricalProperties getProperties() {
@@ -89,27 +91,13 @@ public interface IRealisticElectric extends IHaveMultimeterInformation {
 		return list;
     }
 
-     default void onUpdated(){}
+    default void onUpdated() {
+    }
 
     default boolean makeMultimeterTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
         TFMGTexts.header("multimeter").style(ChatFormatting.WHITE)
                 .forGoggles(tooltip);
 
-
-        getVoltageGeneration().forEach(v -> {
-            int voltage = v.getFirst().getFirst();
-            int phaseOffset = v.getFirst().getSecond();
-            float maxPower = v.getSecond().getFirst();
-            float current = v.getSecond().getSecond();
-
-            float power = voltage * current;
-
-            TFMGTexts.Multimeter.voltageGenerated(voltage).forGoggles(tooltip, 1);
-            TFMGTexts.Multimeter.phaseOffset(phaseOffset).forGoggles(tooltip, 1);
-            TFMGTexts.Multimeter.maxPower(maxPower).forGoggles(tooltip, 1);
-            TFMGTexts.Multimeter.powerGenerated(power).forGoggles(tooltip, 1);
-
-        });
 
         // if (getVoltageGeneration().is) {
         //     TFMGTexts.Multimeter.powerGenerated(powerGeneration()).forGoggles(tooltip, 1);
@@ -143,12 +131,20 @@ public interface IRealisticElectric extends IHaveMultimeterInformation {
     default void onPlace() {
 		BlockPos pos = getPos();
         this.updateNetwork(pos);
-        if (!(this instanceof CableBlockEntity))
+        if (this instanceof ElectricSwitchBlockEntity)
             for (Direction facing : Direction.values()) {
-                if (getWorld().getBlockEntity(pos.relative(facing)) instanceof AbstractCableBlockEntity be) {
-                    be.connectToNeighbors();
+                if (getWorld().getBlockEntity(pos.relative(facing)) instanceof IRealisticElectric be) {
+                    connectToNeighbors(getWorld(),be);
                 }
+
             }
+
+
+        if (!(this instanceof CableBlockEntity)&&getProperties().cableConnectable()) {
+            connectToNeighbors(getWorld(), this);
+            updateNetwork(pos);
+        }
+
         this.updateNetwork(pos);
     }
 

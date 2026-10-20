@@ -25,7 +25,7 @@ public class TFMGPonderScenes {
         ).addStoryBoard("chemical_vat", ChemistryScenes::chemicalVat, TFMGPonderTags.CHEMICAL_VAT);
 
         // Electricity
-        HELPER.forComponents(TFMGBlocks.GENERATOR, TFMGBlocks.ROTOR, TFMGBlocks.STATOR, TFMGBlocks.ELECTRIC_MOTOR)
+        HELPER.forComponents(TFMGBlocks.THREE_PHASE_GENERATOR, TFMGBlocks.ROTOR, TFMGBlocks.STATOR, TFMGBlocks.ELECTRIC_MOTOR)
                 .addStoryBoard("electricity", ElectricityScenes::electricity, TFMGPonderTags.ELECTRIC_MACHINERY)
                 .addStoryBoard("electric_subnetworks", ElectricityScenes::electricSubnetworks, TFMGPonderTags.ELECTRIC_MACHINERY);
         HELPER.forComponents(TFMGBlocks.LARGE_COIL)

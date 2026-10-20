@@ -3,6 +3,7 @@ package com.drmangotea.tfmg.content.electricity.storage;
 import com.drmangotea.tfmg.base.lang.TFMGTexts;
 import com.drmangotea.tfmg.config.TFMGConfigs;
 import com.drmangotea.tfmg.content.electricity.base.ElectricBlockEntity;
+import com.drmangotea.tfmg.content.electricity.experimental.content.power_transmission.energy_storage.TFMGForgeEnergyStorage;
 import com.drmangotea.tfmg.registry.TFMGBlockEntities;
 import com.drmangotea.tfmg.registry.TFMGDataComponents;
 import net.minecraft.core.BlockPos;

@@ -20,7 +20,7 @@ public class LightBulbRenderer extends SafeBlockEntityRenderer<ElectricLightBloc
 
     @Override
     protected void renderSafe(ElectricLightBlockEntity be, float partialTicks, PoseStack ms, MultiBufferSource buffer, int light, int overlay) {
-        if(getLightModel() == null)
+        if (getLightModel() == null)
             return;
         BlockState blockState = be.getBlockState();
         ms.pushPose();
@@ -38,7 +38,7 @@ public class LightBulbRenderer extends SafeBlockEntityRenderer<ElectricLightBloc
         ms.popPose();
     }
 
-    public PartialModel getLightModel(){
+    public PartialModel getLightModel() {
         return TFMGPartialModels.LIGHT_BULB;
     }
 }
