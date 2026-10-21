@@ -182,10 +182,6 @@ import static com.simibubi.create.foundation.data.TagGen.*;
 
 @SuppressWarnings({"unused","removal"})
 public class TFMGBlocks {
-    // I see no reason for this here
-    @Deprecated(since = "1.2.6", forRemoval = true)
-    public static final String[] TFMG_DECOR_METALS = {"steel", "aluminum", "lead", "cast_iron"};
-
     static {
         REGISTRATE.setCreativeTab(TFMGCreativeTabs.TFMG_MAIN);
     }
