@@ -1,8 +1,6 @@
 package com.drmangotea.tfmg.content.electricity.experimental.content.devices.polarizer;
 
 import com.drmangotea.tfmg.base.lang.TFMGTexts;
-import com.drmangotea.tfmg.content.electricity.base.ElectricBlockEntity;
-import com.drmangotea.tfmg.content.electricity.experimental.IRealisticElectric;
 import com.drmangotea.tfmg.content.electricity.experimental.RealElectricNetworkManager;
 import com.drmangotea.tfmg.content.electricity.experimental.RealElectricalNetwork;
 import com.drmangotea.tfmg.content.electricity.experimental.content.devices.base.ResistiveLoadBlockEntity;
@@ -13,7 +11,6 @@ import com.simibubi.create.foundation.item.SmartInventory;
 import net.createmod.catnip.animation.LerpedFloat;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -30,8 +27,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Optional;
-
-import static net.minecraft.world.level.block.HorizontalDirectionalBlock.FACING;
 
 public class PolarizerBlockEntity extends ResistiveLoadBlockEntity implements Clearable {
     public SmartInventory inventory = new LetMeKeepMyItemSmartInventory(1, this).forbidExtraction().whenContentsChanged(this::onInventoryChanged);
@@ -86,7 +81,7 @@ public class PolarizerBlockEntity extends ResistiveLoadBlockEntity implements Cl
         if (recipe.isPresent()) {
             this.recipe = recipe.get();
             chargeCapacitors = true;
-            network.setResistance(this,0, (int) 30);
+            network.setResistance(this,0, 30);
             if (capacitorPercentage >= 200) {
                 performRecipe(recipe.get());
             }

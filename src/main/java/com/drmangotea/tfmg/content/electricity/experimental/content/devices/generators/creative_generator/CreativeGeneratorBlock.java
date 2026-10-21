@@ -1,6 +1,5 @@
 package com.drmangotea.tfmg.content.electricity.experimental.content.devices.generators.creative_generator;
 
-import com.drmangotea.tfmg.content.electricity.base.IElectric;
 import com.drmangotea.tfmg.content.electricity.experimental.IRealisticElectric;
 import com.drmangotea.tfmg.content.electricity.experimental.packets.AddElectricalComponentPacket;
 import com.drmangotea.tfmg.registry.TFMGBlockEntities;
@@ -28,7 +27,7 @@ public class CreativeGeneratorBlock extends Block implements IBE<CreativeGenerat
         if(level.getBlockEntity(pos) instanceof IRealisticElectric be){
             be.onPlace();
             if (level instanceof ServerLevel serverLevel)
-                CatnipServices.NETWORK.sendToClientsTrackingChunk(serverLevel, new ChunkPos(pos), new AddElectricalComponentPacket(BlockPos.of(pos.asLong())));
+                CatnipServices.NETWORK.sendToClientsTrackingChunk(serverLevel, new ChunkPos(pos), new AddElectricalComponentPacket(pos));
 
 
         }
