@@ -145,40 +145,6 @@ public class TFMGUtils {
         s = StringUtils.normalizeSpace(s);
         return s;
     }
-
-    @Deprecated(forRemoval = true, since = "1.2.5")
-    public static void spawnElectricParticles(Level level, BlockPos pos) {
-        spawnElectricParticles(level, new Vec3(pos.getX(), pos.getY(), pos.getZ()));
-    }
-
-    @Deprecated(forRemoval = true, since = "1.2.5")
-    public static void spawnElectricParticles(Level level, Vec3 pos) {
-        if (!(level instanceof ServerLevel serverLevel)) {
-            return;
-        }
-
-        RandomSource r = serverLevel.getRandom();
-
-        for (int i = 0; i < r.nextInt(40); i++) {
-            double x = (r.nextDouble() - 0.5) * 0.02;
-            double y = (r.nextDouble() - 0.5) * 0.02;
-            double z = (r.nextDouble() - 0.5) * 0.02;
-
-            ParticleOptions data = new ElectricSparkParticle.Data();
-
-            serverLevel.sendParticles(
-                    data,
-                    pos.x,
-                    pos.y + 0.5,
-                    pos.z,
-                    1,
-                    x,
-                    y,
-                    z,
-                    0.02
-            );
-        }
-    }
 	
 	public static void spawnSmokeParticles(Level level, BlockPos pos) {
 		spawnSmokeParticles(level, Vec3.atLowerCornerOf(pos), 1);
@@ -261,23 +227,6 @@ public class TFMGUtils {
 		));
 	}
 	
-	@Deprecated(since = "1.2.5")
-	public static void createStorageTooltip(BlockEntity be, List<Component> tooltip) {
-        createFluidTooltip(be, tooltip);
-        createItemTooltip(be, tooltip);
-    }
-
-    /// makes a goggle tooltip for every tank a block entity has
-	@Deprecated(since = "1.2.5")
-    public static boolean createFluidTooltip(BlockEntity be, List<Component> tooltip) {
-        if (be.getLevel() == null)
-            return false;
-
-        IFluidHandler handler = be.getLevel().getCapability(Capabilities.FluidHandler.BLOCK, be.getBlockPos(), null);
-
-		return createFluidTooltip(tooltip, handler);
-    }
-	
 	public static LangBuilder fluidOutOfCapacity(int volume, ChatFormatting style, int capacity) {
 		LangBuilder mb = CreateLang.translate("generic.unit.millibuckets");
 		
@@ -334,16 +283,6 @@ public class TFMGUtils {
 		}
 		
 		return true;
-	}
-	
-	@Deprecated(since = "1.2.5")
-	public static boolean createItemTooltip(BlockEntity be, List<Component> tooltip) {
-		if (be.getLevel() == null)
-			return false;
-		
-		IItemHandler handler = be.getLevel().getCapability(Capabilities.ItemHandler.BLOCK, be.getBlockPos(), null);
-		
-		return createItemTooltip(tooltip, handler);
 	}
 	
 	/// Populates a tooltip with information about the items contained
