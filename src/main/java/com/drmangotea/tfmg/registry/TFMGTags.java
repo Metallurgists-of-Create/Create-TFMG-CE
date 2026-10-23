@@ -212,7 +212,8 @@ public class TFMGTags {
     }
 
     public enum EngineFuel {
-        LARGE_ENGINE
+        LARGE_ENGINE,
+        SIMPLE_LARGE_ENGINE
         ;
 
         public final TagKey<EngineFuelType> tag;
