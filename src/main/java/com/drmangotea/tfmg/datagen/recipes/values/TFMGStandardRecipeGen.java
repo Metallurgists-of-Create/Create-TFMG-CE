@@ -52,7 +52,6 @@ import net.neoforged.neoforge.common.conditions.NotCondition;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -65,29 +64,6 @@ import static com.drmangotea.tfmg.datagen.recipes.TFMGRecipeProvider.I.*;
 @SuppressWarnings("unused")
 public class TFMGStandardRecipeGen extends TFMGRecipeProvider {
     private Marker MATERIALS = enterFolder("materials");
-    public static final Map<String, ItemLike> DYES_FROM_COLOR = new HashMap<>();
-
-
-    static {
-        DYES_FROM_COLOR.put("white", Items.WHITE_DYE);
-        DYES_FROM_COLOR.put("blue", Items.BLUE_DYE);
-        DYES_FROM_COLOR.put("light_blue", Items.LIGHT_BLUE_DYE);
-        DYES_FROM_COLOR.put("red", Items.RED_DYE);
-        DYES_FROM_COLOR.put("green", Items.GREEN_DYE);
-        DYES_FROM_COLOR.put("lime", Items.LIME_DYE);
-        DYES_FROM_COLOR.put("pink", Items.PINK_DYE);
-        DYES_FROM_COLOR.put("magenta", Items.MAGENTA_DYE);
-        DYES_FROM_COLOR.put("yellow", Items.YELLOW_DYE);
-        DYES_FROM_COLOR.put("gray", Items.GRAY_DYE);
-        DYES_FROM_COLOR.put("light_gray", Items.LIGHT_GRAY_DYE);
-        DYES_FROM_COLOR.put("brown", Items.BROWN_DYE);
-        DYES_FROM_COLOR.put("cyan", Items.CYAN_DYE);
-        DYES_FROM_COLOR.put("purple", Items.PURPLE_DYE);
-        DYES_FROM_COLOR.put("orange", Items.ORANGE_DYE);
-        DYES_FROM_COLOR.put("black", Items.BLACK_DYE);
-
-
-    }
 
     GeneratedRecipe
             STEEL_COMPACTING =
@@ -112,208 +88,7 @@ public class TFMGStandardRecipeGen extends TFMGRecipeProvider {
                     metalCompacting(ImmutableList.of(TFMGItems.CONSTANTAN_NUGGET, TFMGItems.CONSTANTAN_INGOT, TFMGBlocks.CONSTANTAN_BLOCK),
                             ImmutableList.of(I::constantanNugget, I::constantanIngot, I::constantanBlock)),
 
-
-    //
-    LEAD_FLYWHEEL = create(TFMGBlocks.LEAD_FLYWHEEL)
-            .unlockedBy(TFMGItems.LEAD_INGOT::get)
-            .viaShaped(b -> b
-                    .define('C', leadIngot())
-                    .define('S', shaft())
-                    .pattern("CCC")
-                    .pattern("CSC")
-                    .pattern("CCC")),
-
-    STEEL_FLYWHEEL = create(TFMGBlocks.STEEL_FLYWHEEL)
-            .unlockedBy(TFMGItems.STEEL_INGOT::get)
-            .viaShaped(b -> b
-                    .define('C', tfmgSteelIngot())
-                    .define('S', shaft())
-                    .pattern("CCC")
-                    .pattern("CSC")
-                    .pattern("CCC")),
-
-    CAST_IRON_FLYWHEEL = create(TFMGBlocks.CAST_IRON_FLYWHEEL)
-            .unlockedBy(TFMGItems.CAST_IRON_INGOT::get)
-            .viaShaped(b -> b
-                    .define('C', castIronIngot())
-                    .define('S', shaft())
-                    .pattern("CCC")
-                    .pattern("CSC")
-                    .pattern("CCC")),
-
-    NICKEL_FLYWHEEL = create(TFMGBlocks.NICKEL_FLYWHEEL)
-            .unlockedBy(TFMGItems.NICKEL_INGOT::get)
-            .viaShaped(b -> b
-                    .define('C', nickelIngot())
-                    .define('S', shaft())
-                    .pattern("CCC")
-                    .pattern("CSC")
-                    .pattern("CCC")),
-
-    ALUMINUM_FLYWHEEL = create(TFMGBlocks.ALUMINUM_FLYWHEEL)
-            .unlockedBy(TFMGItems.ALUMINUM_INGOT::get)
-            .viaShaped(b -> b
-                    .define('C', aluminumIngot())
-                    .define('S', shaft())
-                    .pattern("CCC")
-                    .pattern("CSC")
-                    .pattern("CCC")),
-
-    ELECTRIC_PUMP = create(TFMGBlocks.ELECTRIC_PUMP)
-            .unlockedBy(TFMGItems.CIRCUIT_BOARD::get)
-            .viaShaped(b -> b
-                    .define('C', circuitBoard())
-                    .define('P', TFMGPipes.PIPES.get(TFMGPipes.PipeMaterial.STEEL).getPump())
-                    .define('W', copperWire())
-                    .define('Q', capacitor())
-                    .define('K', TFMGItems.ELECTROMAGNETIC_COIL)
-                    .define('M', magnet())
-                    .pattern("MQK")
-                    .pattern("CPW")
-                    .pattern("MQK")),
-
-    LAMINATED_MAGNETIC_ALLOY_BLOCK = create(TFMGBlocks.LAMINATED_MAGNETIC_ALLOY_BLOCK)
-           .unlockedBy(TFMGItems.MAGNETIC_ALLOY_INGOT::get)
-            .viaShaped(b -> b
-                    .define('C', TFMGItems.MAGNETIC_ALLOY_SHEET.get())
-                    .pattern("CCC")
-                    .pattern("CCC")
-                    .pattern("CCC")),
-
-    STEEL_SWORD = create(TFMGItems.STEEL_TOOLS.get(0))
-            .unlockedBy(TFMGItems.STEEL_INGOT::get)
-            .viaShaped(b -> b
-                    .define('C', steelIngot())
-                    .define('S', Items.STICK)
-                    .pattern("C  ")
-                    .pattern("C  ")
-                    .pattern("S  ")),
-
-    STEEL_PICKAXE = create(TFMGItems.STEEL_TOOLS.get(1))
-            .unlockedBy(TFMGItems.STEEL_INGOT::get)
-            .viaShaped(b -> b
-                    .define('C', steelIngot())
-                    .define('S', Items.STICK)
-                    .pattern("CCC")
-                    .pattern(" S ")
-                    .pattern(" S ")),
-
-    STEEL_AXE = create(TFMGItems.STEEL_TOOLS.get(2))
-            .unlockedBy(TFMGItems.STEEL_INGOT::get)
-            .viaShaped(b -> b
-                    .define('C', steelIngot())
-                    .define('S', Items.STICK)
-                    .pattern(" CC")
-                    .pattern(" SC")
-                    .pattern(" S ")),
-
-    STEEL_SHOVEL = create(TFMGItems.STEEL_TOOLS.get(3))
-            .unlockedBy(TFMGItems.STEEL_INGOT::get)
-            .viaShaped(b -> b
-                    .define('C', steelIngot())
-                    .define('S', Items.STICK)
-                    .pattern("C  ")
-                    .pattern("S  ")
-                    .pattern("S  ")),
-
-    STEEL_HOE = create(TFMGItems.STEEL_TOOLS.get(4))
-            .unlockedBy(TFMGItems.STEEL_INGOT::get)
-            .viaShaped(b -> b
-                    .define('C', steelIngot())
-                    .define('S', Items.STICK)
-                    .pattern("CC ")
-                    .pattern("S  ")
-                    .pattern("S  ")),
-
-    ALUMINUM_SWORD = create(TFMGItems.ALUMINUM_TOOLS.get(0))
-            .unlockedBy(TFMGItems.ALUMINUM_INGOT::get)
-            .viaShaped(b -> b
-                    .define('C', aluminumIngot())
-                    .define('S', Items.STICK)
-                    .pattern("C  ")
-                    .pattern("C  ")
-                    .pattern("S  ")),
-
-    ALUMINUM_PICKAXE = create(TFMGItems.ALUMINUM_TOOLS.get(1))
-            .unlockedBy(TFMGItems.ALUMINUM_INGOT::get)
-            .viaShaped(b -> b
-                    .define('C', aluminumIngot())
-                    .define('S', Items.STICK)
-                    .pattern("CCC")
-                    .pattern(" S ")
-                    .pattern(" S ")),
-
-    ALUMINUM_AXE = create(TFMGItems.ALUMINUM_TOOLS.get(2))
-            .unlockedBy(TFMGItems.ALUMINUM_INGOT::get)
-            .viaShaped(b -> b
-                    .define('C', aluminumIngot())
-                    .define('S', Items.STICK)
-                    .pattern(" CC")
-                    .pattern(" SC")
-                    .pattern(" S ")),
-
-    ALUMINUM_SHOVEL = create(TFMGItems.ALUMINUM_TOOLS.get(3))
-            .unlockedBy(TFMGItems.ALUMINUM_INGOT::get)
-            .viaShaped(b -> b
-                    .define('C', aluminumIngot())
-                    .define('S', Items.STICK)
-                    .pattern("C  ")
-                    .pattern("S  ")
-                    .pattern("S  ")),
-
-    ALUMINUM_HOE = create(TFMGItems.ALUMINUM_TOOLS.get(4))
-            .unlockedBy(TFMGItems.ALUMINUM_INGOT::get)
-            .viaShaped(b -> b
-                    .define('C', aluminumIngot())
-                    .define('S', Items.STICK)
-                    .pattern("CC ")
-                    .pattern("S  ")
-                    .pattern("S  ")),
-
-    LEAD_SWORD = create(TFMGItems.LEAD_TOOLS.get(0))
-            .unlockedBy(TFMGItems.LEAD_INGOT::get)
-            .viaShaped(b -> b
-                    .define('C', leadIngot())
-                    .define('S', Items.STICK)
-                    .pattern("C  ")
-                    .pattern("C  ")
-                    .pattern("S  ")),
-
-    LEAD_PICKAXE = create(TFMGItems.LEAD_TOOLS.get(1))
-            .unlockedBy(TFMGItems.LEAD_INGOT::get)
-            .viaShaped(b -> b
-                    .define('C', leadIngot())
-                    .define('S', Items.STICK)
-                    .pattern("CCC")
-                    .pattern(" S ")
-                    .pattern(" S ")),
-
-    LEAD_AXE = create(TFMGItems.LEAD_TOOLS.get(2))
-            .unlockedBy(TFMGItems.LEAD_INGOT::get)
-            .viaShaped(b -> b
-                    .define('C', leadIngot())
-                    .define('S', Items.STICK)
-                    .pattern(" CC")
-                    .pattern(" SC")
-                    .pattern(" S ")),
-
-    LEAD_SHOVEL = create(TFMGItems.LEAD_TOOLS.get(3))
-            .unlockedBy(TFMGItems.LEAD_INGOT::get)
-            .viaShaped(b -> b
-                    .define('C', leadIngot())
-                    .define('S', Items.STICK)
-                    .pattern("C  ")
-                    .pattern("S  ")
-                    .pattern("S  ")),
-
-    LEAD_HOE = create(TFMGItems.LEAD_TOOLS.get(4))
-            .unlockedBy(TFMGItems.LEAD_INGOT::get)
-            .viaShaped(b -> b
-                    .define('C', leadIngot())
-                    .define('S', Items.STICK)
-                    .pattern("CC ")
-                    .pattern("S  ")
-                    .pattern("S  ")),
+	
 
     /// ////////////
     STEEL_PIPE = create(TFMGPipes.PIPES.get(TFMGPipes.PipeMaterial.STEEL).getPipe()).returns(4)
@@ -1418,7 +1193,7 @@ public class TFMGStandardRecipeGen extends TFMGRecipeProvider {
             .unlockedBy(TFMGItems.LITHIUM_INGOT::get)
             .viaShaped(b -> b
                     .define('P', heavyPlate())
-                    .define('M', TFMGItems.STEEL_TOOLS.get(0))
+                    .define('M', TFMGItems.STEEL_TOOLS.sword())
                     .define('C', circuitBoard())
                     .define('W', copperWire())
                     .define('A', aluminumSheet())
@@ -2340,7 +2115,7 @@ public class TFMGStandardRecipeGen extends TFMGRecipeProvider {
         private record Serializer(MapCodec<Recipe<?>> wrappedCodec) implements RecipeSerializer<ModdedCookingRecipeOutputShim> {
             private static ModdedCookingRecipeOutputShim.Serializer create(Recipe<?> wrapped) {
                 RecipeSerializer<?> wrappedSerializer = wrapped.getSerializer();
-                @SuppressWarnings("unchecked")
+                //@SuppressWarnings("unchecked")
                 ModdedCookingRecipeOutputShim.Serializer serializer = new ModdedCookingRecipeOutputShim.Serializer((MapCodec<Recipe<?>>) wrappedSerializer.codec());
 
                 // Need to do some registry injection to get the Recipe/Registry#byNameCodec to encode the right type for this

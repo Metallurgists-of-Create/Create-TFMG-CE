@@ -31,23 +31,17 @@ import com.tterrag.registrate.util.DataIngredient;
 import com.tterrag.registrate.util.entry.BlockEntry;
 import com.tterrag.registrate.util.nullness.NonNullFunction;
 import com.tterrag.registrate.util.nullness.NonNullUnaryOperator;
-import net.minecraft.advancements.critereon.StatePropertiesPredicate;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.Direction;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockBehaviour;
-import net.minecraft.world.level.block.state.properties.SlabType;
-import net.minecraft.world.level.storage.loot.LootPool;
-import net.minecraft.world.level.storage.loot.LootTable;
-import net.minecraft.world.level.storage.loot.entries.LootItem;
-import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
-import net.minecraft.world.level.storage.loot.predicates.LootItemBlockStatePropertyCondition;
-import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.neoforged.neoforge.client.model.generators.ConfiguredModel;
 import net.neoforged.neoforge.client.model.generators.ModelFile;
 import net.neoforged.neoforge.client.model.generators.MultiPartBlockStateBuilder;
@@ -59,6 +53,7 @@ import java.util.ArrayList;
 import java.util.function.Supplier;
 
 import static com.drmangotea.tfmg.TFMG.REGISTRATE;
+import static com.drmangotea.tfmg.datagen.recipes.TFMGRecipeProvider.I.shaft;
 import static com.simibubi.create.api.behaviour.interaction.MovingInteractionBehaviour.interactionBehaviour;
 import static com.simibubi.create.api.behaviour.movement.MovementBehaviour.movementBehaviour;
 import static com.simibubi.create.foundation.data.BlockStateGen.axisBlock;
@@ -223,15 +218,24 @@ public class TFMGBuilderTransformers {
 		vb.addModels(vb.partialState(), models.toArray(ConfiguredModel[]::new));
 	}
 	
-    public static BlockEntry<TFMGFlywheelBlock> flywheel(String name, NonNullFunction<BlockBehaviour.Properties, TFMGFlywheelBlock> block) {
+    public static BlockEntry<TFMGFlywheelBlock> flywheel(String name, TagKey<Item> ingot, NonNullFunction<BlockBehaviour.Properties, TFMGFlywheelBlock> block) {
         return REGISTRATE.block(name + "_flywheel", block)
                 .initialProperties(SharedProperties::softMetal)
                 .properties(BlockBehaviour.Properties::noOcclusion)
                 .transform(axeOrPickaxe())
                 .transform(TFMGStress.setNoImpact())
                 .blockstate(BlockStateGen.axisBlockProvider(true))
-                .item()
-                .transform(customItemModel())
+                .item().transform(customItemModel())
+				.recipe((ctx, prov) -> ShapedRecipeBuilder
+					.shaped(RecipeCategory.DECORATIONS, ctx.get(), 1)
+					.define('C', ingot)
+					.define('S', shaft())
+					.pattern("CCC")
+					.pattern("CSC")
+					.pattern("CCC")
+					.unlockedBy("has_ingot", RegistrateRecipeProvider.has(ingot))
+					.save(prov, TFMG.asResource(name + "_flywheel"))
+				)
                 .register();
     }
 
@@ -335,15 +339,15 @@ public class TFMGBuilderTransformers {
                     .tag(BlockTags.NEEDS_STONE_TOOL)
                     .recipe((c, p) -> {
                         boolean optional = colour.getId() > 15;
-                        var builder = ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, c.get(), 8)
+						ICondition[] conditions = optional ? new ICondition[]{new TagFilledCondition(colour.getTag())} : new ICondition[]{};
+                        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, c.get(), 8)
                                         .pattern("###")
                                         .pattern("#D#")
                                         .pattern("###")
                                         .define('D', colour.getTag())
                                         .define('#', undyed)
-                                        .unlockedBy("has_concrete", RegistrateRecipeProvider.has(undyed));
-                        ICondition[] conditions = optional ? new ICondition[]{new TagFilledCondition(colour.getTag())} : new ICondition[]{};
-                        TFMGUtils.conditionalCrafting(p, TFMG.asResource("crafting/materials/" + c.getName() + "_dyeing"), builder, conditions);
+                                        .unlockedBy("has_concrete", RegistrateRecipeProvider.has(undyed))
+										.save(p.withConditions(conditions), TFMG.asResource("crafting/materials/" + c.getName() + "_dyeing"));
                     })
 					.transform(tagBlockAndItem(Tags.Blocks.CONCRETES, Tags.Items.CONCRETES)).build()
 					.register();

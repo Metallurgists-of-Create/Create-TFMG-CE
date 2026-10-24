@@ -1,6 +1,5 @@
 package com.drmangotea.tfmg.registry;
 
-
 import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.base.*;
 import com.drmangotea.tfmg.base.blocks.TFMGDirectionalBlock;
@@ -15,6 +14,7 @@ import com.drmangotea.tfmg.content.decoration.kinetics.cogs.TFMGCogWheelBlock;
 import com.drmangotea.tfmg.content.decoration.kinetics.cogs.TFMGCogwheelBlockItem;
 import com.drmangotea.tfmg.content.decoration.kinetics.flywheels.TFMGFlywheelBlock;
 import com.drmangotea.tfmg.content.decoration.kinetics.gearbox.SteelGearboxBlock;
+import com.drmangotea.tfmg.content.decoration.pipes.TFMGPipes;
 import com.drmangotea.tfmg.content.decoration.tanks.TFMGTankGenerator;
 import com.drmangotea.tfmg.content.decoration.tanks.aluminum.AluminumFluidTankModel;
 import com.drmangotea.tfmg.content.decoration.tanks.aluminum.AluminumTankBlock;
@@ -149,9 +149,11 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.recipes.RecipeCategory;
+import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.data.recipes.ShapelessRecipeBuilder;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.ColorRGBA;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.block.*;
@@ -1261,9 +1263,21 @@ public class TFMGBlocks {
                     .transform(pickaxeOnly())
                     .properties(BlockBehaviour.Properties::noOcclusion)
                     .blockstate(BlockStateGen.directionalBlockProvider(true))
-                    .item()
-                    .transform(customItemModel())
-                    .register();
+                    .item().transform(customItemModel())
+					.recipe((ctx, prov) -> ShapedRecipeBuilder
+						.shaped(RecipeCategory.MISC, ctx.get())
+						.define('C', TFMGItems.CIRCUIT_BOARD)
+						.define('P', TFMGPipes.PIPES.get(TFMGPipes.PipeMaterial.STEEL).getPump())
+						.define('W', TFMGTags.Items.WIRES_COPPER.tag)
+						.define('Q', TFMGItems.CAPACITOR)
+						.define('K', TFMGItems.ELECTROMAGNETIC_COIL)
+						.define('M', TFMGItems.MAGNET)
+						.pattern("MQK")
+						.pattern("CPW")
+						.pattern("MQK")
+						.unlockedBy("has_board", RegistrateRecipeProvider.has(TFMGItems.CIRCUIT_BOARD))
+						.save(prov)
+					).register();
     public static final BlockEntry<VoltageObserverBlock> VOLTAGE_OBSERVER =
             REGISTRATE.block("voltage_observer", VoltageObserverBlock::new)
                     .initialProperties(SharedProperties::softMetal)
@@ -1663,8 +1677,12 @@ public class TFMGBlocks {
             .tag(BlockTags.BEACON_BASE_BLOCKS)
             .blockstate(simpleCubeAll("laminated_magnetic_alloy_block"))
             .tag(BlockTags.NEEDS_IRON_TOOL)
-            .item()
-            .build()
+            .item().build()
+			.recipe((ctx, p) -> p.square(
+				DataIngredient.ingredient(Ingredient.of(TFMGItems.MAGNETIC_ALLOY_SHEET), TFMGItems.MAGNETIC_ALLOY_SHEET),
+				RecipeCategory.MISC,
+				ctx, false
+			))
             .register();
 
     public static final BlockEntry<ColoredFallingBlock> CEMENT = REGISTRATE.block("cement", p -> new ColoredFallingBlock(new ColorRGBA(-8356741), p))
@@ -1876,11 +1894,11 @@ public class TFMGBlocks {
 
     //------------------FLYWHEELS------------------//
     public static final BlockEntry<TFMGFlywheelBlock>
-            STEEL_FLYWHEEL = flywheel("steel", TFMGFlywheelBlock::steel),
-            LEAD_FLYWHEEL = flywheel("lead", TFMGFlywheelBlock::lead),
-            CAST_IRON_FLYWHEEL = flywheel("cast_iron", TFMGFlywheelBlock::cast_iron),
-            ALUMINUM_FLYWHEEL = flywheel("aluminum", TFMGFlywheelBlock::aluminum),
-            NICKEL_FLYWHEEL = flywheel("nickel", TFMGFlywheelBlock::nickel);
+            STEEL_FLYWHEEL = flywheel("steel", CommonMetal.STEEL.ingots, TFMGFlywheelBlock::steel),
+            LEAD_FLYWHEEL = flywheel("lead", CommonMetal.LEAD.ingots, TFMGFlywheelBlock::lead),
+            CAST_IRON_FLYWHEEL = flywheel("cast_iron", TFMGTags.Items.INGOTS_CAST_IRON.tag, TFMGFlywheelBlock::cast_iron),
+            ALUMINUM_FLYWHEEL = flywheel("aluminum", CommonMetal.ALUMINUM.ingots, TFMGFlywheelBlock::aluminum),
+            NICKEL_FLYWHEEL = flywheel("nickel", CommonMetal.NICKEL.ingots, TFMGFlywheelBlock::nickel);
 
     public static String[] DECOR_METALS = {"steel", "aluminum", "cast_iron", "lead", "nickel", "constantan", "copper", "zinc", "brass"};
 
@@ -1912,12 +1930,13 @@ public class TFMGBlocks {
                 .recipe((c, p) -> {
                     p.stonecutting(DataIngredient.tag(CommonMetal.ALUMINUM.ingots), RecipeCategory.BUILDING_BLOCKS, c, 2);
                     boolean optional = colour.getId() > 15;
-                    var builder = ShapelessRecipeBuilder.shapeless(RecipeCategory.DECORATIONS, c.get())
+					ICondition[] conditions = optional ? new ICondition[]{new TagFilledCondition(colour.getTag())} : new ICondition[]{};
+                    ShapelessRecipeBuilder.shapeless(RecipeCategory.DECORATIONS, c.get())
                             .requires(colour.getTag())
                             .requires(Items.CAUTION_BLOCKS.tag)
-                            .unlockedBy("has_caution_block", RegistrateRecipeProvider.has(Items.CAUTION_BLOCKS.tag));
-                    ICondition[] conditions = optional ? new ICondition[]{new TagFilledCondition(colour.getTag())} : new ICondition[]{};
-                    TFMGUtils.conditionalCrafting(p, TFMG.asResource("crafting/materials/" + c.getName() + "_from_other_caution_block"), builder, conditions);
+                            .unlockedBy("has_caution_block", RegistrateRecipeProvider.has(Items.CAUTION_BLOCKS.tag))
+							.save(p.withConditions(conditions), TFMG.asResource("crafting/materials/" + c.getName() + "_from_other_caution_block"));
+                    //TFMGUtils.conditionalCrafting(p, , builder, conditions);
                 })
                 .item()
                 .tag(Items.CAUTION_BLOCKS.tag)
