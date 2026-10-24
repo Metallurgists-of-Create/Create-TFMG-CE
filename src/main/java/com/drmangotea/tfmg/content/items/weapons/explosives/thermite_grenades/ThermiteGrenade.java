@@ -87,10 +87,8 @@ public class ThermiteGrenade extends ThrowableItemProjectile {
 		this.discard();
     }
 
-    @SuppressWarnings("unchecked")
-    public static EntityType.Builder<?> build(EntityType.Builder<?> builder) {
-        EntityType.Builder<ThermiteGrenade> entityBuilder = (EntityType.Builder<ThermiteGrenade>) builder;
-        return entityBuilder.sized(.25f, .25f);
+    public static EntityType.Builder<? extends ThermiteGrenade> build(EntityType.Builder<? extends ThermiteGrenade> builder) {
+        return builder.sized(.25f, .25f);
     }
 
     public enum ChemicalColor {
