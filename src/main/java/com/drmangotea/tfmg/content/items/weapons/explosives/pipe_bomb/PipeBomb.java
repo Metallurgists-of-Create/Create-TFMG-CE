@@ -1,6 +1,6 @@
 package com.drmangotea.tfmg.content.items.weapons.explosives.pipe_bomb;
 
-
+import com.drmangotea.tfmg.base.annotation.NothingNullByDefault;
 import com.drmangotea.tfmg.registry.TFMGEntityTypes;
 import com.drmangotea.tfmg.registry.TFMGItems;
 import net.minecraft.core.particles.ParticleOptions;
@@ -14,20 +14,15 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 
+@NothingNullByDefault
 public class PipeBomb extends ThrowableItemProjectile {
     public PipeBomb(EntityType<? extends PipeBomb> entityType, Level level) {
-        super(entityType,level);
-
-
+        super(entityType, level);
     }
-    public PipeBomb(Level p_37399_, LivingEntity p_37400,EntityType bomb) {
-        super(bomb, p_37400, p_37399_);
-
+	
+    public PipeBomb(LivingEntity shooter, Level level) {
+		super(TFMGEntityTypes.PIPE_BOMB.get(), shooter, level);
     }
-    public PipeBomb(Level p_37394_, double p_37395_, double p_37396_, double p_37397_) {
-        super(TFMGEntityTypes.PIPE_BOMB.get(), p_37395_, p_37396_, p_37397_, p_37394_);
-    }
-
 
     protected Item getDefaultItem() {
         return TFMGItems.PIPE_BOMB.get();
@@ -69,9 +64,7 @@ public class PipeBomb extends ThrowableItemProjectile {
 
     }
 
-    @SuppressWarnings("unchecked")
-    public static EntityType.Builder<?> build(EntityType.Builder<?> builder) {
-        EntityType.Builder<PipeBomb> entityBuilder = (EntityType.Builder<PipeBomb>) builder;
-        return entityBuilder.sized(.25f, .25f);
+    public static EntityType.Builder<?> build(EntityType.Builder<? extends PipeBomb> builder) {
+        return builder.sized(.25f, .25f);
     }
 }
