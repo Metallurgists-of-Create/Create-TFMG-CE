@@ -849,7 +849,7 @@ public class TFMGStandardRecipeGen extends TFMGRecipeProvider {
                     .pattern("OCA")
                     .pattern(" R ")),
 
-   OIL_CAN = create(TFMGItems.OIL_CAN)
+	OIL_CAN = create(TFMGItems.OIL_CAN)
            .unlockedBy(TFMGItems.STEEL_NUGGET::get)
            .viaShaped(b -> b
                    .define('O', steelNugget())
@@ -1774,8 +1774,10 @@ public class TFMGStandardRecipeGen extends TFMGRecipeProvider {
         return create(result::get);
     }
 
-    TFMGRecipeProvider.GeneratedRecipe createSpecial(Function<CraftingBookCategory, Recipe<?>> builder, String recipeType,
-                                                       String path) {
+    TFMGRecipeProvider.GeneratedRecipe createSpecial (
+		Function<CraftingBookCategory, Recipe<?>> builder,
+		String recipeType, String path
+	) {
         ResourceLocation location = TFMG.asResource(recipeType + "/" + currentFolder + "/" + path);
         return register(consumer -> {
             SpecialRecipeBuilder b = SpecialRecipeBuilder.special(builder);
@@ -1819,9 +1821,11 @@ public class TFMGStandardRecipeGen extends TFMGRecipeProvider {
                 .forDuration(50)
                 .inFurnace();
     }
-
-    TFMGRecipeProvider.GeneratedRecipe metalCompacting(List<ItemProviderEntry<? extends ItemLike, ? extends ItemLike>> variants,
-                                                         List<Supplier<TagKey<Item>>> ingredients) {
+	
+	TFMGRecipeProvider.GeneratedRecipe metalCompacting (
+		List<ItemProviderEntry<? extends ItemLike, ? extends ItemLike>> variants,
+		List<Supplier<TagKey<Item>>> ingredients
+	) {
         TFMGRecipeProvider.GeneratedRecipe result = null;
         for (int i = 0; i + 1 < variants.size(); i++) {
             ItemProviderEntry<? extends ItemLike, ? extends ItemLike> currentEntry = variants.get(i);
@@ -2115,7 +2119,7 @@ public class TFMGStandardRecipeGen extends TFMGRecipeProvider {
         private record Serializer(MapCodec<Recipe<?>> wrappedCodec) implements RecipeSerializer<ModdedCookingRecipeOutputShim> {
             private static ModdedCookingRecipeOutputShim.Serializer create(Recipe<?> wrapped) {
                 RecipeSerializer<?> wrappedSerializer = wrapped.getSerializer();
-                //@SuppressWarnings("unchecked")
+                @SuppressWarnings("unchecked")
                 ModdedCookingRecipeOutputShim.Serializer serializer = new ModdedCookingRecipeOutputShim.Serializer((MapCodec<Recipe<?>>) wrappedSerializer.codec());
 
                 // Need to do some registry injection to get the Recipe/Registry#byNameCodec to encode the right type for this
@@ -2179,7 +2183,7 @@ public class TFMGStandardRecipeGen extends TFMGRecipeProvider {
         }
     }
 
-    @Override
+    @Override @NothingNullByDefault
     public String getName() {
         return "TFMG'S Standard Recipes";
     }

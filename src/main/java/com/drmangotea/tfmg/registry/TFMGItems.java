@@ -367,13 +367,13 @@ public class TFMGItems {
                 .tag(Items.MULTIMETERS.tag, Items.CURIOS_BELT.tag)
                 .onRegister(item -> ItemDescription.referKey(item, () -> MULTIMETER))
                 .model((ctx, prov) -> prov.generated(ctx::get, TFMG.asResource("item/multimeter/" + colourName)))
-                .recipe((c, p) -> {
+                .recipe((c, p) ->
                     ShapelessRecipeBuilder.shapeless(RecipeCategory.TOOLS, c.get())
                             .requires(colour.getTag())
                             .requires(Items.MULTIMETERS.tag)
                             .unlockedBy("has_multimeter", RegistrateRecipeProvider.has(Items.MULTIMETERS.tag))
-							.save(p.withConditions(conditions), TFMG.asResource("crafting/materials/" + c.getName() + "_from_other_multimeter"));
-                })
+							.save(p.withConditions(conditions), TFMG.asResource("crafting/materials/" + c.getName() + "_from_other_multimeter"))
+                )
                 .register();
     });
 
