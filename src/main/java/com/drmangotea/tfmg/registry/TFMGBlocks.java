@@ -11,7 +11,6 @@ import com.drmangotea.tfmg.content.decoration.*;
 import com.drmangotea.tfmg.content.decoration.concrete.*;
 import com.drmangotea.tfmg.content.decoration.doors.TFMGSlidingDoorBlock;
 import com.drmangotea.tfmg.content.decoration.kinetics.cogs.TFMGCogWheelBlock;
-import com.drmangotea.tfmg.content.decoration.kinetics.cogs.TFMGCogwheelBlockItem;
 import com.drmangotea.tfmg.content.decoration.kinetics.flywheels.TFMGFlywheelBlock;
 import com.drmangotea.tfmg.content.decoration.kinetics.gearbox.SteelGearboxBlock;
 import com.drmangotea.tfmg.content.decoration.pipes.TFMGPipes;
@@ -137,7 +136,6 @@ import com.simibubi.create.content.decoration.slidingDoor.SlidingDoorBlock;
 import com.simibubi.create.content.fluids.tank.FluidTankMovementBehavior;
 import com.simibubi.create.content.kinetics.gearbox.GearboxBlock;
 import com.simibubi.create.content.kinetics.motor.CreativeMotorGenerator;
-import com.simibubi.create.content.kinetics.simpleRelays.BracketedKineticBlockModel;
 import com.simibubi.create.foundation.block.DyedBlockList;
 import com.simibubi.create.foundation.block.connected.HorizontalCTBehaviour;
 import com.simibubi.create.foundation.data.*;
@@ -1471,55 +1469,15 @@ public class TFMGBlocks {
 
     //------------------COGWHEELS------------------//
 
-    public static final BlockEntry<TFMGCogWheelBlock> STEEL_COGWHEEL =
-            REGISTRATE.block("steel_cogwheel", TFMGCogWheelBlock::small)
-                    .initialProperties(SharedProperties::stone)
-                    .properties(p -> p.sound(SoundType.NETHERITE_BLOCK))
-                    .transform(TFMGStress.setNoImpact())
-                    .transform(axeOrPickaxe())
-                    .blockstate(BlockStateGen.axisBlockProvider(false))
-                    .onRegister(CreateRegistrate.blockModel(() -> BracketedKineticBlockModel::new))
-                    .item(TFMGCogwheelBlockItem::new)
-                    .build()
-                    .register();
-
-    public static final BlockEntry<TFMGCogWheelBlock> LARGE_STEEL_COGWHEEL =
-            REGISTRATE.block("large_steel_cogwheel", TFMGCogWheelBlock::large)
-                    .initialProperties(SharedProperties::stone)
-                    .properties(p -> p.sound(SoundType.NETHERITE_BLOCK))
-                    .transform(axeOrPickaxe())
-                    .transform(TFMGStress.setNoImpact())
-                    .blockstate(BlockStateGen.axisBlockProvider(false))
-                    .onRegister(CreateRegistrate.blockModel(() -> BracketedKineticBlockModel::new))
-                    .item(TFMGCogwheelBlockItem::new)
-                    .build()
-                    .register();
-    //
-    public static final BlockEntry<TFMGCogWheelBlock> ALUMINUM_COGWHEEL =
-            REGISTRATE.block("aluminum_cogwheel", TFMGCogWheelBlock::small)
-                    .initialProperties(SharedProperties::stone)
-                    .properties(p -> p.sound(SoundType.COPPER))
-                    .addLayer(() -> RenderType::cutoutMipped)
-                    .transform(TFMGStress.setNoImpact())
-                    .transform(axeOrPickaxe())
-                    .blockstate(BlockStateGen.axisBlockProvider(false))
-                    .onRegister(CreateRegistrate.blockModel(() -> BracketedKineticBlockModel::new))
-                    .item(TFMGCogwheelBlockItem::new)
-                    .build()
-                    .register();
-
-    public static final BlockEntry<TFMGCogWheelBlock> LARGE_ALUMINUM_COGWHEEL =
-            REGISTRATE.block("large_aluminum_cogwheel", TFMGCogWheelBlock::large)
-                    .initialProperties(SharedProperties::stone)
-                    .properties(p -> p.sound(SoundType.COPPER))
-                    .addLayer(() -> RenderType::cutoutMipped)
-                    .transform(axeOrPickaxe())
-                    .transform(TFMGStress.setNoImpact())
-                    .blockstate(BlockStateGen.axisBlockProvider(false))
-                    .onRegister(CreateRegistrate.blockModel(() -> BracketedKineticBlockModel::new))
-                    .item(TFMGCogwheelBlockItem::new)
-                    .build()
-                    .register();
+    public static final BlockEntry<TFMGCogWheelBlock>
+		STEEL_COGWHEEL = cogwheel("steel_cogwheel", false, CommonMetal.STEEL.ingots)
+			.properties(p -> p.sound(SoundType.NETHERITE_BLOCK)).register(),
+		LARGE_STEEL_COGWHEEL = cogwheel("large_steel_cogwheel", true, CommonMetal.STEEL.ingots)
+			.properties(p -> p.sound(SoundType.NETHERITE_BLOCK)).register(),
+		ALUMINUM_COGWHEEL = cogwheel("aluminum_cogwheel", false, CommonMetal.ALUMINUM.ingots)
+			.properties(p -> p.sound(SoundType.COPPER)).addLayer(() -> RenderType::cutoutMipped).register(),
+		LARGE_ALUMINUM_COGWHEEL = cogwheel("large_aluminum_cogwheel", true, CommonMetal.ALUMINUM.ingots)
+			.properties(p -> p.sound(SoundType.COPPER)).addLayer(() -> RenderType::cutoutMipped).register();
 	
     //------------------STORAGE_BLOCKS------------------//
     public static final BlockEntry<Block> STEEL_BLOCK = REGISTRATE.block("steel_block", Block::new)
