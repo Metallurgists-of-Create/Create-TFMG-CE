@@ -58,7 +58,7 @@ public class FireboxBlockEntity extends SmartBlockEntity implements IHaveGoggleI
     public FireboxBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
         setLazyTickRate(60);
-        tankInventory = new ForceableFluidTank(getCapacityMultiplier(), this::onFluidStackChanged).blockExtraction().withValidator(fs -> fs.is(TFMGTags.Fluids.FIREBOX_FUEL.tag));
+        tankInventory = new ForceableFluidTank(getCapacityMultiplier(), this::onFluidStackChanged).withValidator(fs -> fs.is(TFMGTags.Fluids.FIREBOX_FUEL.tag));
         exhuastTank = new ForceableFluidTank(getCapacityMultiplier(), this::onFluidStackChanged).blockInsertion();
         fluidCapability = new InputOutputTankWrapper(exhuastTank, tankInventory);
         updateConnectivity = false;
