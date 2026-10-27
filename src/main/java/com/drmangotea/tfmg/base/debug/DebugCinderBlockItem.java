@@ -13,6 +13,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 
 @NothingNullByDefault
 public class DebugCinderBlockItem extends Item {
@@ -30,12 +31,13 @@ public class DebugCinderBlockItem extends Item {
         BlockPos pos = context.getClickedPos();
         Level level = context.getLevel();
 		Player player = context.getPlayer();
+		BlockEntity blockEntity = level.getBlockEntity(pos);
 		
-		if (level.getBlockEntity(pos) instanceof CableConnectorBlockEntity be) {
+		if (blockEntity instanceof CableConnectorBlockEntity be) {
 			TFMG.LOGGER.info("{}:\n {}", pos, be.connections);
 		}
 
-        if (player != null && level.getBlockEntity(pos) instanceof IElectric be) {
+        if (player != null && blockEntity instanceof IElectric be) {
 			if(player.isCrouching()){
 				be.recalculateNetworkResistance();
 			} else {
@@ -44,7 +46,7 @@ public class DebugCinderBlockItem extends Item {
 			}
         }
 
-        if (level.getBlockEntity(pos) instanceof SteelTankBlockEntity be) {
+        if (blockEntity instanceof SteelTankBlockEntity be) {
             if (player != null && player.isCrouching() && be.getLevel() instanceof Level pLevel) {
                 SteelTankBlock.updateTowerState(pLevel, be.getBlockPos(), false, false);
             }
