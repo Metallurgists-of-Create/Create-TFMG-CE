@@ -37,6 +37,8 @@ import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -51,6 +53,7 @@ import java.util.ArrayList;
 import java.util.function.Supplier;
 
 import static com.drmangotea.tfmg.TFMG.REGISTRATE;
+import static com.drmangotea.tfmg.datagen.recipes.TFMGRecipeProvider.I.shaft;
 import static com.simibubi.create.api.behaviour.interaction.MovingInteractionBehaviour.interactionBehaviour;
 import static com.simibubi.create.api.behaviour.movement.MovementBehaviour.movementBehaviour;
 import static com.simibubi.create.foundation.data.BlockStateGen.axisBlock;
@@ -215,15 +218,24 @@ public class TFMGBuilderTransformers {
 		vb.addModels(vb.partialState(), models.toArray(ConfiguredModel[]::new));
 	}
 	
-    public static BlockEntry<TFMGFlywheelBlock> flywheel(String name, NonNullFunction<BlockBehaviour.Properties, TFMGFlywheelBlock> block) {
+    public static BlockEntry<TFMGFlywheelBlock> flywheel(String name, TagKey<Item> ingot, NonNullFunction<BlockBehaviour.Properties, TFMGFlywheelBlock> block) {
         return REGISTRATE.block(name + "_flywheel", block)
                 .initialProperties(SharedProperties::softMetal)
                 .properties(BlockBehaviour.Properties::noOcclusion)
                 .transform(axeOrPickaxe())
                 .transform(TFMGStress.setNoImpact())
                 .blockstate(BlockStateGen.axisBlockProvider(true))
-                .item()
-                .transform(customItemModel())
+                .item().transform(customItemModel())
+				.recipe((ctx, prov) -> ShapedRecipeBuilder
+					.shaped(RecipeCategory.DECORATIONS, ctx.get(), 1)
+					.define('C', ingot)
+					.define('S', shaft())
+					.pattern("CCC")
+					.pattern("CSC")
+					.pattern("CCC")
+					.unlockedBy("has_ingot", RegistrateRecipeProvider.has(ingot))
+					.save(prov, TFMG.asResource(name + "_flywheel"))
+				)
                 .register();
     }
 
@@ -301,6 +313,7 @@ public class TFMGBuilderTransformers {
                 .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
                 .transform(pickaxeOnly())
                 .blockstate((c, p) -> TFMGVanillaBlockStates.generateSlabBlockState(c, p, "concrete"))
+                .loot((lt, block) -> lt.add(block, lt.createSlabItemTable(block)))
                 .tag(BlockTags.NEEDS_STONE_TOOL)
                 .tag(BlockTags.SLABS)
                 .recipe((c, p) -> p.stonecutting(DataIngredient.items(concrete.block.get()), RecipeCategory.BUILDING_BLOCKS, c, 2))
@@ -326,15 +339,15 @@ public class TFMGBuilderTransformers {
                     .tag(BlockTags.NEEDS_STONE_TOOL)
                     .recipe((c, p) -> {
                         boolean optional = colour.getId() > 15;
-                        var builder = ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, c.get(), 8)
+						ICondition[] conditions = optional ? new ICondition[]{new TagFilledCondition(colour.getTag())} : new ICondition[]{};
+                        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, c.get(), 8)
                                         .pattern("###")
                                         .pattern("#D#")
                                         .pattern("###")
                                         .define('D', colour.getTag())
                                         .define('#', undyed)
-                                        .unlockedBy("has_concrete", RegistrateRecipeProvider.has(undyed));
-                        ICondition[] conditions = optional ? new ICondition[]{new TagFilledCondition(colour.getTag())} : new ICondition[]{};
-                        TFMGUtils.conditionalCrafting(p, TFMG.asResource("crafting/materials/" + c.getName() + "_dyeing"), builder, conditions);
+                                        .unlockedBy("has_concrete", RegistrateRecipeProvider.has(undyed))
+										.save(p.withConditions(conditions), TFMG.asResource("crafting/materials/" + c.getName() + "_dyeing"));
                     })
 					.transform(tagBlockAndItem(Tags.Blocks.CONCRETES, Tags.Items.CONCRETES)).build()
 					.register();
@@ -372,6 +385,7 @@ public class TFMGBuilderTransformers {
                     .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
                     .transform(pickaxeOnly())
                     .blockstate((c, p) -> TFMGVanillaBlockStates.generateSlabBlockState(c, p, colourName + "_concrete", "concrete/" + colourName))
+                    .loot((lt, block) -> lt.add(block, lt.createSlabItemTable(block)))
                     .tag(BlockTags.NEEDS_STONE_TOOL)
                     .tag(BlockTags.SLABS)
                     .recipe((c, p) -> p.stonecutting(DataIngredient.items(set.block.asItem()), RecipeCategory.BUILDING_BLOCKS, c, 2))
@@ -412,6 +426,7 @@ public class TFMGBuilderTransformers {
                 .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
                 .transform(pickaxeOnly())
                 .blockstate((c, p) -> TFMGVanillaBlockStates.generateSlabBlockState(c, p, name))
+                .loot((lt, block) -> lt.add(block, lt.createSlabItemTable(block)))
                 .tag(BlockTags.NEEDS_STONE_TOOL)
                 .tag(BlockTags.SLABS)
                 .recipe((c, p) -> p.stonecutting(DataIngredient.items(blockEntry.asItem()), RecipeCategory.BUILDING_BLOCKS, c, 2))

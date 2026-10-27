@@ -1,9 +1,9 @@
 package com.drmangotea.tfmg.integration.jei.category;
 
+import com.drmangotea.tfmg.base.annotation.NothingNullByDefault;
 import com.drmangotea.tfmg.base.lang.TFMGLang;
 import com.drmangotea.tfmg.base.pressure.Pressure;
 import com.drmangotea.tfmg.config.TFMGConfigs;
-import com.drmangotea.tfmg.content.machinery.vat.base.registry.functions.DrawableVatType;
 import com.drmangotea.tfmg.content.machinery.vat.base.registry.operations.VatCategoryEvent;
 import com.drmangotea.tfmg.content.machinery.vat.base.registry.operations.VatOperation;
 import com.drmangotea.tfmg.content.machinery.vat.base.registry.types.VatType;
@@ -25,15 +25,14 @@ import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import org.apache.commons.lang3.mutable.MutableInt;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@NothingNullByDefault
 public class ChemicalVatCategory extends CreateRecipeCategory<VatMachineRecipe> {
     // Cheap way to do this
     private static final int[] PRESSURE_ANGLES = {
@@ -152,7 +151,6 @@ public class ChemicalVatCategory extends CreateRecipeCategory<VatMachineRecipe> 
     }
 
     @Override
-    @NotNull
     public List<Component> getTooltipStrings(VatMachineRecipe recipe, IRecipeSlotsView recipeSlotsView, double mouseX, double mouseY) {
         List<Component> tooltip = new ArrayList<>();
         int pressure = recipe.pressure.getValue();
@@ -264,18 +262,5 @@ public class ChemicalVatCategory extends CreateRecipeCategory<VatMachineRecipe> 
                 }
             }
         }
-    }
-
-    /**
-     * @deprecated Use {@link VatCategoryEvent#addDrawableVatType(VatType, DrawableVatType)}  instead
-     */
-    @Deprecated(forRemoval = true, since = "1.2.5")
-    private void drawVatTypes(List<ResourceLocation> allowedVatTypes, GuiGraphics graphics) {}
-    /**
-     * @deprecated Use {@link VatCategoryEvent#drawOperation(VatOperation, VatMachineRecipe, GuiGraphics, double, double)} instead
-     */
-    @Deprecated(forRemoval = true, since = "1.2.5")
-    private void drawSprites(List<VatOperation> machines, GuiGraphics graphics) {
-
     }
 }

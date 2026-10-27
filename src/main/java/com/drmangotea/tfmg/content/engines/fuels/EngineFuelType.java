@@ -45,15 +45,15 @@ public record EngineFuelType(HolderSet<Fluid> fluids, float speed, float efficie
 
     public static boolean test(FluidStack fluidStack, TagKey<EngineFuelType> fuelTypeTag, RegistryAccess registryAccess) {
         HolderGetter<EngineFuelType> lookup = registryAccess.asGetterLookup().lookupOrThrow(TFMGRegistries.ENGINE_FUEL_TYPE);
-        var tagged = lookup.getOrThrow(fuelTypeTag);
-        return tagged.stream().map(Holder::value).anyMatch(type -> type.test(fluidStack));
+        var tagged = lookup.get(fuelTypeTag);
+        return tagged.map(holders -> holders.stream().map(Holder::value).anyMatch(type -> type.test(fluidStack))).orElse(false);
     }
 
     public static Optional<EngineFuelType> find(FluidStack fluidStack, RegistryAccess registryAccess, @Nullable TagKey<EngineFuelType> tagFilter) {
         if (tagFilter != null) {
             HolderGetter<EngineFuelType> lookup = registryAccess.asGetterLookup().lookupOrThrow(TFMGRegistries.ENGINE_FUEL_TYPE);
-            var tagged = lookup.getOrThrow(tagFilter);
-            return tagged.stream().map(Holder::value).filter(type -> type.test(fluidStack)).findFirst();
+            var tagged = lookup.get(tagFilter);
+            return tagged.flatMap(holders -> holders.stream().map(Holder::value).filter(type -> type.test(fluidStack)).findFirst());
         } else {
             Registry<EngineFuelType> registry = registryAccess.registryOrThrow(TFMGRegistries.ENGINE_FUEL_TYPE);
             return registry.holders().map(Holder::value).filter(type -> type.test(fluidStack)).findFirst();

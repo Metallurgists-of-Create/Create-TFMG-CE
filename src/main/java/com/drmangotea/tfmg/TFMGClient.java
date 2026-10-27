@@ -49,11 +49,10 @@ public class TFMGClient {
         registerModelPredicates();
         ModLoader.postEvent(new VatCategoryEvent());
         MultimeterCurios.registerRenderer();
-
-        ItemProperties.registerGeneric(TFMG.asResource("april_fools"), (stack, world, entity, s) -> TFMGUtils.isAprilFirst() ? 1 : 0);
     }
 
     public static void registerModelPredicates() {
         ItemProperties.register(TFMGItems.LITHIUM_BLADE.get(), TFMG.asResource("lithium_charged"), (stack, level, entity, seed) -> stack.getOrDefault(TFMGDataComponents.LITHIUM_BLADE_TIMER, 0) > 0 ? 1 : 0);
+        ItemProperties.registerGeneric(TFMG.asResource("april_fools"), (stack, world, entity, s) -> TFMGUtils.isAprilFirst() ? 1 : 0);
     }
 }

@@ -7,23 +7,6 @@ import com.drmangotea.tfmg.content.machinery.vat.industrial_mixer.mode.MixerMode
 import static com.drmangotea.tfmg.TFMG.REGISTRATE;
 
 public class TFMGMixerModes {
-    /**
-     * Use {@link TFMGMixerModes#NONE} instead
-     */
-    @Deprecated(since = "1.2.5", forRemoval = true)
-    public static final MixerModeEntry<MixerMode> none = TFMGMixerModes.NONE;
-
-    /**
-     * Use {@link TFMGMixerModes#MIXING} instead
-     */
-    @Deprecated(since = "1.2.5", forRemoval = true)
-    public static final MixerModeEntry<MixerMode> mixing = TFMGMixerModes.MIXING;
-
-    /**
-     * Use {@link TFMGMixerModes#CENTRIFUGE} instead
-     */
-    @Deprecated(since = "1.2.5", forRemoval = true)
-    public static final MixerModeEntry<MixerMode> centrifuge = TFMGMixerModes.CENTRIFUGE;
 
     public static final MixerModeEntry<MixerMode> NONE = REGISTRATE.mixerMode("none", MixerMode::new)
             .properties((p) -> p)

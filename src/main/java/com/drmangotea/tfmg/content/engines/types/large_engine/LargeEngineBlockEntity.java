@@ -72,7 +72,9 @@ public class LargeEngineBlockEntity extends AbstractEngineBlockEntity {
 
     @Override
     public Predicate<FluidStack> validFuels() {
-        return fs -> level != null && EngineFuelType.test(fs, TFMGTags.EngineFuel.LARGE_ENGINE.tag, level.registryAccess());
+        //temporary solution. Possibly make the large engine abstract??
+        boolean simple = getBlockState().getBlock() == TFMGBlocks.SIMPLE_LARGE_ENGINE.get();
+        return fs -> level != null && EngineFuelType.test(fs, simple ? TFMGTags.EngineFuel.SIMPLE_LARGE_ENGINE.tag : TFMGTags.EngineFuel.LARGE_ENGINE.tag, level.registryAccess());
     }
 
     @Override
@@ -150,7 +152,9 @@ public class LargeEngineBlockEntity extends AbstractEngineBlockEntity {
 	@Override
 	public Optional<EngineFuelType> getFuelType () {
 		if (level == null) return Optional.empty();
-		return EngineFuelType.find(fuelTank.getFluid(), level.registryAccess(), TFMGTags.EngineFuel.LARGE_ENGINE.tag);
+        //temporary solution. Possibly make the large engine abstract??
+        boolean simple = getBlockState().getBlock() == TFMGBlocks.SIMPLE_LARGE_ENGINE.get();
+		return EngineFuelType.find(fuelTank.getFluid(), level.registryAccess(), simple ? TFMGTags.EngineFuel.SIMPLE_LARGE_ENGINE.tag : TFMGTags.EngineFuel.LARGE_ENGINE.tag);
 	}
     
     @OnlyIn(Dist.CLIENT)

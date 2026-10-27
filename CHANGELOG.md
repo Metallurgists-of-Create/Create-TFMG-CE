@@ -18,11 +18,14 @@ Contributors:<br>
 - Added compositions for Crushed Lead & Nickel
 - Fluid Compositions are now created under the `tfmg` namespace.
 - Multimeters are now valid in the `belt` Curio slot.
-- Diagonal Cables can no be horizontal
+- Diagonal Cables can now be horizontal.
+- Firebox's fuel tank can now be extracted from.
 - Engines:
   - Engines now drop all components and upgrades when destroyed.
   - Golden Turbo's speed and angle rendering now matches the Turbo's.
   - Added the `engine_upgrade` component to all default upgrade items.
+  - Simple Large Engines now have their own fuel tag.
+  - Slightly tweaked engine fuel testing to hopefully avoid crashing on a broken tag.
 
 ### API Changes:
 - new `IHaveMultimeterInformation` interface
