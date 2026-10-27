@@ -58,8 +58,12 @@ public class TFMGPipeEntry {
         this.valve = registerValve();
     }
 	
+	private NonNullFunction<TFMGPipes.PipeMaterial, NonNullFunction<BakedModel, ? extends BakedModel>> getMaterialAttachmentModel() {
+		return TFMGPipeAttachmentModel::getForMaterial;
+	}
+	
 	public NonNullFunction<BakedModel, ? extends BakedModel> getAttachmentModel() {
-		return template -> new TFMGPipeAttachmentModel(template, true, material);
+		return getMaterialAttachmentModel().apply(material);
 	}
 
     public BlockEntry<? extends TFMGPipeBlock> getPipe() {
