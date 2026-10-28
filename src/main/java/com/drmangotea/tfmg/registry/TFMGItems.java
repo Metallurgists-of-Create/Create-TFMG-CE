@@ -1,10 +1,7 @@
 package com.drmangotea.tfmg.registry;
 
 import com.drmangotea.tfmg.TFMG;
-import com.drmangotea.tfmg.base.TFMGCreativeTabs;
-import com.drmangotea.tfmg.base.TFMGRegistrate;
-import com.drmangotea.tfmg.base.TFMGTiers;
-import com.drmangotea.tfmg.base.TFMGUtils;
+import com.drmangotea.tfmg.base.*;
 import com.drmangotea.tfmg.base.data_storage.CylinderFuels;
 import com.drmangotea.tfmg.base.debug.DebugCinderBlockItem;
 import com.drmangotea.tfmg.base.dyes.DyedItemList;
@@ -64,14 +61,13 @@ import net.neoforged.neoforge.client.model.generators.ModelFile;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.common.conditions.ICondition;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 import static com.drmangotea.tfmg.content.items.weapons.explosives.thermite_grenades.ThermiteGrenade.ChemicalColor.*;
 import static com.simibubi.create.AllTags.AllItemTags.CREATE_INGOTS;
 import static com.simibubi.create.AllTags.AllItemTags.PLATES;
 
+@SuppressWarnings("unused")
 public class TFMGItems {
 
     public static final TFMGRegistrate REGISTRATE = (TFMGRegistrate) TFMG.REGISTRATE.setCreativeTab(TFMGCreativeTabs.TFMG_MAIN);
@@ -250,11 +246,18 @@ public class TFMGItems {
                     .durability(256))
             .register();
 
-    public static final List<ItemEntry<?>>
-            STEEL_TOOLS = toolset("steel", TFMGTiers.STEEL),
-            ALUMINUM_TOOLS = toolset("aluminum", TFMGTiers.ALUMINUM);
-
-    public static final List<ItemEntry<?>> LEAD_TOOLS = leadToolset();
+    public static final ToolSet
+		STEEL_TOOLS = ToolSet.builder(REGISTRATE, "steel", CommonMetal.STEEL.ingots, TFMGTiers.STEEL)
+			.all().build(),
+		ALUMINUM_TOOLS = ToolSet.builder(REGISTRATE, "aluminum", CommonMetal.ALUMINUM.ingots, TFMGTiers.ALUMINUM)
+			.all().build(),
+		LEAD_TOOLS = ToolSet.builder(REGISTRATE, "lead", CommonMetal.LEAD.ingots, TFMGTiers.LEAD)
+			.sword(LeadSwordItem::new, 2, -2.4f)
+			.axe(LeadAxeItem::new, 6F, -3.2F)
+			.pickaxe()
+			.shovel()
+			.hoe()
+			.build();
 
     public static final ItemEntry<LithiumBladeItem> LITHIUM_BLADE =
             REGISTRATE.item("lithium_blade", p -> new LithiumBladeItem(TFMGTiers.STEEL, p))
@@ -374,18 +377,18 @@ public class TFMGItems {
     public static final DyedItemList<MultimeterItem> MULTIMETERS = new DyedItemList<>(colour -> {
         String colourName = colour.getSerializedName();
         boolean optional = colour.getId() > 15;
+		ICondition[] conditions = optional ? new ICondition[]{new TagFilledCondition(colour.getTag())} : new ICondition[]{};
         return REGISTRATE.item(colourName + "_multimeter", p -> new MultimeterItem(p, colour.getTextureDiffuseColor()))
                 .tag(Items.MULTIMETERS.tag, Items.CURIOS_BELT.tag)
                 .onRegister(item -> ItemDescription.referKey(item, () -> MULTIMETER))
                 .model((ctx, prov) -> prov.generated(ctx::get, TFMG.asResource("item/multimeter/" + colourName)))
-                .recipe((c, p) -> {
-                    var builder = ShapelessRecipeBuilder.shapeless(RecipeCategory.TOOLS, c.get())
+                .recipe((c, p) ->
+                    ShapelessRecipeBuilder.shapeless(RecipeCategory.TOOLS, c.get())
                             .requires(colour.getTag())
                             .requires(Items.MULTIMETERS.tag)
-                            .unlockedBy("has_multimeter", RegistrateRecipeProvider.has(Items.MULTIMETERS.tag));
-                    ICondition[] conditions = optional ? new ICondition[]{new TagFilledCondition(colour.getTag())} : new ICondition[]{};
-                    TFMGUtils.conditionalCrafting(p, TFMG.asResource("crafting/materials/" + c.getName() + "_from_other_multimeter"), builder, conditions);
-                })
+                            .unlockedBy("has_multimeter", RegistrateRecipeProvider.has(Items.MULTIMETERS.tag))
+							.save(p.withConditions(conditions), TFMG.asResource("crafting/materials/" + c.getName() + "_from_other_multimeter"))
+                )
                 .register();
     });
 
@@ -406,98 +409,12 @@ public class TFMGItems {
         return REGISTRATE.item(name, p -> new ArmorItem(material, slot, p)).register();
     }
 
-    private static List<ItemEntry<?>> toolset(String material, Tier tier) {
-
-        List<ItemEntry<?>> list = new ArrayList<>();
-
-        list.add(REGISTRATE.item(material + "_sword", p -> new SwordItem(tier, p))
-                .properties(p -> p.attributes(SwordItem.createAttributes(tier, 2, -2.4F)))
-                .tag(ItemTags.SWORDS, Tags.Items.MELEE_WEAPON_TOOLS)
-                .model((ctx, prov) -> prov
-                        .withExistingParent(material + "_sword", "minecraft:item/handheld")
-                        .texture("layer0", "tfmg:item/" + material + "_sword"))
-                .register());
-        list.add(REGISTRATE.item(material + "_pickaxe", p -> new PickaxeItem(tier, p))
-                .properties(p -> p.attributes(PickaxeItem.createAttributes(tier, 1, 1)))
-                .tag(ItemTags.PICKAXES, ItemTags.CLUSTER_MAX_HARVESTABLES, Tags.Items.MINING_TOOL_TOOLS)
-                .model((ctx, prov) -> prov
-                        .withExistingParent(material + "_pickaxe", "minecraft:item/handheld")
-                        .texture("layer0", "tfmg:item/" + material + "_pickaxe"))
-                .register());
-        list.add(REGISTRATE.item(material + "_axe", p -> new AxeItem(tier, p))
-                .properties(p -> p.attributes(AxeItem.createAttributes(tier, 6.0F, -3.2F)))
-                .tag(ItemTags.AXES, Tags.Items.MELEE_WEAPON_TOOLS)
-                .model((ctx, prov) -> prov
-                        .withExistingParent(material + "_axe", "minecraft:item/handheld")
-                        .texture("layer0", "tfmg:item/" + material + "_axe"))
-                .register());
-        list.add(REGISTRATE.item(material + "_shovel", p -> new ShovelItem(tier, p))
-                .properties(p -> p.attributes(ShovelItem.createAttributes(tier, 1, 1)))
-                .tag(ItemTags.SHOVELS)
-                .model((ctx, prov) -> prov
-                        .withExistingParent(material + "_shovel", "minecraft:item/handheld")
-                        .texture("layer0", "tfmg:item/" + material + "_shovel"))
-                .register());
-        list.add(REGISTRATE.item(material + "_hoe", p -> new HoeItem(tier, p))
-                .properties(p -> p.attributes(HoeItem.createAttributes(tier, 1, 1)))
-                .tag(ItemTags.HOES)
-                .model((ctx, prov) -> prov
-                        .withExistingParent(material + "_hoe", "minecraft:item/handheld")
-                        .texture("layer0", "tfmg:item/" + material + "_hoe"))
-                .register());
-
-
-        return list;
-    }
-
     public static final ItemEntry<SteelVerticalGearboxItem> STEEL_VERTICAL_GEARBOX =
             REGISTRATE.item("steel_vertical_gearbox", SteelVerticalGearboxItem::new)
                     .model(AssetLookup.customBlockItemModel("steel_gearbox", "item_vertical"))
                     .lang("Steel Vertical Gearbox")
                     .register();
 
-
-    private static List<ItemEntry<?>> leadToolset() {
-        List<ItemEntry<?>> list = new ArrayList<>();
-        list.add(REGISTRATE.item("lead_sword", p -> new LeadSwordItem(TFMGTiers.LEAD, p))
-                .properties(p -> p.attributes(SwordItem.createAttributes(TFMGTiers.LEAD, 2, -2.4F)))
-                .tag(ItemTags.SWORDS, Tags.Items.MELEE_WEAPON_TOOLS)
-                .model((ctx, prov) -> prov
-                        .withExistingParent("lead_sword", "minecraft:item/handheld")
-                        .texture("layer0", "tfmg:item/lead_sword"))
-                .register());
-        list.add(REGISTRATE.item("lead_pickaxe", p -> new PickaxeItem(TFMGTiers.LEAD, p))
-                .properties(p -> p.attributes(AxeItem.createAttributes(TFMGTiers.LEAD, 1,1)))
-                .tag(ItemTags.PICKAXES, ItemTags.CLUSTER_MAX_HARVESTABLES, Tags.Items.MINING_TOOL_TOOLS)
-                .model((ctx, prov) -> prov
-                        .withExistingParent("lead_pickaxe", "minecraft:item/handheld")
-                        .texture("layer0", "tfmg:item/lead_pickaxe"))
-                .register());
-        list.add(REGISTRATE.item("lead_axe", p -> new LeadAxeItem(TFMGTiers.LEAD, p))
-                .properties(p -> p.attributes(AxeItem.createAttributes(TFMGTiers.LEAD, 6.0F, -3.2F)))
-                .tag(ItemTags.AXES, Tags.Items.MELEE_WEAPON_TOOLS)
-                .model((ctx, prov) -> prov
-                        .withExistingParent("lead_axe", "minecraft:item/handheld")
-                        .texture("layer0", "tfmg:item/lead_axe"))
-                .register());
-        list.add(REGISTRATE.item("lead_shovel", p -> new ShovelItem(TFMGTiers.LEAD, p))
-                .properties(p -> p.attributes(AxeItem.createAttributes(TFMGTiers.LEAD, 1,1)))
-                .tag(ItemTags.SHOVELS)
-                .model((ctx, prov) -> prov
-                        .withExistingParent("lead_shovel", "minecraft:item/handheld")
-                        .texture("layer0", "tfmg:item/lead_shovel"))
-                .register());
-        list.add(REGISTRATE.item("lead_hoe", p -> new HoeItem(TFMGTiers.LEAD, p))
-                .properties(p -> p.attributes(AxeItem.createAttributes(TFMGTiers.LEAD, 1,1)))
-                .tag(ItemTags.HOES)
-                .model((ctx, prov) -> prov
-                        .withExistingParent("lead_hoe", "minecraft:item/handheld")
-                        .texture("layer0", "tfmg:item/lead_hoe"))
-                .register());
-
-
-        return list;
-    }
 
 
     @SafeVarargs

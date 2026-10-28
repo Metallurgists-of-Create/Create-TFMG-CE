@@ -265,7 +265,7 @@ public class BlastFurnaceOutputBlockEntity extends SmartBlockEntity implements I
     }
 
     public void makeParticles() {
-        if (level == null)
+        if (level == null || this.multiblock.getTopHatchBlockEntity() != null)
             return;
         BlockPos pos = getBlockPos().above().relative(getBlockState().getValue(FACING).getOpposite());
 		TFMGUtils.spawnSmokeParticles(level, Vec3.atLowerCornerWithOffset(pos, 0.2, 0, 0.2), 0.6f);

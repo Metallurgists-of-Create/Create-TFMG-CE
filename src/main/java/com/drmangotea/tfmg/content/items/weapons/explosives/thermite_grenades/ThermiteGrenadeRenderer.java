@@ -1,6 +1,7 @@
 package com.drmangotea.tfmg.content.items.weapons.explosives.thermite_grenades;
 
 
+import com.drmangotea.tfmg.base.annotation.NothingNullByDefault;
 import com.drmangotea.tfmg.registry.TFMGItems;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
@@ -12,6 +13,7 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemDisplayContext;
+import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
@@ -19,6 +21,7 @@ import net.neoforged.api.distmarker.OnlyIn;
 import static com.drmangotea.tfmg.content.items.weapons.explosives.thermite_grenades.ThermiteGrenade.ChemicalColor;
 
 @OnlyIn(Dist.CLIENT)
+@NothingNullByDefault
 public class ThermiteGrenadeRenderer extends EntityRenderer<ThermiteGrenade> {
     private final ItemRenderer itemRenderer;
     private final ChemicalColor chemicalColor;
@@ -42,11 +45,13 @@ public class ThermiteGrenadeRenderer extends EntityRenderer<ThermiteGrenade> {
         pose.mulPose(this.entityRenderDispatcher.cameraOrientation());
         pose.mulPose(Axis.YP.rotationDegrees(180.0F));
 
-		switch (chemicalColor) {
-			case GREEN -> this.itemRenderer.renderStatic(TFMGItems.ZINC_GRENADE.get().getDefaultInstance(), ItemDisplayContext.GROUND, light, OverlayTexture.NO_OVERLAY, pose, bufferSource, grenade.level(), grenade.getId());
-			case BLUE -> this.itemRenderer.renderStatic(TFMGItems.COPPER_GRENADE.get().getDefaultInstance(), ItemDisplayContext.GROUND, light, OverlayTexture.NO_OVERLAY, pose, bufferSource, grenade.level(), grenade.getId());
-			case BASE -> this.itemRenderer.renderStatic(TFMGItems.THERMITE_GRENADE.get().getDefaultInstance(), ItemDisplayContext.GROUND, light, OverlayTexture.NO_OVERLAY, pose, bufferSource, grenade.level(), grenade.getId());
-		}
+		ItemStack stack = switch (chemicalColor) {
+			case GREEN -> TFMGItems.ZINC_GRENADE.get().getDefaultInstance();
+			case BLUE -> TFMGItems.COPPER_GRENADE.get().getDefaultInstance();
+			case BASE -> TFMGItems.THERMITE_GRENADE.get().getDefaultInstance();
+		};
+		
+		itemRenderer.renderStatic(stack, ItemDisplayContext.GROUND, light, OverlayTexture.NO_OVERLAY, pose, bufferSource, grenade.level(), grenade.getId());
 
         pose.popPose();
         super.render(grenade, entityYaw, partialTick, pose, bufferSource, light);

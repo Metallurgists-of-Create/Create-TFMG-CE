@@ -3,15 +3,12 @@ package com.drmangotea.tfmg.base;
 import com.drmangotea.tfmg.TFMGRegistries;
 import com.drmangotea.tfmg.base.lang.TFMGLang;
 import com.drmangotea.tfmg.base.lang.TFMGTexts;
-import com.drmangotea.tfmg.base.spark.ElectricSparkParticle;
 import com.drmangotea.tfmg.base.spark.Spark;
 import com.drmangotea.tfmg.content.electricity.experimental.content.power_transmission.wires.cable_type.CableType;
 import com.drmangotea.tfmg.content.electricity.experimental.IRealisticElectric;
 import com.drmangotea.tfmg.content.electricity.experimental.simulation.nodes.ConnectingElectricalNode;
 import com.drmangotea.tfmg.content.machinery.vat.electrode_holder.electrode.Electrode;
-import com.drmangotea.tfmg.mixin.accessor.ShapedRecipeBuilderAccessor;
 import com.drmangotea.tfmg.registry.TFMGEntityTypes;
-import com.drmangotea.tfmg.mixin.accessor.ShapelessRecipeBuilderAccessor;
 import com.simibubi.create.content.fluids.tank.FluidTankBlockEntity;
 import com.simibubi.create.foundation.fluid.SmartFluidTank;
 import com.simibubi.create.foundation.item.SmartInventory;
@@ -21,21 +18,11 @@ import net.createmod.catnip.outliner.Outliner;
 import net.createmod.catnip.theme.Color;
 import net.createmod.ponder.api.level.PonderLevel;
 import net.minecraft.ChatFormatting;
-import net.minecraft.advancements.Advancement;
-import net.minecraft.advancements.AdvancementRequirements;
-import net.minecraft.advancements.AdvancementRewards;
-import net.minecraft.advancements.critereon.RecipeUnlockedTrigger;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.data.recipes.RecipeBuilder;
-import net.minecraft.data.recipes.RecipeOutput;
-import net.minecraft.data.recipes.ShapedRecipeBuilder;
-import net.minecraft.data.recipes.ShapelessRecipeBuilder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
@@ -46,15 +33,9 @@ import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.ShapedRecipe;
-import net.minecraft.world.item.crafting.ShapedRecipePattern;
-import net.minecraft.world.item.crafting.ShapelessRecipe;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.common.conditions.ICondition;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.items.IItemHandler;
@@ -175,40 +156,6 @@ public class TFMGUtils {
         s = StringUtils.normalizeSpace(s);
         return s;
     }
-
-    @Deprecated(forRemoval = true, since = "1.2.5")
-    public static void spawnElectricParticles(Level level, BlockPos pos) {
-        spawnElectricParticles(level, new Vec3(pos.getX(), pos.getY(), pos.getZ()));
-    }
-
-    @Deprecated(forRemoval = true, since = "1.2.5")
-    public static void spawnElectricParticles(Level level, Vec3 pos) {
-        if (!(level instanceof ServerLevel serverLevel)) {
-            return;
-        }
-
-        RandomSource r = serverLevel.getRandom();
-
-        for (int i = 0; i < r.nextInt(40); i++) {
-            double x = (r.nextDouble() - 0.5) * 0.02;
-            double y = (r.nextDouble() - 0.5) * 0.02;
-            double z = (r.nextDouble() - 0.5) * 0.02;
-
-            ParticleOptions data = new ElectricSparkParticle.Data();
-
-            serverLevel.sendParticles(
-                    data,
-                    pos.x,
-                    pos.y + 0.5,
-                    pos.z,
-                    1,
-                    x,
-                    y,
-                    z,
-                    0.02
-            );
-        }
-    }
 	
 	public static void spawnSmokeParticles(Level level, BlockPos pos) {
 		spawnSmokeParticles(level, Vec3.atLowerCornerOf(pos), 1);
@@ -300,23 +247,6 @@ public class TFMGUtils {
 		));
 	}
 	
-	@Deprecated(since = "1.2.5")
-	public static void createStorageTooltip(BlockEntity be, List<Component> tooltip) {
-        createFluidTooltip(be, tooltip);
-        createItemTooltip(be, tooltip);
-    }
-
-    /// makes a goggle tooltip for every tank a block entity has
-	@Deprecated(since = "1.2.5")
-    public static boolean createFluidTooltip(BlockEntity be, List<Component> tooltip) {
-        if (be.getLevel() == null)
-            return false;
-
-        IFluidHandler handler = be.getLevel().getCapability(Capabilities.FluidHandler.BLOCK, be.getBlockPos(), null);
-
-		return createFluidTooltip(tooltip, handler);
-    }
-	
 	public static LangBuilder fluidOutOfCapacity(int volume, ChatFormatting style, int capacity) {
 		LangBuilder mb = CreateLang.translate("generic.unit.millibuckets");
 		
@@ -373,16 +303,6 @@ public class TFMGUtils {
 		}
 		
 		return true;
-	}
-	
-	@Deprecated(since = "1.2.5")
-	public static boolean createItemTooltip(BlockEntity be, List<Component> tooltip) {
-		if (be.getLevel() == null)
-			return false;
-		
-		IItemHandler handler = be.getLevel().getCapability(Capabilities.ItemHandler.BLOCK, be.getBlockPos(), null);
-		
-		return createItemTooltip(tooltip, handler);
 	}
 	
 	/// Populates a tooltip with information about the items contained
@@ -462,10 +382,6 @@ public class TFMGUtils {
             tank.setFluid(new FluidStack(resource.getFluid(), Math.min(tank.getFluidAmount() + resource.getAmount(), tank.getCapacity())));
     }
 
-    public static Iterable<BlockPos> AABBtoBlockPos(AABB aabb) {
-        return BlockPos.betweenClosed(new BlockPos((int) aabb.minX, (int) aabb.minY, (int) aabb.minZ), new BlockPos((int) aabb.maxX, (int) aabb.maxY, (int) aabb.maxZ));
-    }
-
     /// //////////////////////
 
     public static Electrode getElectrode(ResourceLocation key) {
@@ -523,29 +439,5 @@ public class TFMGUtils {
         int day = date.getDayOfMonth();
         int month = date.getMonthValue();
         return month == 4 && day == 1;
-    }
-
-    //Vanilla builders don't support saving with conditions
-    public static void conditionalCrafting(RecipeOutput recipeOutput, ResourceLocation id, RecipeBuilder builder, ICondition... conditions) {
-        if (builder instanceof ShapelessRecipeBuilder shapelessRecipeBuilder) {
-            ShapelessRecipeBuilderAccessor accessed = (ShapelessRecipeBuilderAccessor) shapelessRecipeBuilder;
-            if (accessed.getCriteria().isEmpty()) {
-                throw new IllegalStateException("No way of obtaining recipe " + id);
-            }
-            Advancement.Builder advancement$builder = recipeOutput.advancement().addCriterion("has_the_recipe", RecipeUnlockedTrigger.unlocked(id)).rewards(AdvancementRewards.Builder.recipe(id)).requirements(AdvancementRequirements.Strategy.OR);
-            accessed.getCriteria().forEach(advancement$builder::addCriterion);
-            ShapelessRecipe shapelessrecipe = new ShapelessRecipe(Objects.requireNonNullElse(accessed.getGroup(), ""), RecipeBuilder.determineBookCategory(accessed.getCategory()), accessed.getResultStack(), accessed.getIngredients());
-            recipeOutput.accept(id, shapelessrecipe, advancement$builder.build(id.withPrefix("recipes/" + accessed.getCategory().getFolderName() + "/")), conditions);
-        } else if (builder instanceof ShapedRecipeBuilder shapedRecipeBuilder) {
-            ShapedRecipeBuilderAccessor accessed = (ShapedRecipeBuilderAccessor) shapedRecipeBuilder;
-            if (accessed.getCriteria().isEmpty()) {
-                throw new IllegalStateException("No way of obtaining recipe " + id);
-            }
-            ShapedRecipePattern pattern = ShapedRecipePattern.of(accessed.getKey(), accessed.getRows());
-            Advancement.Builder advancement$builder = recipeOutput.advancement().addCriterion("has_the_recipe", RecipeUnlockedTrigger.unlocked(id)).rewards(AdvancementRewards.Builder.recipe(id)).requirements(AdvancementRequirements.Strategy.OR);
-            accessed.getCriteria().forEach(advancement$builder::addCriterion);
-            ShapedRecipe shapedrecipe = new ShapedRecipe(Objects.requireNonNullElse(accessed.getGroup(), ""), RecipeBuilder.determineBookCategory(accessed.getCategory()), pattern, accessed.getResultStack(), accessed.showNotification());
-            recipeOutput.accept(id, shapedrecipe, advancement$builder.build(id.withPrefix("recipes/" + accessed.getCategory().getFolderName() + "/")), conditions);
-        }
     }
 }

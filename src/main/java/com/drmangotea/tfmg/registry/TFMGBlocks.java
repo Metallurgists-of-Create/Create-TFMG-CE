@@ -1,6 +1,5 @@
 package com.drmangotea.tfmg.registry;
 
-
 import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.base.*;
 import com.drmangotea.tfmg.base.blocks.TFMGDirectionalBlock;
@@ -12,9 +11,9 @@ import com.drmangotea.tfmg.content.decoration.*;
 import com.drmangotea.tfmg.content.decoration.concrete.*;
 import com.drmangotea.tfmg.content.decoration.doors.TFMGSlidingDoorBlock;
 import com.drmangotea.tfmg.content.decoration.kinetics.cogs.TFMGCogWheelBlock;
-import com.drmangotea.tfmg.content.decoration.kinetics.cogs.TFMGCogwheelBlockItem;
 import com.drmangotea.tfmg.content.decoration.kinetics.flywheels.TFMGFlywheelBlock;
 import com.drmangotea.tfmg.content.decoration.kinetics.gearbox.SteelGearboxBlock;
+import com.drmangotea.tfmg.content.decoration.pipes.TFMGPipes;
 import com.drmangotea.tfmg.content.decoration.tanks.TFMGTankGenerator;
 import com.drmangotea.tfmg.content.decoration.tanks.aluminum.AluminumFluidTankModel;
 import com.drmangotea.tfmg.content.decoration.tanks.aluminum.AluminumTankBlock;
@@ -136,7 +135,6 @@ import com.simibubi.create.content.decoration.slidingDoor.SlidingDoorBlock;
 import com.simibubi.create.content.fluids.tank.FluidTankMovementBehavior;
 import com.simibubi.create.content.kinetics.gearbox.GearboxBlock;
 import com.simibubi.create.content.kinetics.motor.CreativeMotorGenerator;
-import com.simibubi.create.content.kinetics.simpleRelays.BracketedKineticBlockModel;
 import com.simibubi.create.foundation.block.DyedBlockList;
 import com.simibubi.create.foundation.block.connected.HorizontalCTBehaviour;
 import com.simibubi.create.foundation.data.*;
@@ -148,9 +146,11 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.recipes.RecipeCategory;
+import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.data.recipes.ShapelessRecipeBuilder;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.ColorRGBA;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.block.*;
@@ -181,10 +181,6 @@ import static com.simibubi.create.foundation.data.TagGen.*;
 
 @SuppressWarnings({"unused","removal"})
 public class TFMGBlocks {
-    // I see no reason for this here
-    @Deprecated(since = "1.2.6", forRemoval = true)
-    public static final String[] TFMG_DECOR_METALS = {"steel", "aluminum", "lead", "cast_iron"};
-
     static {
         REGISTRATE.setCreativeTab(TFMGCreativeTabs.TFMG_MAIN);
     }
@@ -1535,55 +1531,15 @@ public class TFMGBlocks {
 
     //------------------COGWHEELS------------------//
 
-    public static final BlockEntry<TFMGCogWheelBlock> STEEL_COGWHEEL =
-            REGISTRATE.block("steel_cogwheel", TFMGCogWheelBlock::small)
-                    .initialProperties(SharedProperties::stone)
-                    .properties(p -> p.sound(SoundType.NETHERITE_BLOCK))
-                    .transform(TFMGStress.setNoImpact())
-                    .transform(axeOrPickaxe())
-                    .blockstate(BlockStateGen.axisBlockProvider(false))
-                    .onRegister(CreateRegistrate.blockModel(() -> BracketedKineticBlockModel::new))
-                    .item(TFMGCogwheelBlockItem::new)
-                    .build()
-                    .register();
-
-    public static final BlockEntry<TFMGCogWheelBlock> LARGE_STEEL_COGWHEEL =
-            REGISTRATE.block("large_steel_cogwheel", TFMGCogWheelBlock::large)
-                    .initialProperties(SharedProperties::stone)
-                    .properties(p -> p.sound(SoundType.NETHERITE_BLOCK))
-                    .transform(axeOrPickaxe())
-                    .transform(TFMGStress.setNoImpact())
-                    .blockstate(BlockStateGen.axisBlockProvider(false))
-                    .onRegister(CreateRegistrate.blockModel(() -> BracketedKineticBlockModel::new))
-                    .item(TFMGCogwheelBlockItem::new)
-                    .build()
-                    .register();
-    //
-    public static final BlockEntry<TFMGCogWheelBlock> ALUMINUM_COGWHEEL =
-            REGISTRATE.block("aluminum_cogwheel", TFMGCogWheelBlock::small)
-                    .initialProperties(SharedProperties::stone)
-                    .properties(p -> p.sound(SoundType.COPPER))
-                    .addLayer(() -> RenderType::cutoutMipped)
-                    .transform(TFMGStress.setNoImpact())
-                    .transform(axeOrPickaxe())
-                    .blockstate(BlockStateGen.axisBlockProvider(false))
-                    .onRegister(CreateRegistrate.blockModel(() -> BracketedKineticBlockModel::new))
-                    .item(TFMGCogwheelBlockItem::new)
-                    .build()
-                    .register();
-
-    public static final BlockEntry<TFMGCogWheelBlock> LARGE_ALUMINUM_COGWHEEL =
-            REGISTRATE.block("large_aluminum_cogwheel", TFMGCogWheelBlock::large)
-                    .initialProperties(SharedProperties::stone)
-                    .properties(p -> p.sound(SoundType.COPPER))
-                    .addLayer(() -> RenderType::cutoutMipped)
-                    .transform(axeOrPickaxe())
-                    .transform(TFMGStress.setNoImpact())
-                    .blockstate(BlockStateGen.axisBlockProvider(false))
-                    .onRegister(CreateRegistrate.blockModel(() -> BracketedKineticBlockModel::new))
-                    .item(TFMGCogwheelBlockItem::new)
-                    .build()
-                    .register();
+    public static final BlockEntry<TFMGCogWheelBlock>
+		STEEL_COGWHEEL = cogwheel("steel_cogwheel", false, CommonMetal.STEEL.ingots)
+			.properties(p -> p.sound(SoundType.NETHERITE_BLOCK)).register(),
+		LARGE_STEEL_COGWHEEL = cogwheel("large_steel_cogwheel", true, CommonMetal.STEEL.ingots)
+			.properties(p -> p.sound(SoundType.NETHERITE_BLOCK)).register(),
+		ALUMINUM_COGWHEEL = cogwheel("aluminum_cogwheel", false, CommonMetal.ALUMINUM.ingots)
+			.properties(p -> p.sound(SoundType.COPPER)).addLayer(() -> RenderType::cutoutMipped).register(),
+		LARGE_ALUMINUM_COGWHEEL = cogwheel("large_aluminum_cogwheel", true, CommonMetal.ALUMINUM.ingots)
+			.properties(p -> p.sound(SoundType.COPPER)).addLayer(() -> RenderType::cutoutMipped).register();
 	
     //------------------STORAGE_BLOCKS------------------//
     public static final BlockEntry<Block> STEEL_BLOCK = REGISTRATE.block("steel_block", Block::new)
@@ -1741,8 +1697,12 @@ public class TFMGBlocks {
             .tag(BlockTags.BEACON_BASE_BLOCKS)
             .blockstate(simpleCubeAll("laminated_magnetic_alloy_block"))
             .tag(BlockTags.NEEDS_IRON_TOOL)
-            .item()
-            .build()
+            .item().build()
+			.recipe((ctx, p) -> p.square(
+				DataIngredient.ingredient(Ingredient.of(TFMGItems.MAGNETIC_ALLOY_SHEET), TFMGItems.MAGNETIC_ALLOY_SHEET),
+				RecipeCategory.MISC,
+				ctx, false
+			))
             .register();
 
     public static final BlockEntry<ColoredFallingBlock> CEMENT = REGISTRATE.block("cement", p -> new ColoredFallingBlock(new ColorRGBA(-8356741), p))
@@ -1954,11 +1914,11 @@ public class TFMGBlocks {
 
     //------------------FLYWHEELS------------------//
     public static final BlockEntry<TFMGFlywheelBlock>
-            STEEL_FLYWHEEL = flywheel("steel", TFMGFlywheelBlock::steel),
-            LEAD_FLYWHEEL = flywheel("lead", TFMGFlywheelBlock::lead),
-            CAST_IRON_FLYWHEEL = flywheel("cast_iron", TFMGFlywheelBlock::cast_iron),
-            ALUMINUM_FLYWHEEL = flywheel("aluminum", TFMGFlywheelBlock::aluminum),
-            NICKEL_FLYWHEEL = flywheel("nickel", TFMGFlywheelBlock::nickel);
+            STEEL_FLYWHEEL = flywheel("steel", CommonMetal.STEEL.ingots, TFMGFlywheelBlock::steel),
+            LEAD_FLYWHEEL = flywheel("lead", CommonMetal.LEAD.ingots, TFMGFlywheelBlock::lead),
+            CAST_IRON_FLYWHEEL = flywheel("cast_iron", TFMGTags.Items.INGOTS_CAST_IRON.tag, TFMGFlywheelBlock::cast_iron),
+            ALUMINUM_FLYWHEEL = flywheel("aluminum", CommonMetal.ALUMINUM.ingots, TFMGFlywheelBlock::aluminum),
+            NICKEL_FLYWHEEL = flywheel("nickel", CommonMetal.NICKEL.ingots, TFMGFlywheelBlock::nickel);
 
     public static String[] DECOR_METALS = {"steel", "aluminum", "cast_iron", "lead", "nickel", "constantan", "copper", "zinc", "brass"};
 
@@ -1990,12 +1950,13 @@ public class TFMGBlocks {
                 .recipe((c, p) -> {
                     p.stonecutting(DataIngredient.tag(CommonMetal.ALUMINUM.ingots), RecipeCategory.BUILDING_BLOCKS, c, 2);
                     boolean optional = colour.getId() > 15;
-                    var builder = ShapelessRecipeBuilder.shapeless(RecipeCategory.DECORATIONS, c.get())
+					ICondition[] conditions = optional ? new ICondition[]{new TagFilledCondition(colour.getTag())} : new ICondition[]{};
+                    ShapelessRecipeBuilder.shapeless(RecipeCategory.DECORATIONS, c.get())
                             .requires(colour.getTag())
                             .requires(Items.CAUTION_BLOCKS.tag)
-                            .unlockedBy("has_caution_block", RegistrateRecipeProvider.has(Items.CAUTION_BLOCKS.tag));
-                    ICondition[] conditions = optional ? new ICondition[]{new TagFilledCondition(colour.getTag())} : new ICondition[]{};
-                    TFMGUtils.conditionalCrafting(p, TFMG.asResource("crafting/materials/" + c.getName() + "_from_other_caution_block"), builder, conditions);
+                            .unlockedBy("has_caution_block", RegistrateRecipeProvider.has(Items.CAUTION_BLOCKS.tag))
+							.save(p.withConditions(conditions), TFMG.asResource("crafting/materials/" + c.getName() + "_from_other_caution_block"));
+                    //TFMGUtils.conditionalCrafting(p, , builder, conditions);
                 })
                 .item()
                 .tag(Items.CAUTION_BLOCKS.tag)

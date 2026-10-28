@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@SuppressWarnings("removal")
 public class ComponentRemapper {
     public static boolean engineCylinder(ItemStack stack, RegistryAccess registryAccess) {
         if (!stack.has(TFMGDataComponents.FUELS)) {
@@ -35,7 +36,6 @@ public class ComponentRemapper {
         }
         stack.set(TFMGDataComponents.ENGINE_CYLINDER, new CylinderFuels(validKeys));
         stack.remove(TFMGDataComponents.FUELS);
-        stack.remove(TFMGDataComponents.FUEL_TAGS);
         return true;
     }
 

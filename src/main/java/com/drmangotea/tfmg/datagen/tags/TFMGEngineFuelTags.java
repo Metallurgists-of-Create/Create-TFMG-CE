@@ -23,5 +23,8 @@ public class TFMGEngineFuelTags extends TagsProvider<EngineFuelType> {
     protected void addTags(HolderLookup.Provider provider) {
         tag(TFMGTags.EngineFuel.LARGE_ENGINE.tag)
                 .add(TFMGEngineFuelTypes.DIESEL, TFMGEngineFuelTypes.KEROSENE, TFMGEngineFuelTypes.NAPHTHA, TFMGEngineFuelTypes.FURNACE_GAS);
+
+        tag(TFMGTags.EngineFuel.SIMPLE_LARGE_ENGINE.tag)
+                .add(TFMGEngineFuelTypes.DIESEL, TFMGEngineFuelTypes.KEROSENE, TFMGEngineFuelTypes.NAPHTHA, TFMGEngineFuelTypes.FURNACE_GAS);
     }
 }

@@ -9,7 +9,10 @@ import com.drmangotea.tfmg.datagen.TFMGDatagen;
 import com.drmangotea.tfmg.base.fluid.TFMGFluidInteractions;
 import com.drmangotea.tfmg.config.TFMGConfigs;
 import com.drmangotea.tfmg.content.decoration.pipes.TFMGPipes;
+import com.drmangotea.tfmg.content.electricity.base.ElectricNetworkManager;
+import com.drmangotea.tfmg.base.fire.TFMGColoredFires;
 import com.drmangotea.tfmg.content.world.LevelDataHandler;
+import com.drmangotea.tfmg.datagen.TFMGDatagen;
 import com.drmangotea.tfmg.registry.*;
 import com.drmangotea.tfmg.worldgen.TFMGFeatures;
 import com.mojang.logging.LogUtils;
@@ -49,8 +52,6 @@ public class TFMG {
     public static final NetworkDataManager ELECTRICAL_NETWORK_DATA = new NetworkDataManager();
 
     public static final Logger LOGGER = LogUtils.getLogger();
-
-    //public static final OilDataManager DEPOSITS = new OilDataManager();
 
     public static final TFMGRegistrate REGISTRATE = TFMGRegistrate.create(MOD_ID)
             .setTooltipModifierFactory(item ->

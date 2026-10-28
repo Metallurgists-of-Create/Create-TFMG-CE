@@ -18,6 +18,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 
 @NothingNullByDefault
 public class DebugCinderBlockItem extends Item {
@@ -35,17 +36,18 @@ public class DebugCinderBlockItem extends Item {
         BlockPos pos = context.getClickedPos();
         Level level = context.getLevel();
 		Player player = context.getPlayer();
+		BlockEntity blockEntity = level.getBlockEntity(pos);
 		
-		if (level.getBlockEntity(pos) instanceof CableConnectorBlockEntity be) {
+		if (blockEntity instanceof CableConnectorBlockEntity be) {
 			TFMG.LOGGER.info("{}:\n {}", pos, be.connections);
 		}
 
-        if (level.getBlockEntity(pos) instanceof ThreePhaseGeneratorBlockEntity be) {
+        if (blockEntity instanceof ThreePhaseGeneratorBlockEntity be) {
             RealElectricalNetwork network = RealElectricNetworkManager.getNetwork(be.getLevel());
 
 
         }
-        if (level.getBlockEntity(pos) instanceof DebugResistorBlockEntity be) {
+        if (blockEntity instanceof DebugResistorBlockEntity be) {
 
             RealElectricalNetwork network = RealElectricNetworkManager.getNetwork(be.getWorld());
 
@@ -53,7 +55,7 @@ public class DebugCinderBlockItem extends Item {
 
             return InteractionResult.SUCCESS;
         }
-        if (level.getBlockEntity(pos) instanceof IRealisticElectric be&&false) {
+        if (blockEntity instanceof IRealisticElectric be&&false) {
             //if (context.getPlayer() instanceof ServerPlayer serverPlayer) {
             //    NetworkLoadPacket packet = new NetworkLoadPacket(RealElectricNetworkManager.networks.values().stream().toList());
             //    CatnipServices.NETWORK.sendToClient(serverPlayer, packet);
@@ -84,7 +86,7 @@ public class DebugCinderBlockItem extends Item {
 		}
 
 
-        if (player != null && level.getBlockEntity(pos) instanceof IElectric be) {
+        if (player != null && blockEntity instanceof IElectric be) {
 			if(player.isCrouching()){
 				be.recalculateNetworkResistance();
 			} else {
@@ -93,7 +95,7 @@ public class DebugCinderBlockItem extends Item {
 			}
         }
 
-        if (level.getBlockEntity(pos) instanceof SteelTankBlockEntity be) {
+        if (blockEntity instanceof SteelTankBlockEntity be) {
             if (player != null && player.isCrouching() && be.getLevel() instanceof Level pLevel) {
                 SteelTankBlock.updateTowerState(pLevel, be.getBlockPos(), false, false);
             }

@@ -55,12 +55,6 @@ public class TFMGDataComponents {
 	 */
 	@Deprecated(since = "1.2.4", forRemoval = true)
 	public static final DataComponentType<CompoundTag> FUELS = register("fuels", CompoundTag.CODEC, ByteBufCodecs.COMPOUND_TAG);
-	/**
-	 * This exists purely so Chemica can function as it applies this component to its engine cylinders when it builds the creative tab.
-	 * @deprecated Use {@link com.drmangotea.tfmg.registry.TFMGDataComponents#ENGINE_CYLINDER}.
-	 */
-	@Deprecated(since = "1.2.4", forRemoval = true)
-	public static final DataComponentType<CompoundTag> FUEL_TAGS = register("fuel_tags", CompoundTag.CODEC, ByteBufCodecs.COMPOUND_TAG);
 
 	private static <T> DataComponentType<T> register(String name, Codec<T> persistent, StreamCodec<? super RegistryFriendlyByteBuf, T> network) {
 		DataComponentType<T> type = new DataComponentType.Builder<T>().persistent(persistent).networkSynchronized(network).build();

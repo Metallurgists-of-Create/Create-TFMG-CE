@@ -3,6 +3,7 @@ package com.drmangotea.tfmg.content.items.weapons.flamethrover;
 import com.drmangotea.tfmg.TFMGClient;
 import com.drmangotea.tfmg.TFMGRegistries;
 import com.drmangotea.tfmg.base.TFMGUtils;
+import com.drmangotea.tfmg.base.annotation.NothingNullByDefault;
 import com.drmangotea.tfmg.base.spark.DryIceFlake;
 import com.drmangotea.tfmg.base.spark.LithiumSpark;
 import com.drmangotea.tfmg.base.spark.Spark;
@@ -37,6 +38,7 @@ import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import org.jetbrains.annotations.Nullable;
 
+@NothingNullByDefault
 public class FlamethrowerItem extends Item implements CustomArmPoseItem {
     public static final int FUEL_CAPACITY = 4000;
 
@@ -198,19 +200,6 @@ public class FlamethrowerItem extends Item implements CustomArmPoseItem {
     public static FlamethrowerFuelType getFuel(RegistryAccess registryAccess, ItemStack heldStack) {
         var type = heldStack.getOrDefault(TFMGDataComponents.FLAMETHROWER, FlamethrowerFuel.EMPTY).getFuelType(registryAccess);
         return type.orElse(registryAccess.registryOrThrow(TFMGRegistries.FLAMETHROWER_FUEL_TYPE).get(TFMGFlamethrowerFuelTypes.FALLBACK));
-    }
-
-    private boolean remapOldComponents(ItemStack stack, RegistryAccess registryAccess) {
-        if (stack.has(TFMGDataComponents.FLAMETHROWER_FUEL) && stack.has(TFMGDataComponents.AMOUNT)) {
-            int fuelAmount = stack.getOrDefault(TFMGDataComponents.AMOUNT, 0);
-            String fuelType = stack.getOrDefault(TFMGDataComponents.FLAMETHROWER_FUEL, "fallback");
-            if (fuelType.isEmpty()) fuelType = "fallback";
-            FlamethrowerFuel fuel = FlamethrowerFuel.createForLegacy(registryAccess, fuelType, fuelAmount);
-            stack.set(TFMGDataComponents.FLAMETHROWER, fuel);
-            stack.remove(TFMGDataComponents.FLAMETHROWER_FUEL); stack.remove(TFMGDataComponents.AMOUNT);
-            return true;
-        }
-        return false;
     }
 
     @Override

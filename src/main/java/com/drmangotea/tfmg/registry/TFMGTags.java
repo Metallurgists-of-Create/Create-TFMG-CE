@@ -89,7 +89,8 @@ public class TFMGTags {
         ORES_LEAD(COMMON, "ores/lead"),
         ORES_NICKEL(COMMON, "ores/nickel"),
         ORES_LITHIUM(COMMON, "ores/lithium"),
-        PLATES_CAST_IRON(COMMON, "plates/cast_iron"),
+		PLATES_CAST_IRON(COMMON, "plates/cast_iron"),
+		PLATES_PLASTIC(COMMON, "plates/plastic"),
         RAW_LITHIUM(COMMON, "raw_materials/lithium"),
         RODS_STEEL(COMMON, "rods/steel"),
         SPOOLS,
@@ -150,12 +151,26 @@ public class TFMGTags {
         LUBRICATION_OIL(COMMON),
         NAPHTHA(COMMON),
         CRUDE_OIL(COMMON),
-        MOLTEN_STEEL(COMMON),
+
         FUEL(COMMON),
         ETHYLENE(COMMON),
         PROPYLENE(COMMON),
 
+        BUTANE(COMMON),
+        PROPANE(COMMON),
+        HYDROGEN(COMMON),
+        NEON(COMMON),
+        CARBON_DIOXIDE(COMMON),
+
+
         SULFURIC_ACID(COMMON),
+
+        MOLTEN_STEEL(COMMON),
+        MOLTEN_SLAG(COMMON),
+        MOLTEN_PLASTIC(COMMON),
+        LIQUID_SILICON(COMMON),
+
+        NAPALM(COMMON),
 
         //CBC
         MOLTEN_CAST_IRON(COMMON),
@@ -198,7 +213,8 @@ public class TFMGTags {
     }
 
     public enum EngineFuel {
-        LARGE_ENGINE
+        LARGE_ENGINE,
+        SIMPLE_LARGE_ENGINE
         ;
 
         public final TagKey<EngineFuelType> tag;
