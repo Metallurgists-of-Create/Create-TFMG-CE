@@ -96,7 +96,9 @@ public class Spark extends ThrowableProjectile {
 					new CubeParticleData(trail[0], trail[1], trail[2], .0125f + .0625f * random.nextFloat(), 30, true);
 				level.addParticle(data, this.getX(), this.getY(), this.getZ(), this.random.nextGaussian() * 0.05D, -this.getDeltaMovement().y * 0.5D, this.random.nextGaussian() * 0.05D);
 			}
-		} catch (IOException ignored) { }
+		} catch (IOException e) {
+			TFMG.LOGGER.warn("Error in ticking Spark: ", e);
+		}
     }
 
     private ParticleOptions getParticle() {
@@ -113,7 +115,6 @@ public class Spark extends ThrowableProjectile {
 			} catch (IOException ignored) { }
         }
     }
-
 
     protected void onHitBlock(BlockHitResult hitResult) {
         super.onHitBlock(hitResult);
@@ -152,10 +153,11 @@ public class Spark extends ThrowableProjectile {
     protected void onHit(HitResult p_37406_) {
         super.onHit(p_37406_);
 
-        if (!this.level().isClientSide) {
-            this.level().broadcastEntityEvent(this, (byte) 3);
+        try (Level level = this.level()) {
+			if (level.isClientSide) return;
+			level.broadcastEntityEvent(this, (byte) 3);
             this.discard();
-        }
+        } catch (IOException ignored) {}
     }
 
     public static EntityType.Builder<? extends Spark> build(EntityType.Builder<? extends Spark> builder) {
