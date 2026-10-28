@@ -4,7 +4,7 @@ import com.drmangotea.tfmg.base.TFMGUtils;
 import com.drmangotea.tfmg.base.lang.TFMGTexts;
 import com.drmangotea.tfmg.config.TFMGConfigs;
 import com.drmangotea.tfmg.content.electricity.base.ElectricBlockEntity;
-import com.drmangotea.tfmg.content.electricity.base.IElectric;
+import com.drmangotea.tfmg.content.electricity.base.IOldElectric;
 import com.drmangotea.tfmg.content.electricity.base.NetworkUpdatePacket;
 import com.drmangotea.tfmg.content.machinery.misc.winding_machine.SpoolItem;
 import com.drmangotea.tfmg.registry.TFMGBlocks;
@@ -200,7 +200,7 @@ public class CableConnectorBlockEntity extends ElectricBlockEntity {
             for (CableConnection connection : connections) {
 				//don't update if it's this
 				BlockPos pos = worldPosition.equals(connection.pos1()) ? connection.pos2() : connection.pos1();
-				if (level.getBlockEntity(pos) instanceof IElectric ie) ie.updateNetwork();
+				if (level.getBlockEntity(pos) instanceof IOldElectric ie) ie.updateNetwork();
             }
 			this.updateNetwork();
             updateConnections = false;

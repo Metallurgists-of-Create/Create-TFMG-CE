@@ -2,11 +2,8 @@ package com.drmangotea.tfmg.content.electricity.experimental.content.devices.pol
 
 import com.drmangotea.tfmg.content.electricity.experimental.content.devices.base.DirectionalResistiveLoadBlock;
 import com.drmangotea.tfmg.content.machinery.misc.winding_machine.SpoolItem;
-import com.drmangotea.tfmg.base.TFMGShapes;
 import com.drmangotea.tfmg.base.TFMGUtils;
 import com.drmangotea.tfmg.base.annotation.NothingNullByDefault;
-import com.drmangotea.tfmg.base.blocks.TFMGHorizontalDirectionalBlock;
-import com.drmangotea.tfmg.content.electricity.base.IElectric;
 import com.drmangotea.tfmg.registry.TFMGBlockEntities;
 import com.simibubi.create.foundation.block.IBE;
 import net.minecraft.core.BlockPos;

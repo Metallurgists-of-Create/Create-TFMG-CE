@@ -4,7 +4,8 @@ import com.drmangotea.tfmg.content.electricity.experimental.ElectricalProperties
 import com.drmangotea.tfmg.content.electricity.experimental.IRealisticElectric;
 import com.drmangotea.tfmg.content.electricity.experimental.RealElectricalNetwork;
 import com.drmangotea.tfmg.content.electricity.experimental.WireConnection;
-import com.drmangotea.tfmg.content.electricity.experimental.content.power_transmission.switches.SwitchProperties;
+import com.drmangotea.tfmg.content.electricity.experimental.content.power_transmission.energy_storage.accumulator_control_unit.AccumulatorControlUnitProperties;
+import com.drmangotea.tfmg.content.electricity.experimental.content.power_transmission.switches.electric_switch.SwitchProperties;
 import com.drmangotea.tfmg.content.electricity.experimental.simulation.nodes.*;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
@@ -53,6 +54,10 @@ public abstract class AbstractCableBlockEntity extends SmartBlockEntity implemen
         ElectricalProperties properties = network.members.get(be.getPos());
         network.removeConnections(be);
 
+        if(properties == null){
+            return false;
+        }
+
         for (Direction facing : properties.getConnectableDirections()) {
             BlockPos pos = be.getPos().relative(facing);
 			if (!(level.getBlockEntity(pos) instanceof IRealisticElectric))
@@ -74,21 +79,31 @@ public abstract class AbstractCableBlockEntity extends SmartBlockEntity implemen
 				 }
 
 			 }
-			 if (neighborProperties instanceof SwitchProperties switchProperties) {
-				 if (switchProperties.direction.getAxis() == facing.getAxis()) {
-					 for (ElectricalNode node : switchProperties.nodes) {
-						 int id = node.localId <= 3 ? node.localId : node.localId - 3;
-						 if (node instanceof DirectionalElectricalNode d && properties.nodes.get(id) instanceof ConnectableElectricalNode ld) {
-							 if (d.facing.contains(facing.getOpposite())) {
-
-								 network.connections.add(new WireConnection(d, ld, 10, false));
-
-							 }
-						 }
-					 }
-				 }
-			 }
-        }
+			if (neighborProperties instanceof AccumulatorControlUnitProperties accumulatorProperties &&
+				accumulatorProperties.direction.getAxis() == facing.getAxis()
+			) {
+				for (ElectricalNode node : accumulatorProperties.nodes) {
+					int id = node.localId <= 3 ? node.localId : node.localId - 3;
+					if (node instanceof DirectionalElectricalNode d && properties.nodes.get(id) instanceof ConnectableElectricalNode ld) {
+						if (d.facing.contains(facing.getOpposite())) {
+							network.connections.add(new WireConnection(d, ld, 10, false));
+						}
+					}
+				}
+			}
+			if (neighborProperties instanceof SwitchProperties switchProperties
+				&& switchProperties.direction.getAxis() == facing.getAxis()
+			) {
+				for (ElectricalNode node : switchProperties.nodes) {
+					int id = node.localId <= 3 ? node.localId : node.localId - 3;
+					if (node instanceof DirectionalElectricalNode d && properties.nodes.get(id) instanceof ConnectableElectricalNode ld) {
+						if (d.facing.contains(facing.getOpposite())) {
+							network.connections.add(new WireConnection(d, ld, 10, false));
+						}
+					}
+				}
+			}
+		}
 
         return false;
     }

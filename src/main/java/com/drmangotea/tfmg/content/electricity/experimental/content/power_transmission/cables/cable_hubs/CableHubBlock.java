@@ -4,6 +4,7 @@ import com.drmangotea.tfmg.base.annotation.NothingNullByDefault;
 import com.drmangotea.tfmg.content.electricity.experimental.IRealisticElectric;
 import com.drmangotea.tfmg.content.electricity.experimental.packets.AddElectricalComponentPacket;
 import com.drmangotea.tfmg.registry.TFMGBlockEntities;
+import com.simibubi.create.content.decoration.encasing.EncasedBlock;
 import com.simibubi.create.foundation.block.IBE;
 import net.createmod.catnip.platform.CatnipServices;
 import net.minecraft.core.BlockPos;
@@ -14,13 +15,27 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
+import java.util.function.Supplier;
+
 @NothingNullByDefault
-public class CableHubBlock extends Block implements IBE<CableHubBlockEntity> {
+public class CableHubBlock extends Block implements IBE<CableHubBlockEntity>, EncasedBlock {
+	private Supplier<Block> casing = () -> null;
+	
     public CableHubBlock(Properties properties) {
         super(properties);
     }
-
-    @Override
+	
+	public CableHubBlock(Properties properties, Supplier<Block> casing) {
+		super(properties);
+		this.casing = casing;
+	}
+	
+	public Block getCasing() {
+		return casing.get();
+	}
+	
+	
+	@Override
     protected void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean movedByPiston) {
         super.onPlace(state, level, pos, oldState, movedByPiston);
         if(level.getBlockEntity(pos) instanceof IRealisticElectric be){

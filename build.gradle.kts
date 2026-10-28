@@ -129,7 +129,7 @@ dependencies {
     })
 	compileOnly("dev.ryanhcode.sable:sable-neoforge-${property("minecraft_version")}:${property("sable_version")}")
 	//uncomment for datagen:
-	//localRuntime("dev.ryanhcode.sable:sable-neoforge-${property("minecraft_version")}:${property("sable_version")}")
+	localRuntime("dev.ryanhcode.sable:sable-neoforge-${property("minecraft_version")}:${property("sable_version")}")
     implementation("com.simibubi.create:create-${property("minecraft_version")}:${property("create_version")}:slim") { isTransitive = false }
     implementation("net.createmod.ponder:ponder-neoforge:${property("ponder_version")}+mc1.21.1")
     compileOnly("dev.engine-room.flywheel:flywheel-neoforge-api-${property("minecraft_version")}:${property("flywheel_version")}")
@@ -151,7 +151,7 @@ dependencies {
     localRuntime("maven.modrinth:createaddition:neoforge-1.21.1-1.6.0")
     localRuntime("maven.modrinth:spark:1.10.124-neoforge-1.21.1")
     localRuntime("maven.modrinth:lhGA9TYQ:1IiqEQGl") //architectury, for CPG
-    localRuntime("maven.modrinth:power-grid:jCkPHjmP") //Create: Power Grid 0.6.2
+    //localRuntime("maven.modrinth:power-grid:jCkPHjmP") //Create: Power Grid 0.6.2
     //!!Don't uncomment this during datagen, it will add external stuff to tags!!
     //runtimeOnly("maven.modrinth:dye-depot:2.1.2") // Dye Depot 2.1.2
 }

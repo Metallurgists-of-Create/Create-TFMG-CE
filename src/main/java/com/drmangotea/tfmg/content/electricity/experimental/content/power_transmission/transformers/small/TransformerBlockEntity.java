@@ -1,7 +1,6 @@
 package com.drmangotea.tfmg.content.electricity.experimental.content.power_transmission.transformers.small;
 
 import com.drmangotea.tfmg.base.TFMGUtils;
-import com.drmangotea.tfmg.base.lang.TFMGTexts;
 import com.drmangotea.tfmg.base.blocks.TFMGHorizontalDirectionalBlock;
 import com.drmangotea.tfmg.base.lang.TFMGLang;
 import com.drmangotea.tfmg.content.electricity.experimental.ElectricalProperties;
@@ -111,10 +110,6 @@ public class TransformerBlockEntity extends SmartBlockEntity implements IRealist
         }
     }
 
-    @Override
-    public ElectricalProperties getProperties() {
-        return p;
-    }
 
     @Override
     public BlockPos getPos() {
@@ -128,11 +123,15 @@ public class TransformerBlockEntity extends SmartBlockEntity implements IRealist
         if(primaryTurns < 50 || secondaryTurns < 50) {
             coilRatio = 0;
         } else {
-        coilRatio = (float) secondaryTurns / (float) primaryTurns;
+			coilRatio = secondaryTurns / primaryTurns;
 		}
 		getNetwork().setTransformerRatio(this, 0, coilRatio);
 
 
+    }
+    @Override
+    public ElectricalProperties getProperties() {
+        return p;
     }
 
     @Override

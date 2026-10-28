@@ -13,7 +13,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.List;
 
-public class KineticElectricBlockEntity extends GeneratingKineticBlockEntity implements IElectric, IHaveGoggleInformation, IHaveHoveringInformation {
+public class KineticElectricBlockEntity extends GeneratingKineticBlockEntity implements IOldElectric, IHaveGoggleInformation, IHaveHoveringInformation {
     public ElectricBlockValues data = new ElectricBlockValues(getPos());
 
     public KineticElectricBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
@@ -69,7 +69,7 @@ public class KineticElectricBlockEntity extends GeneratingKineticBlockEntity imp
     @Override
     public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
         boolean added = super.addToGoggleTooltip(tooltip, isPlayerSneaking);
-        boolean electricAdded = IElectric.super.addToGoggleTooltip(tooltip, isPlayerSneaking);
+        boolean electricAdded = IOldElectric.super.addToGoggleTooltip(tooltip, isPlayerSneaking);
         return added || electricAdded;
     }
 

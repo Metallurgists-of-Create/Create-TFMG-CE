@@ -21,7 +21,7 @@ public class ConnectNeighborsPacket extends BlockEntityDataPacket<SmartBlockEnti
     @Override
     protected void handlePacket(SmartBlockEntity blockEntity) {
 
-        if(blockEntity instanceof IElectric be) {
+        if(blockEntity instanceof IOldElectric be) {
             be.onPlaced();
 
         }

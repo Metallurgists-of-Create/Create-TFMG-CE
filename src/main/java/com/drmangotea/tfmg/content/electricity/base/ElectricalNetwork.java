@@ -1,6 +1,5 @@
 package com.drmangotea.tfmg.content.electricity.base;
 
-import com.drmangotea.tfmg.content.electricity.experimental.content.power_transmission.switches.large_switch.LargeSwitchBlockEntity;
 import com.drmangotea.tfmg.content.electricity.experimental.content.power_transmission.transformers.large.LargeTransformerBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.LevelAccessor;
@@ -17,7 +16,7 @@ public class ElectricalNetwork {
     }
 
     //blocks in the network
-    public List<IElectric> members = new ArrayList<>();
+    public List<IOldElectric> members = new ArrayList<>();
 
     //network's id
     public long id;
@@ -27,10 +26,10 @@ public class ElectricalNetwork {
     }
 
     //adds a new block to the network if it's not in it already
-    public void add(IElectric be) {
+    public void add(IOldElectric be) {
         long id = be.getData().getId();
 		
-		for (IElectric member : this.members) {
+		for (IOldElectric member : this.members) {
 			if (member.getData().getId() == id) {
 				return;
 			}
@@ -55,7 +54,7 @@ public class ElectricalNetwork {
          *  3) counts the resistance and power generation of the network
          *  4) creates groups
          */
-        for (IElectric member : members) {
+        for (IOldElectric member : members) {
             member.getData().notEnoughPower = false;
             member.getData().highestCurrent = 0;
 			
@@ -68,7 +67,7 @@ public class ElectricalNetwork {
          * 2) sets network's resistance
          * 3) informs blocks about their group's resistance
          */
-		for (IElectric member : members) {
+		for (IOldElectric member : members) {
 			int oldVoltage = member.getData().getVoltage();
 			float oldPower = member.getPowerUsage();
 			member.getData().voltageSupply = maxVoltage;
@@ -84,7 +83,7 @@ public class ElectricalNetwork {
          * 1) sets the current of wires
          * 2) informs subnetworks
          */
-        for (IElectric member : members) {
+        for (IOldElectric member : members) {
             if (member.resistance() == 0) {
                 member.getData().highestCurrent = current;
             }
@@ -106,13 +105,11 @@ public class ElectricalNetwork {
     public void handleInsufficientPower() {
         if (!members.isEmpty())
             if (members.getFirst().getNetworkPowerUsage() > members.getFirst().getNetworkPowerGeneration()) {
-                for (IElectric member : members) {
+                for (IOldElectric member : members) {
                     member.getData().notEnoughPower = true;
                     member.getData().tickUntilConnectFE = 20 * 2;
 
                     if (member instanceof VoltageAlteringBlockEntity be)
-                        be.updateInFront = true;
-                    if (member instanceof LargeSwitchBlockEntity be)
                         be.updateInFront = true;
                     if (member instanceof LargeTransformerBlockEntity be)
                         be.updateInFront = true;
@@ -121,21 +118,21 @@ public class ElectricalNetwork {
     }
 
     @Deprecated(since = "1.3.2")
-	public static float getCableCurrent(IElectric be) {
+	public static float getCableCurrent(IOldElectric be) {
         float current = 0;
-        for (IElectric member : be.getOrCreateElectricNetwork().members) {
+        for (IOldElectric member : be.getOrCreateElectricNetwork().members) {
             current += member.getCurrent();
         }
         return current;
     }
 
     public void checkForLoops(BlockPos pos) {
-        List<IElectric> membersSnapshot = new ArrayList<>(members);
+        List<IOldElectric> membersSnapshot = new ArrayList<>(members);
 
         List<ElectricalNetwork> networks = new ArrayList<>();
         networks.add(this);
 
-        for (IElectric member : membersSnapshot) {
+        for (IOldElectric member : membersSnapshot) {
             if (member instanceof VoltageAlteringBlockEntity be && be.getControlledBlock() != null) {
                 be.getControlledBlock()
                         .getOrCreateElectricNetwork()
@@ -154,9 +151,9 @@ public class ElectricalNetwork {
 
         network.add(this);
 
-        List<IElectric> membersSnapshot = new ArrayList<>(members);
+        List<IOldElectric> membersSnapshot = new ArrayList<>(members);
 
-        for (IElectric member : membersSnapshot) {
+        for (IOldElectric member : membersSnapshot) {
             if (member instanceof VoltageAlteringBlockEntity be && be.getControlledBlock() != null) {
                 be.getControlledBlock()
                         .getOrCreateElectricNetwork()
@@ -168,7 +165,7 @@ public class ElectricalNetwork {
 
 
 
-    public List<IElectric> getMembers() {
+    public List<IOldElectric> getMembers() {
         return members;
     }
 }

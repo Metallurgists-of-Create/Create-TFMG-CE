@@ -12,7 +12,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.List;
 
-public class ElectricBlockEntity extends SmartBlockEntity implements IElectric, IHaveHoveringInformation {
+public class ElectricBlockEntity extends SmartBlockEntity implements IOldElectric, IHaveHoveringInformation {
 
     public ElectricBlockValues data = new ElectricBlockValues(getPos());
 

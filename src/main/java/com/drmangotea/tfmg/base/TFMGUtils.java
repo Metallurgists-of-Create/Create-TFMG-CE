@@ -6,6 +6,7 @@ import com.drmangotea.tfmg.base.lang.TFMGTexts;
 import com.drmangotea.tfmg.base.spark.Spark;
 import com.drmangotea.tfmg.content.electricity.experimental.content.power_transmission.wires.cable_type.CableType;
 import com.drmangotea.tfmg.content.electricity.experimental.IRealisticElectric;
+import com.drmangotea.tfmg.content.electricity.experimental.content.power_transmission.transformers.large.LargeTransformerBlockEntity;
 import com.drmangotea.tfmg.content.electricity.experimental.simulation.nodes.ConnectingElectricalNode;
 import com.drmangotea.tfmg.content.machinery.vat.electrode_holder.electrode.Electrode;
 import com.drmangotea.tfmg.registry.TFMGEntityTypes;
@@ -62,6 +63,13 @@ public class TFMGUtils {
     }
 
     public static ConnectingElectricalNode closestNode(IRealisticElectric be, Vec3 clickPosition) {
+		if (be == null)
+			return null;
+		
+		if (be instanceof LargeTransformerBlockEntity t && !t.isMainPart) {
+			return closestNode(t.getControlledBlock(), clickPosition);
+		}
+		
 		BlockPos pos = be.getPos();
 		AtomicReference<Float> closestDistance = new AtomicReference<>((float) 1000);
 		AtomicReference<ConnectingElectricalNode> closestConnector = new AtomicReference<>(null);

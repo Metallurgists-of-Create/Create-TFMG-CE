@@ -17,7 +17,10 @@ import com.drmangotea.tfmg.content.electricity.experimental.content.lights.Light
 import com.drmangotea.tfmg.content.electricity.experimental.content.power_transmission.adapters.FourSlotAdapterProperties;
 import com.drmangotea.tfmg.content.electricity.experimental.content.power_transmission.adapters.TwoSlotAdapterProperties;
 import com.drmangotea.tfmg.content.electricity.experimental.content.power_transmission.cables.CableProperties;
-import com.drmangotea.tfmg.content.electricity.experimental.content.power_transmission.switches.SwitchProperties;
+import com.drmangotea.tfmg.content.electricity.experimental.content.power_transmission.energy_storage.accumulator_control_unit.AccumulatorControlUnitProperties;
+import com.drmangotea.tfmg.content.electricity.experimental.content.power_transmission.switches.electric_switch.SwitchProperties;
+import com.drmangotea.tfmg.content.electricity.experimental.content.power_transmission.switches.large_switch.LargeSwitchProperties;
+import com.drmangotea.tfmg.content.electricity.experimental.content.power_transmission.transformers.large.LargeTransformerProperties;
 import com.drmangotea.tfmg.content.electricity.experimental.content.power_transmission.transformers.small.TransformerProperties;
 import com.drmangotea.tfmg.content.electricity.experimental.content.power_transmission.wires.ConnectorProperties;
 import com.drmangotea.tfmg.content.electricity.experimental.simulation.ElectricalComponent;
@@ -188,7 +191,8 @@ public class NetworkSavedData extends SavedData {
 	
 	private static ConnectingElectricalNode getNode(CompoundTag tag, RealElectricalNetwork network) {
 		ConnectingElectricalNode node = null;
-		BlockPos pos = NbtUtils.readBlockPos(tag, "position").get();
+		BlockPos pos = NbtUtils.readBlockPos(tag, "position").orElse(null);
+		if (pos == null) return node;
 		int id1 = tag.getInt("local id");
 		for (ElectricalNode existingNode : network.getNodes(pos)) {
 			if (existingNode.localId == id1 && existingNode instanceof ConnectingElectricalNode connectingNode) {
@@ -212,6 +216,9 @@ public class NetworkSavedData extends SavedData {
             case 9 -> new TransformerProperties(pos, direction);
             case 10 -> new CreativeGeneratorProperties(pos);
             case 11 -> new SwitchProperties(pos, direction);
+            case 12 -> new LargeTransformerProperties(pos, direction);
+            case 13 -> new AccumulatorControlUnitProperties(pos, direction);
+            case 14 -> new LargeSwitchProperties(pos, direction);
             default -> new ElectricalProperties(pos);
 
         };

@@ -3,8 +3,7 @@ package com.drmangotea.tfmg.content.electricity.connection.cables;
 import com.drmangotea.tfmg.base.TFMGShapes;
 import com.drmangotea.tfmg.base.TFMGUtils;
 import com.drmangotea.tfmg.base.blocks.WallMountBlock;
-import com.drmangotea.tfmg.content.electricity.base.IElectric;
-import com.drmangotea.tfmg.registry.TFMGBlockEntities;
+import com.drmangotea.tfmg.content.electricity.base.IOldElectric;
 import com.simibubi.create.AllSoundEvents;
 import com.simibubi.create.content.equipment.wrench.IWrenchable;
 import com.simibubi.create.foundation.block.IBE;
@@ -41,7 +40,7 @@ public class CableConnectorBlock extends WallMountBlock implements IBE<CableConn
     @Override @ParametersAreNonnullByDefault
     public void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean movedByPiston) {
         updateExtension(level, state, pos);
-        withBlockEntityDo(level, pos, IElectric::onPlaced);
+        withBlockEntityDo(level, pos, IOldElectric::onPlaced);
         BlockPos below = pos.relative(state.getValue(FACING).getOpposite());
         BlockState stateBelow = level.getBlockState(below);
         if (stateBelow.getBlock() instanceof CableConnectorBlock)

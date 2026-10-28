@@ -6,7 +6,6 @@ import com.drmangotea.tfmg.registry.TFMGBlocks;
 import com.drmangotea.tfmg.registry.TFMGItems;
 import com.drmangotea.tfmg.registry.TFMGTags;
 import com.simibubi.create.api.data.recipe.SequencedAssemblyRecipeGen;
-import com.simibubi.create.content.fluids.transfer.FillingRecipe;
 import com.simibubi.create.content.kinetics.deployer.DeployerApplicationRecipe;
 import com.simibubi.create.content.kinetics.press.PressingRecipe;
 import com.simibubi.create.foundation.data.recipe.CommonMetal;
@@ -14,7 +13,6 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient;
 
 import javax.annotation.Nonnull;
 import java.util.concurrent.CompletableFuture;
@@ -24,17 +22,7 @@ import static com.drmangotea.tfmg.datagen.recipes.TFMGRecipeProvider.I.*;
 @SuppressWarnings("unused")
 public class TFMGSequencedAssemblyRecipeGen extends SequencedAssemblyRecipeGen {
 
-    GeneratedRecipe POTENTIOMETER = create("potentiometer", b -> b.require(TFMGBlocks.HEAVY_MACHINERY_CASING.get())
-            .transitionTo(TFMGItems.UNFINISHED_POTENTIOMETER.get())
-            .addOutput(TFMGBlocks.POTENTIOMETER.get(), 120)
-            .addOutput(TFMGBlocks.STEEL_CASING.get(), 8)
-            .addOutput(TFMGBlocks.STEEL_COGWHEEL.get(), 8)
-            .addOutput(TFMGBlocks.ELECTRIC_POST.get(), 8)
-            .loops(3)
-            .addStep(WindingRecipe::new, rb -> rb.require(TFMGItems.CONSTANTAN_SPOOL.get()).duration(100))
-            .addStep(DeployerApplicationRecipe::new, rb -> rb.require(TFMGBlocks.STEEL_COGWHEEL))
-            .addStep(DeployerApplicationRecipe::new, rb -> rb.require(copperWire()))
-            .addStep(FillingRecipe::new, rb -> rb.require(SizedFluidIngredient.of(TFMGTags.Fluids.LUBRICATION_OIL.tag, 50)))),
+    GeneratedRecipe
 
     GENERATOR = create("generator", b -> b.require(shaft())
             .transitionTo(TFMGItems.UNFINISHED_GENERATOR.get())

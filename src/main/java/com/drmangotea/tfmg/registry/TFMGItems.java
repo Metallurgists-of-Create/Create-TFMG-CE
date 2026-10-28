@@ -197,10 +197,10 @@ public class TFMGItems {
             UNFINISHED_RESISTOR = REGISTRATE.item("unfinished_resistor", ResistorItem::new).register();
 	
     public static final ItemEntry<AccumulatorCellItem>
-            LEAD_ACID_BATTERY = REGISTRATE.item("lead_acid_battery",p-> new AccumulatorCellItem(p.stacksTo(1),10000)).register(),
-            SINGLE_USE_BATTERY = REGISTRATE.item("single_use_battery",p-> new AccumulatorCellItem(p.stacksTo(1),10000)).register(),
-            SUPERCAPACITOR = REGISTRATE.item("supercapacitor",p-> new AccumulatorCellItem(p.stacksTo(1),10000)).register(),
-            LITHIUM_CELL = REGISTRATE.item("lithium_cell",p-> new AccumulatorCellItem(p.stacksTo(1),10000)).register();
+            LEAD_ACID_BATTERY = REGISTRATE.item("lead_acid_battery",p-> new AccumulatorCellItem(p.stacksTo(1),100000)).register(),
+            SINGLE_USE_BATTERY = REGISTRATE.item("single_use_battery",p-> new AccumulatorCellItem(p.stacksTo(1),100000)).register(),
+            SUPERCAPACITOR = REGISTRATE.item("supercapacitor",p-> new AccumulatorCellItem(p.stacksTo(1),100000)).register(),
+            LITHIUM_CELL = REGISTRATE.item("lithium_cell",p-> new AccumulatorCellItem(p.stacksTo(1),100000)).register();
 
 
     public static final ItemEntry<SpoolItem>

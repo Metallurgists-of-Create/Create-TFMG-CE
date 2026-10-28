@@ -2,6 +2,7 @@ package com.drmangotea.tfmg.content.electricity.experimental;
 
 import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.base.annotation.NothingNullByDefault;
+import com.drmangotea.tfmg.content.electricity.experimental.content.power_transmission.transformers.large.LargeTransformerBlockEntity;
 import com.drmangotea.tfmg.content.electricity.experimental.simulation.nodes.ConnectingElectricalNode;
 import com.drmangotea.tfmg.content.electricity.experimental.simulation.nodes.ElectricalNode;
 import com.drmangotea.tfmg.registry.TFMGDataComponents;
@@ -45,8 +46,15 @@ public class BetterSpoolItem extends Item {
 
 			int id = stack.getOrDefault(TFMGDataComponents.CONNECTOR_ID, 0);
 			
-			if (!(level.getBlockEntity(pos2) instanceof IRealisticElectric be2))
+			if (!(level.getBlockEntity(pos2) instanceof IRealisticElectric b))
 				return InteractionResult.PASS;
+			
+			IRealisticElectric be2;
+			if ((b instanceof LargeTransformerBlockEntity t &&!t.isMainPart)) {
+				be2 = t.getControlledBlock();
+			} else {
+				be2 = b;
+			}
 			
 			List<ElectricalNode> nodes = be2.getProperties().nodes;
 

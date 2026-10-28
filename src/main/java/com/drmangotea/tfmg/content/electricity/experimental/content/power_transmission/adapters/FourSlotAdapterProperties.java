@@ -33,6 +33,11 @@ public class FourSlotAdapterProperties extends DirectionalElectricalProperties {
     }
 
     @Override
+    public List<Direction> getConnectableDirections() {
+        return List.of(Direction.values());
+    }
+
+    @Override
     public int getId() {
         return 5;
     }

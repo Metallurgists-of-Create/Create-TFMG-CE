@@ -2,8 +2,7 @@ package com.drmangotea.tfmg.content.electricity.connection.diagonal;
 
 import com.drmangotea.tfmg.base.TFMGShapes;
 import com.drmangotea.tfmg.base.annotation.NothingNullByDefault;
-import com.drmangotea.tfmg.content.electricity.base.IElectric;
-import com.drmangotea.tfmg.registry.TFMGBlockEntities;
+import com.drmangotea.tfmg.content.electricity.base.IOldElectric;
 import com.mojang.serialization.MapCodec;
 import com.simibubi.create.content.equipment.wrench.IWrenchable;
 import com.simibubi.create.foundation.block.IBE;
@@ -31,7 +30,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import javax.annotation.Nullable;
 import java.util.Objects;
 
-@SuppressWarnings({"unused"})
+//@SuppressWarnings({"unused"})
 @NothingNullByDefault
 public class DiagonalCableBlock extends Block implements SimpleWaterloggedBlock, IWrenchable, IBE<DiagonalCableBlockEntity> {
 	public static final MapCodec<DiagonalCableBlock> CODEC = simpleCodec(DiagonalCableBlock::new);
@@ -64,7 +63,7 @@ public class DiagonalCableBlock extends Block implements SimpleWaterloggedBlock,
 
     @Override
     public void onPlace(BlockState pState, Level level, BlockPos pos, BlockState pOldState, boolean pIsMoving) {
-        withBlockEntityDo(level,pos, IElectric::onPlaced);
+        withBlockEntityDo(level,pos, IOldElectric::onPlaced);
     }
 
     @Override
@@ -117,7 +116,7 @@ public class DiagonalCableBlock extends Block implements SimpleWaterloggedBlock,
 		BlockState newState = calculateRotatedState(state, clickedFace, primary, secondary);
 		
 		context.getLevel().setBlock(context.getClickedPos(), newState, Block.UPDATE_ALL);
-		withBlockEntityDo(context.getLevel(), context.getClickedPos(), IElectric::onPlaced);
+		withBlockEntityDo(context.getLevel(), context.getClickedPos(), IOldElectric::onPlaced);
 		IWrenchable.playRotateSound(context.getLevel(), context.getClickedPos());
 		
 		return result;
@@ -201,6 +200,6 @@ public class DiagonalCableBlock extends Block implements SimpleWaterloggedBlock,
 
     @Override
     public BlockEntityType<? extends DiagonalCableBlockEntity> getBlockEntityType() {
-        return TFMGBlockEntities.DIAGONAL_CABLE_BLOCK.get();
+        return null;//TFMGBlockEntities.DIAGONAL_CABLE_BLOCK.get();
     }
 }

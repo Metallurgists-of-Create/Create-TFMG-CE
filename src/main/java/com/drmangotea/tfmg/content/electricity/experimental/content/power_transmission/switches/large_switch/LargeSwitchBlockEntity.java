@@ -1,27 +1,34 @@
 package com.drmangotea.tfmg.content.electricity.experimental.content.power_transmission.switches.large_switch;
 
-import com.drmangotea.tfmg.content.electricity.base.IElectric;
-import com.drmangotea.tfmg.content.electricity.base.KineticElectricBlockEntity;
-import com.drmangotea.tfmg.content.electricity.base.UpdateInFrontPacket;
+import com.drmangotea.tfmg.base.TFMGUtils;
+import com.drmangotea.tfmg.base.lang.TFMGLang;
+import com.drmangotea.tfmg.content.electricity.experimental.ElectricalProperties;
+import com.drmangotea.tfmg.content.electricity.experimental.IRealisticElectric;
+import com.drmangotea.tfmg.content.electricity.experimental.RealElectricNetworkManager;
+import com.drmangotea.tfmg.content.electricity.experimental.RealElectricalNetwork;
+import com.drmangotea.tfmg.content.electricity.experimental.content.power_transmission.cables.CableProperties;
+import com.drmangotea.tfmg.content.electricity.experimental.simulation.Resistance;
+import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import net.createmod.catnip.animation.LerpedFloat;
-import net.createmod.catnip.platform.CatnipServices;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+import static com.drmangotea.tfmg.content.electricity.experimental.content.power_transmission.cables.AbstractCableBlockEntity.connectToNeighbors;
 import static com.drmangotea.tfmg.content.electricity.experimental.content.power_transmission.switches.large_switch.LargeSwitchBlock.IS_MAIN_PART;
 import static com.simibubi.create.content.kinetics.base.HorizontalKineticBlock.HORIZONTAL_FACING;
 
-public class LargeSwitchBlockEntity extends KineticElectricBlockEntity {
-    public boolean updateInFront = false;
+public class LargeSwitchBlockEntity extends KineticBlockEntity implements IRealisticElectric {
+
 
     public boolean closed = false;
 
@@ -30,41 +37,31 @@ public class LargeSwitchBlockEntity extends KineticElectricBlockEntity {
 
     final boolean isMainPart;
 
+    boolean update = true;
+
+    public double resistance = 0;
+    public double voltage = 0;
+    public double current = 0;
+
+    public boolean connectNextTick = false;
+    ElectricalProperties p;
+
     public LargeSwitchBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
         isMainPart = state.getValue(IS_MAIN_PART);
         visualAngle.setValue(90);
+        List<Direction> directions = new ArrayList<>();
+        Direction direction = state.getValue(HORIZONTAL_FACING);
+        directions.add(direction);
+        directions.add(direction.getOpposite());
+        p = state.getValue(IS_MAIN_PART) ? new LargeSwitchProperties(getPos(), state.getValue(HORIZONTAL_FACING), 1E12) : new CableProperties(getPos(), Arrays.stream(Direction.values()).toList());
+     //  this.p = new CableProperties(getPos(), Arrays.stream(Direction.values()).toList());
+
+
+
+        int i = 0;
     }
 
-
-    public int voltageGeneration() {
-        if (isMainPart)
-            return 0;
-
-        int voltageGeneration = 0;
-        if (getLevelAccessor().getBlockEntity(getBlockPos().relative(getBlockState().getValue(HORIZONTAL_FACING).getOpposite())) instanceof LargeSwitchBlockEntity be)
-            if (be.getData().getId() != getData().getId())
-                if (be.getData().getVoltage() != 0)
-                    if (be.closed) {
-                        voltageGeneration = Math.max(voltageGeneration, be.data.getVoltage());
-                        getData().getsOutsidePower = true;
-                    }
-
-        if (voltageGeneration == 0)
-            getData().getsOutsidePower = false;
-
-        return voltageGeneration;
-    }
-
-    @Override
-    public int getMaxCurrent() {
-        return 1000;
-    }
-
-    @Override
-    public int getMaxVoltage() {
-        return 100000;
-    }
 
     @Override
     protected void read(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {
@@ -76,91 +73,23 @@ public class LargeSwitchBlockEntity extends KineticElectricBlockEntity {
     @Override
     protected void write(CompoundTag compound, HolderLookup.Provider registries, boolean clientPacket) {
         super.write(compound, registries, clientPacket);
-        compound.putFloat("Angle",angle);
-        compound.putBoolean("Closed",closed);
+        compound.putFloat("Angle", angle);
+        compound.putBoolean("Closed", closed);
     }
 
     @Override
-    public void lazyTick() {
-        super.lazyTick();
-        if(data.notEnoughPower&&!getBlockState().getValue(IS_MAIN_PART))
-            if(level != null && level.getBlockEntity(getBlockPos().relative(getBlockState().getValue(HORIZONTAL_FACING).getOpposite()))instanceof LargeSwitchBlockEntity be)
-                be.onPlaced();
-    }
+    public void onUpdated() {
+        RealElectricalNetwork network = RealElectricNetworkManager.getNetwork(level);
 
-    public IElectric getControlledBlock() {
-        if (level == null) return null;
-        Direction facing = getBlockState().getValue(HORIZONTAL_FACING);
-        if(level.getBlockEntity(getBlockPos().relative(facing))instanceof LargeSwitchBlockEntity be){
-            return be;
-        }
-        return null;
-    }
+        Resistance resistor = network.getResistance(getPos(), 0);
 
-    @Override
-    public float resistance() {
-        if (!isMainPart)
-            return 0;
-        if(!closed)
-            return 0;
-        if (getControlledBlock() == null)
-            return 0;
+        if (resistor != null) {
 
-        Direction facing = getBlockState().getValue(HORIZONTAL_FACING);
-        if (level != null && level.getBlockEntity(getBlockPos().relative(facing)) instanceof IElectric be && be.getData().getId() != data.getId()) {
-            int count = getBlocksConnectedToNetworkCount(getControlledBlock().getData().getId());
-
-            if(count!=0)
-                return Math.max(be.getNetworkResistance()*count, 0);
-        }
-        return 0;
-    }
-
-    @Override
-    public void onNetworkChanged(int oldVoltage, float oldPower) {
-        super.onNetworkChanged(oldVoltage, oldPower);
-
-        if (oldVoltage != getData().getVoltage() || oldPower != getPowerUsage()) {
-            updateInFront = true;
-        }
-        sendStuff();
-        setChanged();
-    }
-
-    public float powerGeneration() {
-        if (isMainPart)
-            return 0;
-
-        if(level != null && level.getBlockEntity(getBlockPos().relative(getBlockState().getValue(HORIZONTAL_FACING).getOpposite())) instanceof LargeSwitchBlockEntity be&&be.data.notEnoughPower)
-            return 0;
-
-        int powerGeneration = 0;
-
-        if (getLevelAccessor().getBlockEntity(getBlockPos().relative(getBlockState().getValue(HORIZONTAL_FACING).getOpposite())) instanceof LargeSwitchBlockEntity be)
-            if (be.getData().getId() != getData().getId())
-                if (be.getData().getVoltage() != 0)
-                    if (be.closed) {
-                        powerGeneration = 100000;
-                        getData().getsOutsidePower = true;
-                    }
-
-        if (powerGeneration == 0)
-            getData().getsOutsidePower = false;
-
-        return powerGeneration;
-    }
-
-    public void updateInFront() {
-
-        if (level instanceof ServerLevel serverLevel)
-            CatnipServices.NETWORK.sendToClientsTrackingChunk(serverLevel, new ChunkPos(worldPosition), new UpdateInFrontPacket(getBlockPos()));
-        Direction facing = getBlockState().getValue(HORIZONTAL_FACING);
-        if (level != null && level.getBlockEntity(getBlockPos().relative(facing)) instanceof IElectric be && be.getData().getId() != data.getId()) {
-            be.updateNextTick();
+            resistance = resistor.resistance;
+            voltage = resistor.getVoltage(level);
+            current = (float) (voltage / resistance);
 
         }
-        sendStuff();
-        setChanged();
     }
 
 
@@ -168,14 +97,28 @@ public class LargeSwitchBlockEntity extends KineticElectricBlockEntity {
     public void tick() {
         super.tick();
         if (level == null) return;
+
+        if(update&&!isMainPart&&level.isClientSide){
+            onPlace();
+            update = false;
+        }
+        if(update){
+            for(Direction facing : Arrays.stream(Direction.values()).toList()){
+                if(level.getBlockEntity(getBlockPos().relative(facing)) instanceof IRealisticElectric n){
+                    connectToNeighbors(level,n);
+                }
+            }
+        }
+        if (connectNextTick) {
+
+            connectNextTick = connectToNeighbors(level, this);
+        }
+
         if (level.isClientSide) {
             visualAngle.chase(angle / 10d, 1d, LerpedFloat.Chaser.EXP);
             visualAngle.tickChaser();
         }
-        if(updateInFront) {
-            updateInFront();
-            updateInFront = false;
-        }
+
         if (!isMainPart)
             return;
         if (angle < 0)
@@ -194,27 +137,71 @@ public class LargeSwitchBlockEntity extends KineticElectricBlockEntity {
 
         boolean oldValue = closed;
 
-        if (data.voltage < 1000) {
-            closed = angle == 0;
-        } else {
-            closed = angle < data.voltage / 700f;
-        }
 
+        closed = angle == 0;
         if (oldValue != closed)
-            updateInFront();
+            stateChanged();
 
+    }
+
+    @Override
+    public boolean makeMultimeterTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
+
+        TFMGLang.text("Resistance: " + TFMGUtils.formatUnits(resistance, "Ohm")).forGoggles(tooltip);
+        TFMGLang.text("Voltage: " + TFMGUtils.formatUnits(voltage, "V")).forGoggles(tooltip);
+        TFMGLang.text("Power: " + TFMGUtils.formatUnits(current * voltage, "W")).forGoggles(tooltip);
+
+        return true;
+    }
+
+
+
+    protected void stateChanged() {
+
+        double resistance = 0;
+
+        if (closed) {
+            resistance = 0.001;
+        } else resistance = 1E12;
+
+        //if(newSignal!=0){
+        //    resistance =1f / (newSignal * 1000);
+        //} else resistance = 1E12;
+
+        //if (newSignal == 15) {
+        //    resistance = 0.001;
+        //}
+
+        getNetwork().setResistance(this, 0, resistance);
 
 
 
     }
 
     @Override
-    public boolean makeMultimeterTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
-        super.makeMultimeterTooltip(tooltip, isPlayerSneaking);
+    public ElectricalProperties getProperties() {
+        return p;
+    }
+    @Override
+    public void onPlace() {
+        IRealisticElectric.super.onPlace();
+        connectNextTick = connectToNeighbors(level, this);
+        updateNetwork(getBlockPos());
+    }
+    @Override
+    public void remove() {
+        super.remove();
+        this.removeBlock();
+    }
 
+    @Override
+    public BlockPos getPos() {
+        return getBlockPos();
+    }
 
-
-        return true;
+    @Override
+    public Level getWorld() {
+        return level;
     }
 
     public float getArmSpeed() {
@@ -222,10 +209,4 @@ public class LargeSwitchBlockEntity extends KineticElectricBlockEntity {
     }
 
 
-    @Override
-    public boolean hasElectricitySlot(Direction direction) {
-
-        return (direction == getBlockState().getValue(HORIZONTAL_FACING).getOpposite() && getBlockState().getValue(IS_MAIN_PART)) || (direction == getBlockState().getValue(HORIZONTAL_FACING) && !getBlockState().getValue(IS_MAIN_PART));
-
-    }
 }

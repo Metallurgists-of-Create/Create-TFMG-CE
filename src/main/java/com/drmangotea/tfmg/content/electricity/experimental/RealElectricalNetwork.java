@@ -59,7 +59,8 @@ public class RealElectricalNetwork {
         if (parent[i] == i) return i;
         return parent[i] = find(parent, parent[i]);
     }
-    public void setVoltageGen(BlockPos pos, int voltage) {
+    
+	public void setVoltageGen(BlockPos pos, int voltage) {
         ElectricalProperties properties = members.get(pos);
         if (properties == null)
             return;
@@ -71,13 +72,16 @@ public class RealElectricalNetwork {
         }
         update();
     }
+
     public void setVoltageGen(IRealisticElectric be, int voltage) {
-        this.setVoltageGen(be.getPos(),voltage);
+        this.setVoltageGen(be.getPos(), voltage);
     }
+
     public void setResistance(IRealisticElectric be, int id, double resistance) {
-        this.setResistance(be.getPos(),id,resistance);
+        this.setResistance(be.getPos(), id, resistance);
     }
-    public void setResistance(BlockPos pos, int id, double resistance) {
+    
+	public void setResistance(BlockPos pos, int id, double resistance) {
         members.forEach((m, p) -> {
             if (m == pos) {
                 for (ElectricalComponent component : p.components) {
@@ -91,7 +95,7 @@ public class RealElectricalNetwork {
     }
 
     public void setTransformerRatio(IRealisticElectric be, int id, double ratio) {
-        this.setTransformerRatio(be.getPos(),id,ratio);
+        this.setTransformerRatio(be.getPos(), id, ratio);
     }
 	
     public void setTransformerRatio(BlockPos pos, int id, double ratio) {
@@ -143,7 +147,9 @@ public class RealElectricalNetwork {
         List<ElectricalComponent> components = new ArrayList<>();
         members.forEach((l, p) -> {
 
-            nodes.addAll(p.nodes);
+            if (p == null) return;
+			
+			nodes.addAll(p.nodes);
             components.addAll(p.components);
 
         });
@@ -165,7 +171,7 @@ public class RealElectricalNetwork {
             }
             if (c instanceof Transformer t) {
                 transformers.add(t);
-            //    connections.add(new WireConnection((ConnectableElectricalNode) t.pB, (ConnectableElectricalNode) t.sB,1,false));
+                //    connections.add(new WireConnection((ConnectableElectricalNode) t.pB, (ConnectableElectricalNode) t.sB,1,false));
             }
         });
         // totalNodes = 20;
@@ -315,7 +321,7 @@ public class RealElectricalNetwork {
             if (isNodeS2Merged) {
                 snode2 = getMergedNode(snode2);
             }
-            finalTransformers.add(new Transformer(node1, node2, snode1, snode2, transformer.L1, transformer.turnsRatio, transformer.k, transformer.id,transformer.pos));
+            finalTransformers.add(new Transformer(node1, node2, snode1, snode2, transformer.L1, transformer.turnsRatio, transformer.k, transformer.id, transformer.pos));
         }
         for (IdealVoltageSource source : sources) {
             ElectricalNode node1 = source.localNodeA;
@@ -331,7 +337,7 @@ public class RealElectricalNetwork {
             }
 
 
-            finalSources.add(new IdealVoltageSource(node1, node2, source.amplitude, (int) source.power, source.phaseOffset, source.id,source.pos));
+            finalSources.add(new IdealVoltageSource(node1, node2, source.amplitude, (int) source.power, source.phaseOffset, source.id, source.pos));
         }
 
         for (int i = 0; i < finalNodes.size(); i++) {
@@ -407,7 +413,6 @@ public class RealElectricalNetwork {
         addConnections();
         totalNodes = finalNodes.size();
         optimize();
-
 
 
         solve();
@@ -505,7 +510,8 @@ public class RealElectricalNetwork {
         components.addAll(finalResistors);
         components.addAll(finalTransformers);
         components.addAll(finalSources);
-
+        if (finalNodes.isEmpty())
+            return;
         ElectricalNode groundNode = finalNodes.getFirst();
         Set<ElectricalNode> uniqueNodes = new LinkedHashSet<>();
         uniqueNodes.add(groundNode);
@@ -515,7 +521,7 @@ public class RealElectricalNetwork {
         for (int i = 0; i < activeNodeList.size(); i++)
             activeNodeList.get(i).networkId = i;
 
-       
+
         int extraRowsCount = 0;
         for (ElectricalComponent c : components) {
             if (c instanceof IdealVoltageSource) {
@@ -573,7 +579,7 @@ public class RealElectricalNetwork {
 
             ComplexValue voltage3 = nodeVoltages.get(t.sA.getNetworkId());
             ComplexValue voltage4 = nodeVoltages.get(t.sB.getNetworkId());
-            TFMG.LOGGER.debug("transformer " + i + " Network: " + t.pA.networkId+ " " + t.pB.localId + " " + t.sA.networkId+ " " + t.sB.localId + " " + voltage1  + " " + voltage2 + " Secondary " + voltage3 + " " + voltage4);
+			TFMG.LOGGER.debug("transformer {} Network: {} {} {} {} {} {} Secondary {} {}", i, t.pA.networkId, t.pB.localId, t.sA.networkId, t.sB.localId, voltage1, voltage2, voltage3, voltage4);
 
         }
         sendDataToMembers();

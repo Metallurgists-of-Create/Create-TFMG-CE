@@ -1,7 +1,5 @@
 package com.drmangotea.tfmg.ponder.scenes;
 
-import com.drmangotea.tfmg.content.electricity.experimental.content.power_transmission.transformers.large.LargeTransformerBlock;
-import com.drmangotea.tfmg.content.electricity.experimental.content.power_transmission.transformers.large.LargeTransformerBlockEntity;
 import com.drmangotea.tfmg.content.machinery.misc.winding_machine.WindingMachineBlockEntity;
 import com.drmangotea.tfmg.registry.TFMGBlocks;
 import com.drmangotea.tfmg.registry.TFMGDataComponents;
@@ -244,8 +242,8 @@ public class ElectricityScenes {
                 .rightClick()
                 .withItem(new ItemStack(TFMGBlocks.LAMINATED_MAGNETIC_ALLOY_BLOCK.get()));
         scene.idle(10);
-        scene.world().setBlock(new BlockPos(2, 3, 2), TFMGBlocks.LARGE_TRANSFORMER.getDefaultState().setValue(LargeTransformerBlock.HORIZONTAL_FACING, Direction.SOUTH), true);
-        scene.world().setBlock(new BlockPos(2, 3, 3), TFMGBlocks.LARGE_TRANSFORMER.getDefaultState().setValue(LargeTransformerBlock.HORIZONTAL_FACING, Direction.NORTH), true);
+        //scene.world().setBlock(new BlockPos(2, 3, 2), TFMGBlocks.LARGE_TRANSFORMER.getDefaultState().setValue(LargeTransformerBlock.HORIZONTAL_FACING, Direction.SOUTH), true);
+        //scene.world().setBlock(new BlockPos(2, 3, 3), TFMGBlocks.LARGE_TRANSFORMER.getDefaultState().setValue(LargeTransformerBlock.HORIZONTAL_FACING, Direction.NORTH), true);
         scene.idle(50);
         scene.overlay().showText(50)
                 .attachKeyFrame()
@@ -255,10 +253,10 @@ public class ElectricityScenes {
                 .rightClick()
                 .withItem(new ItemStack(TFMGBlocks.STEEL_BLOCK.get()));
         scene.idle(10);
-        scene.world().modifyBlockEntity(new BlockPos(2, 3, 2), LargeTransformerBlockEntity.class, (large) -> large.constructionState = LargeTransformerBlockEntity.TransformerConstructionState.NEEDS_OIL);
-        scene.world().modifyBlockEntity(new BlockPos(2, 3, 3), LargeTransformerBlockEntity.class, (large) -> large.constructionState = LargeTransformerBlockEntity.TransformerConstructionState.NEEDS_OIL);
-        scene.world().setBlock(new BlockPos(2, 3, 2), TFMGBlocks.LARGE_TRANSFORMER.getDefaultState().setValue(LargeTransformerBlock.HORIZONTAL_FACING, Direction.SOUTH).setValue(LargeTransformerBlock.UNFINISHED_MODEL, false), true);
-        scene.world().setBlock(new BlockPos(2, 3, 3), TFMGBlocks.LARGE_TRANSFORMER.getDefaultState().setValue(LargeTransformerBlock.HORIZONTAL_FACING, Direction.NORTH).setValue(LargeTransformerBlock.UNFINISHED_MODEL, false), true);
+        //scene.world().modifyBlockEntity(new BlockPos(2, 3, 2), LargeTransformerBlockEntity.class, (large) -> large.constructionState = LargeTransformerBlockEntity.TransformerConstructionState.NEEDS_OIL);
+        //scene.world().modifyBlockEntity(new BlockPos(2, 3, 3), LargeTransformerBlockEntity.class, (large) -> large.constructionState = LargeTransformerBlockEntity.TransformerConstructionState.NEEDS_OIL);
+        //scene.world().setBlock(new BlockPos(2, 3, 2), TFMGBlocks.LARGE_TRANSFORMER.getDefaultState().setValue(LargeTransformerBlock.HORIZONTAL_FACING, Direction.SOUTH).setValue(LargeTransformerBlock.UNFINISHED_MODEL, false), true);
+        //scene.world().setBlock(new BlockPos(2, 3, 3), TFMGBlocks.LARGE_TRANSFORMER.getDefaultState().setValue(LargeTransformerBlock.HORIZONTAL_FACING, Direction.NORTH).setValue(LargeTransformerBlock.UNFINISHED_MODEL, false), true);
         scene.idle(30);
         scene.overlay().showText(50)
                 .attachKeyFrame()
@@ -268,8 +266,8 @@ public class ElectricityScenes {
                 .rightClick()
                 .withItem(new ItemStack(lubricationOil().getBucket()));
         scene.idle(10);
-        scene.world().setBlock(new BlockPos(2, 3, 2), TFMGBlocks.LARGE_TRANSFORMER.getDefaultState().setValue(LargeTransformerBlock.HORIZONTAL_FACING, Direction.SOUTH).setValue(LargeTransformerBlock.UNFINISHED_MODEL, false), true);
-        scene.world().setBlock(new BlockPos(2, 3, 3), TFMGBlocks.LARGE_TRANSFORMER.getDefaultState().setValue(LargeTransformerBlock.HORIZONTAL_FACING, Direction.NORTH).setValue(LargeTransformerBlock.UNFINISHED_MODEL, false), true);
+        //scene.world().setBlock(new BlockPos(2, 3, 2), TFMGBlocks.LARGE_TRANSFORMER.getDefaultState().setValue(LargeTransformerBlock.HORIZONTAL_FACING, Direction.SOUTH).setValue(LargeTransformerBlock.UNFINISHED_MODEL, false), true);
+        //scene.world().setBlock(new BlockPos(2, 3, 3), TFMGBlocks.LARGE_TRANSFORMER.getDefaultState().setValue(LargeTransformerBlock.HORIZONTAL_FACING, Direction.NORTH).setValue(LargeTransformerBlock.UNFINISHED_MODEL, false), true);
         scene.idle(50);
         scene.world().showIndependentSection(transformerDecoration, Direction.DOWN);
         scene.idle(20);

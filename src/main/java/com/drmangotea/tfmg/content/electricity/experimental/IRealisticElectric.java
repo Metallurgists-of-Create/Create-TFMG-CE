@@ -4,6 +4,7 @@ import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.base.lang.TFMGTexts;
 import com.drmangotea.tfmg.content.electricity.experimental.content.power_transmission.cables.CableBlockEntity;
 import com.drmangotea.tfmg.content.electricity.experimental.content.power_transmission.switches.electric_switch.ElectricSwitchBlockEntity;
+import com.drmangotea.tfmg.content.electricity.experimental.content.power_transmission.transformers.large.LargeTransformerBlockEntity;
 import com.drmangotea.tfmg.content.electricity.experimental.simulation.ElectricalComponent;
 import com.drmangotea.tfmg.content.electricity.experimental.simulation.IdealVoltageSource;
 import com.drmangotea.tfmg.content.electricity.experimental.simulation.Resistance;
@@ -36,6 +37,8 @@ public interface IRealisticElectric extends IHaveMultimeterInformation {
     }
 
     default void updateNetwork(BlockPos pos) {
+        if (this instanceof LargeTransformerBlockEntity t && !t.isMainPart)
+            return;
 
         RealElectricalNetwork network = RealElectricNetworkManager.getNetwork(getWorld());
         if (network == null)
@@ -50,7 +53,8 @@ public interface IRealisticElectric extends IHaveMultimeterInformation {
         RealElectricalNetwork network = RealElectricNetworkManager.getNetwork(getWorld());
         network.members.remove(this.getPos());
         network.removeConnections(this);
-        network.nodes.removeAll(this.getProperties().nodes);
+        if (this.getProperties() != null)
+            network.nodes.removeAll(this.getProperties().nodes);
 
 
         TFMG.ELECTRICAL_NETWORK_DATA.markDirty();
@@ -134,13 +138,13 @@ public interface IRealisticElectric extends IHaveMultimeterInformation {
         if (this instanceof ElectricSwitchBlockEntity)
             for (Direction facing : Direction.values()) {
                 if (getWorld().getBlockEntity(pos.relative(facing)) instanceof IRealisticElectric be) {
-                    connectToNeighbors(getWorld(),be);
+                    connectToNeighbors(getWorld(), be);
                 }
 
             }
 
 
-        if (!(this instanceof CableBlockEntity)&&getProperties().cableConnectable()) {
+        if (!(this instanceof CableBlockEntity) && getProperties().cableConnectable()) {
             connectToNeighbors(getWorld(), this);
             updateNetwork(pos);
         }

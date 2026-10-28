@@ -1,6 +1,6 @@
 package com.drmangotea.tfmg.content.engines.types.regular_engine;
 
-import com.drmangotea.tfmg.content.electricity.base.IElectric;
+import com.drmangotea.tfmg.content.electricity.base.IOldElectric;
 import com.drmangotea.tfmg.content.engines.base.EngineBlock;
 import com.drmangotea.tfmg.content.engines.types.AbstractSmallEngineBlockEntity;
 import com.drmangotea.tfmg.registry.TFMGBlockEntities;
@@ -78,7 +78,7 @@ public class RegularEngineBlock extends EngineBlock implements IBE<RegularEngine
     }
     @Override
     public void onPlace(BlockState pState, Level level, BlockPos pos, BlockState pOldState, boolean pIsMoving) {
-        withBlockEntityDo(level, pos, IElectric::onPlaced);
+        withBlockEntityDo(level, pos, IOldElectric::onPlaced);
     }
 
     @Override

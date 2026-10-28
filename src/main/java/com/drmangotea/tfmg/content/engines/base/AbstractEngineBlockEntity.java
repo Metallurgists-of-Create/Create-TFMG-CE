@@ -282,11 +282,6 @@ public abstract class AbstractEngineBlockEntity extends KineticElectricBlockEnti
 
     public abstract int getFuelConsumption();
 
-    @Override
-    public void onPlaced() {
-        super.onPlaced();
-    }
-
     public void neighbourChanged() {
         if (level == null)
             return;

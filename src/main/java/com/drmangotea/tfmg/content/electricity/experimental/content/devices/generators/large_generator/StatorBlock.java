@@ -1,0 +1,127 @@
+package com.drmangotea.tfmg.content.electricity.experimental.content.devices.generators.large_generator;
+
+import com.drmangotea.tfmg.base.TFMGShapes;
+import com.drmangotea.tfmg.base.annotation.NothingNullByDefault;
+import com.drmangotea.tfmg.content.electricity.experimental.IRealisticElectric;
+import com.drmangotea.tfmg.content.electricity.experimental.packets.AddElectricalComponentPacket;
+import com.drmangotea.tfmg.registry.TFMGBlockEntities;
+import com.mojang.serialization.MapCodec;
+import com.simibubi.create.foundation.block.IBE;
+import net.createmod.catnip.platform.CatnipServices;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.StringRepresentable;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.DirectionalBlock;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
+
+
+@NothingNullByDefault
+public class StatorBlock extends DirectionalBlock implements IBE<StatorBlockEntity> {
+    public static final MapCodec<StatorBlock> CODEC = simpleCodec(StatorBlock::new);
+
+    public static final BooleanProperty VALUE = BooleanProperty.create("value");
+    public static final EnumProperty<StatorState> STATOR_STATE = EnumProperty.create("stator_state", StatorState.class);
+
+    public StatorBlock(Properties properties) {
+        super(properties);
+    }
+
+    @Override
+    protected MapCodec<? extends DirectionalBlock> codec() {
+        return CODEC;
+    }
+
+
+    @Override
+    protected void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean movedByPiston) {
+        super.onPlace(state, level, pos, oldState, movedByPiston);
+        if(level.getBlockEntity(pos) instanceof IRealisticElectric be){
+            be.onPlace();
+            if (level instanceof ServerLevel serverLevel)
+                CatnipServices.NETWORK.sendToClientsTrackingChunk(serverLevel, new ChunkPos(pos), new AddElectricalComponentPacket(BlockPos.of(pos.asLong())));
+
+
+        }
+    }
+
+    @Override
+    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
+        IBE.onRemove(state, level, pos, newState);
+        super.onRemove(state,level,pos,newState,isMoving);
+    }
+
+    @Override
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> pBuilder) {
+        pBuilder.add(STATOR_STATE,FACING,VALUE);
+        super.createBlockStateDefinition(pBuilder);
+    }
+
+    @Override
+    public VoxelShape getShape(BlockState state, BlockGetter blockGetter, BlockPos pos, CollisionContext context) {
+
+        StatorState statorState = state.getValue(STATOR_STATE);
+        boolean rotated = state.getValue(VALUE);
+        Direction direction = state.getValue(FACING);
+
+        if(direction == Direction.UP)
+            direction = Direction.NORTH;
+        if(statorState == StatorState.CORNER){
+            return rotated ? TFMGShapes.STATOR_ROTATED.get(direction) : TFMGShapes.STATOR.get(direction);
+        }
+        if(statorState == StatorState.CORNER_HORIZONTAL){
+
+
+            return TFMGShapes.STATOR_VERTICAL.get(direction);
+        }
+
+
+        return super.getShape(state, blockGetter, pos, context);
+    }
+
+    @Override
+    public Class<StatorBlockEntity> getBlockEntityClass() {
+        return StatorBlockEntity.class;
+    }
+
+    @Override
+    public BlockEntityType<? extends StatorBlockEntity> getBlockEntityType() {
+        return TFMGBlockEntities.STATOR.get();
+    }
+
+    public enum StatorState implements StringRepresentable{
+
+
+        SIDE("side"),
+        CORNER_HORIZONTAL("corner_horizontal"),
+        CORNER("corner")
+
+
+        ;
+        final String name;
+        StatorState(String name){
+            this.name = name;
+        }
+
+
+        @Override
+        public String getSerializedName() {
+            return name;
+        }
+    }
+
+
+
+
+
+}
