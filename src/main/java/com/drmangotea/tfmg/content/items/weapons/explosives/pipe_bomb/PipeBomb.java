@@ -12,8 +12,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.HitResult;
 
-import java.io.IOException;
-
 @NothingNullByDefault
 public class PipeBomb extends ThrowableItemProjectile {
     public PipeBomb(EntityType<? extends PipeBomb> entityType, Level level) {
@@ -35,23 +33,21 @@ public class PipeBomb extends ThrowableItemProjectile {
 
     public void handleEntityEvent(byte id) {
         if (id == 3) {
-			try (Level level = level()) {
+			Level level = level();
 				ParticleOptions particleoptions = this.getParticle();
 				for (int i = 0; i < 8; ++i) {
 					level.addParticle(particleoptions, this.getX(), this.getY(), this.getZ(), 0.0D, 0.0D, 0.0D);
 				}
-			} catch (IOException ignored) { }
         }
     }
 
     protected void onHit(HitResult result) {
         super.onHit(result);
-		try (Level level = level()) {
+		Level level = level();
 			if (level.isClientSide) return;
             level.broadcastEntityEvent(this, (byte) 3);
             level.explode(this, this.getX(), this.getY(0.0625D), this.getZ(), 2.0F, Level.ExplosionInteraction.NONE);
             this.discard();
-		} catch (IOException ignored) { }
     }
 
     public static EntityType.Builder<?> build(EntityType.Builder<? extends PipeBomb> builder) {
