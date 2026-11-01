@@ -21,8 +21,6 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 
-import java.io.IOException;
-
 @NothingNullByDefault
 public class DryIceFlake extends Spark {
     public DryIceFlake(EntityType<? extends Spark> p_37391_, Level p_37392_) {
@@ -30,51 +28,47 @@ public class DryIceFlake extends Spark {
     }
 	
     protected void onHitBlock(BlockHitResult blockHit) {
-		try (Level level = level()) {
-			if (level.isClientSide || this.getOwner() instanceof Mob) return;
-			
-			BlockPos.betweenClosedStream(
-				new AABB(blockHit.getBlockPos().relative(blockHit.getDirection()))
-					.inflate(TFMGConfigs.common().equipment.fireExtinguisherClearRadius.get())
-			).forEach(p -> {
-				if (level.getBlockState(p).getBlock() instanceof BaseFireBlock) {
-					level.setBlockAndUpdate(p, Blocks.AIR.defaultBlockState());
-				}
-			});
-		} catch (IOException ignored) { }
+		if (level().isClientSide || this.getOwner() instanceof Mob) return;
+		
+		BlockPos.betweenClosedStream(
+			new AABB(blockHit.getBlockPos().relative(blockHit.getDirection()))
+				.inflate(TFMGConfigs.common().equipment.fireExtinguisherClearRadius.get())
+		).forEach(p -> {
+			if (level().getBlockState(p).getBlock() instanceof BaseFireBlock) {
+				level().setBlockAndUpdate(p, Blocks.AIR.defaultBlockState());
+			}
+		});
     }
 
     protected void onHitEntity(EntityHitResult hitResult) {
-		try (Level level = level()) {
-			if (level.isClientSide) return;
-			Entity hitEntity = hitResult.getEntity();
-			hitEntity.extinguishFire();
+		if (level().isClientSide) return;
+		Entity hitEntity = hitResult.getEntity();
+		hitEntity.extinguishFire();
+		
+		if (!hitEntity.canFreeze()) return;
+		
+		// Apply freezing
+		int currentFreeze = hitEntity.getTicksFrozen();
+		int freezeIncrement = 10;
+		int newFreeze = Math.min(currentFreeze + freezeIncrement, hitEntity.getTicksRequiredToFreeze() + 20); // Slightly overfreeze
+		hitEntity.setTicksFrozen(newFreeze);
+		
+		// Damage if fully frozen
+		if (newFreeze >= hitEntity.getTicksRequiredToFreeze()) {
+			hitEntity.hurt(this.damageSources().freeze(), 2.0F);
+		}
+		
+		// Slow movement and remove hellfire
+		if (hitEntity instanceof LivingEntity livingEntity) {
+			livingEntity.addEffect(new MobEffectInstance(
+				MobEffects.MOVEMENT_SLOWDOWN,
+				20,
+				2,
+				false, false, true
+			));
 			
-            if (!hitEntity.canFreeze()) return;
-			
-			// Apply freezing
-			int currentFreeze = hitEntity.getTicksFrozen();
-			int freezeIncrement = 10;
-			int newFreeze = Math.min(currentFreeze + freezeIncrement, hitEntity.getTicksRequiredToFreeze() + 20); // Slightly overfreeze
-			hitEntity.setTicksFrozen(newFreeze);
-			
-			// Damage if fully frozen
-			if (newFreeze >= hitEntity.getTicksRequiredToFreeze()) {
-				hitEntity.hurt(this.damageSources().freeze(), 2.0F);
-			}
-			
-			// Slow movement and remove hellfire
-			if (hitEntity instanceof LivingEntity livingEntity) {
-				livingEntity.addEffect(new MobEffectInstance(
-						MobEffects.MOVEMENT_SLOWDOWN,
-						20,
-						2,
-						false, false, true
-				));
-				
-				livingEntity.removeEffect(TFMGMobEffects.HELLFIRE);
-			}
-		} catch (IOException ignored) { }
+			livingEntity.removeEffect(TFMGMobEffects.HELLFIRE);
+		}
     }
 
     @Override

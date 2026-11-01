@@ -26,6 +26,11 @@ Contributors:<br>
   - Added the `engine_upgrade` component to all default upgrade items.
   - Simple Large Engines now have their own fuel tag.
   - Slightly tweaked engine fuel testing to hopefully avoid crashing on a broken tag.
+- Blast Furnace Output:
+  - Tanks now use `ForceableFluidTank` and block insertion.
+  - Now uses the same timer system as all our other recipe machines.
+  - Tweaked recipe durations.
+- JEI recipe categories now show TFMG instead of Create
 
 ### API Changes:
 - new `IHaveMultimeterInformation` interface

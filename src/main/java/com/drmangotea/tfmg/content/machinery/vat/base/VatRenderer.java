@@ -1,10 +1,12 @@
 package com.drmangotea.tfmg.content.machinery.vat.base;
 
+import com.drmangotea.tfmg.mixin.accessor.TankSegmentAccessor;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.foundation.blockEntity.behaviour.fluid.SmartFluidTankBehaviour;
 import com.simibubi.create.foundation.blockEntity.renderer.SafeBlockEntityRenderer;
 import dev.engine_room.flywheel.lib.transform.TransformStack;
 import net.createmod.catnip.animation.AnimationTickHolder;
+import net.createmod.catnip.data.Couple;
 import net.createmod.catnip.math.VecHelper;
 import net.createmod.catnip.platform.NeoForgeCatnipServices;
 import net.minecraft.client.Minecraft;
@@ -119,23 +121,38 @@ public class VatRenderer extends SafeBlockEntityRenderer<VatBlockEntity> {
     }
 
     protected float renderFluids(VatBlockEntity vat, float partialTicks, PoseStack ms, MultiBufferSource buffer, int light) {
-        SmartFluidTankBehaviour inputFluids = vat.getBehaviour(SmartFluidTankBehaviour.INPUT);
-        SmartFluidTankBehaviour outputFluids = vat.getBehaviour(SmartFluidTankBehaviour.OUTPUT);
-        SmartFluidTankBehaviour[] tanks = { inputFluids, outputFluids };
+        Couple<SmartFluidTankBehaviour> tanks = vat.getTanks();
 
-        float totalUnits = vat.getTotalFluidUnits(partialTicks);
-        if (totalUnits < 1)
+		float totalUnits = 0;
+		int renderedFluids = 0;
+		int totalCapacity = 0;
+		
+		for (SmartFluidTankBehaviour behaviour : tanks) {
+			if (behaviour == null)
+				continue;
+			for (SmartFluidTankBehaviour.TankSegment tankSegment : behaviour.getTanks()) {
+				totalCapacity += ((TankSegmentAccessor) tankSegment).tfmg$tank().getCapacity();
+				if (tankSegment.getRenderedFluid().isEmpty())
+					continue;
+				float units = tankSegment.getTotalUnits(partialTicks);
+				if (units < 1)
+					continue;
+				totalUnits += units;
+				renderedFluids++;
+			}
+		}
+
+		if (renderedFluids == 0 || totalUnits < 1)
             return 0;
 
-        float fluidLevel = Mth.clamp(totalUnits / vat.getTotalCapacity(), 0, 1);
-
-        fluidLevel = 1 - ((1 - fluidLevel) * (1 - fluidLevel));
+        float fluidLevel = Mth.clamp(totalUnits / totalCapacity, 0, 1);
+		
+        fluidLevel *= 2 - fluidLevel;
 
         float capHeight = (1 / 4f);
         float tankHullWidth = 1 / 16f + 1 / 128f;
 
-        float xMax = tankHullWidth + vat.width - 2 * tankHullWidth;
-        float zMax = tankHullWidth + vat.width - 2 * tankHullWidth;
+        float xzMax = tankHullWidth + vat.width - 2 * tankHullWidth;
 
         float level = 0;
         float surfaceY = capHeight;
@@ -154,7 +171,7 @@ public class VatRenderer extends SafeBlockEntityRenderer<VatBlockEntity> {
                 // The - 0.1f is to prevent fluid z-fighting
                 float yMax = Math.min(yMin + (fluidLevel * (vat.height - (2 * capHeight))), vat.height - 0.1f);
 
-                NeoForgeCatnipServices.FLUID_RENDERER.renderFluidBox(renderedFluid, tankHullWidth, yMin, tankHullWidth, xMax, yMax, zMax, buffer, ms, light, false, false);
+                NeoForgeCatnipServices.FLUID_RENDERER.renderFluidBox(renderedFluid, tankHullWidth, yMin, tankHullWidth, xzMax, yMax, xzMax, buffer, ms, light, false, false);
 
                 level += yMax - yMin;
                 surfaceY = yMax;

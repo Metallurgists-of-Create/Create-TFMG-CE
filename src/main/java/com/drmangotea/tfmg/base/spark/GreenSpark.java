@@ -11,8 +11,8 @@ import java.util.Optional;
 
 @NothingNullByDefault
 public class GreenSpark extends Spark {
-    public GreenSpark(EntityType<? extends Spark> p_37391_, Level p_37392_) {
-        super(p_37391_, p_37392_);
+    public GreenSpark(EntityType<? extends Spark> type, Level level) {
+        super(type, level);
     }
 
     public float[] getCustomParticleTrail() {

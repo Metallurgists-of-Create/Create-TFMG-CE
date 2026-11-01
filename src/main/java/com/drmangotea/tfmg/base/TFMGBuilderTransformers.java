@@ -7,6 +7,8 @@ import com.drmangotea.tfmg.config.server.TFMGStress;
 import com.drmangotea.tfmg.content.decoration.FrameBlock;
 import com.drmangotea.tfmg.content.decoration.TrussBlock;
 import com.drmangotea.tfmg.content.decoration.doors.TFMGSlidingDoorBlock;
+import com.drmangotea.tfmg.content.decoration.kinetics.cogs.TFMGCogWheelBlock;
+import com.drmangotea.tfmg.content.decoration.kinetics.cogs.TFMGCogwheelBlockItem;
 import com.drmangotea.tfmg.content.decoration.kinetics.encased.TFMGEncasedCogwheelBlock;
 import com.drmangotea.tfmg.content.decoration.kinetics.encased.TFMGEncasedShaftBlock;
 import com.drmangotea.tfmg.content.decoration.kinetics.flywheels.TFMGFlywheelBlock;
@@ -20,6 +22,7 @@ import com.simibubi.create.content.contraptions.behaviour.DoorMovingInteraction;
 import com.simibubi.create.content.decoration.encasing.EncasedCTBehaviour;
 import com.simibubi.create.content.decoration.slidingDoor.SlidingDoorMovementBehaviour;
 import com.simibubi.create.content.kinetics.base.RotatedPillarKineticBlock;
+import com.simibubi.create.content.kinetics.simpleRelays.BracketedKineticBlockModel;
 import com.simibubi.create.content.kinetics.simpleRelays.encased.EncasedCogCTBehaviour;
 import com.simibubi.create.foundation.block.connected.CTSpriteShiftEntry;
 import com.simibubi.create.foundation.data.*;
@@ -35,6 +38,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.Direction;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
+import net.minecraft.data.recipes.ShapelessRecipeBuilder;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
@@ -216,6 +220,26 @@ public class TFMGBuilderTransformers {
 		}
 		
 		vb.addModels(vb.partialState(), models.toArray(ConfiguredModel[]::new));
+	}
+	
+	public static BlockBuilder<TFMGCogWheelBlock, CreateRegistrate> cogwheel(
+		String name, boolean large, TagKey<Item> ingot
+	) {
+		return REGISTRATE.block(name, large? TFMGCogWheelBlock::large : TFMGCogWheelBlock::small)
+			.initialProperties(SharedProperties::stone)
+			.transform(TFMGStress.setNoImpact())
+			.transform(axeOrPickaxe())
+			.blockstate(BlockStateGen.axisBlockProvider(false))
+			.onRegister(CreateRegistrate.blockModel(() -> BracketedKineticBlockModel::new))
+			.item(TFMGCogwheelBlockItem::new).build()
+			.recipe((ctx, prov) -> {
+				var builder = ShapelessRecipeBuilder.shapeless(RecipeCategory.DECORATIONS, ctx.get(), large ? 2 : 4)
+					.unlockedBy("has_ingot", RegistrateRecipeProvider.has(ingot))
+					.requires(AllBlocks.SHAFT)
+					.requires(ingot);
+				if (large) builder.requires(ingot);
+				builder.save(prov);
+			});
 	}
 	
     public static BlockEntry<TFMGFlywheelBlock> flywheel(String name, TagKey<Item> ingot, NonNullFunction<BlockBehaviour.Properties, TFMGFlywheelBlock> block) {

@@ -94,7 +94,6 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
     protected IPressureHandler pressureCapability;
     //rendering
     protected boolean forceFluidLevelUpdate;
-    public LerpedFloat[] fluidLevel = new LerpedFloat[8];
     public LerpedFloat visualSpeed = LerpedFloat.linear();
     public float spinningAngle;
     protected int luminosity;
@@ -127,9 +126,6 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
     public VatBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
         setLazyTickRate(10);
-        for (int i = 0; i < 8; i++) {
-            fluidLevel[i] = LerpedFloat.linear();
-        }
         window = false;
         inputInventory = new VatInventory(4, this);
         outputInventory = new VatInventory(4, this);
@@ -269,15 +265,7 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
         revalidateMachines();
         updateTemperature();
         if (level != null && level.isClientSide && !(level instanceof PonderLevel)) {
-            int tankNumber = 0;
-            for (int i = 0; i < 8; i++) {
-                IFluidHandler fluidHandler = fluidCapability;
-                if (fluidHandler != null) {
-                    fluidLevel[i].chase((double) (fluidHandler.getFluidInTank(tankNumber).getAmount()) / inputTank.getPrimaryHandler().getCapacity(), .5f, LerpedFloat.Chaser.EXP);
-                    getFillState();
-                    tankNumber++;
-                }
-            }
+			updateFluidLevel();
 
             float targetSpeed = 0;
             for (BlockPos pos : machineMap.keySet()) {
@@ -293,6 +281,14 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
             visualSpeed.chase(Math.min(targetSpeed, 64f) * .09f, .2f, LerpedFloat.Chaser.EXP);
         }
     }
+	
+	public void updateFluidLevel () {
+		for (SmartFluidTankBehaviour tank : tanks) { tank.forEach(s -> {
+			SmartFluidTank ft = ((TankSegmentAccessor) s).tfmg$tank();
+			double percentage = (double) ft.getFluidAmount() / ft.getCapacity();
+			s.getFluidLevel().chase(percentage, .5f, LerpedFloat.Chaser.EXP);
+		}); }
+	}
 
     public void updateTemperature() {
         if (!isController())
@@ -513,9 +509,7 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
         }
         if (updateConnectivity)
             updateConnectivity();
-        for (int i = 0; i < 8; i++) {
-            fluidLevel[i].tickChaser();
-        }
+		if (forceFluidLevelUpdate) updateFluidLevel();
         visualSpeed.tickChaser();
 
     }
@@ -1289,13 +1283,15 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
     }
 
     public float getFillState() {
-        IFluidHandler fluidHandler = fluidCapability;
-        for (int i = 0; i < fluidHandler.getTanks(); i++)
-            if (!fluidHandler.getFluidInTank(i).isEmpty())
-                return (float) fluidHandler.getFluidInTank(i).getAmount() / fluidHandler.getTankCapacity(0);
-
-        return 0;
-
+		int tVol = 0, tCap = 0;
+		for (SmartFluidTankBehaviour behaviour : tanks) {
+			for (SmartFluidTankBehaviour.TankSegment segment : behaviour.getTanks()) {
+				SmartFluidTank tank = ((TankSegmentAccessor) segment).tfmg$tank();
+				tVol += tank.getFluidAmount();
+				tCap += tank.getCapacity();
+			}
+		}
+		return (float) tVol / tCap;
     }
 
     @Override
