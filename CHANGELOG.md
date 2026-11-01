@@ -30,6 +30,7 @@ Contributors:<br>
   - Tanks now use `ForceableFluidTank` and block insertion.
   - Now uses the same timer system as all our other recipe machines.
   - Tweaked recipe durations.
+- JEI recipe categories now show TFMG instead of Create
 
 ### API Changes:
 - new `IHaveMultimeterInformation` interface
