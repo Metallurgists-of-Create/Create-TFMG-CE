@@ -22,7 +22,6 @@ import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
-import java.io.IOException;
 import java.util.Optional;
 
 @NothingNullByDefault
@@ -86,18 +85,14 @@ public class Spark extends ThrowableProjectile {
             this.discard();
         }
 
-		try (Level level = level()) {
-			if (!level.isClientSide) return;
-			float[] trail = getCustomParticleTrail();
-			if (trail[0] == 0 && trail[1] == 0 && trail[2] == 0) {
-				level.addParticle(getTrailParticle(), this.getX(), this.getY(), this.getZ(), this.random.nextGaussian() * 0.05D, -this.getDeltaMovement().y * 0.5D, this.random.nextGaussian() * 0.05D);
-			} else {
-				CubeParticleData data =
-					new CubeParticleData(trail[0], trail[1], trail[2], .0125f + .0625f * random.nextFloat(), 30, true);
-				level.addParticle(data, this.getX(), this.getY(), this.getZ(), this.random.nextGaussian() * 0.05D, -this.getDeltaMovement().y * 0.5D, this.random.nextGaussian() * 0.05D);
-			}
-		} catch (IOException e) {
-			TFMG.LOGGER.warn("Error in ticking Spark: ", e);
+		if (!level().isClientSide) return;
+		float[] trail = getCustomParticleTrail();
+		if (trail[0] == 0 && trail[1] == 0 && trail[2] == 0) {
+			level().addParticle(getTrailParticle(), this.getX(), this.getY(), this.getZ(), this.random.nextGaussian() * 0.05D, -this.getDeltaMovement().y * 0.5D, this.random.nextGaussian() * 0.05D);
+		} else {
+			CubeParticleData data =
+				new CubeParticleData(trail[0], trail[1], trail[2], .0125f + .0625f * random.nextFloat(), 30, true);
+			level().addParticle(data, this.getX(), this.getY(), this.getZ(), this.random.nextGaussian() * 0.05D, -this.getDeltaMovement().y * 0.5D, this.random.nextGaussian() * 0.05D);
 		}
     }
 
@@ -107,24 +102,20 @@ public class Spark extends ThrowableProjectile {
 
     public void handleEntityEvent(byte id) {
         if (id == 3) {
-            try (Level level = level()) {
-				ParticleOptions particleoptions = this.getParticle();
-				for (int i = 0; i < 8; ++i) {
-					level.addParticle(particleoptions, this.getX(), this.getY(), this.getZ(), 0.0D, 0.0D, 0.0D);
-				}
-			} catch (IOException ignored) { }
+			ParticleOptions particleoptions = this.getParticle();
+			for (int i = 0; i < 8; ++i) {
+				level().addParticle(particleoptions, this.getX(), this.getY(), this.getZ(), 0.0D, 0.0D, 0.0D);
+			}
         }
     }
 
     protected void onHitBlock(BlockHitResult hitResult) {
         super.onHitBlock(hitResult);
-		try (Level level = this.level()) {
-			if (level.isClientSide || this.getOwner() instanceof Mob) return;
-			BlockPos blockpos = hitResult.getBlockPos().relative(hitResult.getDirection());
-			if (level.isEmptyBlock(blockpos)) {
-				getFireState(blockpos).ifPresent(state -> level.setBlockAndUpdate(blockpos, state));
-			}
-		} catch (IOException ignored) { }
+		if (level().isClientSide || this.getOwner() instanceof Mob) return;
+		BlockPos blockpos = hitResult.getBlockPos().relative(hitResult.getDirection());
+		if (level().isEmptyBlock(blockpos)) {
+			getFireState(blockpos).ifPresent(state -> level().setBlockAndUpdate(blockpos, state));
+		}
 	}
 
     public int getColor(){
@@ -133,19 +124,17 @@ public class Spark extends ThrowableProjectile {
 
     protected void onHitEntity(EntityHitResult hitResult) {
         super.onHitEntity(hitResult);
-		try (Level level = level()) {
-			if (level.isClientSide) return;
-			//ignite
-			Entity entity = hitResult.getEntity();
-			entity.igniteForSeconds(4.0F);
-			if (entity.getRemainingFireTicks() > 0 && !entity.fireImmune()) {
-				entity.hurt(this.damageSources().onFire(), 1.0F);
-			}
-			//just for Lithium Sparks atm, but no longer hardcoded
-			if (entity instanceof LivingEntity living) {
-				onHitLiving(living);
-			}
-		} catch (IOException ignored) { }
+		if (level().isClientSide) return;
+		//ignite
+		Entity entity = hitResult.getEntity();
+		entity.igniteForSeconds(4.0F);
+		if (entity.getRemainingFireTicks() > 0 && !entity.fireImmune()) {
+			entity.hurt(this.damageSources().onFire(), 1.0F);
+		}
+		//just for Lithium Sparks atm, but no longer hardcoded
+		if (entity instanceof LivingEntity living) {
+			onHitLiving(living);
+		}
     }
 	
 	protected void onHitLiving(LivingEntity living) { }
@@ -153,11 +142,9 @@ public class Spark extends ThrowableProjectile {
     protected void onHit(HitResult p_37406_) {
         super.onHit(p_37406_);
 
-        try (Level level = this.level()) {
-			if (level.isClientSide) return;
-			level.broadcastEntityEvent(this, (byte) 3);
-            this.discard();
-        } catch (IOException ignored) {}
+        if (level().isClientSide) return;
+		level().broadcastEntityEvent(this, (byte) 3);
+		this.discard();
     }
 
     public static EntityType.Builder<? extends Spark> build(EntityType.Builder<? extends Spark> builder) {
