@@ -64,6 +64,7 @@ public abstract class BaseTFMGFireBlock extends BaseFireBlock {
 			.setValue(WEST, false)
 			.setValue(UP, false)
 		);
+		
 		this.shapesCache = ImmutableMap.copyOf(this.stateDefinition.getPossibleStates().stream()
 			.filter((state) -> state.getValue(AGE) == 0)
 			.collect(Collectors.toMap(Function.identity(), BaseTFMGFireBlock::calculateShape))
@@ -118,17 +119,8 @@ public abstract class BaseTFMGFireBlock extends BaseFireBlock {
 		return defaultState;
 	}
 	
-	public static BlockState getState(BlockGetter level, BlockPos pos) {
-		return getBlock().getStateForPlacement(level, pos);
-	}
-	
 	protected BlockState getStateWithAge(LevelAccessor level, BlockPos pos, int age) {
-		BlockState blockstate = getState(level, pos);
-		return blockstate.is(getBlock()) ? blockstate.setValue(AGE, age) : blockstate;
-	}
-	
-	protected static BaseTFMGFireBlock getBlock() {
-		return null; //this should never be called, so it's OK, I think.
+		return getStateForPlacement(level, pos).setValue(AGE, age);
 	}
 	
 	public BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level, BlockPos pos, BlockPos neighborPos) {

@@ -15,8 +15,8 @@ import net.minecraft.world.level.block.state.BlockState;
 public class LithiumFireBlock extends BaseTFMGFireBlock {
     public static final MapCodec<LithiumFireBlock> CODEC = simpleCodec(LithiumFireBlock::new);
 
-    public LithiumFireBlock(Properties p_53425_) {
-        super(p_53425_, 1.0F);
+    public LithiumFireBlock(Properties p) {
+        super(p, 1.0F);
     }
 	
 	@Override
@@ -24,8 +24,8 @@ public class LithiumFireBlock extends BaseTFMGFireBlock {
 		return CODEC;
 	}
 	
-	protected static BaseTFMGFireBlock getBlock() {
-		return TFMGColoredFires.LITHIUM_FIRE.get();
+	public static BlockState getState(BlockGetter level, BlockPos pos) {
+		return TFMGColoredFires.LITHIUM_FIRE.get().getStateForPlacement(level, pos);
 	}
 
     public void entityInside(BlockState blockState, Level level, BlockPos pos, Entity entity) {
