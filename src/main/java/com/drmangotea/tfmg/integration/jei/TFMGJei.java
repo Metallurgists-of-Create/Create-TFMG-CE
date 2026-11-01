@@ -155,8 +155,8 @@ public class TFMGJei implements IModPlugin {
             super(recipeClass);
         }
         @Override
-        public CreateRecipeCategory<T> build(ResourceLocation id, CreateRecipeCategory.Factory<T> factory) {
-            CreateRecipeCategory<T> category = super.build(id, factory);
+        public CreateRecipeCategory<T> build(String id, CreateRecipeCategory.Factory<T> factory) {
+            CreateRecipeCategory<T> category = super.build(TFMG.asResource(id), factory);
             allCategories.add(category);
             return category;
         }

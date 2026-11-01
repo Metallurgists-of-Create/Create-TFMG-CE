@@ -56,7 +56,7 @@ public class WindingRecipe extends StandardProcessingRecipe<RecipeWrapper> imple
 		if (matchingStacks.length == 0) {
 			return Component.literal("Invalid");
 		}
-		return TFMGLang.translateDirect("recipe.assembly.winding", Component.translatable(matchingStacks[0].getDescriptionId()).getString());
+		return TFMGLang.translateDirect("recipe.assembly.winding.count", Component.translatable(matchingStacks[0].getDescriptionId()).getString());
 	}
 
 	@Override
