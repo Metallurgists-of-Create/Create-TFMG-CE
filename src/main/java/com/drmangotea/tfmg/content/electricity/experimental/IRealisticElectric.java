@@ -133,23 +133,23 @@ public interface IRealisticElectric extends IHaveMultimeterInformation {
     }
 
     default void onPlace() {
-		BlockPos pos = getPos();
-        this.updateNetwork(pos);
-        if (this instanceof ElectricSwitchBlockEntity)
+        this.updateNetwork(getPos());
+        /*if (this instanceof ElectricSwitchBlockEntity)
             for (Direction facing : Direction.values()) {
-                if (getWorld().getBlockEntity(pos.relative(facing)) instanceof IRealisticElectric be) {
+                if (getWorld().getBlockEntity(getPos().relative(facing)) instanceof IRealisticElectric be) {
                     connectToNeighbors(getWorld(), be);
                 }
-
             }
 
 
         if (!(this instanceof CableBlockEntity) && getProperties().cableConnectable()) {
             connectToNeighbors(getWorld(), this);
-            updateNetwork(pos);
-        }
+            updateNetwork(BlockPos.of(getPos()));
+        }*/
+		
+		connectToNeighbors(getWorld(), this);
+        this.updateNetwork(getPos());
 
-        this.updateNetwork(pos);
     }
 
     Level getWorld();

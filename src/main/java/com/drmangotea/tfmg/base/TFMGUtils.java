@@ -45,10 +45,6 @@ import org.joml.Quaterniond;
 
 import java.time.LocalDate;
 import java.util.*;
-import java.util.Arrays;
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
@@ -60,6 +56,16 @@ public class TFMGUtils {
             case WEST -> 90;
             case EAST -> 270F;
         };
+    }
+
+    public static List<Direction> invertDirections(List<Direction> directions){
+        List<Direction> inverted = new ArrayList<>();
+
+        for (Direction direction : directions) {
+            inverted.add(direction.getOpposite());
+        }
+
+        return inverted;
     }
 
     public static ConnectingElectricalNode closestNode(IRealisticElectric be, Vec3 clickPosition) {

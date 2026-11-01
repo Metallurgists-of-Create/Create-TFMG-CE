@@ -12,7 +12,7 @@
       "item": "tfmg:steel_mechanism"
     },
     "P": {
-      "item": "tfmg:debug_cinderblock"
+      "tag": "c:wires/copper"
     },
     "R": {
       "item": "tfmg:rebar"

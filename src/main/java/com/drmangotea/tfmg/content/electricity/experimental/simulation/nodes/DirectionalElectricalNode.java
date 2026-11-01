@@ -9,8 +9,6 @@ import java.util.List;
 
 public class DirectionalElectricalNode extends ConnectableElectricalNode {
 
-    public List<Direction> facing;
-
     public DirectionalElectricalNode(BlockPos pos, int localId, List<Direction> facing, NodeType type) {
         super(pos, localId, type);
         this.facing = facing;

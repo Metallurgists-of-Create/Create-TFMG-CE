@@ -9,7 +9,7 @@
       "tag": "c:plates/lead"
     },
     "P": {
-      "item": "tfmg:debug_cinderblock"
+      "tag": "c:wires/copper"
     },
     "R": {
       "tag": "c:dusts/redstone"

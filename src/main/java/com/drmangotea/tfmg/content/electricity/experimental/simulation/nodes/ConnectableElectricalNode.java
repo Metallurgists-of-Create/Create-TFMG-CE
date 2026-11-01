@@ -4,13 +4,14 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.core.Direction;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class ConnectableElectricalNode extends ElectricalNode {
 
     public Vec3 position = new Vec3(0,0,0);
 
-    public List<Direction> facing;
+    public List<Direction> facing = Arrays.stream(Direction.values()).toList();
 
     public final NodeType type;
 
