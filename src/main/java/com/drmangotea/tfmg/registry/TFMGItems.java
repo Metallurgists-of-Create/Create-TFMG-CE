@@ -75,7 +75,7 @@ public class TFMGItems {
             STEEL_INGOT = taggedIngredient("steel_ingot", CommonMetal.STEEL.ingots, Tags.Items.INGOTS, CREATE_INGOTS.tag),
             CAST_IRON_INGOT = taggedIngredient("cast_iron_ingot", Items.INGOTS_CAST_IRON.tag, Tags.Items.INGOTS, CREATE_INGOTS.tag),
             ALUMINUM_INGOT = taggedIngredient("aluminum_ingot", CommonMetal.ALUMINUM.ingots, Tags.Items.INGOTS, CREATE_INGOTS.tag),
-            PLASTIC_SHEET = taggedIngredient("plastic_sheet", Items.INGOTS_PLASTIC.tag, Tags.Items.INGOTS, CREATE_INGOTS.tag),
+            PLASTIC_SHEET = taggedIngredient("plastic_sheet", Items.INGOTS_PLASTIC.tag, Items.PLATES_PLASTIC.tag, Tags.Items.INGOTS, CREATE_INGOTS.tag),
             HEAVY_PLATE = taggedIngredient("heavy_plate", CommonMetal.STEEL.plates, PLATES.tag),
             ALUMINUM_SHEET = taggedIngredient("aluminum_sheet", CommonMetal.ALUMINUM.plates, PLATES.tag),
             NICKEL_SHEET = taggedIngredient("nickel_sheet", CommonMetal.NICKEL.plates, PLATES.tag),
