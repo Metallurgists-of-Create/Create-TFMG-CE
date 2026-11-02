@@ -22,55 +22,61 @@ import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.AABB;
 import net.neoforged.neoforge.common.Tags;
 
-public class OilWellFeature extends Feature<NoneFeatureConfiguration> {
-    public OilWellFeature(Codec<NoneFeatureConfiguration> pCodec) {
+import static net.minecraft.world.level.material.FlowingFluid.FALLING;
+
+public class OilWellFeature extends Feature<WellFeatureConfig> {
+    public OilWellFeature(Codec<WellFeatureConfig> pCodec) {
         super(pCodec);
     }
 
     @Override
-    public boolean place(FeaturePlaceContext<NoneFeatureConfiguration> context) {
+    public boolean place(FeaturePlaceContext<WellFeatureConfig> context) {
         BlockPos startingPos = context.origin();
         WorldGenLevel level = context.level();
         BlockPos pos = startingPos;
-        RandomSource randomsource = context.random();
 
-        if (randomsource.nextInt(7) <= 1)
+        WellFeatureConfig config = context.config();
+        RandomSource random = context.random();
+
+        if (config.discardChance().sample(random) <= 1)
             return false;
 
-        setBlock(level, startingPos, TFMGBlocks.OIL_DEPOSIT.getDefaultState());
+        setBlock(level, startingPos, config.deposit());
         //resevoir handling
-        ChunkAccess chunk = level.getChunk(startingPos);
-        if (chunk.hasData(TFMGDataAttachments.FLUID_RESERVOIR)) {
-            FluidReservoir.addToReservoir(chunk, startingPos);
-        } else {
-            FluidReservoir.createReservoir(chunk, startingPos, level.getRandom());
+        if (config.linkReservoir()) {
+            ChunkAccess chunk = level.getChunk(startingPos);
+            if (chunk.hasData(TFMGDataAttachments.FLUID_RESERVOIR)) {
+                FluidReservoir.addToReservoir(chunk, startingPos);
+            } else {
+                FluidReservoir.createReservoir(chunk, startingPos, level.getRandom());
+            }
         }
 
-        int height = level.getHeight(Heightmap.Types.WORLD_SURFACE_WG, pos.getX(), pos.getZ()) + 70 + randomsource.nextInt(12);
+        int height = level.getHeight(Heightmap.Types.WORLD_SURFACE_WG, pos.getX(), pos.getZ()) + 70 + config.exposedHeight().sample(random);
 
         for (int i = 0; i < height; i++) {
             pos = pos.above();
             for (Direction direction : Iterate.horizontalDirections) {
-                if (randomsource.nextInt(3) == 1) {
-                    if (direction.getAxis().isHorizontal() && level.getBlockState(pos.relative(direction)).is(BlockTags.BASE_STONE_OVERWORLD)) {
-                        setBlock(level, pos.relative(direction), TFMGBlocks.FOSSILSTONE.getDefaultState());
+                if (random.nextInt(3) == 1) {
+                    if (direction.getAxis().isHorizontal() && config.sideStone().target().test(level.getBlockState(pos.relative(direction)), random)) {
+                        setBlock(level, pos.relative(direction), config.sideStone().state());
                     }
                 }
             }
             if (i == height - 18) {
                 AABB area = new AABB(pos).inflate(10);
                 for (BlockPos oilPos : BlockPos.betweenClosed(new BlockPos((int) area.minX, (int) area.minY, (int) area.minZ), new BlockPos((int) area.maxX, (int) area.maxY, (int) area.maxZ))) {
-                    if (randomsource.nextInt(10) == 7){
-                        if (level.getFluidState(oilPos).is(Fluids.WATER) || level.getBlockState(oilPos).is(Tags.Blocks.SANDS)) {
-                            setBlock(level, oilPos, TFMGFluids.CRUDE_OIL.getSource().getSource(true).createLegacyBlock());
-                            if (level.getBlockState(oilPos).is(Tags.Blocks.SANDS))
+                    if (config.spillageChance().sample(random) == 7) {
+                        if (level.getFluidState(oilPos).is(Fluids.WATER) || config.spillageReplaces().stream().anyMatch((rt) -> rt.test(level.getBlockState(oilPos), random))) {
+                            setBlock(level, oilPos, config.fluid().defaultFluidState().setValue(FALLING, true).createLegacyBlock());
+                            if (config.spillageReplaces().stream().anyMatch((rt) -> rt.test(level.getBlockState(oilPos), random)))
                                 setBlock(level, oilPos, level.getBlockState(oilPos).updateShape(Direction.NORTH, level.getBlockState(oilPos), level, oilPos, oilPos));
                         }
                     }
                 }
             }
 
-            setBlock(level, pos, TFMGFluids.CRUDE_OIL.getSource().getSource(true).createLegacyBlock());
+            setBlock(level, pos, config.fluid().defaultFluidState().setValue(FALLING, true).createLegacyBlock());
             level.getBlockState(pos).updateShape(Direction.NORTH,level.getBlockState(pos),level,pos,pos);
         }
         return true;
