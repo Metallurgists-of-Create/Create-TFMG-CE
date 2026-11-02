@@ -33,7 +33,7 @@ public class TFMGPipes {
         STEEL("steel", TFMGSpriteShifts.STEEL_FLUID_CASING, CommonMetal.STEEL.ingots, CommonMetal.STEEL.plates),
         ALUMINUM("aluminum", TFMGSpriteShifts.ALUMINUM_FLUID_CASING, CommonMetal.ALUMINUM.ingots, CommonMetal.ALUMINUM.plates),
         CAST_IRON("cast_iron", TFMGSpriteShifts.CAST_IRON_FLUID_CASING, TFMGTags.Items.INGOTS_CAST_IRON.tag, TFMGTags.Items.PLATES_CAST_IRON.tag),
-        PLASTIC("plastic", TFMGSpriteShifts.PLASTIC_FLUID_CASING, TFMGTags.Items.PLATES_PLASTIC.tag, TFMGTags.Items.PLATES_PLASTIC.tag); //plastic uses sheets instead of ingots for all it's recipes
+        PLASTIC("plastic", TFMGSpriteShifts.PLASTIC_FLUID_CASING, TFMGTags.Items.INGOTS_PLASTIC.tag, TFMGTags.Items.PLATES_PLASTIC.tag); //plastic uses sheets instead of ingots for all it's recipes
 
         public final String name;
 		public final CTSpriteShiftEntry encasedSpriteShift;
