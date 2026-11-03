@@ -9,7 +9,7 @@
       "tag": "c:plates/lead"
     },
     "P": {
-      "item": "tfmg:electric_post"
+      "tag": "c:wires/copper"
     },
     "R": {
       "tag": "c:dusts/redstone"

@@ -5,10 +5,10 @@ import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.TFMGRegistries;
 import com.drmangotea.tfmg.content.decoration.tanks.TFMGFluidTankBlockEntity;
 import com.drmangotea.tfmg.content.decoration.tanks.steel.SteelTankBlockEntity;
-import com.drmangotea.tfmg.content.electricity.experimental.RealElectricNetworkManager;
-import com.drmangotea.tfmg.content.electricity.experimental.content.power_transmission.energy_storage.accumulator_rack.AccumulatorRackBlockEntity;
-import com.drmangotea.tfmg.content.electricity.experimental.content.power_transmission.energy_storage.cells.AccumulatorCellItem;
-import com.drmangotea.tfmg.content.electricity.experimental.content.devices.polarizer.PolarizerBlockEntity;
+import com.drmangotea.tfmg.content.electricity.RealElectricNetworkManager;
+import com.drmangotea.tfmg.content.electricity.content.power_transmission.energy_storage.accumulator_rack.AccumulatorRackBlockEntity;
+import com.drmangotea.tfmg.content.electricity.content.power_transmission.energy_storage.cells.AccumulatorCellItem;
+import com.drmangotea.tfmg.content.electricity.content.devices.polarizer.PolarizerBlockEntity;
 import com.drmangotea.tfmg.content.engines.fuels.EngineFuelTypeManager;
 import com.drmangotea.tfmg.content.engines.types.AbstractSmallEngineBlockEntity;
 import com.drmangotea.tfmg.content.engines.types.large_engine.LargeEngineBlockEntity;
@@ -49,7 +49,7 @@ public class TFMGCommonEvents {
     @SubscribeEvent
     public static void onUnloadWorld(LevelEvent.Unload event) {
         LevelAccessor world = event.getLevel();
-        TFMG.NETWORK_MANAGER.onUnloadWorld(world);
+
 
         TFMG.ELECTRIC_NETWORK_MANAGER.onUnloadWorld(world);
     }
@@ -57,7 +57,7 @@ public class TFMGCommonEvents {
     @SubscribeEvent
     public static void onLoadWorld(LevelEvent.Load event) {
         LevelAccessor world = event.getLevel();
-        TFMG.NETWORK_MANAGER.onLoadWorld(world);
+
         TFMG.DEPOSITS.levelLoaded(world);
 
         //
@@ -67,12 +67,17 @@ public class TFMGCommonEvents {
     }
 
     @SubscribeEvent
-    public static void playerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
+    public static void playerChangedDimension(PlayerEvent.PlayerLoggedInEvent event) {
         Player player = event.getEntity();
 
         RealElectricNetworkManager.playerLogin(player);
     }
+    @SubscribeEvent
+    public static void playerChangedDimension(PlayerEvent.PlayerChangedDimensionEvent event) {
+        Player player = event.getEntity();
 
+        RealElectricNetworkManager.playerLogin(player);
+    }
     @SubscribeEvent
     public static void onServerTick(ServerTickEvent.Post event) {
         RealElectricNetworkManager.handleNetworkUpdate(event);

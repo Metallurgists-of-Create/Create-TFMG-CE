@@ -65,11 +65,15 @@ public class LargeEngineBlockEntity extends AbstractEngineBlockEntity {
     @Override
     public void tankUpdated(FluidStack stack, boolean fuelTank) {
         super.tankUpdated(stack, fuelTank);
-        sendStuff();
+        sendData();
     }
 
     @Override
     public void refreshCapability() {}
+
+
+
+
 
     @Override
     public List<TagKey<Fluid>> getSupportedFuels() {

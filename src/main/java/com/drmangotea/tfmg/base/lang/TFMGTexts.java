@@ -109,6 +109,9 @@ public class TFMGTexts {
         public static LangBuilder networkConsumption(double value) {
             return TFMGLang.translate("multimeter.network.consumption", power(value)).color(0xcc4b74);
         }
+        public static LangBuilder voltageLoss(double value) {
+            return TFMGLang.translate("multimeter.voltage_loss", voltage(value)).color(0xcc4b74);
+        }
         public static LangBuilder resistance(double value) {
             return TFMGLang.text("   R = " +  TFMGTexts.resistance(value)).color(0xc98969);
         }

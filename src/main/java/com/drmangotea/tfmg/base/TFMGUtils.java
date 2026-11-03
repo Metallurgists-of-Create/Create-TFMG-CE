@@ -5,11 +5,13 @@ import com.drmangotea.tfmg.TFMGRegistries;
 import com.drmangotea.tfmg.base.lang.TFMGLang;
 import com.drmangotea.tfmg.base.spark.ElectricSparkParticle;
 import com.drmangotea.tfmg.base.spark.Spark;
-import com.drmangotea.tfmg.content.electricity.connection.cables.CablePos;
-import com.drmangotea.tfmg.content.electricity.experimental.IRealisticElectric;
-import com.drmangotea.tfmg.content.electricity.experimental.content.power_transmission.transformers.large.LargeTransformerBlockEntity;
-import com.drmangotea.tfmg.content.electricity.experimental.content.power_transmission.wires.cable_type.CableType;
-import com.drmangotea.tfmg.content.electricity.experimental.simulation.nodes.ConnectingElectricalNode;
+import com.drmangotea.tfmg.content.electricity.CablePos;
+import com.drmangotea.tfmg.content.electricity.IRealisticElectric;
+import com.drmangotea.tfmg.content.electricity.RealElectricNetworkManager;
+import com.drmangotea.tfmg.content.electricity.RealElectricalNetwork;
+import com.drmangotea.tfmg.content.electricity.content.power_transmission.transformers.large.LargeTransformerBlockEntity;
+import com.drmangotea.tfmg.content.electricity.content.power_transmission.wires.cable_type.CableType;
+import com.drmangotea.tfmg.content.electricity.simulation.nodes.ConnectingElectricalNode;
 import com.drmangotea.tfmg.content.machinery.vat.electrode_holder.electrode.Electrode;
 import com.drmangotea.tfmg.registry.TFMGEntityTypes;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -90,7 +92,9 @@ public class TFMGUtils {
 
         BlockPos pos = BlockPos.of(be.getPos());
 
-        be.getProperties().nodes.forEach(n -> {
+        RealElectricalNetwork network = RealElectricNetworkManager.getNetwork(be.getWorld());
+
+        network.getNodes(be.getPos()).forEach(n -> {
             if (n instanceof ConnectingElectricalNode node) {
                 CablePos position = node.getPosition().add(pos);
                 connectors.put(new Vec3(position.x(), position.y(), position.z()), node);
@@ -112,9 +116,7 @@ public class TFMGUtils {
             }
         });
 
-        //for (ElectricalNode node : RealElectricNetworkManager.getNetwork(be.getWorld()).getNodes(be.getPos())) {
-        //    TFMG.LOGGER.debug("nodes are " + node.getNetworkId());
-        //}
+
         return closestConnector.get();
 
 

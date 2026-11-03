@@ -1,13 +1,14 @@
 package com.drmangotea.tfmg.content.engines.base;
 
 import com.drmangotea.tfmg.config.TFMGConfigs;
-import com.drmangotea.tfmg.content.electricity.base.KineticElectricBlockEntity;
 import com.drmangotea.tfmg.content.engines.fuels.BaseFuelTypes;
 import com.drmangotea.tfmg.content.engines.fuels.EngineFuelTypeManager;
 import com.drmangotea.tfmg.content.engines.fuels.FuelType;
 import com.drmangotea.tfmg.registry.TFMGBlockEntities;
 import com.drmangotea.tfmg.registry.TFMGFluids;
 import com.drmangotea.tfmg.registry.TFMGTags;
+import com.simibubi.create.content.kinetics.base.GeneratingKineticBlockEntity;
+import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.foundation.fluid.CombinedTankWrapper;
 import net.createmod.catnip.math.VecHelper;
 import net.minecraft.core.BlockPos;
@@ -31,7 +32,7 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
-public abstract class AbstractEngineBlockEntity extends KineticElectricBlockEntity {
+public abstract class AbstractEngineBlockEntity extends GeneratingKineticBlockEntity {
 
     //
 
@@ -112,10 +113,7 @@ public abstract class AbstractEngineBlockEntity extends KineticElectricBlockEnti
         return engineController != null;
     }
 
-    @Override
-    public void updateNetwork() {
-        super.updateNetwork();
-    }
+
 
     protected void analogSignalChanged() {
         if (hasEngineController()) {
@@ -153,11 +151,6 @@ public abstract class AbstractEngineBlockEntity extends KineticElectricBlockEnti
 
             drainFuel = false;
 
-    }
-
-    @Override
-    public boolean makeMultimeterTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
-        return false;
     }
 
 
@@ -287,10 +280,6 @@ public abstract class AbstractEngineBlockEntity extends KineticElectricBlockEnti
 
     public abstract int getFuelConsumption();
 
-    @Override
-    public void onPlaced() {
-        super.onPlaced();
-    }
 
     public void neighbourChanged() {
 

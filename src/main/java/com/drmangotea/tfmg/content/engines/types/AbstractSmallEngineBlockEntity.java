@@ -109,22 +109,7 @@ public abstract class AbstractSmallEngineBlockEntity extends AbstractEngineBlock
         return upgrade.isPresent();
     }
 
-    @Override
-    public int voltageGeneration() {
 
-        if (upgrade.isPresent() && upgrade.get().getItem() == TFMGBlocks.THREE_PHASE_GENERATOR.asItem())
-            return (int) (20 * (rpm / 500));
-
-        return 0;
-    }
-
-    @Override
-    public float powerGeneration() {
-        if (upgrade.isPresent() && upgrade.get().getItem() == TFMGBlocks.THREE_PHASE_GENERATOR.asItem())
-            return (int) rpm;
-
-        return 0;
-    }
 
     @Override
     public void lazyTick() {
@@ -600,15 +585,11 @@ public abstract class AbstractSmallEngineBlockEntity extends AbstractEngineBlock
 
                     level.setBlock(be.getBlockPos(), be.getBlockState().setValue(SHAFT_FACING, be.getBlockPos() == this.getBlockPos() ? facing : updateDirection), 2);
 
-                    //if (be instanceof RegularEngineBlockEntity be1 && this instanceof RegularEngineBlockEntity be2 && be1.type != be2.type) {
-                    //    setBlockStates(this, getBlockPos().relative(updateDirection, i - 1));
-                    //    TFMG.LOGGER.debug("set blockstates");
-                    //    return;
-                    //}
+
                     be.detashEngines();
                     engines.add(pos.asLong());
 
-                    // level.setBlock(be.getBlockPos().above(), Blocks.GOLD_BLOCK.defaultBlockState(),3);
+
 
                     be.engineNumber = i;
                     be.engines = new ArrayList<>();

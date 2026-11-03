@@ -1,0 +1,25 @@
+package com.drmangotea.tfmg.content.electricity.simulation.nodes;
+
+import com.drmangotea.tfmg.content.electricity.CablePos;
+import net.minecraft.core.Direction;
+
+import java.util.Arrays;
+import java.util.List;
+
+public class ConnectableElectricalNode extends ElectricalNode{
+
+    public CablePos position = new CablePos(0,0,0);
+
+    public List<Direction> facing = Arrays.stream(Direction.values()).toList();
+
+    public final NodeType type;
+
+    public ConnectableElectricalNode(long pos, int localId, NodeType type) {
+        super(pos, localId);
+        this.type = type;
+    }
+
+    public CablePos getPosition() {
+        return position;
+    }
+}

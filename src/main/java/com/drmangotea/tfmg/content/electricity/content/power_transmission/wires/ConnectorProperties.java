@@ -1,0 +1,28 @@
+package com.drmangotea.tfmg.content.electricity.content.power_transmission.wires;
+
+import com.drmangotea.tfmg.content.electricity.CablePos;
+import com.drmangotea.tfmg.content.electricity.ElectricalProperties;
+import com.drmangotea.tfmg.content.electricity.simulation.nodes.ConnectingElectricalNode;
+import com.drmangotea.tfmg.content.electricity.simulation.nodes.NodeType;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+
+public class ConnectorProperties extends ElectricalProperties {
+    public ConnectorProperties(long pos1) {
+        super(pos1);
+
+        BlockPos pos = BlockPos.of(position);
+        nodes.add(new ConnectingElectricalNode(position,0,new CablePos(0.5f,0.5f,0.5f), NodeType.CONNECTOR));
+    }
+    
+
+
+    @Override
+    public int getId() {
+        return 2;
+    }
+
+    public CompoundTag saveData(CompoundTag compound){
+            return compound;
+    }
+}

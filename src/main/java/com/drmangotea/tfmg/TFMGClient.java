@@ -1,6 +1,6 @@
 package com.drmangotea.tfmg;
 
-import com.drmangotea.tfmg.content.electricity.experimental.ElectricNetworkRenderer;
+import com.drmangotea.tfmg.content.electricity.ElectricNetworkRenderer;
 import com.drmangotea.tfmg.content.items.weapons.advanced_potato_cannon.AdvancedPotatoCannonRenderHandler;
 import com.drmangotea.tfmg.content.items.weapons.flamethrover.FlamethrowerRenderHandler;
 import com.drmangotea.tfmg.content.items.weapons.quad_potato_cannon.QuadPotatoCannonRenderHandler;

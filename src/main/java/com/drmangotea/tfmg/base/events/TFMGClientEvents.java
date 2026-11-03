@@ -2,12 +2,11 @@ package com.drmangotea.tfmg.base.events;
 
 import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.TFMGClient;
-import com.drmangotea.tfmg.content.electricity.connection.cables.CableConnectorBlockEntity;
-import com.drmangotea.tfmg.content.electricity.experimental.ElectricNetworkRenderer;
-import com.drmangotea.tfmg.content.electricity.experimental.RealElectricNetworkManager;
-import com.drmangotea.tfmg.content.electricity.experimental.RealElectricalNetwork;
-import com.drmangotea.tfmg.content.electricity.experimental.content.measuring_instruments.MultimeterOverlayRenderer;
-import com.drmangotea.tfmg.content.electricity.experimental.content.power_transmission.transformers.small.TransformerBlockEntity;
+import com.drmangotea.tfmg.content.electricity.ElectricNetworkRenderer;
+import com.drmangotea.tfmg.content.electricity.RealElectricNetworkManager;
+import com.drmangotea.tfmg.content.electricity.RealElectricalNetwork;
+import com.drmangotea.tfmg.content.electricity.content.measuring_instruments.MultimeterOverlayRenderer;
+import com.drmangotea.tfmg.content.electricity.content.power_transmission.transformers.small.TransformerBlockEntity;
 import com.drmangotea.tfmg.content.items.weapons.advanced_potato_cannon.AdvancedPotatoCannonItemRenderer;
 import com.drmangotea.tfmg.content.items.weapons.quad_potato_cannon.QuadPotatoCannonItemRenderer;
 import com.drmangotea.tfmg.registry.TFMGItems;
@@ -53,7 +52,7 @@ public class TFMGClientEvents {
 
 
         TransformerBlockEntity.tickOutliner();
-        CableConnectorBlockEntity.tickOutliner();
+
     }
 
 

@@ -14,41 +14,42 @@ import com.drmangotea.tfmg.content.decoration.tanks.TFMGFluidTankBlockEntity;
 import com.drmangotea.tfmg.content.decoration.tanks.TFMGFluidTankRenderer;
 import com.drmangotea.tfmg.content.decoration.tanks.steel.SteelFluidTankRenderer;
 import com.drmangotea.tfmg.content.decoration.tanks.steel.SteelTankBlockEntity;
-import com.drmangotea.tfmg.content.electricity.experimental.content.devices.electric_motor.ElectricMotorBlockEntity;
-import com.drmangotea.tfmg.content.electricity.experimental.content.devices.electric_pump.ElectricPumpBlockEntity;
-import com.drmangotea.tfmg.content.electricity.experimental.content.devices.generators.creative_generator.CreativeGeneratorBlockEntity;
-import com.drmangotea.tfmg.content.electricity.experimental.content.devices.generators.large_generator.RotorBlockEntity;
-import com.drmangotea.tfmg.content.electricity.experimental.content.devices.generators.large_generator.RotorRenderer;
-import com.drmangotea.tfmg.content.electricity.experimental.content.devices.generators.large_generator.RotorVisual;
-import com.drmangotea.tfmg.content.electricity.experimental.content.devices.generators.large_generator.StatorBlockEntity;
-import com.drmangotea.tfmg.content.electricity.experimental.content.devices.generators.three_phase_generator.ThreePhaseGeneratorBlockEntity;
-import com.drmangotea.tfmg.content.electricity.experimental.content.devices.polarizer.PolarizerBlockEntity;
-import com.drmangotea.tfmg.content.electricity.experimental.content.devices.polarizer.PolarizerRenderer;
-import com.drmangotea.tfmg.content.electricity.experimental.content.devices.resistor.DebugResistorBlockEntity;
-import com.drmangotea.tfmg.content.electricity.experimental.content.devices.voltage_observer.VoltageObserverBlockEntity;
-import com.drmangotea.tfmg.content.electricity.experimental.content.lights.ElectricLightBlockEntity;
-import com.drmangotea.tfmg.content.electricity.experimental.content.lights.LightBulbRenderer;
-import com.drmangotea.tfmg.content.electricity.experimental.content.lights.neon_tube.NeonTubeBlockEntity;
-import com.drmangotea.tfmg.content.electricity.experimental.content.lights.neon_tube.NeonTubeRenderer;
-import com.drmangotea.tfmg.content.electricity.experimental.content.lights.variants.AluminumLampRenderer;
-import com.drmangotea.tfmg.content.electricity.experimental.content.lights.variants.CircularLightRenderer;
-import com.drmangotea.tfmg.content.electricity.experimental.content.lights.variants.ModernLightRenderer;
-import com.drmangotea.tfmg.content.electricity.experimental.content.measuring_instruments.VoltMeterBlockEntity;
-import com.drmangotea.tfmg.content.electricity.experimental.content.measuring_instruments.VoltMeterRenderer;
-import com.drmangotea.tfmg.content.electricity.experimental.content.power_transmission.adapters.ElectricAdapterBlockEntity;
-import com.drmangotea.tfmg.content.electricity.experimental.content.power_transmission.cables.CableBlockEntity;
-import com.drmangotea.tfmg.content.electricity.experimental.content.power_transmission.cables.cable_hubs.CableHubBlockEntity;
-import com.drmangotea.tfmg.content.electricity.experimental.content.power_transmission.cables.copycat_cable.CopycatCableBlockEntity;
-import com.drmangotea.tfmg.content.electricity.experimental.content.power_transmission.energy_storage.accumulator_control_unit.AccumulatorControlUnitBlockEntity;
-import com.drmangotea.tfmg.content.electricity.experimental.content.power_transmission.energy_storage.accumulator_rack.AccumulatorRackBlockEntity;
-import com.drmangotea.tfmg.content.electricity.experimental.content.power_transmission.switches.electric_switch.ElectricSwitchBlockEntity;
-import com.drmangotea.tfmg.content.electricity.experimental.content.power_transmission.switches.large_switch.LargeSwitchBlockEntity;
-import com.drmangotea.tfmg.content.electricity.experimental.content.power_transmission.switches.large_switch.LargeSwitchRenderer;
-import com.drmangotea.tfmg.content.electricity.experimental.content.power_transmission.transformers.large.LargeCoilBlockEntity;
-import com.drmangotea.tfmg.content.electricity.experimental.content.power_transmission.transformers.large.LargeTransformerBlockEntity;
-import com.drmangotea.tfmg.content.electricity.experimental.content.power_transmission.transformers.small.TransformerBlockEntity;
-import com.drmangotea.tfmg.content.electricity.experimental.content.power_transmission.transformers.small.TransformerRenderer;
-import com.drmangotea.tfmg.content.electricity.experimental.content.power_transmission.wires.RealConnectorBlockEntity;
+import com.drmangotea.tfmg.content.electricity.DiagonalCableBlockEntity;
+import com.drmangotea.tfmg.content.electricity.content.devices.electric_motor.ElectricMotorBlockEntity;
+import com.drmangotea.tfmg.content.electricity.content.devices.electric_pump.ElectricPumpBlockEntity;
+import com.drmangotea.tfmg.content.electricity.content.devices.generators.creative_generator.CreativeGeneratorBlockEntity;
+import com.drmangotea.tfmg.content.electricity.content.devices.generators.large_generator.RotorBlockEntity;
+import com.drmangotea.tfmg.content.electricity.content.devices.generators.large_generator.RotorRenderer;
+import com.drmangotea.tfmg.content.electricity.content.devices.generators.large_generator.RotorVisual;
+import com.drmangotea.tfmg.content.electricity.content.devices.generators.large_generator.StatorBlockEntity;
+import com.drmangotea.tfmg.content.electricity.content.devices.generators.three_phase_generator.ThreePhaseGeneratorBlockEntity;
+import com.drmangotea.tfmg.content.electricity.content.devices.polarizer.PolarizerBlockEntity;
+import com.drmangotea.tfmg.content.electricity.content.devices.polarizer.PolarizerRenderer;
+import com.drmangotea.tfmg.content.electricity.content.devices.resistor.DebugResistorBlockEntity;
+import com.drmangotea.tfmg.content.electricity.content.devices.voltage_observer.VoltageObserverBlockEntity;
+import com.drmangotea.tfmg.content.electricity.content.lights.ElectricLightBlockEntity;
+import com.drmangotea.tfmg.content.electricity.content.lights.LightBulbRenderer;
+import com.drmangotea.tfmg.content.electricity.content.lights.neon_tube.NeonTubeBlockEntity;
+import com.drmangotea.tfmg.content.electricity.content.lights.neon_tube.NeonTubeRenderer;
+import com.drmangotea.tfmg.content.electricity.content.lights.variants.AluminumLampRenderer;
+import com.drmangotea.tfmg.content.electricity.content.lights.variants.CircularLightRenderer;
+import com.drmangotea.tfmg.content.electricity.content.lights.variants.ModernLightRenderer;
+import com.drmangotea.tfmg.content.electricity.content.measuring_instruments.VoltMeterBlockEntity;
+import com.drmangotea.tfmg.content.electricity.content.measuring_instruments.VoltMeterRenderer;
+import com.drmangotea.tfmg.content.electricity.content.power_transmission.adapters.ElectricAdapterBlockEntity;
+import com.drmangotea.tfmg.content.electricity.content.power_transmission.cables.CableBlockEntity;
+import com.drmangotea.tfmg.content.electricity.content.power_transmission.cables.cable_hubs.CableHubBlockEntity;
+import com.drmangotea.tfmg.content.electricity.content.power_transmission.cables.copycat_cable.CopycatCableBlockEntity;
+import com.drmangotea.tfmg.content.electricity.content.power_transmission.energy_storage.accumulator_control_unit.AccumulatorControlUnitBlockEntity;
+import com.drmangotea.tfmg.content.electricity.content.power_transmission.energy_storage.accumulator_rack.AccumulatorRackBlockEntity;
+import com.drmangotea.tfmg.content.electricity.content.power_transmission.switches.electric_switch.ElectricSwitchBlockEntity;
+import com.drmangotea.tfmg.content.electricity.content.power_transmission.switches.large_switch.LargeSwitchBlockEntity;
+import com.drmangotea.tfmg.content.electricity.content.power_transmission.switches.large_switch.LargeSwitchRenderer;
+import com.drmangotea.tfmg.content.electricity.content.power_transmission.transformers.large.LargeCoilBlockEntity;
+import com.drmangotea.tfmg.content.electricity.content.power_transmission.transformers.large.LargeTransformerBlockEntity;
+import com.drmangotea.tfmg.content.electricity.content.power_transmission.transformers.small.TransformerBlockEntity;
+import com.drmangotea.tfmg.content.electricity.content.power_transmission.transformers.small.TransformerRenderer;
+import com.drmangotea.tfmg.content.electricity.content.power_transmission.wires.RealConnectorBlockEntity;
 import com.drmangotea.tfmg.content.engines.engine_gearbox.EngineGearboxBlockEntity;
 import com.drmangotea.tfmg.content.engines.types.large_engine.LargeEngineBlockEntity;
 import com.drmangotea.tfmg.content.engines.types.large_engine.LargeEngineRenderer;
@@ -157,7 +158,7 @@ public class TFMGBlockEntities {
 
     public static final BlockEntityEntry<CableBlockEntity> CABLE = REGISTRATE
             .blockEntity("cable", CableBlockEntity::new)
-            .validBlocks(TFMGBlocks.DEBUG_CABLE)
+            .validBlocks(TFMGBlocks.CABLE)
             .register();
 
     public static final BlockEntityEntry<CableHubBlockEntity> DEBUG_CABLE_HUB = REGISTRATE
@@ -260,10 +261,10 @@ public class TFMGBlockEntities {
             .renderer(() -> NeonTubeRenderer::new)
             .register();
 
-    //public static final BlockEntityEntry<DiagonalCableBlockEntity> DIAGONAL_CABLE_BLOCK = REGISTRATE
-    //        .blockEntity("diagonal_cable_block", DiagonalCableBlockEntity::new)
-    //        .validBlocks(TFMGBlocks.DIAGONAL_CABLE_BLOCK)
-    //        .register();
+    public static final BlockEntityEntry<DiagonalCableBlockEntity> DIAGONAL_CABLE_BLOCK = REGISTRATE
+            .blockEntity("diagonal_cable_block", DiagonalCableBlockEntity::new)
+            .validBlocks(TFMGBlocks.DIAGONAL_CABLE_BLOCK)
+            .register();
 
     public static final BlockEntityEntry<RotorBlockEntity> ROTOR = REGISTRATE
             .blockEntity("rotor", RotorBlockEntity::new)
