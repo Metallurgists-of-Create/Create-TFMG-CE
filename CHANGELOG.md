@@ -1,17 +1,35 @@
 # Create: TFMG Community Edition 1.3.3
 ## Rant:
+Heh, it's been a while.
 
-Contributors:<br>
-@pouffy @ShallowAssumption
+I've had the art department hard at work replacing a bunch of textures that needed replacing.<br>
+They've done a great job, and we hope you like some of the new textures!
+
+This update also comes with some more customisability options and ways for mod/pack devs to expand upon our systems!<br>
+Oh yeah, and some bug fixes. That's probably what you're here for isn't it.
 
 **Please note that not all bugs are fixed and some new additions are subject to change and should be considered experimental.**
+
+## Contributors:
+### Developers:
+- @pouffy
+- @ShallowAssumption
+- @wolfieboy09
+### Artists:
+- @Nerf-Ashton
+- @ImmanisVir
+- @YYY000YYY
+- @DragonVenom360
+
 
 ## Changelog:
 ### Bug Fixes:
 - Blast Furnace Outputs no-longer reset item components.
 - Coke Ovens once again process faster the bigger they are.
 - Concrete-logged Electric Posts no longer dry into Concrete-encased cables
-- Engines and fireboxes exhausting `flowing_carbon_dioxide` instead of `carbon_dioxide`
+- Engines and fireboxes no-longer exhaust `flowing_carbon_dioxide` instead of `carbon_dioxide`.
+- Fixed an issue where double slabs only dropped one slab.
+- Fixed a crash related to thermite grenades.
 
 ### Changes:
 - Recipe inputs now use tags where applicable.
@@ -30,7 +48,12 @@ Contributors:<br>
   - Tanks now use `ForceableFluidTank` and block insertion.
   - Now uses the same timer system as all our other recipe machines.
   - Tweaked recipe durations.
-- JEI recipe categories now show TFMG instead of Create
+  - Smoke particles are no-longer created if a top hatch is present.
+- JEI recipe categories now show TFMG instead of Create.
+- Oil Wells & Deposits now have proper feature configs.
+- All fluids are now properly tagged.
+- Create: The Factory Must WORK! 2.1.2 is no longer marked as incompatible.
+- A load of textures have been reworked.
 
 ### API Changes:
 - new `IHaveMultimeterInformation` interface
