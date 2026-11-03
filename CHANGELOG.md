@@ -17,6 +17,7 @@
 - Cast Iron Block no-longer connects to Aluminium Block
 
 ### Changes:
+- Industrial Blasting JEI category has been improved.
 
 
 ### API Changes:

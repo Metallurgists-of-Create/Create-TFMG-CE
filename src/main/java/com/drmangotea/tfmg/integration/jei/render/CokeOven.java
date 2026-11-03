@@ -7,6 +7,8 @@ import com.mojang.math.Axis;
 import com.simibubi.create.compat.jei.category.animations.AnimatedKinetics;
 import com.simibubi.create.content.processing.burner.BlazeBurnerBlock;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 
 public class CokeOven extends AnimatedKinetics {
     public CokeOven() {}
@@ -21,38 +23,38 @@ public class CokeOven extends AnimatedKinetics {
         int scale =  23;
         BlazeBurnerBlock.HeatLevel heatLevel = BlazeBurnerBlock.HeatLevel.SMOULDERING;
 
-        blockElement(TFMGBlocks.COKE_OVEN.getDefaultState())
+        blockElement(TFMGBlocks.COKE_OVEN.getDefaultState().setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.SOUTH))
                 .scale(scale)
                 .render(graphics);
-        blockElement(TFMGBlocks.COKE_OVEN.getDefaultState())
+        blockElement(TFMGBlocks.COKE_OVEN.getDefaultState().setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.SOUTH))
                 .atLocal(0,0,1)
                 .scale(scale)
                 .render(graphics);
-        blockElement(TFMGBlocks.COKE_OVEN.getDefaultState())
+        blockElement(TFMGBlocks.COKE_OVEN.getDefaultState().setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.SOUTH))
                 .atLocal(0,0,2)
                 .scale(scale)
                 .render(graphics);
-        blockElement(TFMGBlocks.COKE_OVEN.getDefaultState())
+        blockElement(TFMGBlocks.COKE_OVEN.getDefaultState().setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.SOUTH))
                 .atLocal(0,1,0)
                 .scale(scale)
                 .render(graphics);
-        blockElement(TFMGBlocks.COKE_OVEN.getDefaultState())
+        blockElement(TFMGBlocks.COKE_OVEN.getDefaultState().setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.SOUTH))
                 .atLocal(0,1,1)
                 .scale(scale)
                 .render(graphics);
-        blockElement(TFMGBlocks.COKE_OVEN.getDefaultState())
+        blockElement(TFMGBlocks.COKE_OVEN.getDefaultState().setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.SOUTH))
                 .atLocal(0,1,2)
                 .scale(scale)
                 .render(graphics);
-        blockElement(TFMGBlocks.COKE_OVEN.getDefaultState())
+        blockElement(TFMGBlocks.COKE_OVEN.getDefaultState().setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.SOUTH))
                 .atLocal(0,-1,0)
                 .scale(scale)
                 .render(graphics);
-        blockElement(TFMGBlocks.COKE_OVEN.getDefaultState())
+        blockElement(TFMGBlocks.COKE_OVEN.getDefaultState().setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.SOUTH))
                 .atLocal(0,-1,1)
                 .scale(scale)
                 .render(graphics);
-        blockElement(TFMGBlocks.COKE_OVEN.getDefaultState())
+        blockElement(TFMGBlocks.COKE_OVEN.getDefaultState().setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.SOUTH))
                 .atLocal(0,-1,2)
                 .scale(scale)
                 .render(graphics);
