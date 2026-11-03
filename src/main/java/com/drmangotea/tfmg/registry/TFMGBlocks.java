@@ -1525,10 +1525,7 @@ public class TFMGBlocks {
 
     public static final BlockEntry<Block> ALUMINUM_BLOCK = REGISTRATE.block("aluminum_block", Block::new)
             .initialProperties(SharedProperties::softMetal)
-
             .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
-            .onRegister(connectedTextures(() -> new EncasedCTBehaviour(TFMGSpriteShifts.CAST_IRON_BLOCK)))
-            .onRegister(casingConnectivity((block, cc) -> cc.makeCasing(block, TFMGSpriteShifts.CAST_IRON_BLOCK)))
             .transform(pickaxeOnly())
             .blockstate(simpleCubeAll("aluminum_block"))
             .tag(BlockTags.NEEDS_IRON_TOOL)
