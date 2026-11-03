@@ -2,18 +2,23 @@ package com.drmangotea.tfmg.worldgen;
 
 import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.registry.TFMGBlocks;
+import com.drmangotea.tfmg.registry.TFMGFluids;
+import com.drmangotea.tfmg.worldgen.deposits.DepositFeatureConfig;
+import com.drmangotea.tfmg.worldgen.deposits.WellFeatureConfig;
 import com.simibubi.create.infrastructure.worldgen.AllFeatures;
 import com.simibubi.create.infrastructure.worldgen.LayeredOreConfiguration;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
 import net.minecraft.world.level.levelgen.feature.configurations.OreConfiguration;
 import net.minecraft.world.level.levelgen.structure.templatesystem.RuleTest;
 import net.minecraft.world.level.levelgen.structure.templatesystem.TagMatchTest;
+import net.neoforged.neoforge.common.Tags;
 
 import java.util.List;
 
@@ -63,8 +68,26 @@ public class TFMGConfiguredFeatures {
         );
 
 
-        register(ctx, OIL_DEPOSIT, TFMGFeatures.OIL_DEPOSIT.get(),new NoneFeatureConfiguration());
-        register(ctx, OIL_WELL, TFMGFeatures.OIL_WELL.get(),new NoneFeatureConfiguration());
+        register(ctx, OIL_DEPOSIT, TFMGFeatures.OIL_DEPOSIT.get(), new DepositFeatureConfig(
+                UniformInt.of(0, 20),
+                UniformInt.of(0, 6),
+                UniformInt.of(0, 40),
+                UniformInt.of(10, 25),
+                true,
+                TFMGBlocks.OIL_DEPOSIT.getDefaultState(),
+                TFMGFluids.CRUDE_OIL.get().getSource(),
+                new DepositFeatureConfig.TargetBlockState(new TagMatchTest(BlockTags.BASE_STONE_OVERWORLD), TFMGBlocks.FOSSILSTONE.getDefaultState())
+        ));
+        register(ctx, OIL_WELL, TFMGFeatures.OIL_WELL.get(), new WellFeatureConfig(
+                UniformInt.of(0, 7),
+                UniformInt.of(0, 12),
+                UniformInt.of(0, 10),
+                List.of(new TagMatchTest(Tags.Blocks.SANDS)),
+                true,
+                TFMGBlocks.OIL_DEPOSIT.getDefaultState(),
+                TFMGFluids.CRUDE_OIL.get().getSource(),
+                new WellFeatureConfig.TargetBlockState(new TagMatchTest(BlockTags.BASE_STONE_OVERWORLD), TFMGBlocks.FOSSILSTONE.getDefaultState())
+        ));
 
         register(ctx, LEAD_ORE, Feature.ORE, new OreConfiguration(leadTargetStates, 12));
         register(ctx, NICKEL_ORE, Feature.ORE, new OreConfiguration(nickelTargetStates, 10));

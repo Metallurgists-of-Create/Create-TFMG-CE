@@ -7,7 +7,6 @@ import com.drmangotea.tfmg.recipes.WindingRecipe;
 import com.drmangotea.tfmg.registry.TFMGDataComponents;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.compat.jei.category.CreateRecipeCategory;
-import com.simibubi.create.compat.jei.category.animations.AnimatedDeployer;
 import com.simibubi.create.compat.jei.category.sequencedAssembly.SequencedAssemblySubCategory;
 import com.simibubi.create.content.processing.sequenced.SequencedRecipe;
 import com.simibubi.create.foundation.gui.AllGuiTextures;
@@ -54,7 +53,6 @@ public class WindingCategory extends CreateRecipeCategory<WindingRecipe> {
 
     public static class AssemblyWinding extends SequencedAssemblySubCategory {
         private final WindingMachine windingMachine = new WindingMachine();
-        private final AnimatedDeployer 	deployer = new AnimatedDeployer();
         public AssemblyWinding() {
             super(25);
         }
@@ -69,15 +67,15 @@ public class WindingCategory extends CreateRecipeCategory<WindingRecipe> {
             PoseStack ms = graphics.pose();
 
             int coilColor = 0;
-
-            if (recipe.getRecipe().getIngredients().get(1).getItems()[0].getItem() instanceof SpoolItem) {
-                coilColor = recipe.getRecipe().getIngredients().get(1).getItems()[0].getBarColor();
+            var itemList = recipe.getRecipe().getIngredients().get(1).getItems()[0];
+            if (itemList.getItem() instanceof SpoolItem) {
+                coilColor = itemList.getBarColor();
             }
             windingMachine.offset = index;
             ms.pushPose();
             ms.translate(0.0, 67, 0.0);
             ms.scale(0.7F, 0.7F, 0.7F);
-            this.windingMachine.draw(graphics, this.getWidth() / 2, 0,coilColor,false);
+            this.windingMachine.draw(graphics, this.getWidth() / 2, 0, coilColor,false);
             ms.popPose();
         }
     }

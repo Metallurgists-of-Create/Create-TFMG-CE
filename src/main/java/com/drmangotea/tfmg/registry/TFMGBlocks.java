@@ -83,6 +83,7 @@ import com.drmangotea.tfmg.content.machinery.misc.air_intake.AirIntakeGenerator;
 import com.drmangotea.tfmg.content.machinery.misc.concrete_hose.ConcreteHoseBlock;
 import com.drmangotea.tfmg.content.machinery.misc.exhaust.ExhaustBlock;
 import com.drmangotea.tfmg.content.machinery.misc.firebox.FireboxBlock;
+import com.drmangotea.tfmg.content.machinery.misc.firebox.FireboxGenerator;
 import com.drmangotea.tfmg.content.machinery.misc.flarestack.FlarestackBlock;
 import com.drmangotea.tfmg.content.machinery.misc.flarestack.FlarestackGenerator;
 import com.drmangotea.tfmg.content.machinery.misc.gas_lamp.GasLampBlock;
@@ -642,7 +643,7 @@ public class TFMGBlocks {
             .initialProperties(SharedProperties::softMetal)
             .transform(pickaxeOnly())
             .properties(BlockBehaviour.Properties::noOcclusion)
-            .blockstate((ctx, prov) -> prov.simpleBlock(ctx.getEntry(), AssetLookup.partialBaseModel(ctx, prov)))
+            .blockstate(BlockStateGen.horizontalBlockProvider(false))
             .simpleItem()
             .register();
     public static final BlockEntry<OilDepositBlock> OIL_DEPOSIT = REGISTRATE.block("oil_deposit", OilDepositBlock::new)
@@ -959,10 +960,11 @@ public class TFMGBlocks {
     public static final BlockEntry<FireboxBlock> FIREBOX =
             REGISTRATE.block("firebox", FireboxBlock::new)
                     .initialProperties(SharedProperties::stone)
-                    .properties(p -> p.sound(SoundType.NETHER_BRICKS))
+                    .properties(p -> p.sound(SoundType.NETHER_BRICKS)
+                            .lightLevel(FireboxBlock::getLight))
                     .transform(pickaxeOnly())
                     .onRegister(CreateRegistrate.connectedTextures(() -> new MultiblockCTBehavior(null, TFMGSpriteShifts.FIREBOX_TOP)))
-                    .blockstate((ctx, prov) -> prov.simpleBlock(ctx.getEntry(), AssetLookup.partialBaseModel(ctx, prov)))
+                    .blockstate(new FireboxGenerator()::generate)
                     .item(SteelTankItem::new)
                     .build()
                     .register();
@@ -1245,21 +1247,25 @@ public class TFMGBlocks {
             REGISTRATE.block("aluminum_cable_hub", p -> new CableHubBlock(p, ALUMINUM_CASING::get))
                     .initialProperties(SharedProperties::softMetal)
                     .transform(pickaxeOnly())
-					.onRegister(casingConnectivity((block, cc) -> cc.makeCasing(block, TFMGSpriteShifts.INDUSTRIAL_ALUMINUM_CASING)))
+                    .onRegister(connectedTextures(() -> new EncasedCTBehaviour(TFMGSpriteShifts.ALUMINUM_CASING_CABLE_HUB)))
+                    .onRegister(casingConnectivity((block, cc) -> cc.makeCasing(block, TFMGSpriteShifts.INDUSTRIAL_ALUMINUM_CASING)))
                     .simpleItem()
                     .register();
     public static final BlockEntry<CableHubBlock> STEEL_CASING_CABLE_HUB =
             REGISTRATE.block("steel_casing_cable_hub", p -> new CableHubBlock(p, STEEL_CASING::get))
                     .initialProperties(SharedProperties::softMetal)
                     .transform(pickaxeOnly())
-					.onRegister(casingConnectivity((block, cc) -> cc.makeCasing(block, TFMGSpriteShifts.STEEL_CASING)))
+                    .onRegister(connectedTextures(() -> new EncasedCTBehaviour(TFMGSpriteShifts.STEEL_CASING_CABLE_HUB)))
+                    .onRegister(casingConnectivity((block, cc) -> cc.makeCasing(block, TFMGSpriteShifts.STEEL_CASING)))
                     .simpleItem()
                     .register();
     public static final BlockEntry<CableHubBlock> HEAVY_CABLE_HUB =
             REGISTRATE.block("heavy_cable_hub", p -> new CableHubBlock(p, HEAVY_MACHINERY_CASING::get))
                     .initialProperties(SharedProperties::softMetal)
                     .transform(pickaxeOnly())
-					.onRegister(casingConnectivity((block, cc) -> cc.makeCasing(block, TFMGSpriteShifts.HEAVY_MACHINERY_CASING)))
+                    .onRegister(connectedTextures(() -> new EncasedCTBehaviour(TFMGSpriteShifts.HEAVY_MACHINERY_CASING_CABLE_HUB)))
+
+                    .onRegister(casingConnectivity((block, cc) -> cc.makeCasing(block, TFMGSpriteShifts.HEAVY_MACHINERY_CASING)))
 					.simpleItem()
                     .register();
 
@@ -1528,10 +1534,7 @@ public class TFMGBlocks {
 
     public static final BlockEntry<Block> ALUMINUM_BLOCK = REGISTRATE.block("aluminum_block", Block::new)
             .initialProperties(SharedProperties::softMetal)
-
             .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
-            .onRegister(connectedTextures(() -> new EncasedCTBehaviour(TFMGSpriteShifts.CAST_IRON_BLOCK)))
-            .onRegister(casingConnectivity((block, cc) -> cc.makeCasing(block, TFMGSpriteShifts.CAST_IRON_BLOCK)))
             .transform(pickaxeOnly())
             .blockstate(simpleCubeAll("aluminum_block"))
             .tag(BlockTags.NEEDS_IRON_TOOL)

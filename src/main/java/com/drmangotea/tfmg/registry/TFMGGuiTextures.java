@@ -38,7 +38,9 @@ public enum TFMGGuiTextures implements ScreenElement {
     VAT_FREEZER("chemical_vat",112,80,9,9),
     VAT_HEATER("chemical_vat", 112, 89, 9, 9),
     VAT_SUPERHEATER("chemical_vat", 112, 98, 9, 9),
-    VAT_BAROMETER("chemical_vat",211,3,42,42)
+    VAT_BAROMETER("chemical_vat",211,3,42,42),
+    SHORTISH_ARROW("jei/widgets", 19, 20, 35, 9),
+    DOWN_RIGHT_ARROW("jei/widgets", 0, 0, 16, 16)
     ;
 
     public final ResourceLocation location;

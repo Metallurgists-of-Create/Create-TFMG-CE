@@ -1,45 +1,26 @@
-# Create: TFMG Community Edition 1.3.3
+# Create: TFMG Community Edition 1.4.0
 ## Rant:
-
-Contributors:<br>
-@pouffy @ShallowAssumption
+\[\[Insert Rant Here]]
 
 **Please note that not all bugs are fixed and some new additions are subject to change and should be considered experimental.**
 
+## Contributors:
+### Developers:
+- @pouffy
+### Artists:
+- @Nerf-Ashton
+
+
 ## Changelog:
 ### Bug Fixes:
-- Blast Furnace Outputs no-longer reset item components.
-- Coke Ovens once again process faster the bigger they are.
-- Concrete-logged Electric Posts no longer dry into Concrete-encased cables
-- Engines and fireboxes exhausting `flowing_carbon_dioxide` instead of `carbon_dioxide`
+- Glass Pipes of different materials now have the correct clone item stack.
+- Cast Iron Block no-longer connects to Aluminium Block
 
 ### Changes:
-- Recipe inputs now use tags where applicable.
-- Added compositions for Crushed Lead & Nickel
-- Fluid Compositions are now created under the `tfmg` namespace.
-- Multimeters are now valid in the `belt` Curio slot.
-- Diagonal Cables can now be horizontal.
-- Firebox's fuel tank can now be extracted from.
-- Engines:
-  - Engines now drop all components and upgrades when destroyed.
-  - Golden Turbo's speed and angle rendering now matches the Turbo's.
-  - Added the `engine_upgrade` component to all default upgrade items.
-  - Simple Large Engines now have their own fuel tag.
-  - Slightly tweaked engine fuel testing to hopefully avoid crashing on a broken tag.
+- Industrial Blasting JEI category has been improved.
+
 
 ### API Changes:
-- new `IHaveMultimeterInformation` interface
-  - `IElectric` now extends `IHaveMultimeterInformation` instead of `IHaveGoggleInformation`
-  - Multimeters can now display information from any block entity that implements this interface
-- Vat Operations
-  - Renamed `tfmg:mixing` to `tfmg:mixer` & `TFMGVatOperations#MIXING` to `TFMGVatOperations#MIXER`
-  - Renamed `tfmg:freezing` to `tfmg:freezer` & `TFMGVatOperations#FREEZING` to `TFMGVatOperations#FREEZER`
-- Added `tfmg:engine_upgrade` data component.
-- Improved registry creation.
-- Added tag generator for Engine Upgrades.
-- Engine Upgrades are now a registry.
-- Electricity generation on engine upgrades is now an interface.
-- All engines now have registered item handlers.
-- Engine Fuels can now specify custom exhaust fluids (CO2 remains the default).
+
 
 ### New Translations:
