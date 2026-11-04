@@ -160,14 +160,12 @@ public abstract class AbstractSmallEngineBlockEntity extends AbstractEngineBlock
         return upgrade.isPresent();
     }
 
-    @Override
     public int voltageGeneration() {
         if (upgrade.isPresent() && upgrade.get() instanceof EngineGenerator generator)
             return generator.getVoltageGeneration(this);
         return 0;
     }
 
-    @Override
     public float powerGeneration() {
         if (upgrade.isPresent() && upgrade.get() instanceof EngineGenerator generator)
             return generator.getPowerGeneration(this);

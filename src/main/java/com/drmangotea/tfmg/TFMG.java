@@ -1,9 +1,8 @@
 package com.drmangotea.tfmg;
 
 import com.drmangotea.tfmg.base.*;
-import com.drmangotea.tfmg.content.electricity.base.ElectricNetworkManager;
-import com.drmangotea.tfmg.content.electricity.experimental.saved_data.NetworkDataManager;
-import com.drmangotea.tfmg.content.electricity.experimental.RealElectricNetworkManager;
+import com.drmangotea.tfmg.content.electricity.saved_data.NetworkDataManager;
+import com.drmangotea.tfmg.content.electricity.RealElectricNetworkManager;
 import com.drmangotea.tfmg.datagen.TFMGDatagen;
 import com.drmangotea.tfmg.base.fluid.TFMGFluidInteractions;
 import com.drmangotea.tfmg.config.TFMGConfigs;
@@ -43,7 +42,6 @@ public class TFMG {
      */
     public static final Random RANDOM = new Random();
     public static final String MOD_ID = "tfmg";
-    public static final ElectricNetworkManager NETWORK_MANAGER = new ElectricNetworkManager();
 
     public static final RealElectricNetworkManager ELECTRIC_NETWORK_MANAGER = new RealElectricNetworkManager();
     public static final NetworkDataManager ELECTRICAL_NETWORK_DATA = new NetworkDataManager();

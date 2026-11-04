@@ -447,7 +447,7 @@ public class ElectricityScenes {
                 .placeNearTarget();
         scene.world().setKineticSpeed(inputBelt, 16);
         scene.idle(40);
-        ItemStack stack = TFMGItems.UNFINISHED_RESISTOR.asStack();
+        ItemStack stack = TFMGItems.ELECTROMAGNETIC_COIL.asStack(); //TODO: Review
         ElementLink<EntityElement> item = scene.world().createItemEntity(util.vector().centerOf(4, 4, 2), util.vector().of(0, 0, 0), stack);
         scene.idle(13);
         scene.world().modifyEntity(item, Entity::discard);

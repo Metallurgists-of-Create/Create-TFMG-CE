@@ -4,10 +4,12 @@ import com.drmangotea.tfmg.TFMGRegistries;
 import com.drmangotea.tfmg.base.lang.TFMGLang;
 import com.drmangotea.tfmg.base.lang.TFMGTexts;
 import com.drmangotea.tfmg.base.spark.Spark;
-import com.drmangotea.tfmg.content.electricity.experimental.content.power_transmission.wires.cable_type.CableType;
-import com.drmangotea.tfmg.content.electricity.experimental.IRealisticElectric;
-import com.drmangotea.tfmg.content.electricity.experimental.content.power_transmission.transformers.large.LargeTransformerBlockEntity;
-import com.drmangotea.tfmg.content.electricity.experimental.simulation.nodes.ConnectingElectricalNode;
+import com.drmangotea.tfmg.content.electricity.IRealisticElectric;
+import com.drmangotea.tfmg.content.electricity.RealElectricNetworkManager;
+import com.drmangotea.tfmg.content.electricity.RealElectricalNetwork;
+import com.drmangotea.tfmg.content.electricity.content.power_transmission.transformers.large.LargeTransformerBlockEntity;
+import com.drmangotea.tfmg.content.electricity.content.power_transmission.wires.cable_type.CableType;
+import com.drmangotea.tfmg.content.electricity.simulation.nodes.ConnectingElectricalNode;
 import com.drmangotea.tfmg.content.machinery.vat.electrode_holder.electrode.Electrode;
 import com.drmangotea.tfmg.registry.TFMGEntityTypes;
 import com.simibubi.create.content.fluids.tank.FluidTankBlockEntity;
@@ -80,7 +82,9 @@ public class TFMGUtils {
 		AtomicReference<Float> closestDistance = new AtomicReference<>((float) 1000);
 		AtomicReference<ConnectingElectricalNode> closestConnector = new AtomicReference<>(null);
 		
-		be.getProperties().nodes.forEach(n -> {
+		RealElectricalNetwork network = RealElectricNetworkManager.getNetwork(be.getWorld());
+		
+		network.getNodes(be.getPos()).forEach(n -> {
             if (!(n instanceof ConnectingElectricalNode node))
 				return;
 			

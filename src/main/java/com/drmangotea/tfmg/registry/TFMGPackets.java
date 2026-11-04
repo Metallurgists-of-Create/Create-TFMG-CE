@@ -3,13 +3,8 @@ package com.drmangotea.tfmg.registry;
 
 import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.base.spark.ElectricitySparkPacket;
-import com.drmangotea.tfmg.content.electricity.base.*;
-import com.drmangotea.tfmg.content.electricity.connection.cables.CablePlacePacket;
-import com.drmangotea.tfmg.content.electricity.experimental.configuration_wrench.ElectriciansWrenchPacket;
-import com.drmangotea.tfmg.content.electricity.experimental.packets.AddElectricalComponentPacket;
-import com.drmangotea.tfmg.content.electricity.experimental.packets.NetworkLoadPacket;
-import com.drmangotea.tfmg.content.electricity.experimental.packets.UpdateNetworkPacket;
-import com.drmangotea.tfmg.content.electricity.experimental.packets.UpdateVoltagePacket;
+import com.drmangotea.tfmg.content.electricity.configuration_wrench.ElectriciansWrenchPacket;
+import com.drmangotea.tfmg.content.electricity.packets.*;
 import com.drmangotea.tfmg.content.items.weapons.advanced_potato_cannon.AdvancedPotatoCannonPacket;
 import com.drmangotea.tfmg.content.items.weapons.quad_potato_cannon.QuadPotatoCannonPacket;
 import com.drmangotea.tfmg.content.machinery.metallurgy.coke_oven.CokeOvenPacket;
@@ -29,21 +24,18 @@ public enum TFMGPackets implements BasePacketPayload.PacketTypeProvider {
     // Server to Client
     ADVANCED_POTATO_CANNON(AdvancedPotatoCannonPacket.class, AdvancedPotatoCannonPacket.STREAM_CODEC),
     QUAD_POTATO_CANNON(QuadPotatoCannonPacket.class, QuadPotatoCannonPacket.STREAM_CODEC),
-    CONNECT_NEIGHBORS(ConnectNeighborsPacket.class, ConnectNeighborsPacket.STREAM_CODEC),
-    NETWORK_UPDATE(NetworkUpdatePacket.class, NetworkUpdatePacket.STREAM_CODEC),
-    ELECTRICAL_BLOCK_FAIL(ElectricalBlockFailPacket.class, ElectricalBlockFailPacket.STREAM_CODEC),
-    CONNECTION_PACKET(ConnectionPacket.class, ConnectionPacket.STREAM_CODEC),
+
     VAT_EVALUATION(VatEvaluationPacket.class, VatEvaluationPacket.STREAM_CODEC),
     COKE_OVEN_PACKET(CokeOvenPacket.class, CokeOvenPacket.STREAM_CODEC),
     DISTILLATION_PACKET(DistillationTowerPacket.class, DistillationTowerPacket.STREAM_CODEC),
-    UPDATE_IN_FRONT_PACKET(UpdateInFrontPacket.class, UpdateInFrontPacket.STREAM_CODEC),
+
     //TRANSMISSION_REMOVE(TransmissionRemovePacket.class, TransmissionRemovePacket.STREAM_CODEC),
-    CABLE_PLACE_PACKET(CablePlacePacket.class, CablePlacePacket.STREAM_CODEC),
     ELECTRICITY_SPARK_EFFECT(ElectricitySparkPacket.class, ElectricitySparkPacket.STREAM_CODEC),
     ADD_ELECTRICAL_COMPONENT(AddElectricalComponentPacket.class, AddElectricalComponentPacket.STREAM_CODEC),
     NETWORK_LOAD(NetworkLoadPacket.class, NetworkLoadPacket.STREAM_CODEC),
     UPDATE_VOLTAGE(UpdateVoltagePacket.class, UpdateVoltagePacket.STREAM_CODEC),
     UPDATE_NETWORK(UpdateNetworkPacket.class, UpdateNetworkPacket.STREAM_CODEC),
+    UPDATE_ACCUMULATOR(UpdateAccumulatorPacket.class, UpdateAccumulatorPacket.STREAM_CODEC),
 
     // Client to Server
     ELECTRICIANS_WRENCH_PACKET(ElectriciansWrenchPacket.class, ElectriciansWrenchPacket.STREAM_CODEC),

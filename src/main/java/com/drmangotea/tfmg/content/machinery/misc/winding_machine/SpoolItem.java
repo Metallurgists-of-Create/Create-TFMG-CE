@@ -2,12 +2,8 @@ package com.drmangotea.tfmg.content.machinery.misc.winding_machine;
 
 import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.TFMGRegistries;
-import com.drmangotea.tfmg.base.TFMGUtils;
 import com.drmangotea.tfmg.base.annotation.NothingNullByDefault;
 import com.drmangotea.tfmg.base.lang.TFMGLang;
-import com.drmangotea.tfmg.content.electricity.experimental.content.power_transmission.wires.cable_type.CableType;
-import com.drmangotea.tfmg.content.electricity.connection.cables.CableConnection;
-import com.drmangotea.tfmg.content.electricity.connection.cables.CableConnectorBlockEntity;
 import com.drmangotea.tfmg.registry.TFMGDataComponents;
 import com.drmangotea.tfmg.registry.TFMGItems;
 import com.simibubi.create.content.kinetics.deployer.DeployerFakePlayer;
@@ -67,8 +63,6 @@ public class SpoolItem extends Item {
             BlockPos pos = stack.getOrDefault(TFMGDataComponents.POSITION, fallback);
             if (pos == fallback)
                 return InteractionResultHolder.pass(stack);
-            if (level.getBlockEntity(pos) instanceof CableConnectorBlockEntity be)
-                be.player = null;
             stack.remove(TFMGDataComponents.POSITION);
             if (level.isClientSide)
                 player.displayClientMessage(
@@ -126,80 +120,12 @@ public class SpoolItem extends Item {
         }
         if (!stack.has(TFMGDataComponents.SPOOL_AMOUNT))
             return InteractionResult.PASS;
-        if (!level.isClientSide) {
-            if (Objects.equals(cableTypeKey, TFMG.asResource("empty")))
-                return InteractionResult.PASS;
-            for (int i = 0; i < 64; i++) {
-                if (direction != null && level.getBlockEntity(pos.relative(direction)) instanceof CableConnectorBlockEntity) {
-                    pos = pos.relative(direction);
-                } else break;
-            }
-        }
-
-        if (level.getBlockEntity(pos) instanceof CableConnectorBlockEntity be) {
-            if (stack.has(TFMGDataComponents.POSITION)) {
-                if (posToConnect.equals(pos)) {
-                    stack.remove(TFMGDataComponents.POSITION);
-                    if (level.isClientSide)
-                        player.displayClientMessage(TFMGLang.translateDirect("wires.cant_connect_itself")
-                                .withStyle(ChatFormatting.YELLOW), true);
-                    be.player = null;
-                    be.sendData();
-                    be.setChanged();
-                    return InteractionResult.SUCCESS;
-                }
-                for (int i = 0; i < 64; i++) {
-                    if (direction != null && level.getBlockEntity(posToConnect.relative(direction)) instanceof CableConnectorBlockEntity) {
-                        posToConnect = posToConnect.relative(direction);
-                    } else break;
-                }
-                if (level.getBlockEntity(posToConnect) instanceof CableConnectorBlockEntity otherBE) {
-                    CableType cableType = TFMGUtils.getCableType(cableTypeKey);
-
-                    CableConnection connection1 = new CableConnection(otherBE.getBlockPos(),be.getBlockPos(), cableType, true);
-                    CableConnection connection2 = new CableConnection(be.getBlockPos(),otherBE.getBlockPos(), cableType, false);
-
-                    double distance = otherBE.getBlockPos().distManhattan(be.getBlockPos());
-                    int turnsLeft = stack.getOrDefault(TFMGDataComponents.SPOOL_AMOUNT, 0);
-					int amount = Math.round((float)(distance / 4)*80);
-                    if (turnsLeft < amount) { return InteractionResult.PASS; }
-                    if (be.connections.contains(connection1) || otherBE.connections.contains(connection2)) {
-						if (level.isClientSide)
-                            player.displayClientMessage(TFMGLang.translateDirect("wires.connection_already_created")
-                                    .withStyle(ChatFormatting.YELLOW), true);
-                        be.player = null;
-                        be.sendData();
-                        be.setChanged();
-                        return InteractionResult.SUCCESS;
-                    }
-                    be.connections.add(connection1);
-                    otherBE.connections.add(connection2);
-
-                    stack.set(TFMGDataComponents.SPOOL_AMOUNT, turnsLeft - amount);
-                    be.player = null;
-                    otherBE.player = null;
-                    be.onConnected();
-                    otherBE.onConnected();
-                    be.updateConnections();
-                    otherBE.updateConnections();
-                    stack.remove(TFMGDataComponents.POSITION);
-                }
-                //
-                be.player = null;
-                if (!level.isClientSide()) {
-                    be.data.connectNextTick = true;
-                }
-            } else {
-                stack.set(TFMGDataComponents.POSITION, be.getBlockPos());
-                be.player = player;
-                be.color = barColor;
-                be.sendData();
-                be.setChanged();
-                if (!level.isClientSide())
-                    be.onPlaced();
-            }
+        if (level.isClientSide)
             return InteractionResult.SUCCESS;
-        }
+
+        if (Objects.equals(cableTypeKey, TFMG.asResource("empty")))
+            return InteractionResult.PASS;
+
         return InteractionResult.PASS;
     }
 

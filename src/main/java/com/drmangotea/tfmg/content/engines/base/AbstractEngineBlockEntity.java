@@ -1,10 +1,12 @@
 package com.drmangotea.tfmg.content.engines.base;
 
 import com.drmangotea.tfmg.config.TFMGConfigs;
-import com.drmangotea.tfmg.content.electricity.base.KineticElectricBlockEntity;
 import com.drmangotea.tfmg.content.engines.fuels.EngineFuelType;
 import com.drmangotea.tfmg.registry.TFMGBlockEntities;
 import com.drmangotea.tfmg.registry.TFMGFluids;
+import com.drmangotea.tfmg.registry.TFMGTags;
+import com.simibubi.create.content.kinetics.base.GeneratingKineticBlockEntity;
+import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import com.simibubi.create.foundation.fluid.CombinedTankWrapper;
 import net.createmod.catnip.math.VecHelper;
 import net.minecraft.core.BlockPos;
@@ -30,7 +32,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
-public abstract class AbstractEngineBlockEntity extends KineticElectricBlockEntity {
+public abstract class AbstractEngineBlockEntity extends GeneratingKineticBlockEntity {
 
     //
 
@@ -125,11 +127,7 @@ public abstract class AbstractEngineBlockEntity extends KineticElectricBlockEnti
         sendData();
         setChanged();
     }
-
-    @Override
-    public void updateNetwork() {
-        super.updateNetwork();
-    }
+	
 
     protected void analogSignalChanged() {
         if (level == null) return;
@@ -158,11 +156,6 @@ public abstract class AbstractEngineBlockEntity extends KineticElectricBlockEnti
         if (fuelTank.isEmpty())
             updateRotation();
         drainFuel = false;
-    }
-
-    @Override
-    public boolean makeMultimeterTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
-        return false;
     }
 
 

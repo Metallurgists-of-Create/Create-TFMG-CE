@@ -4,15 +4,19 @@ import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.base.annotation.NothingNullByDefault;
 import com.drmangotea.tfmg.content.decoration.tanks.steel.SteelTankBlock;
 import com.drmangotea.tfmg.content.decoration.tanks.steel.SteelTankBlockEntity;
-import com.drmangotea.tfmg.content.electricity.base.IOldElectric;
-import com.drmangotea.tfmg.content.electricity.experimental.IRealisticElectric;
-import com.drmangotea.tfmg.content.electricity.experimental.RealElectricNetworkManager;
-import com.drmangotea.tfmg.content.electricity.experimental.RealElectricalNetwork;
-import com.drmangotea.tfmg.content.electricity.experimental.content.devices.resistor.DebugResistorBlockEntity;
-import com.drmangotea.tfmg.content.electricity.connection.cables.CableConnectorBlockEntity;
-import com.drmangotea.tfmg.content.electricity.experimental.content.power_transmission.cables.cable_hubs.CableHubBlockEntity;
-import com.drmangotea.tfmg.content.electricity.experimental.content.power_transmission.energy_storage.accumulator_rack.AccumulatorRackBlockEntity;
+import com.drmangotea.tfmg.content.electricity.content.devices.resistor.DebugResistorBlockEntity;
+import com.drmangotea.tfmg.content.electricity.IRealisticElectric;
+import com.drmangotea.tfmg.content.electricity.RealElectricNetworkManager;
+import com.drmangotea.tfmg.content.electricity.RealElectricalNetwork;
+import com.drmangotea.tfmg.content.electricity.content.measuring_instruments.VoltMeterBlockEntity;
+import com.drmangotea.tfmg.content.electricity.content.power_transmission.energy_storage.accumulator_control_unit.AccumulatorControlUnitBlockEntity;
+import com.drmangotea.tfmg.content.electricity.content.power_transmission.energy_storage.accumulator_rack.AccumulatorRackBlockEntity;
+import com.drmangotea.tfmg.content.electricity.packets.NetworkLoadPacket;
+import com.drmangotea.tfmg.content.electricity.simulation.IdealVoltageSource;
+import com.drmangotea.tfmg.content.electricity.simulation.Resistance;
+import net.createmod.catnip.platform.CatnipServices;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -20,8 +24,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
-
-import static com.drmangotea.tfmg.content.electricity.experimental.content.power_transmission.cables.AbstractCableBlockEntity.connectToNeighbors;
 
 
 @NothingNullByDefault
@@ -44,16 +46,32 @@ public class DebugCinderBlockItem extends Item {
 		
 		BlockEntity blockEntity = level.getBlockEntity(pos);
 		
-		if (blockEntity instanceof CableConnectorBlockEntity be) {
-			TFMG.LOGGER.info("{}:\n {}", pos, be.connections);
-		}
         if (blockEntity instanceof AccumulatorRackBlockEntity be) {
             be.updateStorage();
-
-
         }
-        if (blockEntity instanceof CableHubBlockEntity be) {
-            connectToNeighbors(be.getLevel(), be);
+        if (blockEntity instanceof VoltMeterBlockEntity be) {
+            RealElectricalNetwork network = RealElectricNetworkManager.getNetwork(be.getWorld());
+            TFMG.LOGGER.debug("voltmeter: "+be.voltage);
+            Resistance resistor = network.getResistance(be.getPos(),0);
+            if(resistor !=null){
+                TFMG.LOGGER.debug("nodes "+resistor.nodeA.networkId+" "+resistor.nodeB.networkId);
+            }
+            if (context.getPlayer() instanceof ServerPlayer serverPlayer) {
+                NetworkLoadPacket packet = new NetworkLoadPacket(RealElectricNetworkManager.networks.values().stream().toList());
+                CatnipServices.NETWORK.sendToClient(serverPlayer, packet);
+            }
+        }
+        if (level.getBlockEntity(pos) instanceof AccumulatorControlUnitBlockEntity be) {
+            RealElectricalNetwork network = RealElectricNetworkManager.getNetwork(be.getWorld());
+
+            network.update();
+
+            IdealVoltageSource source = network.getVoltageSource(be.getPos(),0);
+            if(source == null){
+                return InteractionResult.PASS;
+            }
+
+            TFMG.LOGGER.debug("generator: "+source.amplitude+" "+source.phaseOffset);
         }
         if (blockEntity instanceof DebugResistorBlockEntity be) {
 
@@ -79,28 +97,9 @@ public class DebugCinderBlockItem extends Item {
             TFMG.LOGGER.debug("Connection Count: " + network.connections.size());
             TFMG.LOGGER.debug("Resistor Count: " + network.resistors.size());
             TFMG.LOGGER.debug("This Block Node Count: " + be.getProperties().nodes.size());
-            // TFMG.LOGGER.debug("Voltage gen: " + be.getVoltageGeneration().getFirst().getFirst().getFirst());
 
 
-            // network.connections.forEach(c -> {
-            //     TFMG.LOGGER.debug("Connection1  " + c.node1().getPosition().x() + c.node1().getPosition().y() + c.node1().getPosition().z());
-            //     TFMG.LOGGER.debug("Connection2  " + c.node2().getPosition().x() + c.node2().getPosition().y() + c.node2().getPosition().z());
-            // });
 
-           // if (player != null && player.isCrouching()) {
-                //  TFMG.ELECTRICAL_NETWORK_DATA.markDirty();
-           //     network.update();
-           // }
-		}
-
-
-        if (blockEntity instanceof IOldElectric be) {
-			if(player.isCrouching()){
-				be.recalculateNetworkResistance();
-			} else {
-				be.updateNextTick();
-				TFMG.LOGGER.debug("Network at {} with size {}", BlockPos.of(be.getData().electricalNetworkId), be.getOrCreateElectricNetwork().members.size());
-			}
         }
 
         if (blockEntity instanceof SteelTankBlockEntity be) {
