@@ -79,6 +79,7 @@ public class TFMG {
         TFMGEncasedBlocks.init();
         TFMGPaletteBlocks.init();
 
+		TFMGElectricalProperties.register(modEventBus);
         TFMGParticleTypes.register(modEventBus);
         TFMGPlacementModifiers.register(modEventBus);
         TFMGHeightProviders.register(modEventBus);

@@ -1,10 +1,12 @@
 package com.drmangotea.tfmg.content.electricity.content.lights;
 
 import com.drmangotea.tfmg.content.electricity.ElectricalProperties;
+import com.drmangotea.tfmg.content.electricity.ElectricalPropertiesType;
 import com.drmangotea.tfmg.content.electricity.simulation.Resistance;
 import com.drmangotea.tfmg.content.electricity.simulation.nodes.ConnectableElectricalNode;
 import com.drmangotea.tfmg.content.electricity.simulation.nodes.ElectricalNode;
 import com.drmangotea.tfmg.content.electricity.simulation.nodes.NodeType;
+import com.drmangotea.tfmg.registry.TFMGElectricalProperties;
 import net.minecraft.core.Direction;
 import net.minecraft.core.BlockPos;
 
@@ -26,8 +28,8 @@ public class LightProperties extends ElectricalProperties {
     }
 
     @Override
-    public int getId() {
-        return 7;
+    public ElectricalPropertiesType<?> getType() {
+        return TFMGElectricalProperties.p07.get();
     }
 
     @Override

@@ -1,8 +1,10 @@
 package com.drmangotea.tfmg.content.electricity.content.power_transmission.cables;
 
 import com.drmangotea.tfmg.content.electricity.ElectricalProperties;
+import com.drmangotea.tfmg.content.electricity.ElectricalPropertiesType;
 import com.drmangotea.tfmg.content.electricity.simulation.nodes.DirectionalElectricalNode;
 import com.drmangotea.tfmg.content.electricity.simulation.nodes.NodeType;
+import com.drmangotea.tfmg.registry.TFMGElectricalProperties;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 
@@ -35,7 +37,7 @@ public class CableProperties extends ElectricalProperties {
     }
 
     @Override
-    public int getId() {
-        return 4;
+    public ElectricalPropertiesType<?> getType() {
+        return TFMGElectricalProperties.p04.get();
     }
 }

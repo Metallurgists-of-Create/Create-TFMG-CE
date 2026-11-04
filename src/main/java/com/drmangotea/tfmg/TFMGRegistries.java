@@ -1,5 +1,6 @@
 package com.drmangotea.tfmg;
 
+import com.drmangotea.tfmg.content.electricity.ElectricalPropertiesType;
 import com.drmangotea.tfmg.content.electricity.content.power_transmission.wires.cable_type.CableType;
 import com.drmangotea.tfmg.content.engines.fuels.EngineFuelType;
 import com.drmangotea.tfmg.content.engines.types.EngineType;
@@ -22,6 +23,7 @@ public class TFMGRegistries {
 
     public static final ResourceKey<Registry<CableType>> CABLE_TYPE = createRegistryKey("cable_types");
     public static final ResourceKey<Registry<Electrode>> ELECTRODE = createRegistryKey("electrodes");
+	public static final ResourceKey<Registry<ElectricalPropertiesType<?>>> ELECTRIC_TYPE = createRegistryKey("electric_types");
     public static final ResourceKey<Registry<EngineType>> ENGINE_TYPE = createRegistryKey("engine_type");
     public static final ResourceKey<Registry<MixerMode>> MIXER_MODE = createRegistryKey("mixer_mode");
     public static final ResourceKey<Registry<VatOperation>> VAT_OPERATION = createRegistryKey("vat_operation");
@@ -35,6 +37,7 @@ public class TFMGRegistries {
     public static final Registry<VatOperation> VAT_OPERATION_REGISTRY = makeSyncedRegistry(VAT_OPERATION);
     public static final Registry<CableType> CABLE_TYPE_REGISTRY = makeSyncedRegistry(CABLE_TYPE);
     public static final Registry<Electrode> ELECTRODE_REGISTRY = makeSyncedRegistry(ELECTRODE);
+	public static final Registry<ElectricalPropertiesType<?>> ELECTRICAL_TYPE_REGISTRY = makeSyncedRegistry(ELECTRIC_TYPE);
     public static final Registry<EngineType> ENGINE_TYPE_REGISTRY = makeSyncedRegistry(ENGINE_TYPE);
     public static final Registry<MixerMode> MIXER_MODE_REGISTRY = makeSyncedRegistry(MIXER_MODE);
     public static final Registry<VatType> VAT_TYPE_REGISTRY = makeSyncedRegistry(VAT_TYPE);

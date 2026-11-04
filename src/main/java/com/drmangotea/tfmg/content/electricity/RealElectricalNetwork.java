@@ -251,8 +251,8 @@ public class RealElectricalNetwork {
 
         int count = 0;
         for (WireConnection connection : connections) {
-            ElectricalNode node1 = connection.node1;
-            ElectricalNode node2 = connection.node2;
+            ElectricalNode node1 = connection.node1();
+            ElectricalNode node2 = connection.node2();
 
 
 
@@ -346,7 +346,7 @@ public class RealElectricalNetwork {
     public void removeConnections(IRealisticElectric be) {
         List<WireConnection> connectionsCopy = new ArrayList<>(connections);
         for (WireConnection connection : connectionsCopy) {
-            if (connection.node1.pos == be.getPos() || connection.node2.pos == be.getPos()) {
+            if (connection.node1().pos == be.getPos() || connection.node2().pos == be.getPos()) {
                 connections.remove(connection);
             }
         }

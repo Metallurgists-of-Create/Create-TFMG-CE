@@ -1,11 +1,13 @@
 package com.drmangotea.tfmg.content.electricity.content.devices.generators.three_phase_generator;
 
+import com.drmangotea.tfmg.content.electricity.ElectricalPropertiesType;
 import com.drmangotea.tfmg.content.electricity.content.DirectionalElectricalProperties;
 import com.drmangotea.tfmg.content.electricity.simulation.IdealVoltageSource;
 import com.drmangotea.tfmg.content.electricity.simulation.Resistance;
 import com.drmangotea.tfmg.content.electricity.simulation.nodes.ConnectingElectricalNode;
 import com.drmangotea.tfmg.content.electricity.simulation.nodes.ElectricalNode;
 import com.drmangotea.tfmg.content.electricity.simulation.nodes.NodeType;
+import com.drmangotea.tfmg.registry.TFMGElectricalProperties;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.phys.Vec3;
@@ -64,8 +66,8 @@ public class ThreePhaseGeneratorProperties extends DirectionalElectricalProperti
 
 
     @Override
-    public int getId() {
-        return 1;
+    public ElectricalPropertiesType<?> getType() {
+        return TFMGElectricalProperties.THREE_PHASE_GENERATOR.get();
     }
 
     @Override

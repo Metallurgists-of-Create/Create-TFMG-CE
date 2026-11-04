@@ -22,6 +22,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 
@@ -58,7 +59,7 @@ public class NetworkLoadPacket implements ClientboundPacketPayload {
             for (int j = 0; j < memberCount; j++) {
                 BlockPos position = buffer.readBlockPos();
 
-                int id = buffer.readInt();
+                ResourceLocation id = buffer.readResourceLocation();
                 Direction direction = Direction.from3DDataValue(buffer.readInt());
                 // Direction direction = Direction.NORTH;
                 List<Direction> directions = new ArrayList<>();
@@ -172,7 +173,7 @@ public class NetworkLoadPacket implements ClientboundPacketPayload {
             for (int i = 0; i < memberCount; i++) {
                 buffer.writeBlockPos(positions.get(i));
                 ElectricalProperties property = properties.get(i);
-                buffer.writeInt(property.getId());
+                buffer.writeResourceLocation(property.getType().id());
 
                 //
                 Direction direction = Direction.NORTH;
@@ -213,12 +214,12 @@ public class NetworkLoadPacket implements ClientboundPacketPayload {
             buffer.writeInt(connectionCount);
             for (int i = 0; i < connectionCount; i++) {
                 WireConnection connection = connections.get(i);
-				buffer.writeBoolean(connection.render);
-				buffer.writeDouble(connection.resistance);
-                buffer.writeBlockPos(connection.node1.pos);
-                buffer.writeInt(connection.node1.getLocalId());
-                buffer.writeBlockPos(connection.node2.pos);
-                buffer.writeInt(connection.node2.getLocalId());
+				buffer.writeBoolean(connection.render());
+				buffer.writeDouble(connection.resistance());
+                buffer.writeBlockPos(connection.node1().pos);
+                buffer.writeInt(connection.node1().getLocalId());
+                buffer.writeBlockPos(connection.node2().pos);
+                buffer.writeInt(connection.node2().getLocalId());
 
 
             }

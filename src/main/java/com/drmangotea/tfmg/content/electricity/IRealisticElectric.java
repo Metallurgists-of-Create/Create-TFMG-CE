@@ -18,9 +18,7 @@ import java.util.List;
 import static com.drmangotea.tfmg.content.electricity.content.power_transmission.cables.AbstractCableBlockEntity.connectToNeighbors;
 
 public interface IRealisticElectric extends IHaveMultimeterInformation {
-    default ElectricalProperties getProperties() {
-        return new ElectricalProperties(this.getPos());
-    }
+	ElectricalProperties getProperties();
 
     BlockPos getPos();
 	
@@ -98,32 +96,12 @@ public interface IRealisticElectric extends IHaveMultimeterInformation {
         TFMGTexts.header("multimeter").style(ChatFormatting.WHITE)
                 .forGoggles(tooltip);
 
-
-        // if (getVoltageGeneration().is) {
-        //     TFMGTexts.Multimeter.powerGenerated(powerGeneration()).forGoggles(tooltip, 1);
-        //     TFMGTexts.Multimeter.voltageGenerated(voltageGeneration()).forGoggles(tooltip, 1);
-        //     TFMGTexts.Multimeter.separator().forGoggles(tooltip);
-        // }
-        // if (resistance() != 0 && !(this instanceof CableConnectorBlockEntity) && !(this instanceof CableHubBlockEntity))
-        //     TFMGTexts.Multimeter.resistance(voltageGeneration() > 0 ? getGeneratorResistance() : resistance()).forGoggles(tooltip, 1);
-        // TFMGTexts.Multimeter.voltage(getData().getVoltage()).forGoggles(tooltip, 1);
-        // TFMGTexts.Multimeter.current(resistance() == 0 ? getData().highestCurrent : getCurrent()).forGoggles(tooltip, 1);
-        // if (resistance() != 0)
-        //     TFMGTexts.Multimeter.power(getPowerUsage()).forGoggles(tooltip, 1);
-//
-        // if (getData().energyGiven > 0) {
-        //     TFMGTexts.Multimeter.sendingFE(getData().energyGiven).forGoggles(tooltip, 1);
-        // }
-        // if (getData().energyTakenPerTick > 0) {
-        //     TFMGTexts.Multimeter.takingFE(getData().energyTakenPerTick).forGoggles(tooltip, 1);
-        // }
-//
-        // if (isPlayerSneaking) {
-        //     TFMGTexts.Multimeter.separator().forGoggles(tooltip);
-        //     TFMGTexts.Multimeter.networkGeneration(getNetworkPowerGeneration()).forGoggles(tooltip, 1);
-        //     TFMGTexts.Multimeter.networkConsumption(getNetworkPowerUsage()).forGoggles(tooltip, 1);
-        // }
-
+		/* TODO: Add getters or something like that
+		TFMGTexts.Multimeter.resistance(resistance).forGoggles(tooltip);
+		TFMGTexts.Multimeter.voltage(voltage).forGoggles(tooltip);
+		TFMGTexts.Multimeter.current(current).forGoggles(tooltip);
+		TFMGTexts.Multimeter.power(current*voltage).forGoggles(tooltip);
+		*/
 
         return true;
     }

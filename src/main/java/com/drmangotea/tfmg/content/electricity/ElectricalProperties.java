@@ -4,13 +4,11 @@ import com.drmangotea.tfmg.content.electricity.simulation.ElectricalComponent;
 import com.drmangotea.tfmg.content.electricity.simulation.nodes.ElectricalNode;
 import net.minecraft.core.Direction;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.Level;
 
 import java.util.ArrayList;
 import java.util.List;
 
-
-public class ElectricalProperties {
+public abstract class ElectricalProperties {
 
     public final List<ElectricalNode> nodes = new ArrayList<>();
     public final List<ElectricalComponent> components = new ArrayList<>();
@@ -21,9 +19,7 @@ public class ElectricalProperties {
       this.position = pos;
     }
 
-    public int getId(){
-        return 1;
-    }
+    public abstract ElectricalPropertiesType<?> getType();
 
     public boolean hasElectricityPort(Direction facing){
         return true;
@@ -31,29 +27,15 @@ public class ElectricalProperties {
 
     public boolean cableConnectable(){
         return false;
-    };
+    }
 
     public boolean needsUpdateData(){
         return false;
-    };
+	}
 
     public List<Direction> getConnectableDirections(){
         return new ArrayList<>();
     }
 
-    public List<ElectricalComponent> createProperties(IRealisticElectric be) {
-        return new ArrayList<>();
-    }
-
-
-
-    public static int getFreeId(Level level, int base) {
-        RealElectricalNetwork network = RealElectricNetworkManager.getNetwork(level);
-
-        if (network.nodes.isEmpty())
-            return base;
-
-        return network.nodes.getLast().getNetworkId() + 1+base;
-    }
 
 }

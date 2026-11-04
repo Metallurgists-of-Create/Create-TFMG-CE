@@ -1,10 +1,12 @@
 package com.drmangotea.tfmg.content.electricity.content.devices.generators.creative_generator;
 
 import com.drmangotea.tfmg.content.electricity.ElectricalProperties;
+import com.drmangotea.tfmg.content.electricity.ElectricalPropertiesType;
 import com.drmangotea.tfmg.content.electricity.simulation.IdealVoltageSource;
 import com.drmangotea.tfmg.content.electricity.simulation.nodes.ElectricalNode;
 import com.drmangotea.tfmg.content.electricity.simulation.nodes.HybridConnectedNode;
 import com.drmangotea.tfmg.content.electricity.simulation.nodes.NodeType;
+import com.drmangotea.tfmg.registry.TFMGElectricalProperties;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.phys.Vec3;
@@ -44,8 +46,8 @@ public class CreativeGeneratorProperties extends ElectricalProperties {
 
 
     @Override
-    public int getId() {
-        return 10;
+    public ElectricalPropertiesType<?> getType() {
+        return TFMGElectricalProperties.p10.get();
     }
 
     @Override

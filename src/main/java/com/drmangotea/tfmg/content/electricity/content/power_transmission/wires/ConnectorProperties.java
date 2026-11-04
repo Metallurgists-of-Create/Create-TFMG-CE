@@ -1,8 +1,10 @@
 package com.drmangotea.tfmg.content.electricity.content.power_transmission.wires;
 
 import com.drmangotea.tfmg.content.electricity.ElectricalProperties;
+import com.drmangotea.tfmg.content.electricity.ElectricalPropertiesType;
 import com.drmangotea.tfmg.content.electricity.simulation.nodes.ConnectingElectricalNode;
 import com.drmangotea.tfmg.content.electricity.simulation.nodes.NodeType;
+import com.drmangotea.tfmg.registry.TFMGElectricalProperties;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.phys.Vec3;
@@ -15,8 +17,8 @@ public class ConnectorProperties extends ElectricalProperties {
     }
 
     @Override
-    public int getId() {
-        return 2;
+    public ElectricalPropertiesType<?> getType() {
+        return TFMGElectricalProperties.p02.get();
     }
 
     public CompoundTag saveData(CompoundTag compound) {

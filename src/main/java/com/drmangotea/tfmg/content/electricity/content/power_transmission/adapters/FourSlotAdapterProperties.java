@@ -1,8 +1,10 @@
 package com.drmangotea.tfmg.content.electricity.content.power_transmission.adapters;
 
+import com.drmangotea.tfmg.content.electricity.ElectricalPropertiesType;
 import com.drmangotea.tfmg.content.electricity.content.DirectionalElectricalProperties;
 import com.drmangotea.tfmg.content.electricity.simulation.nodes.HybridConnectedNode;
 import com.drmangotea.tfmg.content.electricity.simulation.nodes.NodeType;
+import com.drmangotea.tfmg.registry.TFMGElectricalProperties;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.phys.Vec3;
@@ -43,8 +45,8 @@ public class FourSlotAdapterProperties extends DirectionalElectricalProperties {
     }
 
     @Override
-    public int getId() {
-        return 5;
+    public ElectricalPropertiesType<?> getType() {
+        return TFMGElectricalProperties.p05.get();
     }
 
     @Override

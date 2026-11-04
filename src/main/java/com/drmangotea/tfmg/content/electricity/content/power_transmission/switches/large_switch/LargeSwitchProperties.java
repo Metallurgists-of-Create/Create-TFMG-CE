@@ -1,9 +1,11 @@
 package com.drmangotea.tfmg.content.electricity.content.power_transmission.switches.large_switch;
 
+import com.drmangotea.tfmg.content.electricity.ElectricalPropertiesType;
 import com.drmangotea.tfmg.content.electricity.content.DirectionalElectricalProperties;
 import com.drmangotea.tfmg.content.electricity.simulation.Resistance;
 import com.drmangotea.tfmg.content.electricity.simulation.nodes.DirectionalElectricalNode;
 import com.drmangotea.tfmg.content.electricity.simulation.nodes.NodeType;
+import com.drmangotea.tfmg.registry.TFMGElectricalProperties;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.phys.Vec3;
@@ -63,7 +65,7 @@ public class LargeSwitchProperties extends DirectionalElectricalProperties {
     }
 
     @Override
-    public int getId() {
-        return 14;
+    public ElectricalPropertiesType<?> getType() {
+        return TFMGElectricalProperties.p14.get();
     }
 }

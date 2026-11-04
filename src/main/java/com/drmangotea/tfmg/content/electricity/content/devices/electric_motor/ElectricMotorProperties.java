@@ -1,11 +1,13 @@
 package com.drmangotea.tfmg.content.electricity.content.devices.electric_motor;
 
 import com.drmangotea.tfmg.config.TFMGConfigs;
+import com.drmangotea.tfmg.content.electricity.ElectricalPropertiesType;
 import com.drmangotea.tfmg.content.electricity.content.DirectionalElectricalProperties;
 import com.drmangotea.tfmg.content.electricity.simulation.Resistance;
 import com.drmangotea.tfmg.content.electricity.simulation.nodes.ConnectingElectricalNode;
 import com.drmangotea.tfmg.content.electricity.simulation.nodes.ElectricalNode;
 import com.drmangotea.tfmg.content.electricity.simulation.nodes.NodeType;
+import com.drmangotea.tfmg.registry.TFMGElectricalProperties;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.phys.Vec3;
@@ -41,8 +43,8 @@ public class ElectricMotorProperties extends DirectionalElectricalProperties {
     }
 
     @Override
-    public int getId() {
-        return 8;
+    public ElectricalPropertiesType<?> getType() {
+        return TFMGElectricalProperties.p08.get();
     }
 
     @Override

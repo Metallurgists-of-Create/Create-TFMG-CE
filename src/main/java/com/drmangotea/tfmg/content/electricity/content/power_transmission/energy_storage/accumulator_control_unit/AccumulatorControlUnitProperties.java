@@ -1,11 +1,13 @@
 package com.drmangotea.tfmg.content.electricity.content.power_transmission.energy_storage.accumulator_control_unit;
 
+import com.drmangotea.tfmg.content.electricity.ElectricalPropertiesType;
 import com.drmangotea.tfmg.content.electricity.content.DirectionalElectricalProperties;
 import com.drmangotea.tfmg.content.electricity.simulation.IdealVoltageSource;
 import com.drmangotea.tfmg.content.electricity.simulation.Resistance;
 import com.drmangotea.tfmg.content.electricity.simulation.nodes.DirectionalElectricalNode;
 import com.drmangotea.tfmg.content.electricity.simulation.nodes.ElectricalNode;
 import com.drmangotea.tfmg.content.electricity.simulation.nodes.NodeType;
+import com.drmangotea.tfmg.registry.TFMGElectricalProperties;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.phys.Vec3;
@@ -51,7 +53,7 @@ public class AccumulatorControlUnitProperties extends DirectionalElectricalPrope
     }
 
     @Override
-    public int getId() {
-        return 13;
+    public ElectricalPropertiesType<?> getType() {
+        return TFMGElectricalProperties.p13.get();
     }
 }

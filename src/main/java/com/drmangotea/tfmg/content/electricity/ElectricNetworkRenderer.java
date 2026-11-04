@@ -57,11 +57,11 @@ public class ElectricNetworkRenderer {
         renderWire(TFMGPartialModels.CABLE, new Vec3(0, -56, 0), new Vec3(0, -56, 10), camera, ms, vc, playerPos);
 
         for (WireConnection connection : network.connections) {
-			if (connection.render)
+			if (connection.render())
 				renderWire(
 					TFMGPartialModels.CABLE,
-					connection.node1.getPosition().add(Vec3.atLowerCornerOf(connection.node1.pos)),
-					connection.node2.getPosition().add(Vec3.atLowerCornerOf(connection.node2.pos)),
+					connection.node1().getPosition().add(Vec3.atLowerCornerOf(connection.node1().pos)),
+					connection.node2().getPosition().add(Vec3.atLowerCornerOf(connection.node2().pos)),
 					camera, ms, vc, playerPos
 				);
         }
