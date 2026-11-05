@@ -69,7 +69,7 @@ public class NetworkLoadPacket implements ClientboundPacketPayload {
                 }
 
                 ElectricalProperties properties = NetworkSavedData.getElectricalProperties(id, direction, directions, position);
-
+				if (properties == null) return;
 
                 int resistorCount = buffer.readInt();
                 List<Double> resistors = new ArrayList<>();

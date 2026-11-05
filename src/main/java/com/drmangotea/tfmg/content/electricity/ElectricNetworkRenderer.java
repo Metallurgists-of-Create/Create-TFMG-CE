@@ -1,18 +1,16 @@
 package com.drmangotea.tfmg.content.electricity;
 
 import com.drmangotea.tfmg.base.TFMGUtils;
+import com.drmangotea.tfmg.config.TFMGConfigs;
 import com.drmangotea.tfmg.content.electricity.simulation.nodes.ConnectingElectricalNode;
 import com.drmangotea.tfmg.content.electricity.simulation.nodes.ElectricalNode;
 import com.drmangotea.tfmg.registry.TFMGPartialModels;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import dev.engine_room.flywheel.lib.model.baked.PartialModel;
-import net.createmod.catnip.animation.AnimationTickHolder;
 import net.createmod.catnip.render.CachedBuffers;
-import net.createmod.catnip.theme.Color;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
@@ -26,21 +24,18 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.function.DoubleUnaryOperator;
 
+@OnlyIn(Dist.CLIENT)
 public class ElectricNetworkRenderer {
 
-
-    @OnlyIn(Dist.CLIENT)
-    public static void tickRender(RenderLevelStageEvent event) {
+    public void tickRender(RenderLevelStageEvent event) {
         tickOutlines();
         renderWires(event);
     }
 
-    @OnlyIn(Dist.CLIENT)
-    public static void renderWires(RenderLevelStageEvent event) {
+    public void renderWires(RenderLevelStageEvent event) {
         Minecraft mc = Minecraft.getInstance();
         Player player = mc.player;
         if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_PARTICLES)
@@ -67,24 +62,26 @@ public class ElectricNetworkRenderer {
         }
     }
 
-    public static void renderWire(PartialModel model, Vec3 pos1, Vec3 pos2, Camera camera, PoseStack ms, VertexConsumer vc, Vec3 playerPos) {
+    public void renderWire(PartialModel model, Vec3 pos1, Vec3 pos2, Camera camera, PoseStack ms, VertexConsumer vc, Vec3 playerPos) {
 		Vec3 cameraInverse = Vec3.ZERO.subtract(camera.getPosition());
 
-        int cableRenderDistance = 64;
+        int cableRenderDistance = TFMGConfigs.client().render.cableRenderDistance.get();
 
         BlockState air = Blocks.AIR.defaultBlockState();
 
 
 		pos1.subtract(0.5d,0.5d,0.5d);
-        Vec3 vec1 = pos1.subtract(0.5d,0.5d,0.5d);
-        Vec3 v = pos2.subtract(0.5d,0.5d,0.5d);
-        //pos2 = player.getEyePosition().subtract(0.5,1,0.5);
-        Vec3 vec2 = v.subtract(vec1);
-
-        float yaw = (float) Math.atan2(vec2.x, vec2.z);
-        float c = (float) Math.sqrt(vec2.x * vec2.x + vec2.z * vec2.z);
-        float pitch = (float) Math.atan2(vec2.y, c);
-        float length = (float) vec2.length();
+        Vec3 posA = pos1.subtract(0.5d,0.5d,0.5d);
+        Vec3 posB = pos2.subtract(0.5d,0.5d,0.5d);
+        Vec3 AtoB = posB.subtract(posA);
+		
+		if ((posA.distanceTo(playerPos) > cableRenderDistance) && (posB.distanceTo(playerPos) > cableRenderDistance))
+			return;
+		
+        float yaw = (float) Math.atan2(AtoB.x, AtoB.z);
+        float flat_length = (float) Math.sqrt(AtoB.x * AtoB.x + AtoB.z * AtoB.z);
+        float pitch = (float) Math.atan2(AtoB.y, flat_length);
+        float length = (float) AtoB.length();
         //
 
         //
@@ -92,9 +89,6 @@ public class ElectricNetworkRenderer {
 		double reciprocal = 1 / (double) segmentCount;
 		DoubleUnaryOperator curveFunction   = x -> 0.2f * x * (x * reciprocal - 1);
 		DoubleUnaryOperator curveDerivative = x -> 0.2f * (2 * x * reciprocal - 1);
-
-		if ((vec1.distanceTo(playerPos) > cableRenderDistance) && (v.distanceTo(playerPos) > cableRenderDistance))
-			return;
 			
 		for (int i = 0; i < segmentCount; i++) {
 			float angle = (float) Math.toDegrees(Math.atan(curveDerivative.applyAsDouble(i)));
@@ -102,7 +96,7 @@ public class ElectricNetworkRenderer {
 			
 			CachedBuffers.partial(model, air)
 				.translate(cameraInverse)
-				.translate(vec1)
+				.translate(posA)
 				.light(600)
 				.translate(0.5f, 0.5f, 0.5f)
 				.rotate(yaw, Direction.Axis.Y)
@@ -115,55 +109,29 @@ public class ElectricNetworkRenderer {
 		}
     }
 
-    public static DoubleUnaryOperator derive(DoubleUnaryOperator f, double h) {
-        return x -> (f.applyAsDouble(x + h) - f.applyAsDouble(x - h)) / (2 * h);
-    }
-
-
-    @OnlyIn(Dist.CLIENT)
     public static void tickOutlines() {
         Minecraft mc = Minecraft.getInstance();
         if (mc.player == null || mc.level == null || !(mc.hitResult instanceof BlockHitResult result))
             return;
 
-        ClientLevel level = mc.level;
         BlockPos pos = result.getBlockPos();
-        Player player = mc.player;
-        //    ItemStack heldItem = player.getMainHandItem();
+        //    ItemStack heldItem = mc.player.getMainHandItem();
 
-        if (level.getBlockEntity(pos) instanceof IRealisticElectric be) {
-            List<ConnectingElectricalNode> connectors = new ArrayList<>();
-            ElectricalProperties properties = be.getProperties();
-
-            RealElectricalNetwork network = RealElectricNetworkManager.getNetwork(level);
-
-            List<ElectricalNode> nodes = network.getNodes(pos);
-
-            for (ElectricalNode node : nodes) {
-                if (node instanceof ConnectingElectricalNode connector)
-                    connectors.add(connector);
-            }
-
-            for (ConnectingElectricalNode node : connectors) {
-				if (node == null) continue;
+        List<ElectricalNode> nodes = RealElectricNetworkManager.getNetwork(mc.level).getNodes(pos);
+		if (nodes.isEmpty()) return;
+		
+		Vec3 basePos = Vec3.atLowerCornerOf(pos);
+		nodes.parallelStream()
+			.forEach(n -> {
+				if (!(n instanceof ConnectingElectricalNode node)) return;
 				
-				Vec3 cablePos = node.getPosition().add(Vec3.atLowerCornerOf(be.getPos()));
+				Vec3 cablePos = node.getPosition().add(basePos);
 
                 Vec3 corner1 = cablePos.add(0.1f, 0.1f, 0.1f);
                 Vec3 corner2 = cablePos.subtract(0.1f, 0.1f, 0.1f);
 				
-				Color color = Color.rainbowColor(AnimationTickHolder.getTicks() * 5);
-				switch (node.localId){
-					case 0 -> color = new Color(0x30A8FF);
-					case 1 -> color = new Color(0xC16B32);
-					case 2 -> color = new Color(0x424242);
-					case 3 -> color = new Color(0x7892A3);
-				}
-				
 				TFMGUtils.createOutline(corner1, corner2, "connector_" + node.localId, node.type.getColor());
-            }
-        }
-
+            });
     }
 
 }

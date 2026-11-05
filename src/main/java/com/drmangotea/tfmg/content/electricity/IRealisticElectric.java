@@ -2,17 +2,11 @@ package com.drmangotea.tfmg.content.electricity;
 
 import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.base.lang.TFMGTexts;
-import com.drmangotea.tfmg.content.electricity.content.power_transmission.transformers.large.LargeTransformerBlockEntity;
-import com.drmangotea.tfmg.content.electricity.simulation.ElectricalComponent;
-import com.drmangotea.tfmg.content.electricity.simulation.IdealVoltageSource;
-import com.drmangotea.tfmg.content.electricity.simulation.Resistance;
-import net.createmod.catnip.data.Pair;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.Level;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static com.drmangotea.tfmg.content.electricity.content.power_transmission.cables.AbstractCableBlockEntity.connectToNeighbors;
@@ -31,9 +25,6 @@ public interface IRealisticElectric extends IHaveMultimeterInformation {
     }
 
     default void updateNetwork(BlockPos pos) {
-        if (this instanceof LargeTransformerBlockEntity t && !t.isMainPart)
-            return;
-
         RealElectricalNetwork network = RealElectricNetworkManager.getNetwork(getWorld());
         if (network == null)
             return;
@@ -55,39 +46,6 @@ public interface IRealisticElectric extends IHaveMultimeterInformation {
         network.update();
     }
 
-
-    default List<Pair<Pair<Integer, Integer>, Pair<Float, Float>>> getVoltageGeneration() {
-        List<Pair<Pair<Integer, Integer>, Pair<Float, Float>>> list = new ArrayList<>();
-
-        ElectricalProperties properties = getNetwork().members.get(getPos());
-		if (properties == null) return list;
-		
-		List<Integer> voltageList = new ArrayList<>();
-		List<Integer> phaseOffsetList = new ArrayList<>();
-		List<Float> maxPowerList = new ArrayList<>();
-		List<Float> currentList = new ArrayList<>();
-		
-		for (int i = 0; i < properties.components.size(); i++) {
-			ElectricalComponent component = properties.components.get(i);
-
-			if (component instanceof IdealVoltageSource source) {
-				voltageList.add((int) source.amplitude);
-				phaseOffsetList.add((int) source.phaseOffset);
-				maxPowerList.add((float) source.power);
-			}
-			if (component instanceof Resistance resistor) {
-				currentList.add((float) (resistor.getVoltage(getWorld()) / resistor.resistance));
-			}
-		}
-		for (int i = 0; i < voltageList.size(); i++) {
-			int voltage = voltageList.get(i);
-			int phaseOffset = phaseOffsetList.get(i);
-			float maxPower = maxPowerList.get(i);
-			float current = currentList.get(i);
-			list.add(Pair.of(Pair.of(voltage, phaseOffset), Pair.of(maxPower, current)));
-		}
-		return list;
-    }
 
     default void onUpdated() {
     }

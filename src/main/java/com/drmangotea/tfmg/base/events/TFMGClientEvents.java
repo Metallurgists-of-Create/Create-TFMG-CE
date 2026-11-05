@@ -3,7 +3,6 @@ package com.drmangotea.tfmg.base.events;
 import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.TFMGClient;
 import com.drmangotea.tfmg.base.lang.TFMGLang;
-import com.drmangotea.tfmg.content.electricity.ElectricNetworkRenderer;
 import com.drmangotea.tfmg.content.electricity.RealElectricNetworkManager;
 import com.drmangotea.tfmg.content.electricity.RealElectricalNetwork;
 import com.drmangotea.tfmg.content.electricity.content.measuring_instruments.MultimeterOverlayRenderer;
@@ -63,7 +62,7 @@ public class TFMGClientEvents {
 
     @SubscribeEvent
     public static void onRenderLevel(RenderLevelStageEvent event) {
-        ElectricNetworkRenderer.tickRender(event);
+        TFMGClient.ELECTRIC_NETWORK_RENDERER.tickRender(event);
     }
 
     public static void onTick(boolean isPreEvent) {

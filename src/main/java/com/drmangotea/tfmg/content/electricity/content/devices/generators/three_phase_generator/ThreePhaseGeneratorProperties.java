@@ -112,7 +112,6 @@ public class ThreePhaseGeneratorProperties extends DirectionalElectricalProperti
                 positions.add(new Vec3(13 / 16f, 0, 13 / 16f));
             }
         }
-        ;
 
         return positions;
     }

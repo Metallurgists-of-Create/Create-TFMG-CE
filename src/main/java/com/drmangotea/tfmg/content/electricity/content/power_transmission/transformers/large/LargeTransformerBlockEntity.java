@@ -52,6 +52,7 @@ public class LargeTransformerBlockEntity extends SmartBlockEntity implements IRe
         super.remove();
         this.removeBlock();
     }
+	
     @Override
     public void onPlace() {
         if (!isMainPart)
@@ -60,6 +61,12 @@ public class LargeTransformerBlockEntity extends SmartBlockEntity implements IRe
 
         getNetwork().setTransformerRatio(this, 0, turnRatio);
     }
+	
+	@Override
+	public void updateNetwork(BlockPos pos) {
+		if (!isMainPart) return;
+		IRealisticElectric.super.updateNetwork(pos);
+	}
 
     @Override
     public void onUpdated() {
