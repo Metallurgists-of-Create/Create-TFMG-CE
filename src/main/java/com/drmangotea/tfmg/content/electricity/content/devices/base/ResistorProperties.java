@@ -69,6 +69,6 @@ public class ResistorProperties extends DirectionalElectricalProperties {
 
     @Override
     public ElectricalPropertiesType<?> getType() {
-        return TFMGElectricalProperties.p03.get();
+        return TFMGElectricalProperties.RESISTOR.get();
     }
 }

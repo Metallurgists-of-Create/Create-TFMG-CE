@@ -44,7 +44,7 @@ public class ElectricMotorProperties extends DirectionalElectricalProperties {
 
     @Override
     public ElectricalPropertiesType<?> getType() {
-        return TFMGElectricalProperties.p08.get();
+        return TFMGElectricalProperties.MOTOR.get();
     }
 
     @Override

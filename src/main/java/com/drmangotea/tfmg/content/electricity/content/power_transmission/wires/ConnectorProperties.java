@@ -18,7 +18,7 @@ public class ConnectorProperties extends ElectricalProperties {
 
     @Override
     public ElectricalPropertiesType<?> getType() {
-        return TFMGElectricalProperties.p02.get();
+        return TFMGElectricalProperties.CONNECTOR.get();
     }
 
     public CompoundTag saveData(CompoundTag compound) {

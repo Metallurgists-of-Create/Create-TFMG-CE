@@ -46,7 +46,7 @@ public class FourSlotAdapterProperties extends DirectionalElectricalProperties {
 
     @Override
     public ElectricalPropertiesType<?> getType() {
-        return TFMGElectricalProperties.p05.get();
+        return TFMGElectricalProperties.FOUR_SLOT_ADAPTER.get();
     }
 
     @Override

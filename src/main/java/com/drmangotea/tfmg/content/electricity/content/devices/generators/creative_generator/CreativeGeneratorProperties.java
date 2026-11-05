@@ -47,7 +47,7 @@ public class CreativeGeneratorProperties extends ElectricalProperties {
 
     @Override
     public ElectricalPropertiesType<?> getType() {
-        return TFMGElectricalProperties.p10.get();
+        return TFMGElectricalProperties.CREATIVE_GENERATOR.get();
     }
 
     @Override

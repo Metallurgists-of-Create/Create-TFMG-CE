@@ -29,7 +29,7 @@ public class LightProperties extends ElectricalProperties {
 
     @Override
     public ElectricalPropertiesType<?> getType() {
-        return TFMGElectricalProperties.p07.get();
+        return TFMGElectricalProperties.LIGHT.get();
     }
 
     @Override

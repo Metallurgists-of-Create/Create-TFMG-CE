@@ -80,6 +80,6 @@ public class SwitchProperties extends DirectionalElectricalProperties {
 
     @Override
     public ElectricalPropertiesType<?> getType() {
-        return TFMGElectricalProperties.p11.get();
+        return TFMGElectricalProperties.SWITCH.get();
     }
 }

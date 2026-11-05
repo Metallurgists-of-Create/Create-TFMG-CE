@@ -10,8 +10,8 @@ import net.minecraft.core.Direction;
 
 import java.util.List;
 
-public class UnwirableConnectorProperties extends ElectricalProperties {
-	public UnwirableConnectorProperties(BlockPos pos, List<Direction> directions) {
+public class UnwireableConnectorProperties extends ElectricalProperties {
+	public UnwireableConnectorProperties(BlockPos pos, List<Direction> directions) {
 		super(pos);
         nodes.add(new DirectionalElectricalNode(position,0,directions, NodeType.CONNECTOR));
     }
@@ -20,7 +20,7 @@ public class UnwirableConnectorProperties extends ElectricalProperties {
 
     @Override
     public ElectricalPropertiesType<?> getType() {
-        return TFMGElectricalProperties.p15.get();
+        return TFMGElectricalProperties.UNWIREABLE_CONNECTOR.get();
     }
 
 

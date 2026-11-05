@@ -53,7 +53,7 @@ public class LargeTransformerProperties extends DirectionalElectricalProperties 
 
     @Override
     public ElectricalPropertiesType<?> getType() {
-        return TFMGElectricalProperties.p12.get();
+        return TFMGElectricalProperties.LARGE_TRANSFORMER.get();
     }
 
     @Override

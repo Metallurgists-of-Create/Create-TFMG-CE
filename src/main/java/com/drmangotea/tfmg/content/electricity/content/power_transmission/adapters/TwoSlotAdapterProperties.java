@@ -37,7 +37,7 @@ public class TwoSlotAdapterProperties extends DirectionalElectricalProperties {
 
     @Override
     public ElectricalPropertiesType<?> getType() {
-        return TFMGElectricalProperties.p06.get();
+        return TFMGElectricalProperties.TWO_SLOT_ADAPTER.get();
     }
 
     @Override

@@ -66,6 +66,6 @@ public class LargeSwitchProperties extends DirectionalElectricalProperties {
 
     @Override
     public ElectricalPropertiesType<?> getType() {
-        return TFMGElectricalProperties.p14.get();
+        return TFMGElectricalProperties.LARGE_SWITCH.get();
     }
 }

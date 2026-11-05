@@ -41,7 +41,7 @@ public class TransformerProperties extends DirectionalElectricalProperties {
 
     @Override
     public ElectricalPropertiesType<?> getType() {
-        return TFMGElectricalProperties.p09.get();
+        return TFMGElectricalProperties.TRANSFORMER.get();
     }
 
     @Override

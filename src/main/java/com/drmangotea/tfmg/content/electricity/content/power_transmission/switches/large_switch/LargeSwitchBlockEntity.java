@@ -6,7 +6,7 @@ import com.drmangotea.tfmg.content.electricity.ElectricalProperties;
 import com.drmangotea.tfmg.content.electricity.IRealisticElectric;
 import com.drmangotea.tfmg.content.electricity.RealElectricNetworkManager;
 import com.drmangotea.tfmg.content.electricity.RealElectricalNetwork;
-import com.drmangotea.tfmg.content.electricity.content.power_transmission.wires.UnwirableConnectorProperties;
+import com.drmangotea.tfmg.content.electricity.content.power_transmission.wires.UnwireableConnectorProperties;
 import com.drmangotea.tfmg.content.electricity.simulation.Resistance;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntity;
 import net.createmod.catnip.animation.LerpedFloat;
@@ -53,7 +53,7 @@ public class LargeSwitchBlockEntity extends KineticBlockEntity implements IReali
         Direction direction = state.getValue(HORIZONTAL_FACING);
         directions.add(direction);
         directions.add(direction.getOpposite());
-        p = state.getValue(IS_MAIN_PART) ? new LargeSwitchProperties(getPos(), state.getValue(HORIZONTAL_FACING), 1E12) : new UnwirableConnectorProperties(getPos(), Arrays.stream(Direction.values()).toList());
+        p = state.getValue(IS_MAIN_PART) ? new LargeSwitchProperties(getPos(), state.getValue(HORIZONTAL_FACING), 1E12) : new UnwireableConnectorProperties(getPos(), Arrays.stream(Direction.values()).toList());
      //  this.p = new CableProperties(getPos(), Arrays.stream(Direction.values()).toList());
 
 

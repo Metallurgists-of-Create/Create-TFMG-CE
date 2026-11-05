@@ -54,6 +54,6 @@ public class AccumulatorControlUnitProperties extends DirectionalElectricalPrope
 
     @Override
     public ElectricalPropertiesType<?> getType() {
-        return TFMGElectricalProperties.p13.get();
+        return TFMGElectricalProperties.ACCUMULATOR_CONTROL.get();
     }
 }

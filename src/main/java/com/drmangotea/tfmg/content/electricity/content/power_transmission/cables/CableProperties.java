@@ -38,6 +38,6 @@ public class CableProperties extends ElectricalProperties {
 
     @Override
     public ElectricalPropertiesType<?> getType() {
-        return TFMGElectricalProperties.p04.get();
+        return TFMGElectricalProperties.CABLE.get();
     }
 }
