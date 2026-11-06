@@ -16,6 +16,7 @@
 - Glass Pipes of different materials now have the correct clone item stack.
 - Cast Iron Block no-longer connects to Aluminium Block.
 - Blast Furnaces no-longer crash with index out of bounds error when trying to process a recipe with one result.
+- 1-block engines now have proper fuel consumption.
 
 ### Changes:
 - Industrial Blasting JEI category has been improved.
