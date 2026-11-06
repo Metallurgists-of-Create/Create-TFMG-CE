@@ -48,8 +48,6 @@ public class ElectricNetworkRenderer {
         VertexConsumer vc = buffer.getBuffer(RenderType.cutoutMipped());
         Camera camera = event.getCamera();
         Vec3 playerPos = player.getEyePosition();
-		
-        renderWire(TFMGPartialModels.CABLE, new Vec3(0, -56, 0), new Vec3(0, -56, 10), camera, ms, vc, playerPos);
 
         for (WireConnection connection : network.connections) {
 			if (connection.render())
