@@ -187,6 +187,10 @@ val generateModMetadata = tasks.register<ProcessResources>("generateModMetadata"
 
     from("src/main/templates")
     into("build/generated/sources/modMetadata")
+
+    from("AGENTS.md")
+    from("LICENCE.md")
+    from("CONTRIBUTING.md")
 }
 
 // Include the output of "generateModMetadata" as an input directory for the build.

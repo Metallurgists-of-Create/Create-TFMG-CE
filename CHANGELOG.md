@@ -1,6 +1,6 @@
-# Create: TFMG Community Edition 1.4.0
+# Create: TFMG Community Edition 1.3.3a
 ## Rant:
-\[\[Insert Rant Here]]
+Hey, patch!
 
 **Please note that not all bugs are fixed and some new additions are subject to change and should be considered experimental.**
 
@@ -20,6 +20,7 @@
 
 ### Changes:
 - Industrial Blasting JEI category has been improved.
+- Licence, Agents & Contributing are now compiled with the mod.
 
 
 ### API Changes:
