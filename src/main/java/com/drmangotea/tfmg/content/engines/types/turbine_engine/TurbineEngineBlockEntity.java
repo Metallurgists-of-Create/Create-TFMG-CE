@@ -11,6 +11,7 @@ import com.drmangotea.tfmg.registry.TFMGTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -55,14 +56,18 @@ public class TurbineEngineBlockEntity extends RegularEngineBlockEntity {
     }
 
     public void setBlockStates(AbstractSmallEngineBlockEntity be, BlockPos last) {
+		if (level == null) return;
         Direction facing = getBlockState().getValue(SHAFT_FACING).getOpposite();
+		Block thisBlock = this.getBlockState().getBlock();
 
-        if(level.getBlockState(getBlockPos().relative(facing)).getBlock()!=this.getBlockState().getBlock()&&level.getBlockState(getBlockPos().relative(facing.getOpposite())).getBlock()!=this.getBlockState().getBlock()){
+        if (level.getBlockState(getBlockPos().relative(facing)).getBlock() != thisBlock &&
+			level.getBlockState(getBlockPos().relative(facing.getOpposite())).getBlock() != thisBlock
+		) {
             level.setBlock(getBlockPos(), level.getBlockState(getBlockPos()).setValue(ENGINE_STATE, SINGLE), 2);
             return;
         }
 
-        if(last!=null){
+        if (last!=null) {
             level.setBlock(last, level.getBlockState(last).setValue(ENGINE_STATE, BACK), 2);
             return;
         }
@@ -70,7 +75,7 @@ public class TurbineEngineBlockEntity extends RegularEngineBlockEntity {
         if (be.isController()) {
             level.setBlock(be.getBlockPos(), be.getBlockState().setValue(ENGINE_STATE, SHAFT), 2);
         } else {
-            level.setBlock(be.getBlockPos(), be.getBlockState().setValue(SHAFT_FACING, getBlockState().getValue(SHAFT_FACING).getOpposite()).setValue(ENGINE_STATE, NORMAL), 2);
+            level.setBlock(be.getBlockPos(), be.getBlockState().setValue(SHAFT_FACING, facing).setValue(ENGINE_STATE, NORMAL), 2);
         }
 
     }

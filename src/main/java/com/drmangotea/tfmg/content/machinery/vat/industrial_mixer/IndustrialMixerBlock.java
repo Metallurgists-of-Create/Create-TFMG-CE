@@ -1,6 +1,7 @@
 package com.drmangotea.tfmg.content.machinery.vat.industrial_mixer;
 
 import com.drmangotea.tfmg.base.TFMGUtils;
+import com.drmangotea.tfmg.base.annotation.NothingNullByDefault;
 import com.drmangotea.tfmg.content.machinery.vat.base.VatBlock;
 import com.drmangotea.tfmg.content.machinery.vat.industrial_mixer.mode.MixerMode;
 import com.drmangotea.tfmg.registry.TFMGBlockEntities;
@@ -21,6 +22,7 @@ import net.minecraft.world.phys.BlockHitResult;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
+@NothingNullByDefault
 public class IndustrialMixerBlock extends KineticBlock implements IBE<IndustrialMixerBlockEntity> {
     public IndustrialMixerBlock(Properties properties) {
         super(properties);

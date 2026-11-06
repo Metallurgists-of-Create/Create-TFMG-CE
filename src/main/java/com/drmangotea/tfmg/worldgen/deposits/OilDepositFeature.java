@@ -17,63 +17,65 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
-import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
 
 
-public class OilDepositFeature extends Feature<NoneFeatureConfiguration> {
-    public OilDepositFeature(Codec<NoneFeatureConfiguration> codec) {
+public class OilDepositFeature extends Feature<DepositFeatureConfig> {
+    public OilDepositFeature(Codec<DepositFeatureConfig> codec) {
         super(codec);
     }
 
     @Override
-    public boolean place(FeaturePlaceContext<NoneFeatureConfiguration> context) {
+    public boolean place(FeaturePlaceContext<DepositFeatureConfig> context) {
         BlockPos startingPos = context.origin();
         WorldGenLevel level = context.level();
         BlockPos pos = startingPos;
-        RandomSource randomsource = context.random();
 
-        if (randomsource.nextInt(20) != 0)
+        DepositFeatureConfig config = context.config();
+        RandomSource random = context.random();
+
+        if (config.discardChance().sample(random) != 0)
             return false;
 
-        for (int i = 0; i < randomsource.nextInt(6) + 1; i++) {
-            placeDeposit(pos, level, randomsource);
-            pos = pos.north(randomsource.nextInt(40) - 20);
-            pos = pos.west(randomsource.nextInt(40) - 20);
+        for (int i = 0; i < config.clusterSize().sample(random) + 1; i++) {
+            placeDeposit(pos, level, random, config);
+            pos = pos.north(config.distancing().sample(random) - 20);
+            pos = pos.west(config.distancing().sample(random) - 20);
         }
         return true;
     }
 
-    public void placeDeposit(BlockPos startingPos, WorldGenLevel level, RandomSource randomsource) {
+    public void placeDeposit(BlockPos startingPos, WorldGenLevel level, RandomSource random, DepositFeatureConfig config) {
         BlockPos pos = startingPos;
-        setBlock(level, startingPos, TFMGBlocks.OIL_DEPOSIT.getDefaultState());
+        setBlock(level, startingPos, config.deposit());
 		//resevoir handling
-		ChunkAccess chunk = level.getChunk(startingPos);
-        if (chunk.hasData(TFMGDataAttachments.FLUID_RESERVOIR)) {
-            FluidReservoir.addToReservoir(chunk, startingPos);
-        } else {
-            FluidReservoir.createReservoir(chunk, startingPos, level.getRandom());
+        if (config.linkReservoir()) {
+            ChunkAccess chunk = level.getChunk(startingPos);
+            if (chunk.hasData(TFMGDataAttachments.FLUID_RESERVOIR)) {
+                FluidReservoir.addToReservoir(chunk, startingPos);
+            } else {
+                FluidReservoir.createReservoir(chunk, startingPos, level.getRandom());
+            }
         }
 
-        int height = randomsource.nextIntBetweenInclusive(10, 25);
+        int height = config.height().sample(random);
         for (int i = 0; i < height; i++) {
             pos = pos.above();
 
             if (level.getBlockState(pos).isAir()) continue;
 
-            setBlock(level, pos, TFMGFluids.CRUDE_OIL.get().getSource().defaultFluidState().createLegacyBlock());
+            setBlock(level, pos, config.fluid().defaultFluidState().createLegacyBlock());
 
-
-            Direction crudeBranchDir = Util.getRandom(Iterate.horizontalDirections, randomsource);
+            Direction crudeBranchDir = Util.getRandom(Iterate.horizontalDirections, random);
             BlockPos crudeBranch = pos.relative(crudeBranchDir);
             if (!level.getBlockState(crudeBranch).isAir()) {
-                setBlock(level, crudeBranch, TFMGFluids.CRUDE_OIL.get().getSource().defaultFluidState().createLegacyBlock());
+                setBlock(level, crudeBranch, config.fluid().defaultFluidState().createLegacyBlock());
             }
 
             if (i < (height / 2)) {
-                Direction fossilDir = Util.getRandom(Iterate.horizontalDirections, randomsource);
+                Direction fossilDir = Util.getRandom(Iterate.horizontalDirections, random);
                 BlockPos fossil = pos.relative(fossilDir);
-                if (level.getBlockState(fossil).is(BlockTags.BASE_STONE_OVERWORLD)) {
-                    setBlock(level, fossil, TFMGBlocks.FOSSILSTONE.getDefaultState());
+                if (config.sideStone().target().test(level.getBlockState(fossil), random)) {
+                    setBlock(level, fossil, config.sideStone().state());
                 }
             }
         }

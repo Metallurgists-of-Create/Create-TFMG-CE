@@ -4,10 +4,7 @@ import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.TFMGRegistries;
 import com.drmangotea.tfmg.content.engines.types.EngineType;
 import com.drmangotea.tfmg.content.engines.upgrades.base.EngineUpgrade;
-import com.drmangotea.tfmg.datagen.integration.TFMGBigCannonsProvider;
-import com.drmangotea.tfmg.datagen.integration.TFMGCuriosProvider;
-import com.drmangotea.tfmg.datagen.integration.TFMGReburnedProvider;
-import com.drmangotea.tfmg.datagen.integration.TFMGRutileProvider;
+import com.drmangotea.tfmg.datagen.integration.*;
 import com.drmangotea.tfmg.datagen.recipes.TFMGRecipeProvider;
 import com.drmangotea.tfmg.datagen.recipes.values.TFMGStandardRecipeGen;
 import com.drmangotea.tfmg.datagen.recipes.values.create.TFMGMechanicalCraftingRecipeGen;
@@ -60,8 +57,8 @@ public class TFMGDatagen {
         generator.addProvider(event.includeServer(), new TFMGEngineFuelTags(output, lookupProvider, fileHelper));
         generator.addProvider(event.includeServer(), new TFMGFlamethrowerFuelTags(output, lookupProvider, fileHelper));
 
-        generator.addProvider(event.includeServer(),new TFMGDataMapProvider(output, lookupProvider));
-        generator.addProvider(event.includeServer(),new TFMGStandardRecipeGen(output, lookupProvider));
+        generator.addProvider(event.includeServer(), new TFMGDataMapProvider(output, lookupProvider));
+        generator.addProvider(event.includeServer(), new TFMGStandardRecipeGen(output, lookupProvider));
         generator.addProvider(event.includeServer(), new TFMGMechanicalCraftingRecipeGen(output, lookupProvider));
         generator.addProvider(event.includeServer(), new TFMGSequencedAssemblyRecipeGen(output, lookupProvider));
 
@@ -76,6 +73,9 @@ public class TFMGDatagen {
         if (LoadingModList.get().getModFileById("createbigcannons") != null) {
             generator.addProvider(event.includeServer(), new TFMGBigCannonsProvider.Melting(output, lookupProvider));
         }
+		if (LoadingModList.get().getModFileById("sable") != null) {
+			generator.addProvider(event.includeServer(), new TFMGSableProvider(output, lookupProvider));
+		}
 		if (Mods.CURIOS.isLoaded()) {
 			generator.addProvider(event.includeServer(), new TFMGCuriosProvider(output, lookupProvider, fileHelper));
 		}

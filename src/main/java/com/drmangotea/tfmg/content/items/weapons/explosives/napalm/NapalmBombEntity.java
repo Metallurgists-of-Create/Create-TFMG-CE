@@ -1,7 +1,7 @@
 package com.drmangotea.tfmg.content.items.weapons.explosives.napalm;
 
-
 import com.drmangotea.tfmg.base.TFMGUtils;
+import com.drmangotea.tfmg.base.annotation.NothingNullByDefault;
 import com.drmangotea.tfmg.registry.TFMGEntityTypes;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
@@ -13,10 +13,10 @@ import net.minecraft.world.level.Level;
 
 import javax.annotation.Nullable;
 
+@NothingNullByDefault
 public class NapalmBombEntity extends Entity {
     private static final EntityDataAccessor<Integer> DATA_FUSE_ID = SynchedEntityData.defineId(NapalmBombEntity.class, EntityDataSerializers.INT);
-    @Nullable
-    private LivingEntity owner;
+    private @Nullable LivingEntity owner;
 
     public NapalmBombEntity(EntityType<? extends NapalmBombEntity> entityType, Level level) {
         super(entityType, level);
@@ -93,10 +93,6 @@ public class NapalmBombEntity extends Entity {
         return this.owner;
     }
 
-    protected float getEyeHeight(Pose p_32088_, EntityDimensions p_32089_) {
-        return 0.15F;
-    }
-
     public void setFuse(int fuse) {
         this.entityData.set(DATA_FUSE_ID, fuse);
     }
@@ -106,9 +102,7 @@ public class NapalmBombEntity extends Entity {
     }
 
 
-    @SuppressWarnings("unchecked")
-    public static EntityType.Builder<?> build(EntityType.Builder<?> builder) {
-        EntityType.Builder<NapalmBombEntity> entityBuilder = (EntityType.Builder<NapalmBombEntity>) builder;
-        return entityBuilder.sized(.25f, .25f);
+    public static EntityType.Builder<? extends NapalmBombEntity> build(EntityType.Builder<? extends NapalmBombEntity> builder) {
+        return builder.sized(.25f, .25f);
     }
 }

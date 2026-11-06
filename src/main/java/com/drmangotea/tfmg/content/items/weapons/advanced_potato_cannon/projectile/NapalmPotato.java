@@ -54,9 +54,7 @@ public class NapalmPotato extends ThrowableItemProjectile {
         }
     }
 
-    @SuppressWarnings("unchecked")
-    public static EntityType.Builder<?> build(EntityType.Builder<?> builder) {
-        EntityType.Builder<NapalmPotato> entityBuilder = (EntityType.Builder<NapalmPotato>) builder;
-        return entityBuilder.sized(.25f, .25f);
+    public static EntityType.Builder<? extends NapalmPotato> build(EntityType.Builder<? extends NapalmPotato> builder) {
+        return builder.sized(.25f, .25f);
     }
 }

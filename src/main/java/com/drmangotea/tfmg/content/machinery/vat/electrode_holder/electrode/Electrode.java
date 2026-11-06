@@ -102,22 +102,6 @@ public class Electrode implements MultiUseAttachment<ElectrodeHolderBlockEntity>
             return this;
         }
 
-        /**
-         * This exists purely so Chemica can load as it references this when registering its electrode.
-         * @deprecated Apply the {@link TFMGDataComponents#ELECTRODE} to your electrode item on registry.
-         */
-        @Deprecated(since = "1.2.4", forRemoval = true)
-        public Properties item(ItemEntry<?> item) {return this;}
-
-        /**
-         * This exists purely so Chemica can load as it references this when registering its electrode.
-         * @deprecated Use {@link Properties#operationId(VatOperationEntry)} instead.
-         */
-        @Deprecated(since = "1.2.4", forRemoval = true)
-        public Properties operationId(String operation) {
-            return this;
-        }
-
         public Properties(ResourceLocation id) {
             this.id = id;
         }

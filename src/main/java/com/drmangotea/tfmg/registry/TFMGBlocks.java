@@ -1,6 +1,5 @@
 package com.drmangotea.tfmg.registry;
 
-
 import com.drmangotea.tfmg.TFMG;
 import com.drmangotea.tfmg.base.*;
 import com.drmangotea.tfmg.base.blocks.TFMGDirectionalBlock;
@@ -12,9 +11,9 @@ import com.drmangotea.tfmg.content.decoration.*;
 import com.drmangotea.tfmg.content.decoration.concrete.*;
 import com.drmangotea.tfmg.content.decoration.doors.TFMGSlidingDoorBlock;
 import com.drmangotea.tfmg.content.decoration.kinetics.cogs.TFMGCogWheelBlock;
-import com.drmangotea.tfmg.content.decoration.kinetics.cogs.TFMGCogwheelBlockItem;
 import com.drmangotea.tfmg.content.decoration.kinetics.flywheels.TFMGFlywheelBlock;
 import com.drmangotea.tfmg.content.decoration.kinetics.gearbox.SteelGearboxBlock;
+import com.drmangotea.tfmg.content.decoration.pipes.TFMGPipes;
 import com.drmangotea.tfmg.content.decoration.tanks.TFMGTankGenerator;
 import com.drmangotea.tfmg.content.decoration.tanks.aluminum.AluminumFluidTankModel;
 import com.drmangotea.tfmg.content.decoration.tanks.aluminum.AluminumTankBlock;
@@ -124,6 +123,7 @@ import com.drmangotea.tfmg.content.machinery.vat.electrode_holder.ElectrodeHolde
 import com.drmangotea.tfmg.content.machinery.vat.freezer.FreezerBlock;
 import com.drmangotea.tfmg.content.machinery.vat.industrial_mixer.IndustrialMixerBlock;
 import com.drmangotea.tfmg.content.world.resevoir.OilDepositBlock;
+import com.drmangotea.tfmg.recipes.condition.TagFilledCondition;
 import com.simibubi.create.AllTags;
 import com.simibubi.create.api.stress.BlockStressValues;
 import com.simibubi.create.content.contraptions.bearing.StabilizedBearingMovementBehaviour;
@@ -137,8 +137,6 @@ import com.simibubi.create.content.decoration.slidingDoor.SlidingDoorBlock;
 import com.simibubi.create.content.fluids.tank.FluidTankMovementBehavior;
 import com.simibubi.create.content.kinetics.gearbox.GearboxBlock;
 import com.simibubi.create.content.kinetics.motor.CreativeMotorGenerator;
-import com.simibubi.create.content.kinetics.simpleRelays.BracketedKineticBlockModel;
-import com.simibubi.create.content.processing.burner.BlazeBurnerBlock;
 import com.simibubi.create.foundation.block.DyedBlockList;
 import com.simibubi.create.foundation.block.connected.HorizontalCTBehaviour;
 import com.simibubi.create.foundation.data.*;
@@ -150,9 +148,11 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.recipes.RecipeCategory;
+import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.data.recipes.ShapelessRecipeBuilder;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.ColorRGBA;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.block.*;
@@ -161,6 +161,7 @@ import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.functions.ApplyBonusCount;
 import net.neoforged.neoforge.common.Tags;
+import net.neoforged.neoforge.common.conditions.ICondition;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -182,10 +183,6 @@ import static com.simibubi.create.foundation.data.TagGen.*;
 
 @SuppressWarnings({"unused","removal"})
 public class TFMGBlocks {
-    // I see no reason for this here
-    @Deprecated(since = "1.2.6", forRemoval = true)
-    public static final String[] TFMG_DECOR_METALS = {"steel", "aluminum", "lead", "cast_iron"};
-
     static {
         REGISTRATE.setCreativeTab(TFMGCreativeTabs.TFMG_MAIN);
     }
@@ -934,6 +931,22 @@ public class TFMGBlocks {
             .blockstate((ctx, prov) -> prov.simpleBlock(ctx.getEntry(), AssetLookup.partialBaseModel(ctx, prov)))
             .simpleItem()
             .register();
+	
+	//------------------CASINGS------------------//
+	
+	public static final BlockEntry<CasingBlock> STEEL_CASING = REGISTRATE.block("steel_casing", CasingBlock::new)
+		.transform(BuilderTransformers.casing(() -> TFMGSpriteShifts.STEEL_CASING))
+		.register();
+	public static final BlockEntry<CasingBlock> HEAVY_MACHINERY_CASING = REGISTRATE.block("heavy_machinery_casing", CasingBlock::new)
+		.tag(TFMGTags.Blocks.SURFACE_SCANNER_FINDABLE.tag)
+		.transform(BuilderTransformers.casing(() -> TFMGSpriteShifts.HEAVY_MACHINERY_CASING))
+		.properties(p -> p.sound(SoundType.NETHERITE_BLOCK))
+		.register();
+	public static final BlockEntry<CasingBlock> ALUMINUM_CASING = REGISTRATE.block("industrial_aluminum_casing", CasingBlock::new)
+		.transform(BuilderTransformers.casing(() -> TFMGSpriteShifts.INDUSTRIAL_ALUMINUM_CASING))
+		.properties(p -> p.sound(SoundType.COPPER))
+		.lang("Aluminum Casing")
+		.register();
 
     //------------------ELECTRICITY------------------//
 
@@ -1022,25 +1035,29 @@ public class TFMGBlocks {
                     .build()
                     .register();
     public static final BlockEntry<CableHubBlock> ALUMINUM_CABLE_HUB =
-            REGISTRATE.block("aluminum_cable_hub", p -> new CableHubBlock(p, 80))
+            REGISTRATE.block("aluminum_cable_hub", p -> new CableHubBlock(p, 80, ALUMINUM_CASING::get))
                     .initialProperties(SharedProperties::softMetal)
                     .transform(pickaxeOnly())
-                    .item()
-                    .build()
+                    .onRegister(connectedTextures(() -> new EncasedCTBehaviour(TFMGSpriteShifts.ALUMINUM_CASING_CABLE_HUB)))
+                    .onRegister(casingConnectivity((block, cc) -> cc.makeCasing(block, TFMGSpriteShifts.INDUSTRIAL_ALUMINUM_CASING)))
+                    .simpleItem()
                     .register();
     public static final BlockEntry<CableHubBlock> STEEL_CASING_CABLE_HUB =
-            REGISTRATE.block("steel_casing_cable_hub", p -> new CableHubBlock(p, 100))
+            REGISTRATE.block("steel_casing_cable_hub", p -> new CableHubBlock(p, 100, STEEL_CASING::get))
                     .initialProperties(SharedProperties::softMetal)
                     .transform(pickaxeOnly())
-                    .item()
-                    .build()
+                    .onRegister(connectedTextures(() -> new EncasedCTBehaviour(TFMGSpriteShifts.STEEL_CASING_CABLE_HUB)))
+                    .onRegister(casingConnectivity((block, cc) -> cc.makeCasing(block, TFMGSpriteShifts.STEEL_CASING)))
+                    .simpleItem()
                     .register();
     public static final BlockEntry<CableHubBlock> HEAVY_CABLE_HUB =
-            REGISTRATE.block("heavy_cable_hub", p -> new CableHubBlock(p, 100))
+            REGISTRATE.block("heavy_cable_hub", p -> new CableHubBlock(p, 100, HEAVY_MACHINERY_CASING::get))
                     .initialProperties(SharedProperties::softMetal)
                     .transform(pickaxeOnly())
-                    .item()
-                    .build()
+                    .onRegister(connectedTextures(() -> new EncasedCTBehaviour(TFMGSpriteShifts.HEAVY_MACHINERY_CASING_CABLE_HUB)))
+
+                    .onRegister(casingConnectivity((block, cc) -> cc.makeCasing(block, TFMGSpriteShifts.HEAVY_MACHINERY_CASING)))
+					.simpleItem()
                     .register();
 
     public static final BlockEntry<CableTubeBlock> CABLE_TUBE =
@@ -1250,9 +1267,21 @@ public class TFMGBlocks {
                     .transform(pickaxeOnly())
                     .properties(BlockBehaviour.Properties::noOcclusion)
                     .blockstate(BlockStateGen.directionalBlockProvider(true))
-                    .item()
-                    .transform(customItemModel())
-                    .register();
+                    .item().transform(customItemModel())
+					.recipe((ctx, prov) -> ShapedRecipeBuilder
+						.shaped(RecipeCategory.MISC, ctx.get())
+						.define('C', TFMGItems.CIRCUIT_BOARD)
+						.define('P', TFMGPipes.PIPES.get(TFMGPipes.PipeMaterial.STEEL).getPump())
+						.define('W', TFMGTags.Items.WIRES_COPPER.tag)
+						.define('Q', TFMGItems.CAPACITOR)
+						.define('K', TFMGItems.ELECTROMAGNETIC_COIL)
+						.define('M', TFMGItems.MAGNET)
+						.pattern("MQK")
+						.pattern("CPW")
+						.pattern("MQK")
+						.unlockedBy("has_board", RegistrateRecipeProvider.has(TFMGItems.CIRCUIT_BOARD))
+						.save(prov)
+					).register();
     public static final BlockEntry<VoltageObserverBlock> VOLTAGE_OBSERVER =
             REGISTRATE.block("voltage_observer", VoltageObserverBlock::new)
                     .initialProperties(SharedProperties::softMetal)
@@ -1446,71 +1475,16 @@ public class TFMGBlocks {
 
     //------------------COGWHEELS------------------//
 
-    public static final BlockEntry<TFMGCogWheelBlock> STEEL_COGWHEEL =
-            REGISTRATE.block("steel_cogwheel", TFMGCogWheelBlock::small)
-                    .initialProperties(SharedProperties::stone)
-                    .properties(p -> p.sound(SoundType.NETHERITE_BLOCK))
-                    .transform(TFMGStress.setNoImpact())
-                    .transform(axeOrPickaxe())
-                    .blockstate(BlockStateGen.axisBlockProvider(false))
-                    .onRegister(CreateRegistrate.blockModel(() -> BracketedKineticBlockModel::new))
-                    .item(TFMGCogwheelBlockItem::new)
-                    .build()
-                    .register();
-
-    public static final BlockEntry<TFMGCogWheelBlock> LARGE_STEEL_COGWHEEL =
-            REGISTRATE.block("large_steel_cogwheel", TFMGCogWheelBlock::large)
-                    .initialProperties(SharedProperties::stone)
-                    .properties(p -> p.sound(SoundType.NETHERITE_BLOCK))
-                    .transform(axeOrPickaxe())
-                    .transform(TFMGStress.setNoImpact())
-                    .blockstate(BlockStateGen.axisBlockProvider(false))
-                    .onRegister(CreateRegistrate.blockModel(() -> BracketedKineticBlockModel::new))
-                    .item(TFMGCogwheelBlockItem::new)
-                    .build()
-                    .register();
-    //
-    public static final BlockEntry<TFMGCogWheelBlock> ALUMINUM_COGWHEEL =
-            REGISTRATE.block("aluminum_cogwheel", TFMGCogWheelBlock::small)
-                    .initialProperties(SharedProperties::stone)
-                    .properties(p -> p.sound(SoundType.COPPER))
-                    .addLayer(() -> RenderType::cutoutMipped)
-                    .transform(TFMGStress.setNoImpact())
-                    .transform(axeOrPickaxe())
-                    .blockstate(BlockStateGen.axisBlockProvider(false))
-                    .onRegister(CreateRegistrate.blockModel(() -> BracketedKineticBlockModel::new))
-                    .item(TFMGCogwheelBlockItem::new)
-                    .build()
-                    .register();
-
-    public static final BlockEntry<TFMGCogWheelBlock> LARGE_ALUMINUM_COGWHEEL =
-            REGISTRATE.block("large_aluminum_cogwheel", TFMGCogWheelBlock::large)
-                    .initialProperties(SharedProperties::stone)
-                    .properties(p -> p.sound(SoundType.COPPER))
-                    .addLayer(() -> RenderType::cutoutMipped)
-                    .transform(axeOrPickaxe())
-                    .transform(TFMGStress.setNoImpact())
-                    .blockstate(BlockStateGen.axisBlockProvider(false))
-                    .onRegister(CreateRegistrate.blockModel(() -> BracketedKineticBlockModel::new))
-                    .item(TFMGCogwheelBlockItem::new)
-                    .build()
-                    .register();
-
-    //------------------CASINGS------------------//
-
-    public static final BlockEntry<CasingBlock> STEEL_CASING = REGISTRATE.block("steel_casing", CasingBlock::new)
-            .transform(BuilderTransformers.casing(() -> TFMGSpriteShifts.STEEL_CASING))
-            .register();
-    public static final BlockEntry<CasingBlock> HEAVY_MACHINERY_CASING = REGISTRATE.block("heavy_machinery_casing", CasingBlock::new)
-            .tag(TFMGTags.Blocks.SURFACE_SCANNER_FINDABLE.tag)
-            .transform(BuilderTransformers.casing(() -> TFMGSpriteShifts.HEAVY_MACHINERY_CASING))
-            .properties(p -> p.sound(SoundType.NETHERITE_BLOCK))
-            .register();
-    public static final BlockEntry<CasingBlock> ALUMINUM_CASING = REGISTRATE.block("industrial_aluminum_casing", CasingBlock::new)
-            .transform(BuilderTransformers.casing(() -> TFMGSpriteShifts.INDUSTRIAL_ALUMINUM_CASING))
-            .properties(p -> p.sound(SoundType.COPPER))
-            .lang("Aluminum Casing")
-            .register();
+    public static final BlockEntry<TFMGCogWheelBlock>
+		STEEL_COGWHEEL = cogwheel("steel_cogwheel", false, CommonMetal.STEEL.ingots)
+			.properties(p -> p.sound(SoundType.NETHERITE_BLOCK)).register(),
+		LARGE_STEEL_COGWHEEL = cogwheel("large_steel_cogwheel", true, CommonMetal.STEEL.ingots)
+			.properties(p -> p.sound(SoundType.NETHERITE_BLOCK)).register(),
+		ALUMINUM_COGWHEEL = cogwheel("aluminum_cogwheel", false, CommonMetal.ALUMINUM.ingots)
+			.properties(p -> p.sound(SoundType.COPPER)).addLayer(() -> RenderType::cutoutMipped).register(),
+		LARGE_ALUMINUM_COGWHEEL = cogwheel("large_aluminum_cogwheel", true, CommonMetal.ALUMINUM.ingots)
+			.properties(p -> p.sound(SoundType.COPPER)).addLayer(() -> RenderType::cutoutMipped).register();
+	
     //------------------STORAGE_BLOCKS------------------//
     public static final BlockEntry<Block> STEEL_BLOCK = REGISTRATE.block("steel_block", Block::new)
             .initialProperties(SharedProperties::softMetal)
@@ -1551,10 +1525,7 @@ public class TFMGBlocks {
 
     public static final BlockEntry<Block> ALUMINUM_BLOCK = REGISTRATE.block("aluminum_block", Block::new)
             .initialProperties(SharedProperties::softMetal)
-
             .properties(BlockBehaviour.Properties::requiresCorrectToolForDrops)
-            .onRegister(connectedTextures(() -> new EncasedCTBehaviour(TFMGSpriteShifts.CAST_IRON_BLOCK)))
-            .onRegister(casingConnectivity((block, cc) -> cc.makeCasing(block, TFMGSpriteShifts.CAST_IRON_BLOCK)))
             .transform(pickaxeOnly())
             .blockstate(simpleCubeAll("aluminum_block"))
             .tag(BlockTags.NEEDS_IRON_TOOL)
@@ -1667,8 +1638,12 @@ public class TFMGBlocks {
             .tag(BlockTags.BEACON_BASE_BLOCKS)
             .blockstate(simpleCubeAll("laminated_magnetic_alloy_block"))
             .tag(BlockTags.NEEDS_IRON_TOOL)
-            .item()
-            .build()
+            .item().build()
+			.recipe((ctx, p) -> p.square(
+				DataIngredient.ingredient(Ingredient.of(TFMGItems.MAGNETIC_ALLOY_SHEET), TFMGItems.MAGNETIC_ALLOY_SHEET),
+				RecipeCategory.MISC,
+				ctx, false
+			))
             .register();
 
     public static final BlockEntry<ColoredFallingBlock> CEMENT = REGISTRATE.block("cement", p -> new ColoredFallingBlock(new ColorRGBA(-8356741), p))
@@ -1880,11 +1855,11 @@ public class TFMGBlocks {
 
     //------------------FLYWHEELS------------------//
     public static final BlockEntry<TFMGFlywheelBlock>
-            STEEL_FLYWHEEL = flywheel("steel", TFMGFlywheelBlock::steel),
-            LEAD_FLYWHEEL = flywheel("lead", TFMGFlywheelBlock::lead),
-            CAST_IRON_FLYWHEEL = flywheel("cast_iron", TFMGFlywheelBlock::cast_iron),
-            ALUMINUM_FLYWHEEL = flywheel("aluminum", TFMGFlywheelBlock::aluminum),
-            NICKEL_FLYWHEEL = flywheel("nickel", TFMGFlywheelBlock::nickel);
+            STEEL_FLYWHEEL = flywheel("steel", CommonMetal.STEEL.ingots, TFMGFlywheelBlock::steel),
+            LEAD_FLYWHEEL = flywheel("lead", CommonMetal.LEAD.ingots, TFMGFlywheelBlock::lead),
+            CAST_IRON_FLYWHEEL = flywheel("cast_iron", TFMGTags.Items.INGOTS_CAST_IRON.tag, TFMGFlywheelBlock::cast_iron),
+            ALUMINUM_FLYWHEEL = flywheel("aluminum", CommonMetal.ALUMINUM.ingots, TFMGFlywheelBlock::aluminum),
+            NICKEL_FLYWHEEL = flywheel("nickel", CommonMetal.NICKEL.ingots, TFMGFlywheelBlock::nickel);
 
     public static String[] DECOR_METALS = {"steel", "aluminum", "cast_iron", "lead", "nickel", "constantan", "copper", "zinc", "brass"};
 
@@ -1915,11 +1890,14 @@ public class TFMGBlocks {
                 .tag(BlockTags.NEEDS_STONE_TOOL)
                 .recipe((c, p) -> {
                     p.stonecutting(DataIngredient.tag(CommonMetal.ALUMINUM.ingots), RecipeCategory.BUILDING_BLOCKS, c, 2);
+                    boolean optional = colour.getId() > 15;
+					ICondition[] conditions = optional ? new ICondition[]{new TagFilledCondition(colour.getTag())} : new ICondition[]{};
                     ShapelessRecipeBuilder.shapeless(RecipeCategory.DECORATIONS, c.get())
                             .requires(colour.getTag())
                             .requires(Items.CAUTION_BLOCKS.tag)
                             .unlockedBy("has_caution_block", RegistrateRecipeProvider.has(Items.CAUTION_BLOCKS.tag))
-                            .save(p, TFMG.asResource("crafting/materials/" + c.getName() + "_from_other_caution_block"));
+							.save(p.withConditions(conditions), TFMG.asResource("crafting/materials/" + c.getName() + "_from_other_caution_block"));
+                    //TFMGUtils.conditionalCrafting(p, , builder, conditions);
                 })
                 .item()
                 .tag(Items.CAUTION_BLOCKS.tag)

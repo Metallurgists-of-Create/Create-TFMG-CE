@@ -1,6 +1,5 @@
 package com.drmangotea.tfmg.content.engines.types;
 
-import com.drmangotea.tfmg.TFMGRegistries;
 import com.drmangotea.tfmg.base.TFMGUtils;
 import com.drmangotea.tfmg.base.lang.TFMGLang;
 import com.drmangotea.tfmg.base.lang.TFMGTexts;
@@ -23,7 +22,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
@@ -44,6 +42,7 @@ import net.neoforged.neoforge.items.wrapper.CombinedInvWrapper;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import static com.drmangotea.tfmg.content.engines.base.EngineBlock.ENGINE_STATE;
 import static com.drmangotea.tfmg.content.engines.base.EngineBlock.EngineState.NORMAL;
@@ -108,8 +107,8 @@ public abstract class AbstractSmallEngineBlockEntity extends AbstractEngineBlock
         float oilModifier = oil > 0 ? 0.7f : 1f;
         float coolingFluidModifier = coolingFluid > 0 ? 0.7f : 1f;
 
-		//TODO: Review `highestSignal` division
-		return (int) ((5f/6f * (1 / efficiencyModifier()) * getSpeedEfficiency() * highestSignal * oilModifier * coolingFluidModifier) * (engineLength() )+ 1);
+		return (int) (1 +
+			(5f/6f * (1 / efficiencyModifier()) * getSpeedEfficiency() * highestSignal * oilModifier * coolingFluidModifier * engineLength()));
     }
 
     public void detachEngines() {}
@@ -118,11 +117,10 @@ public abstract class AbstractSmallEngineBlockEntity extends AbstractEngineBlock
         if (cachedUpgradeLines != null)
             return cachedUpgradeLines;
 
-        List<Component> lines = new ArrayList<>();
-        for (AbstractSmallEngineBlockEntity be : getEngines()) {
-            be.upgrade.ifPresent(engineUpgrade -> lines.add(Component.literal("- ").withStyle(ChatFormatting.DARK_GRAY)
-                    .append(engineUpgrade.getDisplayName().copy().withStyle(ChatFormatting.AQUA))));
-        }
+        List<Component> lines = getUpgrades().map(upgrade -> (Component) (
+			Component.literal("- ").withStyle(ChatFormatting.DARK_GRAY)
+				.append(upgrade.getDisplayName().copy().withStyle(ChatFormatting.AQUA))
+		)).toList();
         cachedUpgradeLines = lines;
         return lines;
     }
@@ -144,10 +142,10 @@ public abstract class AbstractSmallEngineBlockEntity extends AbstractEngineBlock
     }
 
     public void setBlockStates(AbstractSmallEngineBlockEntity be, BlockPos last) {
-        if (level == null) return;
-        if (!be.isController()) {
-            level.setBlock(be.getBlockPos(), level.getBlockState(be.getBlockPos()).setValue(SHAFT_FACING, getBlockState().getValue(SHAFT_FACING).getOpposite()), 2);
-        }
+        if (level == null || be.isController()) return;
+        BlockPos pos = be.getBlockPos();
+		Direction facing = getBlockState().getValue(SHAFT_FACING).getOpposite();
+		level.setBlock(pos, level.getBlockState(pos).setValue(SHAFT_FACING, facing), 2);
     }
 
     public boolean hasAllComponents() {
@@ -231,7 +229,7 @@ public abstract class AbstractSmallEngineBlockEntity extends AbstractEngineBlock
         compound.put("Controller", NbtUtils.writeBlockPos(controller));
         compound.put("Components", componentsInventory.serializeNBT(registries));
         compound.put("Upgrades", upgradeInventory.serializeNBT(registries));
-        this.upgrade.ifPresent(upgrade -> TFMGRegistries.ENGINE_UPGRADE_REGISTRY.byNameCodec().encodeStart(NbtOps.INSTANCE, upgrade).ifSuccess(nbt -> compound.put("Upgrade", nbt)));
+        this.upgrade.ifPresent(upgrade -> upgrade.write(compound, "Upgrade"));
         compound.putInt("Oil", oil);
         compound.putInt("CoolingFluid", coolingFluid);
         super.write(compound, registries, clientPacket);
@@ -245,7 +243,7 @@ public abstract class AbstractSmallEngineBlockEntity extends AbstractEngineBlock
         upgradeInventory.deserializeNBT(registries,compound.getCompound("Upgrades"));
         remapUpgrade(compound, registries);
         if (compound.contains("Upgrade")) {
-            TFMGRegistries.ENGINE_UPGRADE_REGISTRY.byNameCodec().parse(NbtOps.INSTANCE, compound.get("Upgrade")).ifSuccess(upgrade -> this.upgrade = Optional.of(upgrade));
+			this.upgrade = EngineUpgrade.read(compound.get("Upgrade"));
         }
         super.read(compound, registries, clientPacket);
         controller = NbtUtils.readBlockPos(compound, "Controller").orElse(getBlockPos());
@@ -441,7 +439,7 @@ public abstract class AbstractSmallEngineBlockEntity extends AbstractEngineBlock
                 return true;
             }
         }
-        if (itemStack.is(TFMGFluids.COOLING_FLUID.getBucket().get())) {
+        if (itemStack.is(TFMGFluids.COOLING_FLUID.getBucket().orElseThrow())) {
             if (level.getBlockEntity(controller) instanceof AbstractSmallEngineBlockEntity be) {
                 if (be.coolingFluid > 1000)
                     return false;
@@ -452,7 +450,7 @@ public abstract class AbstractSmallEngineBlockEntity extends AbstractEngineBlock
                 return true;
             }
         }
-        if (itemStack.is(TFMGFluids.LUBRICATION_OIL.getBucket().get())) {
+        if (itemStack.is(TFMGFluids.LUBRICATION_OIL.getBucket().orElseThrow())) {
             if (level.getBlockEntity(controller) instanceof AbstractSmallEngineBlockEntity be) {
                 if (be.oil > 1000) 
                     return false;
@@ -497,14 +495,15 @@ public abstract class AbstractSmallEngineBlockEntity extends AbstractEngineBlock
     }
 
     public List<AbstractSmallEngineBlockEntity> getEngines() {
-        List<AbstractSmallEngineBlockEntity> values = new ArrayList<>();
-        if (level == null) return values;
-        for (BlockPos pos : getAllEngines()) {
-            if (level.getBlockEntity(pos) instanceof AbstractSmallEngineBlockEntity be)
-                values.add(be);
-        }
-        return values;
-    }
+		return getEngineStream().toList();
+	}
+	
+	public Stream<AbstractSmallEngineBlockEntity> getEngineStream() {
+		if (level == null) return Stream.of();
+		return getAllEngines().stream().mapMulti((pos, c) -> {
+			if (level.getBlockEntity(pos) instanceof AbstractSmallEngineBlockEntity be) c.accept(be);
+		});
+	}
 
     public boolean isController() {
         if (controller == null)
@@ -513,7 +512,6 @@ public abstract class AbstractSmallEngineBlockEntity extends AbstractEngineBlock
             controller = getBlockPos();
         return controller.equals(getBlockPos());
     }
-
 
     @Override
     public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
@@ -658,32 +656,23 @@ public abstract class AbstractSmallEngineBlockEntity extends AbstractEngineBlock
 
     }
 
+	public Stream<? extends EngineUpgrade> getUpgrades() {
+		return getEngineStream().mapMulti((e,c) -> e.upgrade.ifPresent(c));
+	}
 
     public float getUpgradeSpeedModifier() {
-        float modifier = 1;
-        for (AbstractSmallEngineBlockEntity be : getEngines()) {
-            if (be.upgrade.isPresent())
-                modifier *= be.upgrade.get().getSpeedModifier(this);
-        }
-        return modifier;
+		return getUpgrades().map(u -> u.getSpeedModifier(this))
+			.reduce((f1, f2) -> f1*f2).orElse(1f);
     }
 
     public float getUpgradeTorqueModifier() {
-        float modifier = 1;
-        for (AbstractSmallEngineBlockEntity be : getEngines()) {
-            if (be.upgrade.isPresent())
-                modifier *= be.upgrade.get().getTorqueModifier(this);
-        }
-        return modifier;
+		return getUpgrades().map(u -> u.getTorqueModifier(this))
+			.reduce((f1, f2) -> f1*f2).orElse(1f);
     }
 
     public float getUpgradeEfficiencyModifier() {
-        float modifier = 1;
-        for (AbstractSmallEngineBlockEntity be : getEngines()) {
-            if (be.upgrade.isPresent())
-                modifier *= be.upgrade.get().getEfficiencyModifier(this);
-        }
-        return modifier;
+		return getUpgrades().map(u -> u.getEfficiencyModifier(this))
+			.reduce((f1, f2) -> f1*f2).orElse(1f);
     }
 
     @Override

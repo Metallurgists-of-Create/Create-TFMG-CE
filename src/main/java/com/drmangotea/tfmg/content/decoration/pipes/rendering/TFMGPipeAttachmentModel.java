@@ -7,6 +7,7 @@ import com.simibubi.create.content.fluids.FluidTransportBehaviour;
 import com.simibubi.create.content.fluids.pipes.FluidPipeBlock;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.model.BakedModelWrapperWithData;
+import com.tterrag.registrate.util.nullness.NonNullFunction;
 import net.createmod.catnip.data.Iterate;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.client.Minecraft;
@@ -34,27 +35,15 @@ import java.util.List;
 @OnlyIn(Dist.CLIENT)
 public class TFMGPipeAttachmentModel extends BakedModelWrapperWithData {
 
-    public final TFMGPipes.PipeMaterial material ;
+    public final TFMGPipes.PipeMaterial material;
     private static final ModelProperty<PipeModelData> PIPE_PROPERTY = new ModelProperty<>();
     private final boolean ao;
-
-    public static TFMGPipeAttachmentModel withAOSteel(BakedModel template) {
-        return new TFMGPipeAttachmentModel(template, true, TFMGPipes.PipeMaterial.STEEL);
-    }
-    public static TFMGPipeAttachmentModel withAOAluminum(BakedModel template) {
-        return new TFMGPipeAttachmentModel(template, true, TFMGPipes.PipeMaterial.ALUMINUM);
-    }
-    public static TFMGPipeAttachmentModel withAOBrass(BakedModel template) {
-        return new TFMGPipeAttachmentModel(template, true, TFMGPipes.PipeMaterial.BRASS);
-    }
-    public static TFMGPipeAttachmentModel withAOCastIron(BakedModel template) {
-        return new TFMGPipeAttachmentModel(template, true, TFMGPipes.PipeMaterial.CAST_IRON);
-    }
-    public static TFMGPipeAttachmentModel withAOPlastic(BakedModel template) {
-        return new TFMGPipeAttachmentModel(template, true, TFMGPipes.PipeMaterial.PLASTIC);
-    }
-
-    public TFMGPipeAttachmentModel(BakedModel template, boolean ao, TFMGPipes.PipeMaterial material) {
+	
+	public static NonNullFunction<BakedModel, ? extends BakedModel> getForMaterial(TFMGPipes.PipeMaterial mat) {
+		return template -> new TFMGPipeAttachmentModel(template, true, mat);
+	}
+	
+	public TFMGPipeAttachmentModel(BakedModel template, boolean ao, TFMGPipes.PipeMaterial material) {
         super(template);
         this.ao = ao;
         this.material = material;

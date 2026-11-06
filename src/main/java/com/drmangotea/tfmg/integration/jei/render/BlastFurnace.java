@@ -5,12 +5,17 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import com.simibubi.create.compat.jei.category.animations.AnimatedKinetics;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.WallSide;
 
 import static net.minecraft.world.level.block.WallBlock.*;
 
 public class BlastFurnace extends AnimatedKinetics {
     public BlastFurnace() {}
+
+    public boolean topHatch = false;
+    public boolean tuyere = false;
 
     @Override
     public void draw(GuiGraphics graphics, int xOffset, int yOffset) {
@@ -19,9 +24,10 @@ public class BlastFurnace extends AnimatedKinetics {
         matrixStack.translate(xOffset, yOffset, 200);
         matrixStack.mulPose(Axis.XP.rotationDegrees(-15.5f));
         matrixStack.mulPose(Axis.YP.rotationDegrees(22.5f));
-        int scale =  23;
+        int scale = 23;
 
-        blockElement(TFMGBlocks.BLAST_FURNACE_OUTPUT.getDefaultState())
+        blockElement(TFMGBlocks.BLAST_FURNACE_OUTPUT.getDefaultState().setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.SOUTH))
+                .atLocal(0,0,0)
                 .scale(scale)
                 .render(graphics);
         blockElement(TFMGBlocks.FIREPROOF_BRICKS.getDefaultState())
@@ -30,7 +36,7 @@ public class BlastFurnace extends AnimatedKinetics {
                 .render(graphics);
 
         for(int i = 0; i < 4; i++) {
-            if(i !=0)
+            if(i != 0)
                 blockElement(TFMGBlocks.FIREPROOF_BRICKS.getDefaultState())
                         .atLocal(0, -i, 0)
                         .scale(scale)
@@ -63,6 +69,19 @@ public class BlastFurnace extends AnimatedKinetics {
                         .atLocal(-1, -i, -2)
                         .scale(scale)
                         .render(graphics);
+        }
+
+        if (topHatch) {
+            blockElement(TFMGBlocks.BLAST_FURNACE_HATCH.getDefaultState())
+                    .atLocal(0, -4, -1)
+                    .scale(scale)
+                    .render(graphics);
+        }
+        if (tuyere) {
+            blockElement(TFMGBlocks.BLAST_FURNACE_HATCH.getDefaultState())
+                    .atLocal(-1, -1, -1)
+                    .scale(scale)
+                    .render(graphics);
         }
 
         matrixStack.scale(scale, -scale, scale);

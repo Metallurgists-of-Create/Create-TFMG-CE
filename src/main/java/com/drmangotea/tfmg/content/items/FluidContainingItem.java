@@ -96,7 +96,7 @@ public class FluidContainingItem extends Item {
                     if (validator.test(stackToDrain)) {
                         FluidStack actuallyDrained = capability.drain(stackToDrain, IFluidHandler.FluidAction.EXECUTE);
                         stack.set(TFMGDataComponents.AMOUNT, contained + actuallyDrained.getAmount());
-                        context.getPlayer().getCooldowns().addCooldown(stack.getItem(), 20);
+                        player.getCooldowns().addCooldown(stack.getItem(), 20);
                         foundFluid = true;
                         break;
                     }

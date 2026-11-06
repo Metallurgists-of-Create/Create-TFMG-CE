@@ -2,6 +2,7 @@ package com.drmangotea.tfmg.content.electricity.connection;
 
 import com.drmangotea.tfmg.content.electricity.base.IElectric;
 import com.drmangotea.tfmg.registry.TFMGBlockEntities;
+import com.simibubi.create.content.decoration.encasing.EncasedBlock;
 import com.simibubi.create.content.equipment.wrench.IWrenchable;
 import com.simibubi.create.foundation.block.IBE;
 import net.minecraft.core.BlockPos;
@@ -14,15 +15,27 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Arrays;
+import java.util.function.Supplier;
 
 @ParametersAreNonnullByDefault
-public class CableHubBlock extends Block implements IBE<CableHubBlockEntity>, IWrenchable {
+public class CableHubBlock extends Block implements IBE<CableHubBlockEntity>, IWrenchable, EncasedBlock {
     public int maxCurrent;
+	private Supplier<Block> casing = () -> null;
 
     public CableHubBlock(Properties properties, int maxCurrent) {
         super(properties);
         this.maxCurrent = maxCurrent;
     }
+	
+	public CableHubBlock(Properties properties, int maxCurrent, Supplier<Block> casing) {
+		super(properties);
+		this.maxCurrent = maxCurrent;
+		this.casing = casing;
+	}
+	
+	public Block getCasing() {
+		return casing.get();
+	}
 
     @Override
     public void onPlace(BlockState pState, Level level, BlockPos pos, BlockState pOldState, boolean pIsMoving) {
@@ -45,10 +58,12 @@ public class CableHubBlock extends Block implements IBE<CableHubBlockEntity>, IW
     public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
         IBE.onRemove(state, level, pos, newState);
     }
+	
     @Override
     public Class<CableHubBlockEntity> getBlockEntityClass() {
         return CableHubBlockEntity.class;
     }
+	
     @Override
     public BlockEntityType<? extends CableHubBlockEntity> getBlockEntityType() {
         return TFMGBlockEntities.CABLE_HUB.get();

@@ -1,5 +1,6 @@
 package com.drmangotea.tfmg.recipes;
 
+import com.drmangotea.tfmg.base.annotation.NothingNullByDefault;
 import com.drmangotea.tfmg.base.pressure.Pressure;
 import com.drmangotea.tfmg.content.machinery.vat.base.registry.operations.VatOperation;
 import com.drmangotea.tfmg.content.machinery.vat.base.registry.types.VatType;
@@ -19,6 +20,7 @@ import net.minecraft.world.level.Level;
 
 import java.util.List;
 
+@NothingNullByDefault
 public class VatMachineRecipe extends ProcessingRecipe<RecipeInput, VatRecipeParams> {
     public List<VatOperation> machines;
     public List<VatType> allowedVatTypes;
@@ -73,6 +75,7 @@ public class VatMachineRecipe extends ProcessingRecipe<RecipeInput, VatRecipePar
         R create(VatRecipeParams params);
     }
 
+	@SuppressWarnings("unused")
     public static class Builder<R extends VatMachineRecipe> extends ProcessingRecipeBuilder<VatRecipeParams, R, VatMachineRecipe.Builder<R>> {
         public Builder(VatMachineRecipe.Factory<R> factory, ResourceLocation recipeId) {
             super(factory, recipeId);

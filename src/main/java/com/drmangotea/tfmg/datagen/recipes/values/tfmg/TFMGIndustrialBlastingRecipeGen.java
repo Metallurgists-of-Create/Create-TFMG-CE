@@ -22,7 +22,7 @@ public class TFMGIndustrialBlastingRecipeGen extends IndustrialBlastingRecipeGen
     SILICON = create("silicon", b -> b
             .require(Tags.Items.GEMS_QUARTZ)
             .output(TFMGFluids.LIQUID_SILICON.get(),40)
-            .duration(5)
+            .duration(100)
     ),
 
     STEEL_CRUSHED = create("steel", b -> b
@@ -31,7 +31,7 @@ public class TFMGIndustrialBlastingRecipeGen extends IndustrialBlastingRecipeGen
             .output(TFMGFluids.MOLTEN_STEEL.get(),90)
             .output(TFMGFluids.MOLTEN_SLAG.get(),80)
             .output(TFMGFluids.FURNACE_GAS.get(),200)
-            .duration(20)
+            .duration(400)
             .hotAirUsage(20)
     ),
     STEEL_RAW = create("steel_from_raw_iron", b -> b
@@ -40,7 +40,7 @@ public class TFMGIndustrialBlastingRecipeGen extends IndustrialBlastingRecipeGen
             .output(TFMGFluids.MOLTEN_STEEL.get(),180)
             .output(TFMGFluids.MOLTEN_SLAG.get(),160)
             .output(TFMGFluids.FURNACE_GAS.get(),200)
-            .duration(40)
+            .duration(800)
             .hotAirUsage(40)
     ),
     STEEL_DUST = create("steel_from_dust", b -> b
@@ -50,7 +50,7 @@ public class TFMGIndustrialBlastingRecipeGen extends IndustrialBlastingRecipeGen
             .output(TFMGFluids.MOLTEN_STEEL.get(),90)
             .output(TFMGFluids.MOLTEN_SLAG.get(),80)
             .output(TFMGFluids.FURNACE_GAS.get(),20)
-            .duration(20)
+            .duration(400)
             .hotAirUsage(20)
     )
 

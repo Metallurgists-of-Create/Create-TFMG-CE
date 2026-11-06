@@ -1,6 +1,7 @@
 package com.drmangotea.tfmg.content.engines.upgrades.base;
 
 import com.drmangotea.tfmg.TFMGRegistries;
+import com.drmangotea.tfmg.base.annotation.NothingNullByDefault;
 import com.drmangotea.tfmg.base.lang.TFMGLang;
 import com.drmangotea.tfmg.content.engines.types.AbstractSmallEngineBlockEntity;
 import com.drmangotea.tfmg.registry.*;
@@ -11,6 +12,9 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.core.Holder;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtOps;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -73,11 +77,21 @@ public abstract class EngineUpgrade {
     public void lazyTickUpgrade(AbstractSmallEngineBlockEntity engine) {}
 
     public void render(AbstractSmallEngineBlockEntity be, float partialTicks, PoseStack ms, MultiBufferSource buffer, int light) {}
+	
+	public void write (CompoundTag compound, String name) {
+		TFMGRegistries.ENGINE_UPGRADE_REGISTRY.byNameCodec().encodeStart(NbtOps.INSTANCE, this)
+			.ifSuccess(nbt -> compound.put(name, nbt));
+	}
+	
+	public static Optional<EngineUpgrade> read (Tag tag) {
+		return TFMGRegistries.ENGINE_UPGRADE_REGISTRY.byNameCodec().parse(NbtOps.INSTANCE, tag).result();
+	}
 
     public static Optional<Holder<EngineUpgrade>> getUpgradeFromItem(ItemStack stack) {
         return Optional.ofNullable(stack.get(TFMGDataComponents.ENGINE_UPGRADE)).map(Stored::upgrade);
     }
 
+	@NothingNullByDefault
     public record Stored(Holder<EngineUpgrade> upgrade) implements TooltipProvider {
         public static final Codec<EngineUpgrade.Stored> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 TFMGRegistries.ENGINE_UPGRADE_REGISTRY.holderByNameCodec().fieldOf("upgrade").forGetter(EngineUpgrade.Stored::upgrade)

@@ -1,5 +1,6 @@
 package com.drmangotea.tfmg.content.items;
 
+import com.drmangotea.tfmg.base.annotation.NothingNullByDefault;
 import com.drmangotea.tfmg.registry.TFMGDataAttachments;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.fluids.FluidTransportBehaviour;
@@ -25,7 +26,6 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.api.distmarker.Dist;
@@ -33,7 +33,7 @@ import net.neoforged.api.distmarker.OnlyIn;
 
 import java.util.Map;
 
-
+@NothingNullByDefault
 public class ScrewdriverItem extends Item {
     public ScrewdriverItem(Properties properties) {
         super(properties);
@@ -77,10 +77,6 @@ public class ScrewdriverItem extends Item {
                         .setValue(facingToPropertyMap.get(side.getOpposite()), true), side, null, world, pos);
     }
 
-    private static AABB lastShownAABB = null;
-    private static boolean render = false;
-    private static int colour = PonderPalette.BLUE.getColor();
-
     @OnlyIn(Dist.CLIENT)
     public static void clientTick() {
         Player player = Minecraft.getInstance().player;
@@ -98,24 +94,13 @@ public class ScrewdriverItem extends Item {
 
         BlockHitResult block = RaycastHelper.rayTraceRange(world, player, player.blockInteractionRange());
         BlockPos targetedPos = block.getBlockPos();
-
-        BlockState state = world.getBlockState(targetedPos);
-        VoxelShape shape = state.getShape(world, targetedPos);
-
+        VoxelShape shape = world.getBlockState(targetedPos).getShape(world, targetedPos);
         BlockEntity blockEntity = world.getBlockEntity(targetedPos);
 
-        if (blockEntity instanceof FluidPipeBlockEntity) {
-            lastShownAABB = shape.isEmpty() ? new AABB(BlockPos.ZERO) : shape.bounds().move(targetedPos);
-            colour = isLocked(blockEntity) ? PonderPalette.RED.getColor() : PonderPalette.GREEN.getColor();
-            render = true;
-        } else {
-            render = false;
-        }
-
-        if (render) {
-            Outliner.getInstance().showAABB("lockable_pipe", lastShownAABB)
-                    .colored(colour)
-                    .lineWidth(1 / 32f);
+        if (blockEntity instanceof FluidPipeBlockEntity && !shape.isEmpty()) {
+			Outliner.getInstance().showAABB("lockable_pipe", shape.bounds().move(targetedPos))
+				.colored(isLocked(blockEntity) ? PonderPalette.RED.getColor() : PonderPalette.GREEN.getColor())
+				.lineWidth(1 / 32f);
         }
     }
 

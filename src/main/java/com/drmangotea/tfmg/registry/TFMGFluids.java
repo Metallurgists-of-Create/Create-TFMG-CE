@@ -31,14 +31,14 @@ import static com.drmangotea.tfmg.base.TFMGUtils.toHumanReadable;
 public class TFMGFluids {
     public static final FluidEntry<VirtualFluid>
             LPG = gasFuel("lpg", 0xfff5e687, TFMGTags.Fluids.LPG.tag, TFMGTags.Fluids.FIREBOX_FUEL.tag),
-            BUTANE = gasFuel("butane", 0xffad77d4, TFMGTags.Fluids.FIREBOX_FUEL.tag),
-            PROPANE = gasFuel("propane", 0xff88bf80, TFMGTags.Fluids.FIREBOX_FUEL.tag),
-            HYDROGEN = gasFuel("hydrogen", 0xffd0f2f5),
-            FURNACE_GAS = gasFuel("furnace_gas", 0xff5c5555, TFMGTags.Fluids.BLAST_STOVE_FUEL.tag, TFMGTags.Fluids.FURNACE_GAS.tag),
+            BUTANE = gasFuel("butane", 0xffad77d4, TFMGTags.Fluids.BUTANE.tag, TFMGTags.Fluids.FIREBOX_FUEL.tag),
+            PROPANE = gasFuel("propane", 0xff88bf80, TFMGTags.Fluids.PROPANE.tag, TFMGTags.Fluids.FIREBOX_FUEL.tag),
+            HYDROGEN = gasFuel("hydrogen", 0xffd0f2f5, TFMGTags.Fluids.HYDROGEN.tag),
+            FURNACE_GAS = gasFuel("furnace_gas", 0xff5c5555, TFMGTags.Fluids.FURNACE_GAS.tag, TFMGTags.Fluids.BLAST_STOVE_FUEL.tag),
             ETHYLENE = gas("ethylene", 0xffbcadcc, TFMGTags.Fluids.ETHYLENE.tag),
             PROPYLENE = gas("propylene", 0xffc0d1b4, TFMGTags.Fluids.PROPYLENE.tag),
-            NEON = gas("neon", 0xff9dede9),
-            CARBON_DIOXIDE = gas("carbon_dioxide", 0xff525252, TFMGTags.Fluids.EXHAUSTABLE.tag),
+            NEON = gas("neon", 0xff9dede9, TFMGTags.Fluids.NEON.tag),
+            CARBON_DIOXIDE = gas("carbon_dioxide", 0xff525252, TFMGTags.Fluids.CARBON_DIOXIDE.tag, TFMGTags.Fluids.EXHAUSTABLE.tag),
             AIR = gas("air", 0xffdfe6e5, TFMGTags.Fluids.AIR.tag),
             HOT_AIR = gas("hot_air", 0xffe8e1d5, TFMGTags.Fluids.HOT_AIR.tag);
 
@@ -51,12 +51,12 @@ public class TFMGFluids {
             KEROSENE = fuel("kerosene", 0x7C82D5, TFMGTags.Fluids.KEROSENE.tag, TFMGTags.Fluids.FIREBOX_FUEL.tag),
             CREOSOTE = fuel("creosote", 0x010101, TFMGTags.Fluids.CREOSOTE.tag, TFMGTags.Fluids.BLAST_STOVE_FUEL.tag),
             MOLTEN_STEEL = hotFluid("molten_steel", 0xFFF760, TFMGTags.Fluids.MOLTEN_STEEL.tag),
-            MOLTEN_SLAG = hotFluid("molten_slag", 0xFFF760),
-            MOLTEN_PLASTIC = hotFluid("molten_plastic", 0xDEE4FF),
-            LIQUID_SILICON = hotFluid("liquid_silicon", 0xFFF760),
+            MOLTEN_SLAG = hotFluid("molten_slag", 0xFFF760, TFMGTags.Fluids.MOLTEN_SLAG.tag),
+            MOLTEN_PLASTIC = hotFluid("molten_plastic", 0xDEE4FF, TFMGTags.Fluids.MOLTEN_PLASTIC.tag),
+            LIQUID_SILICON = hotFluid("liquid_silicon", 0xFFF760, TFMGTags.Fluids.LIQUID_SILICON.tag),
             LUBRICATION_OIL = fluid("lubrication_oil", 0x9D945F, TFMGTags.Fluids.LUBRICATION_OIL.tag, TFMGTags.Fluids.FLAMMABLE.tag),
             COOLING_FLUID = fluid("cooling_fluid", 0x7BC1C1, TFMGTags.Fluids.COOLING_FLUID.tag),
-            NAPALM = fluid("napalm", 0xC0CA97),
+            NAPALM = fluid("napalm", 0xC0CA97, TFMGTags.Fluids.NAPALM.tag),
             SULFURIC_ACID = acidFluid("sulfuric_acid", 0xE9E7CC,  TFMGTags.Fluids.SULFURIC_ACID.tag),
             LIQUID_CONCRETE = concreteFluid("liquid_concrete", 0x5B5B59, ConcreteFluid.Source::new),
             LIQUID_ASPHALT = concreteFluid("liquid_asphalt", 0x010101, AsphaltFluid.Source::new);

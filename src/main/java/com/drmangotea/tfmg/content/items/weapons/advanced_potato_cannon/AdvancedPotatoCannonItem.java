@@ -1,7 +1,7 @@
 package com.drmangotea.tfmg.content.items.weapons.advanced_potato_cannon;
 
-
 import com.drmangotea.tfmg.TFMGClient;
+import com.drmangotea.tfmg.base.annotation.NothingNullByDefault;
 import com.drmangotea.tfmg.content.items.weapons.advanced_potato_cannon.projectile.NapalmPotato;
 import com.drmangotea.tfmg.registry.TFMGEntityTypes;
 import com.drmangotea.tfmg.registry.TFMGItems;
@@ -36,6 +36,7 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
+@NothingNullByDefault
 public class AdvancedPotatoCannonItem extends ProjectileWeaponItem implements CustomArmPoseItem {
 	public static final int MAX_DAMAGE = 500;
 
@@ -43,17 +44,14 @@ public class AdvancedPotatoCannonItem extends ProjectileWeaponItem implements Cu
 		super(properties.durability(MAX_DAMAGE));
 	}
 
-
-
 	@Override
 	public boolean canAttackBlock(BlockState state, Level world, BlockPos pos, Player player) {
 		return false;
 	}
 
-
-
 	@Override
 	public InteractionResult useOn(UseOnContext context) {
+		if (context.getPlayer() == null) return InteractionResult.FAIL;
 		return use(context.getLevel(), context.getPlayer(), context.getHand()).getResult();
 	}
 
@@ -125,7 +123,6 @@ public class AdvancedPotatoCannonItem extends ProjectileWeaponItem implements Cu
 
 			int cooldown = 75;
 
-
 			AllSoundEvents.FWOOMP.play(world,player,player.getX(),player.getY(),player.getZ(),1,0.2f);
 
 			ShootableGadgetItemMethods.applyCooldown(player, stack, hand, this::isCannon, cooldown);
@@ -148,9 +145,7 @@ public class AdvancedPotatoCannonItem extends ProjectileWeaponItem implements Cu
 			}
 		}
 
-
 		return Optional.empty();
-
 	}
 
 	@Override

@@ -85,7 +85,8 @@ public class ForceableFluidTank extends SmartFluidTank {
 	
 	public ForceableFluidTank read(HolderLookup.Provider lookupProvider, CompoundTag nbt) {
 		readFromNBT(lookupProvider, nbt);
-		if (getSpace() < 0) this.forceDrain(-getSpace(), FluidAction.EXECUTE);
+		int over = fluid.getAmount() - capacity;
+		if (over > 0) this.forceDrain(over, FluidAction.EXECUTE);
 		return this;
 	}
 

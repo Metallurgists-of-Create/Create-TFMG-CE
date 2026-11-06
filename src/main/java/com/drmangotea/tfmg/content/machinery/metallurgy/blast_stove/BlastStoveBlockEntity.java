@@ -73,9 +73,8 @@ public class BlastStoveBlockEntity extends SmartBlockEntity implements IHaveGogg
 		int capacity = getCapacityMultiplier();
         primaryOutputTank = new ForceableFluidTank(capacity, this::onFluidStackChanged).blockInsertion(); //output (hot air)
         exhaustOutputTank = new ForceableFluidTank(capacity, this::onFluidStackChanged).blockInsertion();
-        AirInputTank = new ForceableFluidTank(capacity, this::onFluidStackChanged).blockExtraction();
-        fuelInputTank = new ForceableFluidTank(capacity, this::onFluidStackChanged).blockExtraction()
-			.withValidator(f -> f.is(TFMGTags.Fluids.BLAST_STOVE_FUEL.tag));
+        AirInputTank = new ForceableFluidTank(capacity, this::onFluidStackChanged);
+        fuelInputTank = new ForceableFluidTank(capacity, this::onFluidStackChanged);
         primaryCapability = new InputOutputTankWrapper(primaryOutputTank, fuelInputTank);
         secondaryCapability = new InputOutputTankWrapper(exhaustOutputTank, AirInputTank);
 		combinedCapability = new CombinedTankWrapper(primaryCapability, secondaryCapability);
