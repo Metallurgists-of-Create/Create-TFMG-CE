@@ -3,16 +3,16 @@
   "category": "misc",
   "key": {
     "I": {
-      "tag": "c:plates/plastic"
+      "tag": "c:ingots/plastic"
     },
     "P": {
       "tag": "c:plates/plastic"
     }
   },
   "pattern": [
-    "P",
-    "I",
-    "P"
+    " P ",
+    " I ",
+    " P "
   ],
   "result": {
     "count": 4,
