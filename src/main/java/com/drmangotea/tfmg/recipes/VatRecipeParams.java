@@ -33,7 +33,7 @@ public class VatRecipeParams extends ProcessingRecipeParams {
     public static final MapCodec<VatRecipeParams> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             codec(VatRecipeParams::new).forGetter(Function.identity()),
             Codec.intRange(0, Integer.MAX_VALUE).optionalFieldOf("min_size", 0).forGetter(VatRecipeParams::getMinSize),
-            NumberTest.CODEC.optionalFieldOf("heat_level", NumberTests.Any.INSTANCE).forGetter(VatRecipeParams::getHeatLevel),
+            NumberTest.CODEC.optionalFieldOf("heat_level", NumberTests.any()).forGetter(VatRecipeParams::getHeatLevel),
             Pressure.CODEC.optionalFieldOf("pressure", Pressure.EMPTY).forGetter(VatRecipeParams::getPressure),
             VatOperation.CODEC.listOf().optionalFieldOf("machines", new ArrayList<>()).forGetter(VatRecipeParams::getMachines),
             VatType.CODEC.listOf().optionalFieldOf("allowed_vat_types", List.of()).forGetter(VatRecipeParams::getAllowedVatTypes)
