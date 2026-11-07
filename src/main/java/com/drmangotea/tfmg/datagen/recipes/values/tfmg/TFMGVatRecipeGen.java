@@ -1,6 +1,7 @@
 package com.drmangotea.tfmg.datagen.recipes.values.tfmg;
 
 import com.drmangotea.tfmg.TFMG;
+import com.drmangotea.tfmg.base.number.NumberTests;
 import com.drmangotea.tfmg.base.pressure.Pressure;
 import com.drmangotea.tfmg.content.machinery.vat.base.registry.operations.VatOperation;
 import com.drmangotea.tfmg.content.machinery.vat.base.registry.types.VatType;
@@ -97,7 +98,7 @@ public class TFMGVatRecipeGen extends VatRecipeGen {
             .mixing()
             .allowAllVatTypes()
             .duration(40)
-            .heatLevel(2)
+            .heatLevel(NumberTests.greater(2))
     ),
 
     NAPHTHA = create("naphtha", b -> b
@@ -107,7 +108,7 @@ public class TFMGVatRecipeGen extends VatRecipeGen {
             .mixing()
             .duration(20)
             .allowAllVatTypes()
-            .heatLevel(2)
+            .heatLevel(NumberTests.greater(2))
     ),
 
     PLASTIC_FROM_ETHYLENE = create("plastic_from_ethylene", b -> b
@@ -116,7 +117,7 @@ public class TFMGVatRecipeGen extends VatRecipeGen {
             .mixing()
             .allowAllVatTypes()
             .duration(30)
-            .heatLevel(2)
+            .heatLevel(NumberTests.greater(2))
     ),
 
     PLASTIC_FROM_PROPYLENE = create("plastic_from_propylene", b -> b
@@ -125,7 +126,7 @@ public class TFMGVatRecipeGen extends VatRecipeGen {
             .mixing()
             .duration(30)
             .allowAllVatTypes()
-            .heatLevel(2)
+            .heatLevel(NumberTests.greater(2))
     ),
 
     ETCHED_CIRCUIT_BOARD = create("etched_circuit_board", b -> b
@@ -149,7 +150,7 @@ public class TFMGVatRecipeGen extends VatRecipeGen {
             .duration(100)
             .electrolysis()
             .allowNonCastIron()
-            .heatLevel(2)
+            .heatLevel(NumberTests.greater(2))
     ),
 
     //CBC
@@ -159,7 +160,7 @@ public class TFMGVatRecipeGen extends VatRecipeGen {
             .output(CBCFluids.MOLTEN_NETHERSTEEL.get(), 360)
             .arcBlasting()
             .allowFireproof()
-            .heatLevel(2)
+            .heatLevel(NumberTests.greater(2))
     );
 
     public static class VatRecipeValues {

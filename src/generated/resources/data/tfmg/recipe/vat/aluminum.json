@@ -4,7 +4,10 @@
     "tfmg:steel",
     "tfmg:fireproof"
   ],
-  "heat_level": 2,
+  "heat_level": {
+    "type": "tfmg:greater",
+    "target": 2.0
+  },
   "ingredients": [
     {
       "tag": "c:dusts/bauxite"

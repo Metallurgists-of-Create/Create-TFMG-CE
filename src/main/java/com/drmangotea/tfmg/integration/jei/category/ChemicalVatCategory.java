@@ -2,6 +2,8 @@ package com.drmangotea.tfmg.integration.jei.category;
 
 import com.drmangotea.tfmg.base.annotation.NothingNullByDefault;
 import com.drmangotea.tfmg.base.lang.TFMGLang;
+import com.drmangotea.tfmg.base.number.NumberTest;
+import com.drmangotea.tfmg.base.number.NumberTests;
 import com.drmangotea.tfmg.base.pressure.Pressure;
 import com.drmangotea.tfmg.config.TFMGConfigs;
 import com.drmangotea.tfmg.content.machinery.vat.base.registry.operations.VatCategoryEvent;
@@ -171,20 +173,21 @@ public class ChemicalVatCategory extends CreateRecipeCategory<VatMachineRecipe> 
             }
         }
 
-        boolean showHeat;
-        if (recipe.heatLevel > 9) {
-            showHeat = mouseY > 109 && mouseY < 118 && mouseX > 10 && mouseX < 100;
-        } else if (recipe.heatLevel > 0) {
-            showHeat = mouseY > 109 && mouseY < 118 && mouseX > 10 && mouseX < (recipe.heatLevel * 10) + 10;
-        } else {
-            showHeat = mouseY > 109 && mouseY < 118 && mouseX > 10 && mouseX < (Math.abs(recipe.heatLevel) * 10) + 10;
-        }
+        //TODO: Adapt this to work with tests
+        //boolean showHeat;
+        //if (recipe.heatLevel > 9) {
+        //    showHeat = mouseY > 109 && mouseY < 118 && mouseX > 10 && mouseX < 100;
+        //} else if (recipe.heatLevel > 0) {
+        //    showHeat = mouseY > 109 && mouseY < 118 && mouseX > 10 && mouseX < (recipe.heatLevel * 10) + 10;
+        //} else {
+        //    showHeat = mouseY > 109 && mouseY < 118 && mouseX > 10 && mouseX < (Math.abs(recipe.heatLevel) * 10) + 10;
+        //}
 
-        if (showHeat) {
-            int colour = recipe.heatLevel <= 0 ? 0x9eccfb : recipe.heatLevel > 9 ? 0x425bf5 : 0xd17800;
-            tooltip.add(TFMGLang.translate("recipe.vat.heat", recipe.heatLevel).component()
-                    .withColor(colour));
-        }
+        //if (showHeat) {
+        //    int colour = recipe.heatLevel <= 0 ? 0x9eccfb : recipe.heatLevel > 9 ? 0x425bf5 : 0xd17800;
+        //    tooltip.add(TFMGLang.translate("recipe.vat.heat", recipe.heatLevel).component()
+        //            .withColor(colour));
+        //}
 
         List<VatOperation> alreadyHandled = new ArrayList<>();
 
@@ -242,25 +245,26 @@ public class ChemicalVatCategory extends CreateRecipeCategory<VatMachineRecipe> 
         return (float) (Math.sin(t) * WOBBLE_AMPLITUDE + Math.sin(t * 2.7f) * (WOBBLE_AMPLITUDE * 0.3f));
     }
 
-    private void renderHeated(int heatLevel, GuiGraphics graphics) {
-        if(heatLevel != 0) {
-            if (heatLevel > 9) {
-                for (int i = 9; i > 0; i--) {
-                    if (heatLevel >= 9 + i) {
-                        TFMGGuiTextures.VAT_SUPERHEATER.render(graphics, i * 10, 109);
-                    } else {
-                        TFMGGuiTextures.VAT_HEATER.render(graphics, i * 10, 109);
-                    }
-                }
-            } else if (heatLevel > 0) {
-                for (int i = heatLevel; i > 0; i--) {
-                    TFMGGuiTextures.VAT_HEATER.render(graphics, i * 10, 109);
-                }
-            } else {
-                for (int i = -1 * heatLevel; i > 0; i--) {
-                    TFMGGuiTextures.VAT_FREEZER.render(graphics, i * 10, 109);
-                }
-            }
+    private void renderHeated(NumberTest heatLevel, GuiGraphics graphics) {
+        if(heatLevel != NumberTests.any()) {
+            //TODO: Adapt this to work with tests
+            //if (heatLevel > 9) {
+            //    for (int i = 9; i > 0; i--) {
+            //        if (heatLevel >= 9 + i) {
+            //            TFMGGuiTextures.VAT_SUPERHEATER.render(graphics, i * 10, 109);
+            //        } else {
+            //            TFMGGuiTextures.VAT_HEATER.render(graphics, i * 10, 109);
+            //        }
+            //    }
+            //} else if (heatLevel > 0) {
+            //    for (int i = heatLevel; i > 0; i--) {
+            //        TFMGGuiTextures.VAT_HEATER.render(graphics, i * 10, 109);
+            //    }
+            //} else {
+            //    for (int i = -1 * heatLevel; i > 0; i--) {
+            //        TFMGGuiTextures.VAT_FREEZER.render(graphics, i * 10, 109);
+            //    }
+            //}
         }
     }
 }

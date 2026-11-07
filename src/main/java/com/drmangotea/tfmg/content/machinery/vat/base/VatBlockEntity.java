@@ -521,7 +521,7 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
     public void handleRecipe() {
         if (level == null || recipe == null || !isController() ||
                 level.isClientSide && !isVirtual() ||
-                recipe.heatLevel * (recipe.heatLevel - heatLevel) > 0 ||
+                recipe.heatLevel.test(heatLevel, this.level.getRandom()) ||
                 recipe.pressure.getValue() * (recipe.pressure.getValue() - pressure.getValue()) > 0)
             return;
 

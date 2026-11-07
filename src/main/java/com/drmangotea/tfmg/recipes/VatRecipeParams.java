@@ -1,5 +1,7 @@
 package com.drmangotea.tfmg.recipes;
 
+import com.drmangotea.tfmg.base.number.NumberTest;
+import com.drmangotea.tfmg.base.number.NumberTests;
 import com.drmangotea.tfmg.base.pressure.Pressure;
 import com.drmangotea.tfmg.content.machinery.vat.base.registry.operations.VatOperation;
 import com.drmangotea.tfmg.content.machinery.vat.base.registry.types.VatType;
@@ -18,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
+//TODO: Make pressure & min_size use a NumberTest
 public class VatRecipeParams extends ProcessingRecipeParams {
     public static final List<VatTypeEntry> types = List.of(
             TFMGVatTypes.CAST_IRON, TFMGVatTypes.STEEL, TFMGVatTypes.FIREPROOF
@@ -30,7 +33,7 @@ public class VatRecipeParams extends ProcessingRecipeParams {
     public static final MapCodec<VatRecipeParams> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             codec(VatRecipeParams::new).forGetter(Function.identity()),
             Codec.intRange(0, Integer.MAX_VALUE).optionalFieldOf("min_size", 0).forGetter(VatRecipeParams::getMinSize),
-            Codec.INT.optionalFieldOf("heat_level", 0).forGetter(VatRecipeParams::getHeatLevel),
+            NumberTest.CODEC.optionalFieldOf("heat_level", NumberTests.Any.INSTANCE).forGetter(VatRecipeParams::getHeatLevel),
             Pressure.CODEC.optionalFieldOf("pressure", Pressure.EMPTY).forGetter(VatRecipeParams::getPressure),
             VatOperation.CODEC.listOf().optionalFieldOf("machines", new ArrayList<>()).forGetter(VatRecipeParams::getMachines),
             VatType.CODEC.listOf().optionalFieldOf("allowed_vat_types", List.of()).forGetter(VatRecipeParams::getAllowedVatTypes)
@@ -46,13 +49,13 @@ public class VatRecipeParams extends ProcessingRecipeParams {
     public static final StreamCodec<RegistryFriendlyByteBuf, VatRecipeParams> STREAM_CODEC = streamCodec(VatRecipeParams::new);
 
     public int min_size = 1;
-    public int heat_level = 0;
+    public NumberTest heat_level = NumberTests.Any.INSTANCE;
     public Pressure pressure = Pressure.EMPTY;
 
     public List<VatOperation> machines = new ArrayList<>();
     public List<VatType> allowedVatTypes = new ArrayList<>();
 
-    protected final int getHeatLevel() {
+    protected final NumberTest getHeatLevel() {
         return heat_level;
     }
 
@@ -76,7 +79,7 @@ public class VatRecipeParams extends ProcessingRecipeParams {
     protected void encode(RegistryFriendlyByteBuf buffer) {
         super.encode(buffer);
         ByteBufCodecs.INT.encode(buffer, min_size);
-        ByteBufCodecs.INT.encode(buffer, heat_level);
+        ByteBufCodecs.fromCodec(NumberTest.CODEC).encode(buffer, heat_level);
         Pressure.STREAM_CODEC.encode(buffer, pressure);
 
         CatnipStreamCodecBuilders.list(VatOperation.STREAM_CODEC).encode(buffer, machines);
@@ -88,7 +91,7 @@ public class VatRecipeParams extends ProcessingRecipeParams {
     protected void decode(RegistryFriendlyByteBuf buffer) {
         super.decode(buffer);
         min_size = ByteBufCodecs.INT.decode(buffer);
-        heat_level = ByteBufCodecs.INT.decode(buffer);
+        heat_level = ByteBufCodecs.fromCodec(NumberTest.CODEC).decode(buffer);
         pressure = Pressure.STREAM_CODEC.decode(buffer);
 
         machines = CatnipStreamCodecBuilders.list(VatOperation.STREAM_CODEC).decode(buffer);

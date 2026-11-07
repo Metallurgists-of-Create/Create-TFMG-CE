@@ -1,6 +1,7 @@
 package com.drmangotea.tfmg.recipes;
 
 import com.drmangotea.tfmg.base.annotation.NothingNullByDefault;
+import com.drmangotea.tfmg.base.number.NumberTest;
 import com.drmangotea.tfmg.base.pressure.Pressure;
 import com.drmangotea.tfmg.content.machinery.vat.base.registry.operations.VatOperation;
 import com.drmangotea.tfmg.content.machinery.vat.base.registry.types.VatType;
@@ -25,7 +26,7 @@ public class VatMachineRecipe extends ProcessingRecipe<RecipeInput, VatRecipePar
     public List<VatOperation> machines;
     public List<VatType> allowedVatTypes;
     public int minSize;
-    public int heatLevel;
+    public NumberTest heatLevel;
     public Pressure pressure;
 
     public VatMachineRecipe(VatRecipeParams params) {
@@ -96,10 +97,7 @@ public class VatMachineRecipe extends ProcessingRecipe<RecipeInput, VatRecipePar
             return this;
         }
 
-        public VatMachineRecipe.Builder<R> heatLevel(int level) {
-            if (level < 0) {
-                throw new IllegalArgumentException("Heat level can not be less than 0!");
-            }
+        public VatMachineRecipe.Builder<R> heatLevel(NumberTest level) {
             params.heat_level = level;
             return this;
         }
