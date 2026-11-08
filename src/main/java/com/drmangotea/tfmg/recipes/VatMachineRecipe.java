@@ -25,9 +25,9 @@ import java.util.List;
 public class VatMachineRecipe extends ProcessingRecipe<RecipeInput, VatRecipeParams> {
     public List<VatOperation> machines;
     public List<VatType> allowedVatTypes;
-    public int minSize;
+    public NumberTest minSize;
     public NumberTest heatLevel;
-    public Pressure pressure;
+    public NumberTest pressure;
 
     public VatMachineRecipe(VatRecipeParams params) {
         super(TFMGRecipeTypes.VAT, params);
@@ -92,8 +92,8 @@ public class VatMachineRecipe extends ProcessingRecipe<RecipeInput, VatRecipePar
             return this;
         }
 
-        public VatMachineRecipe.Builder<R> pressure(int kpa) {
-            params.pressure = Pressure.of(kpa);
+        public VatMachineRecipe.Builder<R> pressure(NumberTest kpa) {
+            params.pressure = kpa;
             return this;
         }
 
@@ -144,7 +144,7 @@ public class VatMachineRecipe extends ProcessingRecipe<RecipeInput, VatRecipePar
             return this.freezing().freezing().freezing();
         }
 
-        public VatMachineRecipe.Builder<R> minSize(int minSize) {
+        public VatMachineRecipe.Builder<R> minSize(NumberTest minSize) {
             params.min_size = minSize;
             return this;
         }

@@ -13,7 +13,6 @@
   "machines": [
     "tfmg:mixer"
   ],
-  "min_size": 1,
   "processing_time": 100,
   "results": [
     {

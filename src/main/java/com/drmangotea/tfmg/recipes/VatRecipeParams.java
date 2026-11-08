@@ -32,9 +32,9 @@ public class VatRecipeParams extends ProcessingRecipeParams {
 
     public static final MapCodec<VatRecipeParams> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             codec(VatRecipeParams::new).forGetter(Function.identity()),
-            Codec.intRange(0, Integer.MAX_VALUE).optionalFieldOf("min_size", 0).forGetter(VatRecipeParams::getMinSize),
+            NumberTest.CODEC.optionalFieldOf("min_size", NumberTests.any()).forGetter(VatRecipeParams::getMinSize),
             NumberTest.CODEC.optionalFieldOf("heat_level", NumberTests.any()).forGetter(VatRecipeParams::getHeatLevel),
-            Pressure.CODEC.optionalFieldOf("pressure", Pressure.EMPTY).forGetter(VatRecipeParams::getPressure),
+            NumberTest.CODEC.optionalFieldOf("pressure", NumberTests.any()).forGetter(VatRecipeParams::getPressure),
             VatOperation.CODEC.listOf().optionalFieldOf("machines", new ArrayList<>()).forGetter(VatRecipeParams::getMachines),
             VatType.CODEC.listOf().optionalFieldOf("allowed_vat_types", List.of()).forGetter(VatRecipeParams::getAllowedVatTypes)
     ).apply(instance, (params, min_size, heat_level,pressure, machines, allowed_vat_types) -> {
@@ -48,9 +48,9 @@ public class VatRecipeParams extends ProcessingRecipeParams {
 
     public static final StreamCodec<RegistryFriendlyByteBuf, VatRecipeParams> STREAM_CODEC = streamCodec(VatRecipeParams::new);
 
-    public int min_size = 1;
-    public NumberTest heat_level = NumberTests.Any.INSTANCE;
-    public Pressure pressure = Pressure.EMPTY;
+    public NumberTest min_size = NumberTests.any();
+    public NumberTest heat_level = NumberTests.any();
+    public NumberTest pressure = NumberTests.any();
 
     public List<VatOperation> machines = new ArrayList<>();
     public List<VatType> allowedVatTypes = new ArrayList<>();
@@ -59,11 +59,11 @@ public class VatRecipeParams extends ProcessingRecipeParams {
         return heat_level;
     }
 
-    protected final Pressure getPressure() {
+    protected final NumberTest getPressure() {
         return pressure;
     }
 
-    protected final int getMinSize() {
+    protected final NumberTest getMinSize() {
         return min_size;
     }
 
@@ -78,9 +78,9 @@ public class VatRecipeParams extends ProcessingRecipeParams {
     @Override
     protected void encode(RegistryFriendlyByteBuf buffer) {
         super.encode(buffer);
-        ByteBufCodecs.INT.encode(buffer, min_size);
+        ByteBufCodecs.fromCodec(NumberTest.CODEC).encode(buffer, min_size);
         ByteBufCodecs.fromCodec(NumberTest.CODEC).encode(buffer, heat_level);
-        Pressure.STREAM_CODEC.encode(buffer, pressure);
+        ByteBufCodecs.fromCodec(NumberTest.CODEC).encode(buffer, pressure);
 
         CatnipStreamCodecBuilders.list(VatOperation.STREAM_CODEC).encode(buffer, machines);
         CatnipStreamCodecBuilders.list(VatType.STREAM_CODEC).encode(buffer, allowedVatTypes);
@@ -90,9 +90,9 @@ public class VatRecipeParams extends ProcessingRecipeParams {
     @Override
     protected void decode(RegistryFriendlyByteBuf buffer) {
         super.decode(buffer);
-        min_size = ByteBufCodecs.INT.decode(buffer);
+        min_size = ByteBufCodecs.fromCodec(NumberTest.CODEC).decode(buffer);
         heat_level = ByteBufCodecs.fromCodec(NumberTest.CODEC).decode(buffer);
-        pressure = Pressure.STREAM_CODEC.decode(buffer);
+        pressure = ByteBufCodecs.fromCodec(NumberTest.CODEC).decode(buffer);
 
         machines = CatnipStreamCodecBuilders.list(VatOperation.STREAM_CODEC).decode(buffer);
         allowedVatTypes = CatnipStreamCodecBuilders.list(VatType.STREAM_CODEC).decode(buffer);

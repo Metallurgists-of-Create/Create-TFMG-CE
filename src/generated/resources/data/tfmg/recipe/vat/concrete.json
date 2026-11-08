@@ -19,7 +19,6 @@
   "machines": [
     "tfmg:mixer"
   ],
-  "min_size": 1,
   "results": [
     {
       "amount": 32000,

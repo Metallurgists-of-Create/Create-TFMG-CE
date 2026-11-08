@@ -10,7 +10,6 @@
   "machines": [
     "tfmg:centrifuge"
   ],
-  "min_size": 1,
   "processing_time": 10,
   "results": [
     {

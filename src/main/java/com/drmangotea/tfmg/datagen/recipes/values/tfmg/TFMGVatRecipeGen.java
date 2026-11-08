@@ -67,7 +67,7 @@ public class TFMGVatRecipeGen extends VatRecipeGen {
             .output(TFMGFluids.MOLTEN_SLAG.get(), 160)
             .duration(20)
             .allowFireproof()
-            .minSize(9)
+            .minSize(NumberTests.greater(9))
             .arcBlasting()
     ),
 

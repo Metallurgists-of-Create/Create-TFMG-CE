@@ -19,7 +19,10 @@
     "tfmg:graphite_electrode",
     "tfmg:graphite_electrode"
   ],
-  "min_size": 9,
+  "min_size": {
+    "type": "tfmg:greater",
+    "target": 9.0
+  },
   "processing_time": 20,
   "results": [
     {

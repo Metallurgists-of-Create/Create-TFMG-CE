@@ -147,7 +147,7 @@ public class ChemicalVatCategory extends CreateRecipeCategory<VatMachineRecipe> 
             posItem += 21;
         }
 
-        if (recipe.minSize > 1) {
+        if (recipe.minSize != NumberTests.any()) {
             graphics.drawString(Minecraft.getInstance().font, TFMGLang.translate("recipe.vat.minsize", recipe.minSize).component(), 122, 45, 16579836);
         }
     }
@@ -155,7 +155,8 @@ public class ChemicalVatCategory extends CreateRecipeCategory<VatMachineRecipe> 
     @Override
     public List<Component> getTooltipStrings(VatMachineRecipe recipe, IRecipeSlotsView recipeSlotsView, double mouseX, double mouseY) {
         List<Component> tooltip = new ArrayList<>();
-        int pressure = recipe.pressure.getValue();
+        //TODO: Adapt this to work with tests
+        int pressure = 0;//recipe.pressure.getValue();
 
         if (mouseY > -3 && mouseY < 43 && mouseX > 127 && mouseX < 170) {
             if(pressure != 0) {
@@ -200,9 +201,10 @@ public class ChemicalVatCategory extends CreateRecipeCategory<VatMachineRecipe> 
         return tooltip;
     }
 
-    private void renderPressure(Pressure pressure, GuiGraphics graphics) {
+    private void renderPressure(NumberTest pressure, GuiGraphics graphics) {
         TFMGGuiTextures.VAT_BAROMETER.render(graphics, 128, 0);
-        renderPressureBar(graphics, pressure.getValue());
+        //TODO: Adapt this to work with tests
+        renderPressureBar(graphics, 0/*pressure.getValue()*/);
     }
 
     private float getNeedleAngle(int pressure) {

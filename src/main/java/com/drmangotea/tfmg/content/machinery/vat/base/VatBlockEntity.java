@@ -379,7 +379,7 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
 
         for (RecipeHolder<? extends Recipe<?>> recipe1 : list) {
             VatMachineRecipe testedRecipe = (VatMachineRecipe) recipe1.value();
-            if (getTotalTankSize() < testedRecipe.minSize)
+            if (!testedRecipe.minSize.test(getTotalTankSize(), level.getRandom()))
                 continue;
             boolean doesntMatch = false;
 
@@ -521,8 +521,8 @@ public class VatBlockEntity extends SmartBlockEntity implements IHaveGoggleInfor
     public void handleRecipe() {
         if (level == null || recipe == null || !isController() ||
                 level.isClientSide && !isVirtual() ||
-                recipe.heatLevel.test(heatLevel, this.level.getRandom()) ||
-                recipe.pressure.getValue() * (recipe.pressure.getValue() - pressure.getValue()) > 0)
+                !recipe.heatLevel.test(heatLevel, this.level.getRandom()) ||
+                !recipe.pressure.test(pressure.getValue(), this.level.getRandom()))
             return;
 
         if (timer >= recipe.getProcessingDuration()) {
