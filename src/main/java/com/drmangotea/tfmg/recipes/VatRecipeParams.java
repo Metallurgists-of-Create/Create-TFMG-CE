@@ -2,12 +2,10 @@ package com.drmangotea.tfmg.recipes;
 
 import com.drmangotea.tfmg.base.number.NumberTest;
 import com.drmangotea.tfmg.base.number.NumberTests;
-import com.drmangotea.tfmg.base.pressure.Pressure;
 import com.drmangotea.tfmg.content.machinery.vat.base.registry.operations.VatOperation;
 import com.drmangotea.tfmg.content.machinery.vat.base.registry.types.VatType;
 import com.drmangotea.tfmg.content.machinery.vat.base.registry.types.VatTypeEntry;
 import com.drmangotea.tfmg.registry.TFMGVatTypes;
-import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.simibubi.create.content.processing.recipe.ProcessingRecipeParams;
@@ -32,14 +30,14 @@ public class VatRecipeParams extends ProcessingRecipeParams {
 
     public static final MapCodec<VatRecipeParams> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             codec(VatRecipeParams::new).forGetter(Function.identity()),
-            NumberTest.CODEC.optionalFieldOf("min_size", NumberTests.any()).forGetter(VatRecipeParams::getMinSize),
+            NumberTest.CODEC.optionalFieldOf("size", NumberTests.any()).forGetter(VatRecipeParams::getSize),
             NumberTest.CODEC.optionalFieldOf("heat_level", NumberTests.any()).forGetter(VatRecipeParams::getHeatLevel),
             NumberTest.CODEC.optionalFieldOf("pressure", NumberTests.any()).forGetter(VatRecipeParams::getPressure),
             VatOperation.CODEC.listOf().optionalFieldOf("machines", new ArrayList<>()).forGetter(VatRecipeParams::getMachines),
             VatType.CODEC.listOf().optionalFieldOf("allowed_vat_types", List.of()).forGetter(VatRecipeParams::getAllowedVatTypes)
     ).apply(instance, (params, min_size, heat_level,pressure, machines, allowed_vat_types) -> {
         params.machines = machines;
-        params.min_size = min_size;
+        params.size = min_size;
         params.heat_level = heat_level;
         params.pressure = pressure;
         params.allowedVatTypes = allowed_vat_types;
@@ -48,7 +46,7 @@ public class VatRecipeParams extends ProcessingRecipeParams {
 
     public static final StreamCodec<RegistryFriendlyByteBuf, VatRecipeParams> STREAM_CODEC = streamCodec(VatRecipeParams::new);
 
-    public NumberTest min_size = NumberTests.any();
+    public NumberTest size = NumberTests.any();
     public NumberTest heat_level = NumberTests.any();
     public NumberTest pressure = NumberTests.any();
 
@@ -63,8 +61,8 @@ public class VatRecipeParams extends ProcessingRecipeParams {
         return pressure;
     }
 
-    protected final NumberTest getMinSize() {
-        return min_size;
+    protected final NumberTest getSize() {
+        return size;
     }
 
     protected final List<VatOperation> getMachines() {
@@ -78,7 +76,7 @@ public class VatRecipeParams extends ProcessingRecipeParams {
     @Override
     protected void encode(RegistryFriendlyByteBuf buffer) {
         super.encode(buffer);
-        ByteBufCodecs.fromCodec(NumberTest.CODEC).encode(buffer, min_size);
+        ByteBufCodecs.fromCodec(NumberTest.CODEC).encode(buffer, size);
         ByteBufCodecs.fromCodec(NumberTest.CODEC).encode(buffer, heat_level);
         ByteBufCodecs.fromCodec(NumberTest.CODEC).encode(buffer, pressure);
 
@@ -90,7 +88,7 @@ public class VatRecipeParams extends ProcessingRecipeParams {
     @Override
     protected void decode(RegistryFriendlyByteBuf buffer) {
         super.decode(buffer);
-        min_size = ByteBufCodecs.fromCodec(NumberTest.CODEC).decode(buffer);
+        size = ByteBufCodecs.fromCodec(NumberTest.CODEC).decode(buffer);
         heat_level = ByteBufCodecs.fromCodec(NumberTest.CODEC).decode(buffer);
         pressure = ByteBufCodecs.fromCodec(NumberTest.CODEC).decode(buffer);
 

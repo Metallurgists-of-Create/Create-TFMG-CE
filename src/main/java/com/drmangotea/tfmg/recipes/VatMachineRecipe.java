@@ -2,7 +2,6 @@ package com.drmangotea.tfmg.recipes;
 
 import com.drmangotea.tfmg.base.annotation.NothingNullByDefault;
 import com.drmangotea.tfmg.base.number.NumberTest;
-import com.drmangotea.tfmg.base.pressure.Pressure;
 import com.drmangotea.tfmg.content.machinery.vat.base.registry.operations.VatOperation;
 import com.drmangotea.tfmg.content.machinery.vat.base.registry.types.VatType;
 import com.drmangotea.tfmg.registry.TFMGRecipeTypes;
@@ -25,7 +24,7 @@ import java.util.List;
 public class VatMachineRecipe extends ProcessingRecipe<RecipeInput, VatRecipeParams> {
     public List<VatOperation> machines;
     public List<VatType> allowedVatTypes;
-    public NumberTest minSize;
+    public NumberTest size;
     public NumberTest heatLevel;
     public NumberTest pressure;
 
@@ -33,7 +32,7 @@ public class VatMachineRecipe extends ProcessingRecipe<RecipeInput, VatRecipePar
         super(TFMGRecipeTypes.VAT, params);
         machines = params.machines;
         allowedVatTypes = params.allowedVatTypes;
-        minSize = params.min_size;
+        size = params.size;
         heatLevel = params.heat_level;
         pressure = params.pressure;
     }
@@ -144,8 +143,8 @@ public class VatMachineRecipe extends ProcessingRecipe<RecipeInput, VatRecipePar
             return this.freezing().freezing().freezing();
         }
 
-        public VatMachineRecipe.Builder<R> minSize(NumberTest minSize) {
-            params.min_size = minSize;
+        public VatMachineRecipe.Builder<R> minSize(NumberTest size) {
+            params.size = size;
             return this;
         }
 

@@ -4,7 +4,6 @@ import com.drmangotea.tfmg.base.annotation.NothingNullByDefault;
 import com.drmangotea.tfmg.base.lang.TFMGLang;
 import com.drmangotea.tfmg.base.number.NumberTest;
 import com.drmangotea.tfmg.base.number.NumberTests;
-import com.drmangotea.tfmg.base.pressure.Pressure;
 import com.drmangotea.tfmg.config.TFMGConfigs;
 import com.drmangotea.tfmg.content.machinery.vat.base.registry.operations.VatCategoryEvent;
 import com.drmangotea.tfmg.content.machinery.vat.base.registry.operations.VatOperation;
@@ -147,8 +146,8 @@ public class ChemicalVatCategory extends CreateRecipeCategory<VatMachineRecipe> 
             posItem += 21;
         }
 
-        if (recipe.minSize != NumberTests.any()) {
-            graphics.drawString(Minecraft.getInstance().font, TFMGLang.translate("recipe.vat.minsize", recipe.minSize).component(), 122, 45, 16579836);
+        if (recipe.size != NumberTests.any()) {
+            graphics.drawString(Minecraft.getInstance().font, TFMGLang.translate("recipe.vat.minsize", recipe.size).component(), 122, 45, 16579836);
         }
     }
 

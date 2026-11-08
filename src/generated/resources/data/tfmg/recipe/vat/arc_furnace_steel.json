@@ -19,10 +19,6 @@
     "tfmg:graphite_electrode",
     "tfmg:graphite_electrode"
   ],
-  "min_size": {
-    "type": "tfmg:greater",
-    "target": 9.0
-  },
   "processing_time": 20,
   "results": [
     {
@@ -37,5 +33,9 @@
       "amount": 160,
       "id": "tfmg:molten_slag"
     }
-  ]
+  ],
+  "size": {
+    "type": "tfmg:greater",
+    "target": 9.0
+  }
 }
