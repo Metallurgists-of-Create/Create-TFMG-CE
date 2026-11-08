@@ -17,7 +17,7 @@ public class TFMGNumberTests {
     public static final DeferredRegister<NumberTestType<?>> NUMBER_TESTS = DeferredRegister.create(TFMGRegistries.NUMBER_TEST_TYPE, TFMG.MOD_ID);
 
     public static final Supplier<NumberTestType<NumberTests.Any>> ANY = register("any", NumberTests.Any.CODEC);
-    public static final Supplier<NumberTestType<NumberTests.Flat>> FLAT = register("flat", NumberTests.Flat.CODEC);
+    public static final Supplier<NumberTestType<NumberTests.Exact>> EXACT = register("flat", NumberTests.Exact.CODEC);
     public static final Supplier<NumberTestType<NumberTests.Less>> LESS = register("less", NumberTests.Less.CODEC);
     public static final Supplier<NumberTestType<NumberTests.Greater>> GREATER = register("greater", NumberTests.Greater.CODEC);
     public static final Supplier<NumberTestType<NumberTests.Between>> BETWEEN = register("between", NumberTests.Between.CODEC);

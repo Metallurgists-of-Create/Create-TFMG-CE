@@ -20,18 +20,21 @@ import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
+import net.createmod.catnip.data.Couple;
 import net.createmod.catnip.data.Pair;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import org.apache.commons.lang3.mutable.MutableInt;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 @NothingNullByDefault
 public class ChemicalVatCategory extends CreateRecipeCategory<VatMachineRecipe> {
@@ -147,25 +150,25 @@ public class ChemicalVatCategory extends CreateRecipeCategory<VatMachineRecipe> 
         }
 
         if (recipe.size != NumberTests.any()) {
-            graphics.drawString(Minecraft.getInstance().font, TFMGLang.translate("recipe.vat.minsize", recipe.size).component(), 122, 45, 16579836);
+            graphics.drawString(Minecraft.getInstance().font, TFMGLang.translate("recipe.vat.size", recipe.size.formatText(Couple.create(1d, 27d), RandomSource.create())).component(), 122, 45, 16579836);
         }
     }
 
     @Override
     public List<Component> getTooltipStrings(VatMachineRecipe recipe, IRecipeSlotsView recipeSlotsView, double mouseX, double mouseY) {
         List<Component> tooltip = new ArrayList<>();
-        //TODO: Adapt this to work with tests
+
         int pressure = 0;//recipe.pressure.getValue();
-
+        //TODO: The colour should shift based on where the dial is.
         if (mouseY > -3 && mouseY < 43 && mouseX > 127 && mouseX < 170) {
-            if(pressure != 0) {
+            if(recipe.pressure != NumberTests.any()) {
                 int colour = 0x5b6ee1;
-                if (pressure > -8 && pressure < -3) colour = 0x5fcde4;
-                if (pressure > -4 && pressure < 3) colour = 0x37946e;
-                if (pressure > 2 && pressure < 8) colour = 0xd95763;
-                if (pressure > 7 && pressure < 10) colour = 0x9b1c1c;
+                //if (pressure > -8 && pressure < -3) colour = 0x5fcde4;
+                //if (pressure > -4 && pressure < 3) colour = 0x37946e;
+                //if (pressure > 2 && pressure < 8) colour = 0xd95763;
+                //if (pressure > 7 && pressure < 10) colour = 0x9b1c1c;
 
-                tooltip.add(TFMGLang.translate("recipe.vat.pressure", pressure).component()
+                tooltip.add(TFMGLang.translate("recipe.vat.pressure", recipe.pressure.formatText(Couple.create(-30d, 30d), RandomSource.create())).component()
                         .withColor(colour));
             } else {
                 tooltip.add(TFMGLang.translate("recipe.vat.pressure.none").component()
@@ -173,8 +176,8 @@ public class ChemicalVatCategory extends CreateRecipeCategory<VatMachineRecipe> 
             }
         }
 
-        //TODO: Adapt this to work with tests
-        //boolean showHeat;
+        //TODO: Perhaps a thermometer visual could be used instead? Moving based on the bounds of the test.
+        boolean showHeat = mouseY > 109 && mouseY < 118 && mouseX > 10 && mouseX < 100;
         //if (recipe.heatLevel > 9) {
         //    showHeat = mouseY > 109 && mouseY < 118 && mouseX > 10 && mouseX < 100;
         //} else if (recipe.heatLevel > 0) {
@@ -183,11 +186,11 @@ public class ChemicalVatCategory extends CreateRecipeCategory<VatMachineRecipe> 
         //    showHeat = mouseY > 109 && mouseY < 118 && mouseX > 10 && mouseX < (Math.abs(recipe.heatLevel) * 10) + 10;
         //}
 
-        //if (showHeat) {
-        //    int colour = recipe.heatLevel <= 0 ? 0x9eccfb : recipe.heatLevel > 9 ? 0x425bf5 : 0xd17800;
-        //    tooltip.add(TFMGLang.translate("recipe.vat.heat", recipe.heatLevel).component()
-        //            .withColor(colour));
-        //}
+        if (showHeat && recipe.heatLevel != NumberTests.any()) {
+            //int colour = recipe.heatLevel <= 0 ? 0x9eccfb : recipe.heatLevel > 9 ? 0x425bf5 : 0xd17800;
+            tooltip.add(TFMGLang.translate("recipe.vat.heat", recipe.heatLevel.formatText(Couple.create(Double.MIN_VALUE, Double.MAX_VALUE), RandomSource.create())).component()
+                    /*.withColor(colour)*/);
+        }
 
         List<VatOperation> alreadyHandled = new ArrayList<>();
 
@@ -202,7 +205,7 @@ public class ChemicalVatCategory extends CreateRecipeCategory<VatMachineRecipe> 
 
     private void renderPressure(NumberTest pressure, GuiGraphics graphics) {
         TFMGGuiTextures.VAT_BAROMETER.render(graphics, 128, 0);
-        //TODO: Adapt this to work with tests
+        //TODO: This needs to bounce between the bounds of a NumberTest or stay still if the min & max are equal.
         renderPressureBar(graphics, 0/*pressure.getValue()*/);
     }
 

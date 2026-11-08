@@ -1,9 +1,12 @@
 package com.drmangotea.tfmg.base.number;
 
+import com.drmangotea.tfmg.base.lang.TFMGLang;
 import com.drmangotea.tfmg.registry.TFMGNumberTests;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.createmod.catnip.data.Couple;
+import net.minecraft.network.chat.Component;
 import net.minecraft.util.RandomSource;
 
 public class NumberTests {
@@ -12,8 +15,8 @@ public class NumberTests {
         return Any.INSTANCE;
     }
 
-    public static Flat flat(double target) {
-        return new Flat(target);
+    public static Exact exact(double target) {
+        return new Exact(target);
     }
 
     public static Less less(double target, boolean inclusive) {
@@ -51,15 +54,25 @@ public class NumberTests {
         }
 
         @Override
+        public Component formatText(Couple<Double> limits, RandomSource random) {
+            return TFMGLang.translate("number_test.any").component();
+        }
+
+        @Override
+        public Couple<Double> getBounds(Couple<Double> limits, RandomSource random) {
+            return limits;
+        }
+
+        @Override
         public NumberTestType<?> getType() {
             return TFMGNumberTests.ANY.get();
         }
     }
 
-    public record Flat(double target) implements NumberTest {
-        public static final MapCodec<Flat> CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(
-                Codec.DOUBLE.fieldOf("target").forGetter(Flat::target)
-        ).apply(instance, Flat::new));
+    public record Exact(double target) implements NumberTest {
+        public static final MapCodec<Exact> CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(
+                Codec.DOUBLE.fieldOf("target").forGetter(Exact::target)
+        ).apply(instance, Exact::new));
 
         @Override
         public boolean test(double value, RandomSource random) {
@@ -67,8 +80,18 @@ public class NumberTests {
         }
 
         @Override
+        public Component formatText(Couple<Double> limits, RandomSource random) {
+            return TFMGLang.translate("number_test.exact", target()).component();
+        }
+
+        @Override
+        public Couple<Double> getBounds(Couple<Double> limits, RandomSource random) {
+            return Couple.create(target(), target());
+        }
+
+        @Override
         public NumberTestType<?> getType() {
-            return TFMGNumberTests.FLAT.get();
+            return TFMGNumberTests.EXACT.get();
         }
     }
 
@@ -87,6 +110,16 @@ public class NumberTests {
             if (inclusive)
                 return value <= target();
             return value < target();
+        }
+
+        @Override
+        public Couple<Double> getBounds(Couple<Double> limits, RandomSource random) {
+            return Couple.create(Math.min(target(), limits.getFirst()), Math.min(target(), limits.getSecond()));
+        }
+
+        @Override
+        public Component formatText(Couple<Double> limits, RandomSource random) {
+            return TFMGLang.translate("number_test.less" + (inclusive() ? ".inclusive" : ""), target()).component();
         }
 
         @Override
@@ -113,6 +146,16 @@ public class NumberTests {
         }
 
         @Override
+        public Component formatText(Couple<Double> limits, RandomSource random) {
+            return TFMGLang.translate("number_test.greater" + (inclusive() ? ".inclusive" : ""), target()).component();
+        }
+
+        @Override
+        public Couple<Double> getBounds(Couple<Double> limits, RandomSource random) {
+            return Couple.create(Math.max(target(), limits.getFirst()), Math.max(target(), limits.getSecond()));
+        }
+
+        @Override
         public NumberTestType<?> getType() {
             return TFMGNumberTests.GREATER.get();
         }
@@ -134,6 +177,18 @@ public class NumberTests {
             if (inclusive)
                 return min() <= value && max() >= value;
             return min() < value && max() > value;
+        }
+
+        @Override
+        public Component formatText(Couple<Double> limits, RandomSource random) {
+            return TFMGLang.translate("number_test.between" + (inclusive() ? ".inclusive" : ""), min(), max()).component();
+        }
+
+        @Override
+        public Couple<Double> getBounds(Couple<Double> limits, RandomSource random) {
+            double min = inclusive ? min() : Math.nextUp(min());
+            double max = inclusive ? max() : Math.nextDown(max());
+            return Couple.create(min, max);
         }
 
         @Override
