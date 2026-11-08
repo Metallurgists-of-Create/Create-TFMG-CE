@@ -14,7 +14,8 @@ val release = System.getenv("RELEASE") != null && System.getenv("RELEASE").toBoo
 val webhook = ci && !release
 val buildNumber: String? = System.getenv("MOD_BUILD_NUMBER")
 
-val runDataGen = gradle.startParameter.taskNames.any { it.contains("runData") }
+//FIXME: This fails to actually activate during datagen
+val runDataGen = true//gradle.startParameter.taskNames.any { it.contains("runData") }
 
 version = "${property("minecraft_version")}-${property("mod_version")}${if (webhook) "-build.${buildNumber}" else ""}"
 group = "${property("mod_group_id")}"

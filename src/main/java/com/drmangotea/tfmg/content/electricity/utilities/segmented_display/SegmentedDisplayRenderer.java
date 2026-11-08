@@ -6,9 +6,11 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.simibubi.create.foundation.blockEntity.renderer.SafeBlockEntityRenderer;
 import dev.engine_room.flywheel.lib.model.baked.PartialModel;
 import net.createmod.catnip.render.CachedBuffers;
+import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -16,31 +18,22 @@ public class SegmentedDisplayRenderer extends SafeBlockEntityRenderer<SegmentedD
 
     public SegmentedDisplayRenderer(BlockEntityRendererProvider.Context context) {}
     @Override
-    protected void renderSafe(SegmentedDisplayBlockEntity be, float partialTicks, PoseStack ms, MultiBufferSource bufferSource, int light, int overlay) {
+    protected void renderSafe(SegmentedDisplayBlockEntity be, float partialTicks, PoseStack ms, MultiBufferSource bufferSource, int l, int overlay) {
 
         BlockState blockState = be.getBlockState();
+		Direction facing = blockState.getValue(HorizontalDirectionalBlock.FACING).getOpposite();
+		int light = LightTexture.pack(15, 15);
         VertexConsumer vb = bufferSource.getBuffer(RenderType.cutoutMipped());
         ms.pushPose();
 
         int color =  be.color.getTextColor();
-
-        for(int i =0;i<be.segmentsToRender.size();i++){
-
-            CachedBuffers.partialFacing(getSegment(be.segmentsToRender.get(i)-10), blockState,blockState.getValue(HorizontalDirectionalBlock.FACING).getOpposite())
-                    .light(999999)
-                    .color(color)
-                    .renderInto(ms,vb);
-        }
-
-        for(int i =0;i<be.segmentsToRender2.size();i++){
-
-            CachedBuffers.partialFacing(getSegment(be.segmentsToRender2.get(i)-10), blockState,blockState.getValue(HorizontalDirectionalBlock.FACING).getOpposite())
-                    .light(999999)
-                    .color(color)
-                    .renderInto(ms,vb);
-        }
-
-
+		
+		be.segmentsToRender.forEach(list -> list.forEach(seg ->
+            CachedBuffers.partialFacing(getSegment(seg), blockState, facing)
+				.light(light)
+				.color(color)
+				.renderInto(ms,vb)
+		));
 
         ms.popPose();
     }

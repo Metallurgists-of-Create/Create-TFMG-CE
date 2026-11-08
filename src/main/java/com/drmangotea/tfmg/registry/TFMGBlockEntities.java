@@ -416,8 +416,6 @@ public class TFMGBlockEntities {
             .blockEntity("segmented_display", SegmentedDisplayBlockEntity::new)
             .validBlocks(TFMGBlocks.SEGMENTED_DISPLAY)
             .renderer(() -> SegmentedDisplayRenderer::new)
-            //.onRegister(assignDataBehaviourBE(new SegmentedDisplayTarget()))
-            //.onRegister(assignDataBehaviourBE(new SegmentedDisplaySource()))
             .register();
 
     public static final BlockEntityEntry<SmokestackBlockEntity> SMOKESTACK = REGISTRATE

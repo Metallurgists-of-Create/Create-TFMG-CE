@@ -15,7 +15,6 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,13 +22,9 @@ import static net.minecraft.world.level.block.HorizontalDirectionalBlock.FACING;
 
 @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 public class SegmentedDisplayBlockEntity extends ElectricBlockEntity {
-    private static final Couple<String> EMPTY = Couple.create("", "");
-
     private Optional<DynamicComponent> customText;
     private Couple<String> displayedStrings;
-
-    public List<Integer> segmentsToRender = new ArrayList<>();
-    public List<Integer> segmentsToRender2 = new ArrayList<>();
+    public Couple<List<Integer>> segmentsToRender = clearSegments();
 
     public DyeColor color;
 
@@ -56,10 +51,9 @@ public class SegmentedDisplayBlockEntity extends ElectricBlockEntity {
     @Override
     public void lazyTick() {
         super.lazyTick();
-        if(getPowerUsage()<5||!canWork()){
-            segmentsToRender = new ArrayList<>();
-            segmentsToRender2 = new ArrayList<>();
-        }else {
+        if (getPowerUsage() < 5 || !canWork()) {
+            segmentsToRender = clearSegments();
+        } else {
             segmentsToRender = getSegments();
         }
     }
@@ -68,32 +62,21 @@ public class SegmentedDisplayBlockEntity extends ElectricBlockEntity {
         partIndex = 0;
         customText = Optional.empty();
     }
-    public List<Integer> getSegments(){
-        List<Integer> segments = SegmentedDisplaySegments.SYMBOLS_TO_SEGMENTS.get(getDisplayedStrings().get(true).toLowerCase());
-
-        List<Integer> segments2 = SegmentedDisplaySegments.SYMBOLS_TO_SEGMENTS.get(getDisplayedStrings().get(false).toLowerCase());
-
-        if(segments2 == null)
-            segments2 = new ArrayList<>();
-        if(segments == null)
-            segments = new ArrayList<>();
-
-        List<Integer> segments3 = new ArrayList<>();
-        for(int segment : segments2){
-            segments3.add(segment+10);
-        }
-
-        segmentsToRender2 = segments3;
-
-        return segments;
+	
+    public Couple<List<Integer>> getSegments() {
+		if (displayedStrings == null) return clearSegments();
+		
+		return displayedStrings.mapWithContext((symbol,first) -> {
+			List<Integer> segments = SegmentedDisplaySegments.SYMBOLS_TO_SEGMENTS.get(symbol.toLowerCase());
+			if (segments == null) return List.of();
+			if (first) return segments;
+			return segments.stream().map(i -> i+10).toList();
+		});
     }
 
-
-    public Couple<String> getDisplayedStrings() {
-        if (displayedStrings == null)
-            return EMPTY;
-        return displayedStrings;
-    }
+	public Couple<List<Integer>> clearSegments() {
+		return Couple.create(List.of(),List.of());
+	}
 
     @Override
     public void initialize() {
@@ -125,20 +108,16 @@ public class SegmentedDisplayBlockEntity extends ElectricBlockEntity {
     }
 
     public void updateDisplayedStrings() {
-        customText.map(DynamicComponent::resolve)
-                .ifPresentOrElse(
-                        fullText -> displayedStrings =
-                                Couple.create(
-                                        charOrEmpty(fullText, partIndex * 2),
-                                        charOrEmpty(fullText, partIndex * 2 + 1)
-                                ),
-                        () -> displayedStrings =
-                                Couple.create("0","0"));
+        customText.map(DynamicComponent::resolve).ifPresentOrElse(
+			fullText -> displayedStrings = Couple.create(
+				charOrEmpty(fullText, partIndex * 2),
+				charOrEmpty(fullText, partIndex * 2 + 1)
+			),
+			() -> displayedStrings = Couple.create("0","0"));
     }
 
     public MutableComponent getFullText() {
-        return customText.map(DynamicComponent::get)
-                .orElse(Component.literal(""));
+        return customText.map(DynamicComponent::get).orElse(Component.literal(""));
     }
 
     @Override
@@ -173,8 +152,7 @@ public class SegmentedDisplayBlockEntity extends ElectricBlockEntity {
         NBTHelper.writeEnum(compound,"color",color);
         if (customText.isPresent()) {
             compound.putInt("CustomTextIndex", partIndex);
-            customText.get()
-                    .write(compound, registries);
+            customText.get().write(compound, registries);
         }
     }
 

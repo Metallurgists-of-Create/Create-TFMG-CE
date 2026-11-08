@@ -30,7 +30,6 @@ import java.util.function.BiConsumer;
 public class SegmentedDisplayBlock extends TFMGHorizontalDirectionalBlock implements IBE<SegmentedDisplayBlockEntity> {
     public SegmentedDisplayBlock(Properties properties) {
         super(properties);
-
     }
 
     @Override
@@ -49,10 +48,7 @@ public class SegmentedDisplayBlock extends TFMGHorizontalDirectionalBlock implem
             return;
 
         BlockPos currentPos = start;
-        Direction left = state.getValue(FACING)
-                .getClockWise();
-
-
+        Direction left = state.getValue(FACING).getClockWise();
         Direction right = left.getOpposite();
 
         while (true) {
@@ -78,15 +74,10 @@ public class SegmentedDisplayBlock extends TFMGHorizontalDirectionalBlock implem
     @Override
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
         ItemStack heldItem = player.getItemInHand(hand);
-        SegmentedDisplayBlockEntity segmentedDisplay = getBlockEntity(world, pos);
         if (heldItem.isEmpty()) {
-
-            segmentedDisplay.clearCustomText();
+            withBlockEntityDo(world, pos, SegmentedDisplayBlockEntity::clearCustomText);
             return ItemInteractionResult.SUCCESS;
         }
-
-        boolean display =
-                heldItem.getItem() == Items.NAME_TAG && heldItem.has(DataComponents.CUSTOM_NAME) || AllBlocks.CLIPBOARD.isIn(heldItem);
 
         DyeColor dye = DyeColor.getColor(heldItem);
 
@@ -98,8 +89,10 @@ public class SegmentedDisplayBlock extends TFMGHorizontalDirectionalBlock implem
             return ItemInteractionResult.SUCCESS;
         }
 
-        if(!display)
-            return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        if (!(heldItem.getItem() == Items.NAME_TAG && heldItem.has(DataComponents.CUSTOM_NAME)
+			|| AllBlocks.CLIPBOARD.isIn(heldItem))
+		) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+		
         String tagUsed = stack.getOrDefault(DataComponents.CUSTOM_NAME, Component.empty()).getString();
         walkParts(world, pos, (currentPos, rowPosition) -> withBlockEntityDo(world, currentPos, be -> be.displayCustomText(tagUsed, rowPosition)));
         return ItemInteractionResult.SUCCESS;

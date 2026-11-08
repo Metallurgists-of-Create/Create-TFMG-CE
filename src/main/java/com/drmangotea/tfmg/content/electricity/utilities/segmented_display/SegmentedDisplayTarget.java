@@ -6,7 +6,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
@@ -22,9 +21,7 @@ public class SegmentedDisplayTarget extends SingleLineDisplayTarget {
     protected void acceptLine(MutableComponent text, DisplayLinkContext context) {
         String tagElement = Component.Serializer.toJson(text, context.level().registryAccess());
         SegmentedDisplayBlock.walkParts(context.level(), context.getTargetPos(), (currentPos, rowPosition) -> {
-            BlockEntity blockEntity = context.level()
-                    .getBlockEntity(currentPos);
-            if (blockEntity instanceof SegmentedDisplayBlockEntity display)
+            if (context.level().getBlockEntity(currentPos) instanceof SegmentedDisplayBlockEntity display)
                 display.displayCustomText(tagElement, rowPosition);
         });
     }

@@ -172,6 +172,7 @@ import static com.drmangotea.tfmg.base.TFMGBuilderTransformers.*;
 import static com.drmangotea.tfmg.content.electricity.lights.LightBulbBlock.LIGHT;
 import static com.drmangotea.tfmg.registry.TFMGTags.Items;
 import static com.simibubi.create.api.behaviour.display.DisplaySource.displaySource;
+import static com.simibubi.create.api.behaviour.display.DisplayTarget.displayTarget;
 import static com.simibubi.create.api.behaviour.movement.MovementBehaviour.movementBehaviour;
 import static com.simibubi.create.api.contraption.storage.fluid.MountedFluidStorageType.mountedFluidStorage;
 import static com.simibubi.create.foundation.data.BlockStateGen.axisBlock;
@@ -1369,9 +1370,11 @@ public class TFMGBlocks {
                     .initialProperties(SharedProperties::softMetal)
                     .transform(pickaxeOnly())
                     .onRegister(connectedTextures(SegmentedDisplayCTBehavior::new))
+					.onRegister(casingConnectivity((b,cc) -> cc.makeCasing(b, TFMGSpriteShifts.HEAVY_MACHINERY_CASING)))
                     .blockstate(BlockStateGen.horizontalBlockProvider(true))
-                    .item()
-                    .transform(customItemModel())
+					.transform(displaySource(TFMGDisplaySources.SEGMENTED_DISPLAY))
+					.transform(displayTarget(TFMGDisplayTargets.SEGMENTED_DISPLAY))
+                    .item().transform(customItemModel())
                     .register();
 
     public static final BlockEntry<TransformerBlock> TRANSFORMER =
@@ -1897,7 +1900,6 @@ public class TFMGBlocks {
                             .requires(Items.CAUTION_BLOCKS.tag)
                             .unlockedBy("has_caution_block", RegistrateRecipeProvider.has(Items.CAUTION_BLOCKS.tag))
 							.save(p.withConditions(conditions), TFMG.asResource("crafting/materials/" + c.getName() + "_from_other_caution_block"));
-                    //TFMGUtils.conditionalCrafting(p, , builder, conditions);
                 })
                 .item()
                 .tag(Items.CAUTION_BLOCKS.tag)

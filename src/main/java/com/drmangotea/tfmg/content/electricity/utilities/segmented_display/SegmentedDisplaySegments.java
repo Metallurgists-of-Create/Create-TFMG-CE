@@ -6,8 +6,6 @@ public class SegmentedDisplaySegments {
     public static Map<String, List<Integer>> SYMBOLS_TO_SEGMENTS= new HashMap<>();
     static {
 
-
-        //
         put(0,1,2,3,5,6,7);
         put(1,1,2);
         put(2,3,6,4,2,5);
@@ -48,27 +46,13 @@ public class SegmentedDisplaySegments {
         put("y",1,4,6,7,5);
         put("z",3,9,4);
 
-
     }
-    public static void put(int number, Integer... segments){
+    private static void put(int number, Integer... segments){
         put(String.valueOf(number),segments);
     }
     private static void put(String string, Integer... segments){
 
         SYMBOLS_TO_SEGMENTS.put(string, Arrays.asList(segments));
-
-        List<Integer> segments2 = new ArrayList<>();
-
-        for (Integer segment : segments){
-
-            if(segment == 0)
-                break;
-
-            segments2.add(10+segment);
-        }
-
-
-        SYMBOLS_TO_SEGMENTS.put(string, segments2);
 
     }
 }
