@@ -5,7 +5,6 @@ import com.drmangotea.tfmg.registry.TFMGNumberTests;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.createmod.catnip.data.Couple;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.RandomSource;
 
@@ -54,13 +53,13 @@ public class NumberTests {
         }
 
         @Override
-        public Component formatText(Couple<Double> limits, RandomSource random) {
+        public Component formatText(Bounds limits) {
             return TFMGLang.translate("number_test.any").component();
         }
 
         @Override
-        public Couple<Double> getBounds(Couple<Double> limits, RandomSource random) {
-            return limits;
+        public Bounds getBounds() {
+            return null;
         }
 
         @Override
@@ -80,13 +79,13 @@ public class NumberTests {
         }
 
         @Override
-        public Component formatText(Couple<Double> limits, RandomSource random) {
+        public Component formatText(Bounds limits) {
             return TFMGLang.translate("number_test.exact", target()).component();
         }
 
         @Override
-        public Couple<Double> getBounds(Couple<Double> limits, RandomSource random) {
-            return Couple.create(target(), target());
+        public Bounds getBounds() {
+            return new Bounds(target(), target());
         }
 
         @Override
@@ -113,12 +112,12 @@ public class NumberTests {
         }
 
         @Override
-        public Couple<Double> getBounds(Couple<Double> limits, RandomSource random) {
-            return Couple.create(Math.min(target(), limits.getFirst()), Math.min(target(), limits.getSecond()));
+        public Bounds getBounds() {
+            return new Bounds(Double.NEGATIVE_INFINITY, target());
         }
 
         @Override
-        public Component formatText(Couple<Double> limits, RandomSource random) {
+        public Component formatText(Bounds limits) {
             return TFMGLang.translate("number_test.less" + (inclusive() ? ".inclusive" : ""), target()).component();
         }
 
@@ -146,13 +145,13 @@ public class NumberTests {
         }
 
         @Override
-        public Component formatText(Couple<Double> limits, RandomSource random) {
+        public Component formatText(Bounds limits) {
             return TFMGLang.translate("number_test.greater" + (inclusive() ? ".inclusive" : ""), target()).component();
         }
 
         @Override
-        public Couple<Double> getBounds(Couple<Double> limits, RandomSource random) {
-            return Couple.create(Math.max(target(), limits.getFirst()), Math.max(target(), limits.getSecond()));
+        public Bounds getBounds() {
+            return new Bounds(target(), Double.POSITIVE_INFINITY);
         }
 
         @Override
@@ -180,15 +179,15 @@ public class NumberTests {
         }
 
         @Override
-        public Component formatText(Couple<Double> limits, RandomSource random) {
+        public Component formatText(Bounds limits) {
             return TFMGLang.translate("number_test.between" + (inclusive() ? ".inclusive" : ""), min(), max()).component();
         }
 
         @Override
-        public Couple<Double> getBounds(Couple<Double> limits, RandomSource random) {
-            double min = inclusive ? min() : Math.nextUp(min());
-            double max = inclusive ? max() : Math.nextDown(max());
-            return Couple.create(min, max);
+        public Bounds getBounds() {
+            //double min = inclusive ? min() : Math.nextUp(min());
+            //double max = inclusive ? max() : Math.nextDown(max());
+            return new Bounds(min, max, inclusive);
         }
 
         @Override

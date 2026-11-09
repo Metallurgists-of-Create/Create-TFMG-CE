@@ -20,21 +20,18 @@ import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
-import net.createmod.catnip.data.Couple;
 import net.createmod.catnip.data.Pair;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import org.apache.commons.lang3.mutable.MutableInt;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 @NothingNullByDefault
 public class ChemicalVatCategory extends CreateRecipeCategory<VatMachineRecipe> {
@@ -148,9 +145,11 @@ public class ChemicalVatCategory extends CreateRecipeCategory<VatMachineRecipe> 
             TFMGGuiTextures.SLOT.render(graphics, posItem - widthItem, recipe.getFluidIngredients().isEmpty() ? 70 : 62);
             posItem += 21;
         }
-
-        if (recipe.size != NumberTests.any()) {
-            graphics.drawString(Minecraft.getInstance().font, TFMGLang.translate("recipe.vat.size", recipe.size.formatText(Couple.create(1d, 27d), RandomSource.create())).component(), 122, 45, 16579836);
+		
+		NumberTest.Bounds bounds = recipe.size.getBounds();
+        if (bounds != null) {
+			bounds = bounds.intersection(new NumberTest.Bounds(1d, 27d), true);
+            graphics.drawString(Minecraft.getInstance().font, TFMGLang.translate("recipe.vat.size", recipe.size.formatText(bounds)).component(), 122, 45, 16579836);
         }
     }
 
@@ -168,7 +167,7 @@ public class ChemicalVatCategory extends CreateRecipeCategory<VatMachineRecipe> 
                 //if (pressure > 2 && pressure < 8) colour = 0xd95763;
                 //if (pressure > 7 && pressure < 10) colour = 0x9b1c1c;
 
-                tooltip.add(TFMGLang.translate("recipe.vat.pressure", recipe.pressure.formatText(Couple.create(-30d, 30d), RandomSource.create())).component()
+                tooltip.add(TFMGLang.translate("recipe.vat.pressure", recipe.pressure.formatText(new NumberTest.Bounds(-30d, 30d))).component()
                         .withColor(colour));
             } else {
                 tooltip.add(TFMGLang.translate("recipe.vat.pressure.none").component()
@@ -188,7 +187,7 @@ public class ChemicalVatCategory extends CreateRecipeCategory<VatMachineRecipe> 
 
         if (showHeat && recipe.heatLevel != NumberTests.any()) {
             //int colour = recipe.heatLevel <= 0 ? 0x9eccfb : recipe.heatLevel > 9 ? 0x425bf5 : 0xd17800;
-            tooltip.add(TFMGLang.translate("recipe.vat.heat", recipe.heatLevel.formatText(Couple.create(Double.MIN_VALUE, Double.MAX_VALUE), RandomSource.create())).component()
+            tooltip.add(TFMGLang.translate("recipe.vat.heat", recipe.heatLevel.formatText(new NumberTest.Bounds(Double.MIN_VALUE, Double.MAX_VALUE))).component()
                     /*.withColor(colour)*/);
         }
 
@@ -250,25 +249,26 @@ public class ChemicalVatCategory extends CreateRecipeCategory<VatMachineRecipe> 
     }
 
     private void renderHeated(NumberTest heatLevel, GuiGraphics graphics) {
-        if(heatLevel != NumberTests.any()) {
-            //TODO: Adapt this to work with tests
-            //if (heatLevel > 9) {
-            //    for (int i = 9; i > 0; i--) {
-            //        if (heatLevel >= 9 + i) {
-            //            TFMGGuiTextures.VAT_SUPERHEATER.render(graphics, i * 10, 109);
-            //        } else {
-            //            TFMGGuiTextures.VAT_HEATER.render(graphics, i * 10, 109);
-            //        }
-            //    }
-            //} else if (heatLevel > 0) {
-            //    for (int i = heatLevel; i > 0; i--) {
-            //        TFMGGuiTextures.VAT_HEATER.render(graphics, i * 10, 109);
-            //    }
-            //} else {
-            //    for (int i = -1 * heatLevel; i > 0; i--) {
-            //        TFMGGuiTextures.VAT_FREEZER.render(graphics, i * 10, 109);
-            //    }
-            //}
-        }
-    }
+		NumberTest.Bounds bounds = heatLevel.getBounds();
+		
+		if (bounds == null) return;
+		
+		if (bounds.min() > 9) {
+			for (int i = 9; i > 0; i--) {
+				if (bounds.min() >= 9 + i) {
+					TFMGGuiTextures.VAT_SUPERHEATER.render(graphics, i * 10, 109);
+				} else {
+					TFMGGuiTextures.VAT_HEATER.render(graphics, i * 10, 109);
+				}
+			}
+		} else if (bounds.min() > 0) {
+			for (int i = (int) bounds.min(); i > 0; i--) {
+				TFMGGuiTextures.VAT_HEATER.render(graphics, i * 10, 109);
+			}
+		} else {
+			for (int i = (int) bounds.max(); i < 0; i++) {
+				TFMGGuiTextures.VAT_FREEZER.render(graphics, i * 10, 109);
+			}
+		}
+	}
 }
