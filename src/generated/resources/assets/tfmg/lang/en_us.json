@@ -1248,6 +1248,6 @@
   "tfmg.vat.header": "Chemical Vat",
   "tfmg.voltage": "Voltage: %1$s",
   "tfmg.winding_machine.header": "Winding Machine",
-  "tfmg.winding_machine.turn_percentage": "Allowed Turn Percentage (From 1000)",
+  "tfmg.winding_machine.turn_count": "Number of Turns",
   "tfmg.wires.removed_data": "Data Removed"
 }

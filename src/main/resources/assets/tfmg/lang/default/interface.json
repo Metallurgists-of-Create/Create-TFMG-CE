@@ -98,7 +98,7 @@
   "tfmg.goggles.motor.usage": "Energy Usage: %1$s fe/t",
   "tfmg.goggles.generator.production": "Energy Production: %1$s fe/t",
   "tfmg.resistor.allowed_voltage": "Percentage of Voltage Allowed",
-  "tfmg.winding_machine.turn_percentage": "Allowed Turn Percentage (From 1000)",
+  "tfmg.winding_machine.turn_count": "Number of Turns",
   "tfmg.creative_generator.voltage_generation": "Voltage Generation",
   "tfmg.distillation_output.when_tank_is_full": "When Internal Tank is Full",
   "tfmg.distillation_output.mode.keep_fluid": "Stop Distillation Process",
