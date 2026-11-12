@@ -22,6 +22,7 @@
 - Segmented Displays
   - textures connect to Heavy Machinery Casings
   - Can be targetted by display links
+  - Can read text from Clipboards
 
 ### API Changes:
 

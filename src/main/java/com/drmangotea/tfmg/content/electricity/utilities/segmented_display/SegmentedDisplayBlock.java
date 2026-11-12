@@ -5,6 +5,7 @@ import com.drmangotea.tfmg.base.blocks.TFMGHorizontalDirectionalBlock;
 import com.drmangotea.tfmg.content.electricity.base.IElectric;
 import com.drmangotea.tfmg.registry.TFMGBlockEntities;
 import com.simibubi.create.AllBlocks;
+import com.simibubi.create.content.equipment.clipboard.ClipboardEntry;
 import com.simibubi.create.foundation.block.IBE;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -70,16 +71,19 @@ public class SegmentedDisplayBlock extends TFMGHorizontalDirectionalBlock implem
             index++;
         }
     }
+	
+	public void write(LevelAccessor world, BlockPos start, String text) {
+		walkParts(world, start, (blockPos, rowPos) -> withBlockEntityDo(world, blockPos, be -> be.displayCustomText(text, rowPos)));
+	}
 
     @Override
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
-        ItemStack heldItem = player.getItemInHand(hand);
-        if (heldItem.isEmpty()) {
+        if (stack.isEmpty()) {
             withBlockEntityDo(world, pos, SegmentedDisplayBlockEntity::clearCustomText);
             return ItemInteractionResult.SUCCESS;
         }
 
-        DyeColor dye = DyeColor.getColor(heldItem);
+        DyeColor dye = DyeColor.getColor(stack);
 
         if (dye != null) {
             walkParts(world, pos, (currentPos, rowPosition) -> {
@@ -88,13 +92,18 @@ public class SegmentedDisplayBlock extends TFMGHorizontalDirectionalBlock implem
             });
             return ItemInteractionResult.SUCCESS;
         }
-
-        if (!(heldItem.getItem() == Items.NAME_TAG && heldItem.has(DataComponents.CUSTOM_NAME)
-			|| AllBlocks.CLIPBOARD.isIn(heldItem))
-		) return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+		
+		if (stack.is(AllBlocks.CLIPBOARD.asItem())) {
+			String string = ClipboardEntry.getLastViewedEntries(stack).getFirst().text.getString().split("\n")[0];
+			write(world, pos, string);
+			return ItemInteractionResult.SUCCESS;
+		}
+		
+        if (!(stack.is(Items.NAME_TAG) && stack.has(DataComponents.CUSTOM_NAME)))
+			return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
 		
         String tagUsed = stack.getOrDefault(DataComponents.CUSTOM_NAME, Component.empty()).getString();
-        walkParts(world, pos, (currentPos, rowPosition) -> withBlockEntityDo(world, currentPos, be -> be.displayCustomText(tagUsed, rowPosition)));
+        write(world, pos, tagUsed);
         return ItemInteractionResult.SUCCESS;
     }
 
