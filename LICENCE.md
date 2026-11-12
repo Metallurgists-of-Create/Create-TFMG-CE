@@ -48,7 +48,7 @@ In addition, the following restrictions apply:
 6. Attribution. Every distribution, including of modified versions, must keep the copyright notice and this
    licence intact. No person may present the Software, or a modified version of it, as their own original work
    or as the work of anyone other than the copyright holders and contributors. Modified versions must be clearly
-   identified as modified and must not use the Radiohead's name or branding to imply endorsement.
+   identified as modified and must not use The Metallurgists' name or branding to imply endorsement.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
