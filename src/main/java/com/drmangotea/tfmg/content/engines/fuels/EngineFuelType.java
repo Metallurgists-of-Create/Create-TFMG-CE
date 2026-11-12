@@ -16,10 +16,7 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Stream;
 
 public record EngineFuelType(HolderSet<Fluid> fluids, float speed, float efficiency, float torque, Fluid exhaust) {
@@ -30,18 +27,21 @@ public record EngineFuelType(HolderSet<Fluid> fluids, float speed, float efficie
 		Codec.FLOAT.optionalFieldOf("speed", 1f).forGetter(EngineFuelType::speed),
 		Codec.FLOAT.optionalFieldOf("efficiency", 1f).forGetter(EngineFuelType::efficiency),
 		Codec.FLOAT.optionalFieldOf("torque", 1f).forGetter(EngineFuelType::torque),
-		BuiltInRegistries.FLUID.byNameCodec().optionalFieldOf("exhaust", TFMGFluids.CARBON_DIOXIDE.get()).forGetter(EngineFuelType::exhaust)
+		BuiltInRegistries.FLUID.byNameCodec().optionalFieldOf("exhaust").xmap(
+			o -> o.orElseGet(TFMGFluids.CARBON_DIOXIDE::getSource),
+			Optional::of //default should be printed anyway
+		).forGetter(EngineFuelType::exhaust)
     ).apply(i, EngineFuelType::new));
 
     public static Optional<Holder.Reference<EngineFuelType>> getTypeForFluid(RegistryAccess registryAccess, Fluid fluid) {
-        return typeCache.computeIfAbsent(fluid, f -> {
-			Optional<Holder.Reference<Fluid>> fluidRef = BuiltInRegistries.FLUID.getHolder(BuiltInRegistries.FLUID.getKey(f));
-            return fluidRef.flatMap(fluidReference -> registryAccess.lookupOrThrow(TFMGRegistries.ENGINE_FUEL_TYPE)
-                    .listElements()
-                    .filter(ref -> ref.value().fluids.contains(fluidReference))
-                    .findFirst());
-
-        });
+		return typeCache.computeIfAbsent(fluid, f ->
+			BuiltInRegistries.FLUID.getHolder(BuiltInRegistries.FLUID.getKey(f))
+			.flatMap(fluidReference ->
+				registryAccess.lookupOrThrow(TFMGRegistries.ENGINE_FUEL_TYPE)
+					.listElements()
+					.filter(ref -> ref.value().fluids.contains(fluidReference))
+					.findFirst())
+        );
     }
 
     public boolean test(FluidStack fluidStack) {
