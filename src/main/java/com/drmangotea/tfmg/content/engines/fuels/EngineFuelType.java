@@ -16,10 +16,12 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Stream;
 
-@SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 public record EngineFuelType(HolderSet<Fluid> fluids, float speed, float efficiency, float torque, Fluid exhaust) {
     public static final Map<Fluid, Optional<Holder.Reference<EngineFuelType>>> typeCache = new HashMap<>();
 
@@ -28,23 +30,18 @@ public record EngineFuelType(HolderSet<Fluid> fluids, float speed, float efficie
 		Codec.FLOAT.optionalFieldOf("speed", 1f).forGetter(EngineFuelType::speed),
 		Codec.FLOAT.optionalFieldOf("efficiency", 1f).forGetter(EngineFuelType::efficiency),
 		Codec.FLOAT.optionalFieldOf("torque", 1f).forGetter(EngineFuelType::torque),
-		BuiltInRegistries.FLUID.byNameCodec().optionalFieldOf("exhaust").forGetter((et) -> Optional.of(et.exhaust()))
+		BuiltInRegistries.FLUID.byNameCodec().optionalFieldOf("exhaust", TFMGFluids.CARBON_DIOXIDE.get()).forGetter(EngineFuelType::exhaust)
     ).apply(i, EngineFuelType::new));
-
-    public EngineFuelType(HolderSet<Fluid> fluids, float speed, float efficiency, float torque, Optional<Fluid> exhaust) {
-        this(fluids, speed, efficiency, torque, exhaust.orElse(TFMGFluids.CARBON_DIOXIDE.getSource()));
-    }
 
     public static Optional<Holder.Reference<EngineFuelType>> getTypeForFluid(RegistryAccess registryAccess, Fluid fluid) {
         return typeCache.computeIfAbsent(fluid, f -> {
 			Optional<Holder.Reference<Fluid>> fluidRef = BuiltInRegistries.FLUID.getHolder(BuiltInRegistries.FLUID.getKey(f));
-			if (fluidRef.isEmpty()) return Optional.empty();
-			
-			return registryAccess.lookupOrThrow(TFMGRegistries.ENGINE_FUEL_TYPE)
-                .listElements()
-                .filter(ref -> ref.value().fluids.contains(fluidRef.get()))
-                .findFirst();
-		});
+            return fluidRef.flatMap(fluidReference -> registryAccess.lookupOrThrow(TFMGRegistries.ENGINE_FUEL_TYPE)
+                    .listElements()
+                    .filter(ref -> ref.value().fluids.contains(fluidReference))
+                    .findFirst());
+
+        });
     }
 
     public boolean test(FluidStack fluidStack) {
