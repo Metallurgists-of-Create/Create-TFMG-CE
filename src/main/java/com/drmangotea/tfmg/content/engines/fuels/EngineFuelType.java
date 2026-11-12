@@ -8,6 +8,7 @@ import com.simibubi.create.foundation.fluid.FluidHelper;
 import net.minecraft.core.*;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.fluids.FluidStack;
@@ -16,7 +17,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.stream.Stream;
 
+@SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 public record EngineFuelType(HolderSet<Fluid> fluids, float speed, float efficiency, float torque, Fluid exhaust) {
     public static final Map<Fluid, Optional<Holder.Reference<EngineFuelType>>> typeCache = new HashMap<>();
 
@@ -33,10 +36,15 @@ public record EngineFuelType(HolderSet<Fluid> fluids, float speed, float efficie
     }
 
     public static Optional<Holder.Reference<EngineFuelType>> getTypeForFluid(RegistryAccess registryAccess, Fluid fluid) {
-        return typeCache.computeIfAbsent(fluid, f -> registryAccess.lookupOrThrow(TFMGRegistries.ENGINE_FUEL_TYPE)
+        return typeCache.computeIfAbsent(fluid, f -> {
+			Optional<Holder.Reference<Fluid>> fluidRef = BuiltInRegistries.FLUID.getHolder(BuiltInRegistries.FLUID.getKey(f));
+			if (fluidRef.isEmpty()) return Optional.empty();
+			
+			return registryAccess.lookupOrThrow(TFMGRegistries.ENGINE_FUEL_TYPE)
                 .listElements()
-                .filter(ref -> ref.value().fluids.contains(f.builtInRegistryHolder()))
-                .findFirst());
+                .filter(ref -> ref.value().fluids.contains(fluidRef.get()))
+                .findFirst();
+		});
     }
 
     public boolean test(FluidStack fluidStack) {
@@ -50,15 +58,16 @@ public record EngineFuelType(HolderSet<Fluid> fluids, float speed, float efficie
     }
 
     public static Optional<EngineFuelType> find(FluidStack fluidStack, RegistryAccess registryAccess, @Nullable TagKey<EngineFuelType> tagFilter) {
-        if (tagFilter != null) {
-            HolderGetter<EngineFuelType> lookup = registryAccess.asGetterLookup().lookupOrThrow(TFMGRegistries.ENGINE_FUEL_TYPE);
-            var tagged = lookup.get(tagFilter);
-            return tagged.flatMap(holders -> holders.stream().map(Holder::value).filter(type -> type.test(fluidStack)).findFirst());
-        } else {
-            Registry<EngineFuelType> registry = registryAccess.registryOrThrow(TFMGRegistries.ENGINE_FUEL_TYPE);
-            return registry.holders().map(Holder::value).filter(type -> type.test(fluidStack)).findFirst();
-        }
-    }
+		Stream<? extends Holder<EngineFuelType>> stream;
+        if (tagFilter == null) {
+			stream = registryAccess.registryOrThrow(TFMGRegistries.ENGINE_FUEL_TYPE).holders();
+		} else {
+            stream = registryAccess.asGetterLookup()
+				.lookupOrThrow(TFMGRegistries.ENGINE_FUEL_TYPE)
+				.get(tagFilter).orElseThrow().stream();
+		}
+		return stream.map(Holder::value).filter(type -> type.test(fluidStack)).findFirst();
+	}
 
     public static class Builder {
         private final HolderSet<Fluid> fluids;
@@ -77,11 +86,10 @@ public record EngineFuelType(HolderSet<Fluid> fluids, float speed, float efficie
         }
 
         public Builder(Fluid... fluids) {
-            List<Holder<Fluid>> fluidList = new ArrayList<>();
-            for (Fluid fluid : fluids) {
-                fluidList.add(FluidHelper.convertToStill(fluid).builtInRegistryHolder());
-            }
-            this.fluids = HolderSet.direct(fluidList);
+			this.fluids = HolderSet.direct(Arrays.stream(fluids).<Holder<Fluid>>map(fluid -> {
+				ResourceLocation f = BuiltInRegistries.FLUID.getKey(FluidHelper.convertToStill(fluid));
+				return BuiltInRegistries.FLUID.getHolder(f).orElseThrow();
+			}).toList());
         }
 
         public Builder speed(float speed) {

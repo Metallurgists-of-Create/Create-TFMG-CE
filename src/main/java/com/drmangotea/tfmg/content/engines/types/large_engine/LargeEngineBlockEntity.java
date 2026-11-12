@@ -138,22 +138,13 @@ public class LargeEngineBlockEntity extends AbstractEngineBlockEntity {
     public float efficiencyModifier() {
         return super.efficiencyModifier() * 0.5f;
     }
-
-    @Override
-    public float speedModifier() {
-		return super.speedModifier();
-    }
-
-    @Override
-    public float torqueModifier() {
-		return super.torqueModifier();
-    }
 	
 	@Override
 	public Optional<EngineFuelType> getFuelType () {
 		if (level == null) return Optional.empty();
         //temporary solution. Possibly make the large engine abstract??
-        boolean simple = getBlockState().getBlock() == TFMGBlocks.SIMPLE_LARGE_ENGINE.get();
+		//Alternative: make large engine blocks specify a fuel tag, maybe through an interface #todo
+        boolean simple = getBlockState().is(TFMGBlocks.SIMPLE_LARGE_ENGINE.get());
 		return EngineFuelType.find(fuelTank.getFluid(), level.registryAccess(), simple ? TFMGTags.EngineFuel.SIMPLE_LARGE_ENGINE.tag : TFMGTags.EngineFuel.LARGE_ENGINE.tag);
 	}
     
