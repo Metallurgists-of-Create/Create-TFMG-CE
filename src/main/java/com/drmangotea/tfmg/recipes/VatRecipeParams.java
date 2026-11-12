@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
-//TODO: Make pressure & min_size use a NumberTest
 public class VatRecipeParams extends ProcessingRecipeParams {
     public static final List<VatTypeEntry> types = List.of(
             TFMGVatTypes.CAST_IRON, TFMGVatTypes.STEEL, TFMGVatTypes.FIREPROOF

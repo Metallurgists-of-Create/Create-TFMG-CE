@@ -149,7 +149,7 @@ public class ChemicalVatCategory extends CreateRecipeCategory<VatMachineRecipe> 
 		NumberTest.Bounds bounds = recipe.size.getBounds();
         if (bounds != null) {
 			bounds = bounds.intersection(new NumberTest.Bounds(1d, 27d), true);
-            graphics.drawString(Minecraft.getInstance().font, TFMGLang.translate("recipe.vat.size", recipe.size.formatText(bounds)).component(), 122, 45, 16579836);
+            graphics.drawString(Minecraft.getInstance().font, TFMGLang.translate("recipe.vat.size", recipe.size.formatText(bounds)).component(), 122, 45, 0xFCFCFC);
         }
     }
 
