@@ -7,6 +7,7 @@
 ## Contributors:
 ### Developers:
 - @ShallowAssumption
+- @wolfieboy09
 
 ### Artists:
 
@@ -25,6 +26,6 @@
   - Can read text from Clipboards
 
 ### API Changes:
-
+-  `CylinderFuels#withAdditionalFuel` now exists to add additional fuels to `CylinderFuels`
 
 ### New Translations:
