@@ -22,11 +22,14 @@
 
 ### Changes:
 - Segmented Displays
-  - textures connect to Heavy Machinery Casings
-  - Can be targetted by display links
-  - Can read text from Clipboards
+  - textures connect to Heavy Machinery Casings.
+  - Can be targeted by display links.
+  - Can read text from Clipboards.
 - Small Engines
-  - now display electric information when an electricity-generating upgrade is attached
+  - now display electric information when an electricity-generating upgrade is attached.
+- Engine Fuels
+  - Added a JEI category for Engine Fuel stats.
+  - Engine Fuels are now synchronised to clients.
 
 ### API Changes:
 - `EngineFuelType.getTypeForFluid` returns `Optional<EngineFuelType>` instead of `Optional<Reference<EngineFuelType>>`

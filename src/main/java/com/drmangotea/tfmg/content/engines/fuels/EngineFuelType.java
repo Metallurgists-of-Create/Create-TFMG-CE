@@ -8,6 +8,9 @@ import com.simibubi.create.foundation.fluid.FluidHelper;
 import net.minecraft.core.*;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.material.Fluid;
@@ -32,9 +35,18 @@ public record EngineFuelType(HolderSet<Fluid> fluids, float speed, float efficie
 			Optional::of //default should be printed anyway
 		).forGetter(EngineFuelType::exhaust)
     ).apply(i, EngineFuelType::new));
-	
+
+    public static final StreamCodec<RegistryFriendlyByteBuf, EngineFuelType> STREAM_CODEC = StreamCodec.composite(
+            ByteBufCodecs.holderSet(Registries.FLUID), EngineFuelType::fluids,
+            ByteBufCodecs.FLOAT, EngineFuelType::speed,
+            ByteBufCodecs.FLOAT, EngineFuelType::efficiency,
+            ByteBufCodecs.FLOAT, EngineFuelType::torque,
+            ByteBufCodecs.registry(Registries.FLUID), EngineFuelType::exhaust,
+            EngineFuelType::new
+    );
+
 	public static final Codec<TagKey<EngineFuelType>> TAG_CODEC = TagKey.codec(TFMGRegistries.ENGINE_FUEL_TYPE);
-	
+
     public static Optional<EngineFuelType> getTypeForFluid(RegistryAccess registryAccess, Fluid fluid) {
 		return typeCache.computeIfAbsent(fluid, f ->
 			BuiltInRegistries.FLUID.getHolder(BuiltInRegistries.FLUID.getKey(f))
@@ -59,7 +71,7 @@ public record EngineFuelType(HolderSet<Fluid> fluids, float speed, float efficie
 		return getTypesForTag(registryAccess, tagFilter)
 			.filter(h -> h.value().test(fluidStack)).findFirst().map(Holder::value);
 	}
-	
+
 	private static Stream<? extends Holder<EngineFuelType>> getTypesForTag (
 		RegistryAccess registryAccess, @Nullable TagKey<EngineFuelType> tagFilter
 	) {
