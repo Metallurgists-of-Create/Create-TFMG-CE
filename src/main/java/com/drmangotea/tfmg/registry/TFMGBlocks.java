@@ -224,7 +224,7 @@ public class TFMGBlocks {
             .item()
             .transform(customItemModel())
             .register();
-    public static final BlockEntry<LargeEngineBlock> LARGE_ENGINE = REGISTRATE.block("large_engine", LargeEngineBlock::new)
+    public static final BlockEntry<LargeEngineBlock> LARGE_ENGINE = REGISTRATE.block("large_engine", p -> new LargeEngineBlock(p, TFMGTags.EngineFuel.LARGE_ENGINE.tag))
             .initialProperties(SharedProperties::softMetal)
             .properties(p -> p.sound(SoundType.NETHERITE_BLOCK).requiresCorrectToolForDrops())
             .properties(BlockBehaviour.Properties::noOcclusion)
@@ -233,7 +233,7 @@ public class TFMGBlocks {
             .blockstate((c, p) -> p.directionalBlock(c.get(), AssetLookup.partialBaseModel(c, p)))
             .item().transform(customItemModel())
             .register();
-    public static final BlockEntry<LargeEngineBlock> SIMPLE_LARGE_ENGINE = REGISTRATE.block("simple_large_engine", LargeEngineBlock::new)
+    public static final BlockEntry<LargeEngineBlock> SIMPLE_LARGE_ENGINE = REGISTRATE.block("simple_large_engine", p -> new LargeEngineBlock(p, TFMGTags.EngineFuel.SIMPLE_LARGE_ENGINE.tag))
             .initialProperties(SharedProperties::softMetal)
             .properties(p -> p.sound(SoundType.NETHERITE_BLOCK).requiresCorrectToolForDrops())
             .properties(BlockBehaviour.Properties::noOcclusion)

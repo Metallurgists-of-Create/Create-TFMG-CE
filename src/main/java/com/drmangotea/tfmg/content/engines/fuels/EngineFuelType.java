@@ -20,7 +20,7 @@ import java.util.*;
 import java.util.stream.Stream;
 
 public record EngineFuelType(HolderSet<Fluid> fluids, float speed, float efficiency, float torque, Fluid exhaust) {
-    public static final Map<Fluid, Optional<Holder.Reference<EngineFuelType>>> typeCache = new HashMap<>();
+    public static final Map<Fluid, Optional<EngineFuelType>> typeCache = new HashMap<>();
 
     public static final Codec<EngineFuelType> CODEC = RecordCodecBuilder.create(i -> i.group(
 		RegistryCodecs.homogeneousList(Registries.FLUID).fieldOf("fluids").forGetter(EngineFuelType::fluids),
@@ -32,15 +32,17 @@ public record EngineFuelType(HolderSet<Fluid> fluids, float speed, float efficie
 			Optional::of //default should be printed anyway
 		).forGetter(EngineFuelType::exhaust)
     ).apply(i, EngineFuelType::new));
-
-    public static Optional<Holder.Reference<EngineFuelType>> getTypeForFluid(RegistryAccess registryAccess, Fluid fluid) {
+	
+	public static final Codec<TagKey<EngineFuelType>> TAG_CODEC = TagKey.codec(TFMGRegistries.ENGINE_FUEL_TYPE);
+	
+    public static Optional<EngineFuelType> getTypeForFluid(RegistryAccess registryAccess, Fluid fluid) {
 		return typeCache.computeIfAbsent(fluid, f ->
 			BuiltInRegistries.FLUID.getHolder(BuiltInRegistries.FLUID.getKey(f))
 			.flatMap(fluidReference ->
 				registryAccess.lookupOrThrow(TFMGRegistries.ENGINE_FUEL_TYPE)
 					.listElements()
 					.filter(ref -> ref.value().fluids.contains(fluidReference))
-					.findFirst())
+					.findFirst().map(Holder.Reference::value))
         );
     }
 
@@ -48,22 +50,29 @@ public record EngineFuelType(HolderSet<Fluid> fluids, float speed, float efficie
         return fluidStack.is(fluids);
     }
 
-    public static boolean test(FluidStack fluidStack, TagKey<EngineFuelType> fuelTypeTag, RegistryAccess registryAccess) {
-        HolderGetter<EngineFuelType> lookup = registryAccess.asGetterLookup().lookupOrThrow(TFMGRegistries.ENGINE_FUEL_TYPE);
-        var tagged = lookup.get(fuelTypeTag);
-        return tagged.map(holders -> holders.stream().map(Holder::value).anyMatch(type -> type.test(fluidStack))).orElse(false);
+    public static boolean test(FluidStack fluidStack, @Nullable TagKey<EngineFuelType> fuelTypeTag, RegistryAccess registryAccess) {
+		return getTypesForTag(registryAccess, fuelTypeTag)
+			.anyMatch(h -> h.value().test(fluidStack));
     }
 
     public static Optional<EngineFuelType> find(FluidStack fluidStack, RegistryAccess registryAccess, @Nullable TagKey<EngineFuelType> tagFilter) {
+		return getTypesForTag(registryAccess, tagFilter)
+			.filter(h -> h.value().test(fluidStack)).findFirst().map(Holder::value);
+	}
+	
+	private static Stream<? extends Holder<EngineFuelType>> getTypesForTag (
+		RegistryAccess registryAccess, @Nullable TagKey<EngineFuelType> tagFilter
+	) {
 		Stream<? extends Holder<EngineFuelType>> stream;
         if (tagFilter == null) {
+			//if tag is null, return all fuels
 			stream = registryAccess.registryOrThrow(TFMGRegistries.ENGINE_FUEL_TYPE).holders();
 		} else {
             stream = registryAccess.asGetterLookup()
 				.lookupOrThrow(TFMGRegistries.ENGINE_FUEL_TYPE)
 				.get(tagFilter).orElseThrow().stream();
 		}
-		return stream.map(Holder::value).filter(type -> type.test(fluidStack)).findFirst();
+		return stream;
 	}
 
     public static class Builder {

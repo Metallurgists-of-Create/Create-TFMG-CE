@@ -9,7 +9,6 @@ import com.drmangotea.tfmg.content.engines.fuels.EngineFuelType;
 import com.drmangotea.tfmg.registry.TFMGBlockEntities;
 import com.drmangotea.tfmg.registry.TFMGBlocks;
 import com.drmangotea.tfmg.registry.TFMGSoundEvents;
-import com.drmangotea.tfmg.registry.TFMGTags;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntityRenderer;
 import com.simibubi.create.content.kinetics.belt.behaviour.DirectBeltInputBehaviour;
 import com.simibubi.create.content.kinetics.steamEngine.PoweredShaftBlockEntity;
@@ -22,6 +21,7 @@ import net.minecraft.core.Direction.AxisDirection;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -64,7 +64,6 @@ public class LargeEngineBlockEntity extends AbstractEngineBlockEntity {
     @Override
     public void tankUpdated(FluidStack stack, boolean fuelTank) {
         super.tankUpdated(stack, fuelTank);
-        sendStuff();
     }
 
     @Override
@@ -72,9 +71,7 @@ public class LargeEngineBlockEntity extends AbstractEngineBlockEntity {
 
     @Override
     public Predicate<FluidStack> validFuels() {
-        //temporary solution. Possibly make the large engine abstract??
-        boolean simple = getBlockState().getBlock() == TFMGBlocks.SIMPLE_LARGE_ENGINE.get();
-        return fs -> level != null && EngineFuelType.test(fs, simple ? TFMGTags.EngineFuel.SIMPLE_LARGE_ENGINE.tag : TFMGTags.EngineFuel.LARGE_ENGINE.tag, level.registryAccess());
+		return fs -> level != null && EngineFuelType.test(fs, getFuelTypeTag(), level.registryAccess());
     }
 
     @Override
@@ -142,10 +139,11 @@ public class LargeEngineBlockEntity extends AbstractEngineBlockEntity {
 	@Override
 	public Optional<EngineFuelType> getFuelType () {
 		if (level == null) return Optional.empty();
-        //temporary solution. Possibly make the large engine abstract??
-		//Alternative: make large engine blocks specify a fuel tag, maybe through an interface #todo
-        boolean simple = getBlockState().is(TFMGBlocks.SIMPLE_LARGE_ENGINE.get());
-		return EngineFuelType.find(fuelTank.getFluid(), level.registryAccess(), simple ? TFMGTags.EngineFuel.SIMPLE_LARGE_ENGINE.tag : TFMGTags.EngineFuel.LARGE_ENGINE.tag);
+        return EngineFuelType.find(fuelTank.getFluid(), level.registryAccess(), getFuelTypeTag());
+	}
+	
+	public TagKey<EngineFuelType> getFuelTypeTag () {
+		return getBlockState().getBlock() instanceof LargeEngineBlock le ? le.getFuelTypeTag() : null;
 	}
     
     @OnlyIn(Dist.CLIENT)
